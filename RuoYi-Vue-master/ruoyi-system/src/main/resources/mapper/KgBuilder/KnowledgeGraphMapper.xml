@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ruoyi.system.mapper.KgBuilderMapper.KnowledgeGraphDao">
+
+	<resultMap id="BaseResultMap" type="com.ruoyi.system.domain.KgBuilderPojo.entity.KgDomain">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="name" jdbcType="VARCHAR" property="name" />
+		<result column="type" jdbcType="INTEGER" property="type"/>
+		<result column="description" jdbcType="VARCHAR" property="description" />
+		<result column="parent_id" jdbcType="INTEGER" property="parentId"/>
+		<result column="nodeCount" jdbcType="INTEGER" property="nodeCount" />
+		<result column="shipCount" jdbcType="INTEGER" property="shipCount" />
+		<result column="status" jdbcType="INTEGER" property="status" />
+		<result column="createUser" jdbcType="VARCHAR" property="createUser" />
+		<result column="createTime" jdbcType="DATE" property="createTime"/>
+		<result column="modifyUser" jdbcType="VARCHAR" property="modifyUser"/>
+		<result column="modifyTime" jdbcType="DATE" property="modifyTime"/>
+		<result column="commend" jdbcType="INTEGER" property="commend" />
+	</resultMap>
+
+	<resultMap id="BaseFileResultMap" type="com.ruoyi.system.domain.KgBuilderPojo.entity.KgNodeDetailFile">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="domainId" jdbcType="VARCHAR" property="domainId" />
+		<result column="nodeId" jdbcType="INTEGER" property="nodeId" />
+		<result column="fileName" jdbcType="VARCHAR" property="fileName" />
+		<result column="imageType" jdbcType="INTEGER" property="imageType" />
+		<result column="status" jdbcType="INTEGER" property="status" />
+		<result column="createUser" jdbcType="VARCHAR" property="createUser" />
+		<result column="createTime" jdbcType="DATE" property="createTime" />
+		<result column="modifyUser" jdbcType="VARCHAR" property="modifyUser" />
+		<result column="modifyTime" jdbcType="DATE" property="modifyTime" />
+	</resultMap>
+
+	<resultMap id="BaseDetailResultMap" type="com.ruoyi.system.domain.KgBuilderPojo.entity.KgNodeDetail">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="domainId" jdbcType="VARCHAR" property="domainId" />
+		<result column="nodeId" jdbcType="INTEGER" property="nodeId" />
+		<result column="content" jdbcType="VARCHAR" property="content" />
+		<result column="status" jdbcType="INTEGER" property="status" />
+		<result column="createUser" jdbcType="VARCHAR" property="createUser" />
+		<result column="createTime" jdbcType="DATE" property="createTime" />
+		<result column="modifyUser" jdbcType="VARCHAR" property="modifyUser" />
+		<result column="modifyTime" jdbcType="DATE" property="modifyTime" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		id,name,type, description,parent_id,nodeCount, shipCount,status,createUser,createTime,modifyUser,,modifyTime,commend
+	</sql>
+
+	<select id="getDomains" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM kg_domain where status=1
+	</select>
+
+	<select id="getKgDomainList" parameterType="KgDomain" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List"/>
+		FROM kg_domain
+		<where>
+			status = 1
+			<if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+			<if test="type != null "> and type = #{type}</if>
+			<if test="description != null  and description != ''"> and description = #{description}</if>
+			<if test="parentId != null "> and parent_id = #{parentId}</if>
+			<if test="nodecount != null "> and nodecount = #{nodecount}</if>
+			<if test="shipcount != null "> and shipcount = #{shipcount}</if>
+			<if test="createuser != null  and createuser != ''"> and createuser = #{createuser}</if>
+			<if test="creattime != null "> and creattime = #{creattime}</if>
+			<if test="updateuser != null  and updateuser != ''"> and updateuser = #{updateuser}</if>
+			<if test="updatetime != null "> and updatetime = #{updatetime}</if>
+			<if test="commend != null "> and commend = #{commend}</if>
+		</where>
+		ORDER BY id desc
+	</select>
+
+	<select id="getDomainList" resultMap="BaseResultMap" >
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM kg_domain
+		 <where >	
+		 status=1   
+	      <if test="domainName!='' and domainName!=null">
+	      	and name like '%${domainName}%'
+	      </if>
+			 <if test="type!=null">
+				 and `type`=#{type}
+			 </if>
+			 <if test="commend!=null">
+				 and `commend`=#{commend}
+			 </if>
+	    </where>
+	    order by id desc
+	</select>
+
+	<select id="getRecommendDomainList" resultMap="BaseResultMap" >
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM kg_domain
+		<where >
+			status=1 and commend=1
+		</where>
+		order by id desc
+	</select>
+
+	<select id="getDomainByName" resultMap="BaseResultMap" parameterType="String">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM kg_domain WHERE status=1 and name =#{domainName}
+	</select>
+
+	<select id="getDomainById" resultMap="BaseResultMap" parameterType="Integer">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM kg_domain WHERE status=1 and id =#{domainId}
+	</select>
+
+	<insert id="saveDomain" parameterType="map" keyColumn="id" keyProperty="id"  useGeneratedKeys="true">
+        INSERT INTO kg_domain(name, createUser,nodeCount, shipCount,status,type,commend) VALUES (#{name},#{createUser},#{nodeCount},#{shipCount},1,#{type},#{commend})
+    </insert>
+
+	<insert id="saveKgDomain" parameterType="KgDomain" useGeneratedKeys="true" keyProperty="id">
+		insert into kg_domain
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="name != null and name != ''">name,</if>
+			<if test="type != null">type,</if>
+			<if test="description != null">description,</if>
+			<if test="parentId != null">parent_id,</if>
+			<if test="nodecount != null">nodecount,</if>
+			<if test="shipcount != null">shipcount,</if>
+			<if test="status != null">status,</if>
+			<if test="createuser != null">createuser,</if>
+			<if test="creattime != null">creattime,</if>
+			<if test="updateuser != null">updateuser,</if>
+			<if test="updatetime != null">updatetime,</if>
+			<if test="commend != null">commend,</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="name != null and name != ''">#{name},</if>
+			<if test="type != null">#{type},</if>
+			<if test="description != null">#{description},</if>
+			<if test="parentId != null">#{parentId},</if>
+			<if test="nodecount != null">#{nodecount},</if>
+			<if test="shipcount != null">#{shipcount},</if>
+			<if test="status != null">#{status},</if>
+			<if test="createuser != null">#{createuser},</if>
+			<if test="creattime != null">#{creattime},</if>
+			<if test="updateuser != null">#{updateuser},</if>
+			<if test="updatetime != null">#{updatetime},</if>
+			<if test="commend != null">#{commend},</if>
+		</trim>
+	</insert>
+
+	<update id="updateDomain" parameterType="map">
+        UPDATE kg_domain
+        SET 
+        name =#{name} ,
+        createUser=#{createUser} ,
+        nodeCount=#{nodeCount},
+        shipCount=#{shipCount},
+        WHERE id = #{id}
+    </update>
+
+	<update id="updateKgDomain" parameterType="KgDomain">
+		update kg_domain
+		<trim prefix="SET" suffixOverrides=",">
+			<if test="name != null and name != ''">name = #{name},</if>
+			<if test="type != null">type = #{type},</if>
+			<if test="description != null">description = #{description},</if>
+			<if test="parentId != null">parent_id = #{parentId},</if>
+			<if test="nodecount != null">nodecount = #{nodecount},</if>
+			<if test="shipcount != null">shipcount = #{shipcount},</if>
+			<if test="status != null">status = #{status},</if>
+			<if test="createuser != null">createuser = #{createuser},</if>
+			<if test="creattime != null">creattime = #{creattime},</if>
+			<if test="updateuser != null">updateuser = #{updateuser},</if>
+			<if test="updatetime != null">updatetime = #{updatetime},</if>
+			<if test="commend != null">commend = #{commend},</if>
+		</trim>
+		where id = #{id}
+	</update>
+
+
+	<update id="deleteDomain" parameterType="Integer">
+        UPDATE kg_domain SET status = 0 WHERE id = #{id}
+    </update>
+
+	<delete id="deleteKgDomainById" parameterType="Integer">
+		delete from kg_domain where id = #{id}
+	</delete>
+
+	<delete id="deleteKgDomainByIds" parameterType="String">
+		delete from kg_domain where id in
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+	<insert id="saveNodeImage" parameterType="java.util.List" >
+		insert kg_nodedetail_file
+		(Domainid,NodeId,FileName,ImageType,CreateUser,CreateTime,Status)
+		values
+		<foreach collection="maplist" item="item" separator=",">
+			(#{item.domainId},#{item.nodeId} ,#{item.file} ,#{item.imageType},#{item.createUser},#{item.createTime},#{item.status})
+		</foreach>
+	</insert>
+
+	<insert id="saveNodeContent" parameterType="map" >
+		insert kg_nodedetail
+		(Domainid,NodeId,Content,CreateUser,CreateTime,Status)
+		values
+		(#{params.domainId},#{params.nodeId} ,#{params.content} ,#{params.createUser},#{params.createTime},#{params.status})
+	</insert>
+
+	<update id="updateNodeContent" parameterType="map">
+        UPDATE kg_nodedetail SET Content =#{params.content} ,ModifyTime=#{params.modifytime} WHERE Domainid=#{params.domainId} and NodeId = #{params.nodeId}
+    </update>
+
+	<select id="getNodeImageList" resultMap="BaseFileResultMap">
+		SELECT * from kg_nodedetail_file where Status=1 and  Domainid=#{domainId} and NodeId=#{nodeId}
+	</select>
+
+	<select id="getNodeContent" resultMap="BaseDetailResultMap">
+		SELECT * from kg_nodedetail where Status=1 and  Domainid=#{domainId} and NodeId=#{nodeId}
+	</select>
+
+	<update id="deleteNodeImage">
+		update kg_nodedetail_file set Status=0 where Domainid=#{domainId} and NodeId=#{nodeId}
+	</update>
+
+</mapper>

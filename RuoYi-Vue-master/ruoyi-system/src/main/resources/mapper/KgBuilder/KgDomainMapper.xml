@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.KgDomainMapper">
+    
+    <resultMap type="com.ruoyi.system.domain.KgBuilderPojo.entity.KgDomain" id="KgDomainResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="type"    column="type"    />
+        <result property="description"    column="description"    />
+        <result property="parentId"    column="parent_id"    />
+        <result property="nodecount"    column="nodecount"    />
+        <result property="shipcount"    column="shipcount"    />
+        <result property="status"    column="status"    />
+        <result property="createuser"    column="createuser"    />
+        <result property="creattime"    column="creattime"    />
+        <result property="updateuser"    column="updateuser"    />
+        <result property="updatetime"    column="updatetime"    />
+        <result property="commend"    column="commend"    />
+    </resultMap>
+
+    <sql id="selectKgDomainVo">
+        select id, name, type, description, parent_id, nodecount, shipcount, status, createuser, creattime, updateuser, updatetime, commend from kg_domain
+    </sql>
+
+    <select id="selectKgDomainList" parameterType="KgDomain" resultMap="KgDomainResult">
+        <include refid="selectKgDomainVo"/>
+        <where>  
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="type != null "> and type = #{type}</if>
+            <if test="description != null  and description != ''"> and description = #{description}</if>
+            <if test="parentId != null "> and parent_id = #{parentId}</if>
+            <if test="nodecount != null "> and nodecount = #{nodecount}</if>
+            <if test="shipcount != null "> and shipcount = #{shipcount}</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="createuser != null  and createuser != ''"> and createuser = #{createuser}</if>
+            <if test="creattime != null "> and creattime = #{creattime}</if>
+            <if test="updateuser != null  and updateuser != ''"> and updateuser = #{updateuser}</if>
+            <if test="updatetime != null "> and updatetime = #{updatetime}</if>
+            <if test="commend != null "> and commend = #{commend}</if>
+        </where>
+    </select>
+    
+    <select id="selectKgDomainById" parameterType="Long" resultMap="KgDomainResult">
+        <include refid="selectKgDomainVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertKgDomain" parameterType="KgDomain" useGeneratedKeys="true" keyProperty="id">
+        insert into kg_domain
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">name,</if>
+            <if test="type != null">type,</if>
+            <if test="description != null">description,</if>
+            <if test="parentId != null">parent_id,</if>
+            <if test="nodecount != null">nodecount,</if>
+            <if test="shipcount != null">shipcount,</if>
+            <if test="status != null">status,</if>
+            <if test="createuser != null">createuser,</if>
+            <if test="creattime != null">creattime,</if>
+            <if test="updateuser != null">updateuser,</if>
+            <if test="updatetime != null">updatetime,</if>
+            <if test="commend != null">commend,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">#{name},</if>
+            <if test="type != null">#{type},</if>
+            <if test="description != null">#{description},</if>
+            <if test="parentId != null">#{parentId},</if>
+            <if test="nodecount != null">#{nodecount},</if>
+            <if test="shipcount != null">#{shipcount},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createuser != null">#{createuser},</if>
+            <if test="creattime != null">#{creattime},</if>
+            <if test="updateuser != null">#{updateuser},</if>
+            <if test="updatetime != null">#{updatetime},</if>
+            <if test="commend != null">#{commend},</if>
+         </trim>
+    </insert>
+
+    <update id="updateKgDomain" parameterType="KgDomain">
+        update kg_domain
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="type != null">type = #{type},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="parentId != null">parent_id = #{parentId},</if>
+            <if test="nodecount != null">nodecount = #{nodecount},</if>
+            <if test="shipcount != null">shipcount = #{shipcount},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="createuser != null">createuser = #{createuser},</if>
+            <if test="creattime != null">creattime = #{creattime},</if>
+            <if test="updateuser != null">updateuser = #{updateuser},</if>
+            <if test="updatetime != null">updatetime = #{updatetime},</if>
+            <if test="commend != null">commend = #{commend},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteKgDomainById" parameterType="Long">
+        delete from kg_domain where id = #{id}
+    </delete>
+
+    <delete id="deleteKgDomainByIds" parameterType="String">
+        delete from kg_domain where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

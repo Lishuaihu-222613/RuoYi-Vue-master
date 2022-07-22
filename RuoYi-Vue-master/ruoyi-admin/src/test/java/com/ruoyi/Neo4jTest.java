@@ -2,6 +2,12 @@ package com.ruoyi;
 
 import com.ruoyi.common.utils.Neo4j.Neo4jUtil;
 import com.ruoyi.common.utils.poi.WordUtil;
+import com.ruoyi.system.domain.KgBuilderPojo.model.nodes.conditionItem;
+import com.ruoyi.system.domain.KgBuilderPojo.model.nodes.decisionKnowledge;
+import com.ruoyi.system.domain.KgBuilderPojo.model.nodes.resultItem;
+import com.ruoyi.system.domain.KgBuilderPojo.model.relationships.ruleAntecedent;
+import com.ruoyi.system.domain.KgBuilderPojo.model.relationships.ruleConsequent;
+import com.ruoyi.system.service.dKService.impl.dKServiceImpl;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,13 +21,11 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @RunWith(SpringJUnit4ClassRunner.class) // SpringJUnit支持，由此引入Spring-Test框架支持！
 @SpringBootTest(classes = Neo4jTest.class) // 指定我们SpringBoot工程的Application启动类
-@WebAppConfiguration // 由于是Web项目，Junit需要模拟ServletContext，因此我们需要给我们的测试类加上@WebAppConfiguration。
+@WebAppConfiguration// 由于是Web项目，Junit需要模拟ServletContext，因此我们需要给我们的测试类加上@WebAppConfiguration。
 @ComponentScan(basePackages = {"com.ruoyi"})
 public class Neo4jTest {
 
@@ -30,6 +34,9 @@ public class Neo4jTest {
 
     @Autowired
     public WordUtil wordUtil;
+
+    @Autowired
+    public dKServiceImpl dKService;
 
     @Test
     public void ConnectTest(){
@@ -555,10 +562,18 @@ public class Neo4jTest {
     @Test
     public void QueryCypherTest(){
 
-        String cypher = "MATCH (people:Person)-[relatedTo]-(:Movie {title: \"Cloud Atlas\"}) RETURN people.name, Type(relatedTo), relatedTo";
+//        String cypher = "MATCH (people:Person)-[relatedTo]-(:Movie {title: \"Cloud Atlas\"}) RETURN people.name, Type(relatedTo), relatedTo";
+//
+//        long graphValue = Neo4jUtil.getGraphValue(cypher);
+//        System.out.println(graphValue);
 
-        long graphValue = Neo4jUtil.getGraphValue(cypher);
-        System.out.println(graphValue);
+        String Json = "{\"username\":\"baoqiang1\",\"password\":\"123\"},\n" +
+                "            {\"username\":\"baoqiang2\",\"password\":\"123\"},\n" +
+                "            {\"username\":\"baoqiang3\",\"password\":\"123\"}\n" ;
+
+        String json = Neo4jUtil.getFilterPropertiesJson(Json);
+
+        System.out.println(json);
 
 //        for (HashMap<String, Object> map : Neo4jUtil.getGraphValue(cypher)) {
 //            System.out.println(map.toString());
@@ -579,6 +594,43 @@ public class Neo4jTest {
         String filepath = "templates/";
 
         wordUtil.downloadWord(filepath, templatePath,params);
+
+    }
+
+    @Test
+    public void Neo4jDataTest(){
+
+//        conditionItem CI = new conditionItem();
+//        CI.setCluster("粗糙度");
+//        CI.setContent("Ra6.3");
+//
+//        resultItem RI = new resultItem();
+//        RI.setCluster("进给量");
+//        RI.setContent("0.5mm/r");
+//
+//        ruleAntecedent ruleA = new ruleAntecedent();
+//        ruleA.setCluster("Before");
+//        ruleA.setContent("粗糙度要求");
+//        ruleA.setCondition(CI);
+//
+//        ruleConsequent ruleC = new ruleConsequent();
+//        ruleC.setCluster("After");
+//        ruleC.setContent("进给量要求");
+//        ruleC.setResultItem(RI);
+//
+//        Set<ruleAntecedent> ruleAs = new HashSet<>();
+//        Set<ruleConsequent> ruleCs = new HashSet<>();
+//        ruleAs.add(ruleA);
+//        ruleCs.add(ruleC);
+//
+//        decisionKnowledge DK = new decisionKnowledge();
+//        DK.setName("决策规则1");
+//        DK.setRuleAntecedents(ruleAs);
+//        DK.setRuleConsequents(ruleCs);
+//
+//        dKService.createDecisionKnowledge(DK);
+        List<decisionKnowledge> knowledges = dKService.getDecisionKnowledge();
+        System.out.println(knowledges);
 
     }
 }

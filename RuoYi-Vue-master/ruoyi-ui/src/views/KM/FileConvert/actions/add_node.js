@@ -1,5 +1,4 @@
-import store from '/src/store'
-import * as KGBuilder from '@/api/system/KgBuilder'
+import * as kgBuilderApi from '@/api/system/KgBuilder'
 
 export default{
 
@@ -15,19 +14,19 @@ export default{
   },
   onClick (ev) {
     let obj = {
-      id: String('node' + (store.state.dataList.nodes.length + 1)),
-      label: String(store.state.dataList.nodes.length + 1),
+      label: '',
       x: ev.x,
       y: ev.y
     }
-    this.graph.addItem('node', obj)
-    store.commit('addNode', obj)
-    // 操作记录
-    let logObj = {
-      id: String('log' + (store.state.log.length + 1)),
-      action: 'addNode',
-      data: obj
-    }
-    store.commit('addLog', logObj)
+    obj.domain = this.graph.get('domain')
+    kgBuilderApi.createNode(obj).then(result => {
+      if (result.code === 200) {
+        alert('创建节点成功！')
+        this.graph.addItem('node', result.data)
+      }
+      else{
+        alert('创建节点失败！')
+      }
+    })
   }
 }

@@ -2,6 +2,7 @@ package com.ruoyi.system.mapper.KgBuilderMapper;
 
 import com.ruoyi.common.utils.Neo4j.GraphPageRecord;
 import com.ruoyi.system.domain.KgBuilderPojo.model.NodeItem;
+import com.ruoyi.system.domain.KgBuilderPojo.request.EdgeItem;
 import com.ruoyi.system.domain.KgBuilderPojo.request.GraphQuery;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -82,6 +83,13 @@ public interface KGGraphDao {
 	HashMap<String, Object> updateNodeName(String domain, String nodeId, String nodeName);
 
 	/**
+	 * 更新节点
+	 * @param nodeItem
+	 * @return
+	 */
+	HashMap<String, Object> updateNode(NodeItem nodeItem);
+
+	/**
 	 * 创建单个节点
 	 * 
 	 * @param domain
@@ -143,15 +151,15 @@ public interface KGGraphDao {
 	 * 
 	 * @param domain
 	 *            领域
-	 * @param sourceId
+	 * @param source
 	 *            源节点id
-	 * @param targetId
+	 * @param target
 	 *            目标节点id
-	 * @param ship
+	 * @param label
 	 *            关系
 	 * @return
 	 */
-	HashMap<String, Object> createLink(String domain, long sourceId, long targetId, String ship);
+	HashMap<String, Object> createEdge(String domain, String source, String target, String label);
 
 	/**
 	 * 通过UUID添加关系
@@ -174,7 +182,7 @@ public interface KGGraphDao {
 	 *            关系名称
 	 * @return
 	 */
-	HashMap<String, Object> updateLink(String domain, long shipId, String shipName);
+	HashMap<String, Object> updateEdge(String domain, EdgeItem edge);
 
 	/**
 	 * 删除节点(先删除关系再删除节点)
@@ -183,15 +191,15 @@ public interface KGGraphDao {
 	 * @param nodeId
 	 * @return
 	 */
-	List<HashMap<String, Object>> deleteNode(String domain, long nodeId);
+	List<HashMap<String, Object>> deleteNode(String domain, String nodeId);
 
 	/**
 	 * 删除关系
 	 * 
 	 * @param domain
-	 * @param shipId
+	 * @param EdgeId
 	 */
-	void deleteLink(String domain, long shipId);
+	void deleteEdge(String domain, String EdgeId);
 
 	/**
 	 * 段落识别出的三元组生成图谱

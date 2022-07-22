@@ -77,7 +77,7 @@
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="submitData"
+        <el-button type="primary" @click="submitdata"
         >确 定</el-button
         >
       </span>
@@ -90,6 +90,7 @@
 import defaultNode from '@/views/KM/FileConvert/default/default_node'
 import defaultEdge from '@/views/KM/FileConvert/default/default_edge'
 import { isNullAndEmpty, objectJS } from '@/views/KM/FileConvert/actions/commen'
+import * as G6 from '@antv/g6'
 
 export default {
   props: {
@@ -99,51 +100,44 @@ export default {
       default: 100
     },
 
-    selectedNodeId: {
-      type: String,
-      default: ''
+    selectedNode: {
+      type: Object,
+      default: () => {}
     },
 
-    selectedEdgeId: {
-      type: String,
-      default: ''
+    selectedEdge: {
+      type: Object,
+      default: () => {}
     },
 
     graph: {
       type: Object,
       default: () => {}
     }
-
   },
   watch: {
 
-    selectedEdgeId: {
+    selectedEdge: {
       handler (newVal, oldVal) {
         if (newVal !== '') {
-          let edgeArr = this.$store.state.dataList.edges.filter((item) => {
-            return item.id === newVal
-          })
-          this.edge = edgeArr[0]
+          this.edge = newVal
         }
       }
     },
 
-    selectedNodeId: {
+    selectedNode: {
       handler (newVal, oldVal) {
         if (newVal !== '') {
-          let nodeArr = this.$store.state.dataList.nodes.filter((item) => {
-            return item.id === newVal
-          })
-          this.node = nodeArr[0]
-          this.radius = nodeArr[0].size[0] / 2
+          this.node = newVal
+          this.radius = newVal.size[0] / 2
         }
       }
     }
   },
   data: () => ({
     tools: [
-      { icon: 'mdi-undo-variant', tip: '撤销 Ctrl+Z', event: 'search' },
-      { icon: 'mdi-backup-restore', tip: '重做', event: 'restore' },
+      { icon: 'mdi-book-open-page-variant-outline', tip: '查找', event: 'search' },
+      { icon: 'mdi-vector-polygon', tip: '扩展', event: 'restore' },
       { icon: 'mdi-content-copy', tip: '复制 Ctrl+C', event: 'copy' },
       { icon: 'mdi-content-paste', tip: '粘贴 Ctrl+V', event: 'paste' },
       { icon: 'mdi-trash-can-outline', tip: '删除 Ctrl+Backspace', event: 'delete' },
@@ -154,8 +148,8 @@ export default {
       { icon: 'mdi-arrow-collapse-all', tip: '适应画布', event: 'adaptCanvas' },
       { icon: 'mdi-cloud-upload', tip: '导入文件', event: 'importFile' },
       { icon: 'mdi-file-image', tip: '导出图片', event: 'saveImage' },
-      { icon: 'mdi-file-code', tip: '导出JSON', event: 'saveJson' },
-      { icon: 'mdi-help-box', tip: '帮助', event: 'help' }
+      { icon: 'mdi-magnify', tip: '放大镜', event: 'saveJson' },
+      { icon: 'mdi-cube-scan', tip: '滤镜', event: 'help' }
     ],
     show3: false,
     node: {},
@@ -174,14 +168,36 @@ export default {
               {label: '同心圆布局', value: 'concentric'},
               {label: '网格布局', value: 'grid'},
               {label: 'Ai布局', value: 'predictLayout'},
-    ]
+    ],
+    filterLens: false,
+    fishEyeCondition:false,
+    edgefilterLens:new G6.EdgeFilterLens({
+      trigger: 'mousemove',
+      r: 200,
+      type:"both",
+      showLabel:'both',
+      scaleRBy:'wheel',
+      // shouldShow: d => {
+      //   return d.size > 10;
+      // }
+    }),
+    fisheye:new G6.Fisheye({
+      r: 200,
+      d: 10,
+      showLabel: true,
+      delegateStyle: {
+        fill: '#f00',
+        lineDash: [5, 5],
+        stroke: '#666',
+      },
+    }),
   }),
   mounted () {
     this.keyCodeForEvent()
   },
   methods: {
 
-    changeLayout () {this.graph.updateLayout({ type: this.layout })},
+    changeLayout () {this.graph.updateLayout({ type: this.layout ,preventOverlap: true, nodeSpaceing: (d) => {return d.size;} ,strictRadial: true})},
 
     onSuccess (res, file, fileList) {
       let reader = new FileReader()
@@ -237,104 +253,77 @@ export default {
     },
     restore () {
       this.graph.clear()
-      this.$store.commit('clearData')
     },
     copy () {
-
-      if (this.selectedNodeId === '') {
+      if (this.selectedNode === null) {
         this.$message.error('未选择节点！')
       } else {
-        this.$store.state.dataList.nodes.forEach((node) => {
-          if (node.id === this.selectedNodeId) {
             this.cloneNode = objectJS.deepClone(node)
             this.$message.success('复制成功')
           }
-        })
-      }
-    },
+      },
+
     paste () {
-      if (this.selectedNodeId === '') {
+      if (this.selectedNode === null) {
         this.$message.error('未选择节点！')
       } else {
-        this.cloneNode.id =
-          'node' + (this.$store.state.dataList.nodes.length + 1)
-        this.cloneNode.label = this.$store.state.dataList.nodes.length + 1
         this.cloneNode.x = this.cloneNode.x + 20
         this.cloneNode.y = this.cloneNode.y + 20
         let obj = objectJS.deepClone(this.cloneNode)
         this.graph.addItem('node', obj)
-        this.$store.commit('addNode', obj)
         this.$message.success('粘贴成功')
       }
     },
     delete () {
-      if (this.selectedEdgeId === '' && this.selectedNodeId === '') {
+      if (this.selectedEdge === null && this.selectedNode === null) {
         this.$message.error('未选择元素！')
-      } else if (this.selectedEdgeId !== '') {
+      } else if (this.selectedEdge !== null) {
         let obj = {}
         this.graph.getEdges().forEach((edge) => {
-          if (edge._cfg.id === this.selectedEdgeId) {
+          if (edge._cfg.id === this.selectedEdge.id) {
             obj = edge._cfg.model
           }
         })
-        // 操作记录
-        let logObj = {
-          id: String('log' + (this.$store.state.log.length + 1)),
-          action: 'deleteEdge',
-          data: obj
-        }
-        this.$store.commit('addLog', logObj)
-        this.graph.removeItem(this.selectedEdgeId)
-        this.$store.commit('deleteEdge', this.selectedEdgeId)
-        this.$emit('update:selectedEdgeId', '')
-      } else if (this.selectedNodeId !== '') {
+        this.graph.removeItem(this.selectedEdge.id)
+      } else if (this.selectedNode !== null) {
         let obj = {}
         this.graph.getNodes().forEach((node) => {
-          if (node._cfg.id === this.selectedNodeId) {
+          if (node._cfg.id === this.selectedNode.id) {
             obj = node._cfg.model
           }
         })
-        // 操作记录
-        let logObj = {
-          id: String('log' + (this.$store.state.log.length + 1)),
-          action: 'deleteNode',
-          data: obj
-        }
-        this.$store.commit('addLog', logObj)
-        this.graph.removeItem(this.selectedNodeId)
-        this.$store.commit('deleteNode', this.selectedNodeId)
-        this.$emit('update:selectedNodeId', '')
+        this.graph.removeItem(this.selectedNode.id)
       }
     },
     onTop () {
-      if (this.selectedEdgeId === '' && this.selectedNodeId === '') {
+      if (this.selectedEdge.id === '' && this.selectedNode.id === '') {
         this.$message.error('未选择元素！')
-      } else if (this.selectedEdgeId !== '') {
+      } else if (this.selectedEdge.id !== '') {
         this.graph.getEdges().forEach((edge) => {
-          if (edge._cfg.id === this.selectedEdgeId) {
+          if (edge._cfg.id === this.selectedEdge.id) {
             edge.toFront()
           }
         })
-      } else if (this.selectedNodeId !== '') {
+      } else if (this.selectedNode.id !== '') {
         this.graph.getNodes().forEach((node) => {
-          if (node._cfg.id === this.selectedNodeId) {
+          if (node._cfg.id === this.selectedNode.id) {
             node.toFront()
           }
         })
       }
     },
     onBottom () {
-      if (this.selectedEdgeId === '' && this.selectedNodeId === '') {
+      if (this.selectedEdge.id === '' && this.selectedNode.id === '') {
         this.$message.error('未选择元素！')
-      } else if (this.selectedEdgeId !== '') {
+      } else if (this.selectedEdge.id !== '') {
         this.graph.getEdges().forEach((edge) => {
-          if (edge._cfg.id === this.selectedEdgeId) {
+          if (edge._cfg.id === this.selectedEdge.id) {
             edge.toBack()
           }
         })
-      } else if (this.selectedNodeId !== '') {
+      } else if (this.selectedNode.id !== '') {
         this.graph.getNodes().forEach((node) => {
-          if (node._cfg.id === this.selectedNodeId) {
+          if (node._cfg.id === this.selectedNode.id) {
             node.toBack()
           }
         })
@@ -369,28 +358,6 @@ export default {
       }
       return target
     },
-    submitData () {
-      const dataList = this.uploadData
-      let _this = this
-      if (!isNullAndEmpty(dataList.nodes)) {
-        dataList.nodes.forEach((item) => {
-          this.initializeObj(defaultNode, item)
-          _this.graph.addItem('node', item)
-          _this.$store.commit('addNode', item)
-        })
-      }
-      if (!isNullAndEmpty(dataList.edges)) {
-        dataList.edges.forEach((item) => {
-          this.initializeObj(defaultEdge, item)
-          _this.graph.addItem('edge', item)
-          _this.$store.commit('addEdge', item)
-        })
-      }
-      this.graph.updateLayout({
-        type: 'random'
-      })
-      this.dialogVisible = false
-    },
     saveImage () {
       if (!isNullAndEmpty(this.$store.state.dataList.nodes)) {
         this.graph.downloadFullImage('graph', 'image/png', {
@@ -402,38 +369,27 @@ export default {
       }
     },
     saveJson () {
-      if (!isNullAndEmpty(this.$store.state.dataList.nodes)) {
-        const dataList = this.$store.state.dataList
-        const content = {}
-        // content.nodes = dataList.nodes.map(x => {
-        //   return {
-        //     id: x.id,
-        //     label: x.label
-        //   }
-        // })
-        // content.edges = dataList.edges.map(x => {
-        //   return {
-        //     source: x.source,
-        //     target: x.target,
-        //     label: x.label
-        //   }
-        // })
-        content.nodes = dataList.nodes
-        content.edges = dataList.edges
-        var eleLink = document.createElement('a')
-        eleLink.download = 'kg.json'
-        eleLink.style.display = 'none'
-        var blob = new Blob([JSON.stringify(content)])
-        eleLink.href = URL.createObjectURL(blob)
-        document.body.appendChild(eleLink)
-        eleLink.click()
-        document.body.removeChild(eleLink)
-      } else {
-        this.$message.warning('暂无数据可导出！')
+      //鱼眼放大镜
+      if(!this.fishEyeCondition) {
+        this.graph.removePlugin(this.fisheye);
+        this.fishEyeCondition = true;
+      }
+      else {
+        this.graph.addPlugin(this.fisheye);
+        this.fishEyeCondition = false;
       }
     },
     help () {
-      window.open('https://github.com/qiaolufei/KG-Editor/issues/new')
+
+      if(!this.filterLens) {
+        this.graph.removePlugin(this.edgefilterLens);
+        this.filterLens = true;
+      }
+      else {
+        //滤镜
+        this.graph.addPlugin(this.edgefilterLens);
+        this.filterLens = false;
+      }
     },
     // 模拟组合键触发函数
     keyCodeForEvent () {
@@ -488,8 +444,7 @@ export default {
         }
       }
     }
-  }
-}
+}}
 </script>
 <style lang="less" scoped>
 .toolbar {

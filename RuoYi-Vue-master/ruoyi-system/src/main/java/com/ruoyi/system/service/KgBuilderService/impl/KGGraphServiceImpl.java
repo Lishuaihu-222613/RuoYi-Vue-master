@@ -11,6 +11,7 @@ import com.ruoyi.system.domain.KgBuilderPojo.entity.CategoryNode;
 import com.ruoyi.system.domain.KgBuilderPojo.model.NodeItem;
 import com.ruoyi.system.domain.KgBuilderPojo.model.TreeExcel;
 import com.ruoyi.system.domain.KgBuilderPojo.model.TreeExcelRecordData;
+import com.ruoyi.system.domain.KgBuilderPojo.request.EdgeItem;
 import com.ruoyi.system.domain.KgBuilderPojo.request.GraphQuery;
 import com.ruoyi.system.mapper.KgBuilderMapper.impl.KGGraphRepository;
 import com.ruoyi.system.service.KgBuilderService.CategoryNodeService;
@@ -110,23 +111,23 @@ public class KGGraphServiceImpl implements KgGraphService {
     }
 
     @Override
-    public HashMap<String, Object> createLink(String domain, long sourceId, long targetId, String ship) {
-        return kgRepository.createLink(domain, sourceId, targetId, ship);
+    public HashMap<String, Object> createEdge(String domain, String source, String target, String ship) {
+        return kgRepository.createEdge(domain, source, target, ship);
     }
 
     @Override
-    public HashMap<String, Object> updateLink(String domain, long shipId, String shipName) {
-        return kgRepository.updateLink(domain, shipId, shipName);
+    public HashMap<String, Object> updateEdge(String domain, EdgeItem edge) {
+        return kgRepository.updateEdge(domain, edge);
     }
 
     @Override
-    public List<HashMap<String, Object>> deleteNode(String domain, long nodeId) {
+    public List<HashMap<String, Object>> deleteNode(String domain, String nodeId) {
         return kgRepository.deleteNode(domain, nodeId);
     }
 
     @Override
-    public void deleteLink(String domain, long shipId) {
-        kgRepository.deleteLink(domain, shipId);
+    public void deleteEdge(String domain, String EdgeId) {
+        kgRepository.deleteEdge(domain, EdgeId);
     }
 
     @Override
@@ -291,7 +292,9 @@ public class KGGraphServiceImpl implements KgGraphService {
                     categoryNodeService.updateLeafStatusByPrimaryKey(parentId, 0);
                 }
                 //创建节点
-                NodeItem nodeItem=new NodeItem(id,nodeName,cellColor);
+                HashMap<String, Object> style = new HashMap<>();
+                style.put("fill",cellColor);
+                NodeItem nodeItem = new NodeItem(String.valueOf(id),nodeName,style);
                 kgRepository.createNodeWithUUid(label,nodeItem);
                 //创建关系
                 if(parentId>0){

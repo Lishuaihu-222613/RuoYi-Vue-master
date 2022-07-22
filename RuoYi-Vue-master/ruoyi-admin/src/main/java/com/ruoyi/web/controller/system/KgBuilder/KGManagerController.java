@@ -1,5 +1,7 @@
 package com.ruoyi.web.controller.system.KgBuilder;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.csvreader.CsvWriter;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.github.pagehelper.PageHelper;
@@ -199,8 +201,11 @@ public class KGManagerController extends BaseController {
     public R<HashMap<String, Object>> createNode(@RequestBody NodeItem entity) {
         HashMap<String, Object> graphNode = new HashMap<String, Object>();
         try {
+//            System.out.println(entity);
+//            System.out.println(Arrays.toString(entity.getSize()));
             graphNode = kgGraphService.createNode(entity.getDomain(), entity);
             if (graphNode != null && graphNode.size() > 0) {
+                System.out.println(graphNode);
                 return R.success(graphNode);
             }
         } catch (Exception e) {
@@ -257,11 +262,11 @@ public class KGManagerController extends BaseController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/createLink")
-    public R<HashMap<String, Object>> createLink(@RequestBody CreateLinkItem request) {
+    @RequestMapping(value = "/createEdge")
+    public R<HashMap<String, Object>> createLink(@RequestBody EdgeItem edge) {
         try {
-            HashMap<String, Object> cypherResult = kgGraphService.createLink(request.getDomain(), request.getSourceId(), request.getTargetId(), request.getShip());
-            return R.success(cypherResult);
+            HashMap<String, Object> Result = kgGraphService.createEdge(edge.getDomain(), edge.getSource(), edge.getTarget(), edge.getLabel());
+            return R.success(Result);
         } catch (Exception e) {
             e.printStackTrace();
             return R.error(e.getMessage());
@@ -269,25 +274,41 @@ public class KGManagerController extends BaseController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/updateLink")
-    public R<HashMap<String, Object>> updateLink(String domain, long shipId, String shipName) {
+    @RequestMapping(value = "/updateEdge")
+    public R<HashMap<String, Object>> updateEdge(@RequestBody EdgeItem edge) {
         try {
-            HashMap<String, Object> cypherResult = kgGraphService.updateLink(domain, shipId, shipName);
-            return R.success(cypherResult);
+            System.out.println(edge);
+            HashMap<String, Object> Result = kgGraphService.updateEdge(edge.getDomain(), edge);
+            if(Result != null && Result.size() > 0) {
+                return R.success(Result);
+            }
         } catch (Exception e) {
             e.printStackTrace();
             return R.error(e.getMessage());
         }
-
+        return R.error("操作失败");
     }
 
     @ResponseBody
     @RequestMapping(value = "/deleteNode")
-    public R<List<HashMap<String, Object>>> deleteNode(String domain, Long nodeId) {
+    public R<List<HashMap<String, Object>>> deleteNode(String domain, String nodeId) {
         try {
             System.out.println(domain+nodeId);
             List<HashMap<String, Object>> rList = kgGraphService.deleteNode(domain, nodeId);
             return R.success(rList);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/deleteEdge")
+    public R<HashMap<String, Object>> deleteEdge(String domain, String edgeId) {
+        try {
+            System.out.println(domain+edgeId);
+            kgGraphService.deleteEdge(domain, edgeId);
+            return R.success();
         } catch (Exception e) {
             e.printStackTrace();
             return R.error(e.getMessage());
@@ -306,21 +327,6 @@ public class KGManagerController extends BaseController {
             return R.error(e.getMessage());
         }
     }
-
-    @ResponseBody
-    @RequestMapping(value = "/deleteLink")
-    public R<HashMap<String, Object>> deleteLink(String domain, long shipId) {
-        try {
-            kgGraphService.deleteLink(domain, shipId);
-            return R.success();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return R.error(e.getMessage());
-        }
-
-    }
-
     @ResponseBody
     @RequestMapping(value = "/importGraph")
     public R<String> importGraph(@RequestParam(value = "file", required = true)

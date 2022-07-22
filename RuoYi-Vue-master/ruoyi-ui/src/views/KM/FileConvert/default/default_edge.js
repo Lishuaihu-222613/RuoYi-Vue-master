@@ -1,9 +1,9 @@
 export default{
-  type: 'line',
+  type: 'quadratic',
   style: {
     stroke: '#C0C4CC', // 颜色
     lineWidth: 1, // 宽度
-    lineAppendWidth: 0, // 鼠标检测宽度
+    lineAppendWidth: 3, // 鼠标检测宽度
     startArrow: false, // 开始箭头
     endArrow: true, // 结束箭头
     cursor: 'pointer'
@@ -21,5 +21,14 @@ export default{
       fontFamily: '微软雅黑', // 文本字体
       fontSize: 14 // 文本字体大小
     }
+  },
+  stateStyles: {
+    hover: {
+      stroke: '#409eff' // 颜色
+    },
+    selected: {
+      stroke: '#409eff' // 颜色
+    }
   }
+
 }

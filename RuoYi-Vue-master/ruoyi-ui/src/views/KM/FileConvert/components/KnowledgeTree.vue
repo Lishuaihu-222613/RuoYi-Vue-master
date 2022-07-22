@@ -9,6 +9,7 @@
       v-model="filterText"
       :trigger-on-focus="false"
       @select="handleSelect"
+      @change="searchDomain"
       clearable
       :autofocus = true
     >
@@ -73,13 +74,16 @@ export default {
     handleSelect(item) {
       console.log(item);
     },
+    searchDomain(){
+      this.$emit('searchDomain',this.filterText);
+    },
     initKnowledgeTree() {
-      kgBuilderApi.getDomains().then(result => {
-        if (result.code == 200) {
-          this.treedata = result.data;
-        }
-      });
-      this.treedata = ruoyiutils.handleTree(treedata);
+      // kgBuilderApi.getDomains().then(result => {
+      //   if (result.code == 200) {
+      //     this.treedata = result.data;
+      //   }
+      // });
+      // // this.treedata = ruoyiutils.handleTree(treedata);
     }
   }
 }

@@ -1,5 +1,7 @@
 package com.ruoyi.common.utils.Neo4j;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import org.neo4j.driver.*;
 import org.neo4j.driver.types.Node;
 import org.neo4j.driver.types.Path;
@@ -105,9 +107,14 @@ public class Neo4jUtil implements AutoCloseable{
                             Map<String, Object> map = neo4jNode.asMap();
                             for (Map.Entry<String, Object> entry : map.entrySet()) {
                                 String key = entry.getKey();
-                                rss.put(key, entry.getValue());
+                                if(entry.getValue().toString().startsWith("{")){
+                                    String json = (String) entry.getValue();
+                                    Object parse = JSON.parse(json);
+                                    rss.put(key, parse);
+                                }else{
+                                rss.put(key, entry.getValue());}
                             }
-                            rss.put("uuid", uuid);
+                            rss.put("id", uuid);
                             ents.add(rss);
                         }
                     }
@@ -204,11 +211,16 @@ public class Neo4jUtil implements AutoCloseable{
                             Map<String, Object> map = rship.asMap();
                             for (Map.Entry<String, Object> entry : map.entrySet()) {
                                 String key = entry.getKey();
-                                rss.put(key, entry.getValue());
+                                if(entry.getValue().toString().startsWith("{")){
+                                    String json = (String) entry.getValue();
+                                    Object parse = JSON.parse(json);
+                                    rss.put(key, parse);
+                                }else{
+                                    rss.put(key, entry.getValue());}
                             }
-                            rss.put("uuid", uuid);
-                            rss.put("sourceId", sourceId);
-                            rss.put("targetId", targetId);
+                            rss.put("id", uuid);
+                            rss.put("source", sourceId);
+                            rss.put("target", targetId);
                             ents.add(rss);
                         }
                     }
@@ -287,9 +299,9 @@ public class Neo4jUtil implements AutoCloseable{
 
                                 for (Map.Entry<String, Object> entry : map.entrySet()) {
                                     String key = entry.getKey();
-                                    rss.put(key, entry.getValue());
+                                    rss.put(key, JSON.toJSON(entry.getValue()));
                                 }
-                                rss.put("uuid", uuid);
+                                rss.put("id", uuid);
                                 uuids.add(uuid);
                             }
                             if (!rss.isEmpty()) {
@@ -306,11 +318,11 @@ public class Neo4jUtil implements AutoCloseable{
                             Map<String, Object> map = rship.asMap();
                             for (Map.Entry<String, Object> entry : map.entrySet()) {
                                 String key = entry.getKey();
-                                rShips.put(key, entry.getValue());
+                                rShips.put(key, JSON.toJSON(entry.getValue()));
                             }
-                            rShips.put("uuid", uuid);
-                            rShips.put("sourceId", sourceId);
-                            rShips.put("targetId", targetId);
+                            rShips.put("id", uuid);
+                            rShips.put("source", sourceId);
+                            rShips.put("target", targetId);
 
                             ships.add(rShips);
 
@@ -327,9 +339,9 @@ public class Neo4jUtil implements AutoCloseable{
                                 if (!uuids.contains(uuid)) {
                                     for (Map.Entry<String, Object> entry : map.entrySet()) {
                                         String key = entry.getKey();
-                                        rss.put(key, entry.getValue());
+                                        rss.put(key, JSON.toJSON(entry.getValue()));
                                     }
-                                    rss.put("uuid", uuid);
+                                    rss.put("id", uuid);
                                     uuids.add(uuid);
                                 }
                                 if (!rss.isEmpty()) {
@@ -348,11 +360,11 @@ public class Neo4jUtil implements AutoCloseable{
 
                                 for (Map.Entry<String, Object> entry : map.entrySet()) {
                                     String key = entry.getKey();
-                                    rShips.put(key, entry.getValue());
+                                    rShips.put(key, JSON.toJSON(entry.getValue()));
                                 }
-                                rShips.put("uuid", uuid);
-                                rShips.put("sourceId", sourceId);
-                                rShips.put("targetId", targetId);
+                                rShips.put("id", uuid);
+                                rShips.put("source", sourceId);
+                                rShips.put("target", targetId);
                                 ships.add(rShips);
                             }
                         } else if (typeName.contains("LIST")) {
@@ -370,12 +382,12 @@ public class Neo4jUtil implements AutoCloseable{
 
                                 for (Map.Entry<String, Object> entry : map.entrySet()) {
                                     String key = entry.getKey();
-                                    rShips.put(key, entry.getValue());
+                                    rShips.put(key, JSON.toJSON(entry.getValue()));
                                 }
 
-                                rShips.put("uuid", uuid);
-                                rShips.put("sourceId", sourceId);
-                                rShips.put("targetId", targetId);
+                                rShips.put("id", uuid);
+                                rShips.put("source", sourceId);
+                                rShips.put("target", targetId);
                                 ships.add(rShips);
 
                             }
@@ -391,8 +403,8 @@ public class Neo4jUtil implements AutoCloseable{
                         }
                     }
                 }
-                mo.put("node", ents);
-                mo.put("relationship", toDistinctList(ships));
+                mo.put("nodes", ents);
+                mo.put("edges", toDistinctList(ships));
             }
 
         } catch (Exception e) {
@@ -454,7 +466,7 @@ public class Neo4jUtil implements AutoCloseable{
                         arr[j] = "'" + arr[j] + "'";
                     }
                     v = String.join(",", arr);
-                    sql = "n." + key + "=[" + val + "]";
+                    sql = "n." + key + "=[" + arr + "]";
                 } else if (val instanceof List) {
                     //如果为true则强转成String数组
                     List<String> arr = (ArrayList<String>) val;
@@ -466,6 +478,15 @@ public class Neo4jUtil implements AutoCloseable{
                     }
                     v = String.join(",", aa);
                     sql = "n." + key + "=[" + v + "]";
+                } else if(val instanceof Number[]){
+                    //如果为true则强转成Number数组
+                    Number[] arr = (Number[]) val;
+                    System.out.println(arr);
+                    sql = "n." + key + "=" + Arrays.toString(arr);
+                }else if(val instanceof Map){
+                    Map<String,Object> arr = (Map<String, Object>) val;
+                    String json = JSON.toJSONString(arr);
+                    sql = "n." + key + "='" +json+"'";
                 } else {
                     // 得到此属性的值
                     map.put(key, val);// 设置键值
@@ -483,6 +504,87 @@ public class Neo4jUtil implements AutoCloseable{
         }
         return String.join(",", sqlList);
     }
+
+    /**
+     * 对象转json，key=value,用于 cypher set语句
+     *
+     * @param obj
+     * @param <T>
+     * @return
+     */
+    public static <T> String getKeyValCyphersqlforEdge(T obj) {
+
+        Map<String, Object> map = new HashMap<String, Object>();
+
+        List<String> sqlList = new ArrayList<String>();
+
+        // 得到类对象
+        Class userCla = obj.getClass();
+
+        /* 得到类中的所有属性集合 */
+        Field[] fs = userCla.getDeclaredFields();
+
+        for (int i = 0; i < fs.length; i++) {
+            Field f = fs[i];
+            Class type = f.getType();
+
+            f.setAccessible(true); // 设置些属性是可以访问的
+
+            Object val = new Object();
+            try {
+                val = f.get(obj);
+                if (val == null) {
+                    val = "";
+                }
+                String sql = "";
+                String key = f.getName();
+                if (val instanceof String[]) {
+                    //如果为true则强转成String数组
+                    String[] arr = (String[]) val;
+                    String v = "";
+                    for (int j = 0; j < arr.length; j++) {
+                        arr[j] = "'" + arr[j] + "'";
+                    }
+                    v = String.join(",", arr);
+                    sql = "r." + key + "=[" + arr + "]";
+                } else if (val instanceof List) {
+                    //如果为true则强转成String数组
+                    List<String> arr = (ArrayList<String>) val;
+                    List<String> aa = new ArrayList<String>();
+                    String v = "";
+                    for (String s : arr) {
+                        s = "'" + s + "'";
+                        aa.add(s);
+                    }
+                    v = String.join(",", aa);
+                    sql = "r." + key + "=[" + v + "]";
+                } else if(val instanceof Number[]){
+                    //如果为true则强转成Number数组
+                    Number[] arr = (Number[]) val;
+                    System.out.println(arr);
+                    sql = "r." + key + "=" + Arrays.toString(arr);
+                } else if(val instanceof Map){
+                    Map<String,Object> arr = (Map<String, Object>) val;
+                    String json = JSON.toJSONString(arr);
+                    sql = "r." + key + "='" +json+"'";
+                } else {
+                    // 得到此属性的值
+                    map.put(key, val);// 设置键值
+                    if (type.getName().equals("int")) {
+                        sql = "r." + key + "=" + val + "";
+                    } else {
+                        sql = "r." + key + "='" + val + "'";
+                    }
+                }
+                sqlList.add(sql);
+
+            } catch (IllegalArgumentException | IllegalAccessException e) {
+                log.error(e.getMessage());
+            }
+        }
+        return String.join(",", sqlList);
+    }
+
 
     /**
      * 将haspmap集合反序列化成对象集合
@@ -656,7 +758,7 @@ public class Neo4jUtil implements AutoCloseable{
                         String key = entry.getKey();
                         ret.put(key, entry.getValue());
                     }
-                    ret.put("uuid", uuid);
+                    ret.put("id", uuid);
                 }
             }
         } catch (Exception e) {
@@ -700,9 +802,9 @@ public class Neo4jUtil implements AutoCloseable{
         while (it.hasNext()) {
 
             HashMap<String, Object> map = it.next();
-            String uuid = (String) map.get("uuid");
+            String id = (String) map.get("id");
             int beforeSize = keysSet.size();
-            keysSet.add(uuid);
+            keysSet.add(id);
             int afterSize = keysSet.size();
             if (afterSize != (beforeSize + 1)) {
                 it.remove();

@@ -1,10 +1,13 @@
 package com.ruoyi.system.mapper.KgBuilderMapper.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.ruoyi.common.utils.Neo4j.GraphPageRecord;
 import com.ruoyi.common.utils.Neo4j.JsonHelper;
 import com.ruoyi.common.utils.Neo4j.Neo4jUtil;
 import com.ruoyi.common.utils.Neo4j.StringUtil;
+import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.system.domain.KgBuilderPojo.model.NodeItem;
+import com.ruoyi.system.domain.KgBuilderPojo.request.EdgeItem;
 import com.ruoyi.system.domain.KgBuilderPojo.request.GraphQuery;
 import com.ruoyi.system.mapper.KgBuilderMapper.KGGraphDao;
 import org.springframework.stereotype.Repository;
@@ -143,14 +146,14 @@ public class KGGraphRepository implements KGGraphDao {
 
                     HashMap<String, Object> graphNode = Neo4jUtil.getGraphNodeAndShip(nodeSql);
 
-                    Object node = graphNode.get("node");
+                    Object nodes = graphNode.get("nodes");
 
                     // 没有关系显示则显示节点
-                    if (node != null) {
+                    if (nodes != null) {
 
-                        nr.put("node", graphNode.get("node"));
+                        nr.put("nodes", JSON.toJSON(graphNode.get("nodes")));
 
-                        nr.put("relationship", graphNode.get("relationship"));
+                        nr.put("edges", JSON.toJSON(graphNode.get("edges")));
 
                     } else {
 
@@ -158,23 +161,23 @@ public class KGGraphRepository implements KGGraphDao {
 
                         List<HashMap<String, Object>> nodeItem = Neo4jUtil.getGraphNode(nodecql);
 
-                        nr.put("node", nodeItem);
+                        nr.put("nodes", JSON.toJSON(nodeItem));
 
-                        nr.put("relationship", new ArrayList<HashMap<String, Object>>());
+                        nr.put("edges", JSON.toJSON(new ArrayList<HashMap<String, Object>>()));
                     }
                 } else {
                     String nodeSql = String.format("MATCH (n:`%s`) %s RETURN distinct(n) limit %s", domain, cqWhere, query.getPageSize());
 
                     List<HashMap<String, Object>> graphNode = Neo4jUtil.getGraphNode(nodeSql);
 
-                    nr.put("node", graphNode);
+                    nr.put("nodes", JSON.toJSON(graphNode));
 
                     // m是否加领域
                     String domainSql = String.format("MATCH (n:`%s`) <-[r]-> (m) %s RETURN distinct(r) limit %s", domain, cqWhere, query.getPageSize());
 
                     List<HashMap<String, Object>> graphRelation = Neo4jUtil.getGraphRelationShip(domainSql);
 
-                    nr.put("relationship", graphRelation);
+                    nr.put("edges", JSON.toJSON(graphRelation));
                 }
             }
         } catch (Exception e) {
@@ -238,7 +241,7 @@ public class KGGraphRepository implements KGGraphDao {
                                 props.add(hashMap);// 属性和方法放在一起展示
 
                             } else {
-                                // methods.add(hashMap);
+                                methods.add(hashMap);
                             }
                         }
                     }
@@ -316,6 +319,7 @@ public class KGGraphRepository implements KGGraphDao {
 
     /**
      * 获取/展开更多节点,找到和该节点有关系的节点
+     * limit 100 去掉（2022-05-20）
      */
     @Override
     public HashMap<String, Object> getMoreRelationNode(String domain, String nodeId) {
@@ -324,7 +328,7 @@ public class KGGraphRepository implements KGGraphDao {
 
         try {
 
-            String cypherSql = String.format("MATCH (n:`%s`) -[r]- (m) where id(n)=%s  return * limit 100", domain, nodeId);
+            String cypherSql = String.format("MATCH (n:`%s`) -[r]- (m) where id(n)=%s  return *", domain, nodeId);
 
             result = Neo4jUtil.getGraphNodeAndShip(cypherSql);
 
@@ -362,6 +366,44 @@ public class KGGraphRepository implements KGGraphDao {
     }
 
     /**
+     * 更新节点
+     * @param nodeItem
+     * @return
+     */
+    @Override
+    public HashMap<String, Object> updateNode(NodeItem nodeItem) {
+
+        HashMap<String, Object> result = new HashMap<>();
+
+        List<HashMap<String, Object>> graphNodeList = new ArrayList<HashMap<String, Object>>();
+
+        try {
+
+            if (!StringUtils.isEmpty(nodeItem.getId())) {
+
+                String sqlKeyVal = Neo4jUtil.getKeyValCyphersql(nodeItem);
+
+                String cypherSql = String.format("match (n:`%s`) where id(n)=%s set %s return n", nodeItem.getDomain(), nodeItem.getId(), sqlKeyVal);
+
+                graphNodeList = Neo4jUtil.getGraphNode(cypherSql);
+
+            }
+
+            if (graphNodeList.size() > 0) {
+
+                result = graphNodeList.get(0);
+
+                return result;
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+
+    /**
      * 创建单个节点
      */
     @Override
@@ -371,16 +413,17 @@ public class KGGraphRepository implements KGGraphDao {
 
         List<HashMap<String, Object>> graphNodeList = new ArrayList<HashMap<String, Object>>();
 
+        System.out.println(entity.toString());
+
         try {
 
-            if (entity.getUuid() != 0) {
+            if (!StringUtils.isEmpty(entity.getId())) {
                 String sqlKeyVal = Neo4jUtil.getKeyValCyphersql(entity);
-                String cypherSql = String.format("match (n:`%s`) where id(n)=%s set %s return n", domain, entity.getUuid(), sqlKeyVal);
+                String cypherSql = String.format("match (n:`%s`) where id(n)=%s set %s return n", domain, entity.getId(), sqlKeyVal);
                 graphNodeList = Neo4jUtil.getGraphNode(cypherSql);
             } else {
-                entity.setColor("#ff4500");// 默认颜色
-                entity.setR(30);// 默认半径
-                String propertiesString = Neo4jUtil.getFilterPropertiesJson(JsonHelper.toJSONString(entity));
+                String propertiesString = Neo4jUtil.getFilterPropertiesJson(JsonHelper.toJSONString(entity));//能替换两个？
+                System.out.println(propertiesString);
                 String cypherSql = String.format("create (n:`%s` %s) return n", domain, propertiesString);
                 graphNodeList = Neo4jUtil.getGraphNode(cypherSql);
             }
@@ -410,9 +453,9 @@ public class KGGraphRepository implements KGGraphDao {
 
         try {
 
-            if (entity.getUuid() != 0) {
+            if (!StringUtils.isEmpty(entity.getId())) {
                 String sqlKeyVal = Neo4jUtil.getKeyValCyphersql(entity);
-                String cypherSql = String.format("match (n:`%s`) where id(n)=%s set %s return n", domain, entity.getUuid(), sqlKeyVal);
+                String cypherSql = String.format("match (n:`%s`) where id(n)=%s set %s return n", domain, entity.getId(), sqlKeyVal);
                 graphNodeList = Neo4jUtil.getGraphNode(cypherSql);
             }
 
@@ -420,11 +463,10 @@ public class KGGraphRepository implements KGGraphDao {
                 rss = graphNodeList.get(0);
                 return rss;
             }
-
-            entity.setName(entity.getName());
-            entity.setColor(entity.getColor());
-            entity.setR(30);// 默认半径
-            entity.setUuid(entity.getUuid());
+            entity.setLabel(entity.getLabel());
+            entity.setStyle(entity.getStyle());
+            entity.setSize(new Number[]{(60)});// 直径
+            entity.setId(entity.getId());
             String propertiesString = Neo4jUtil.getFilterPropertiesJson(JsonHelper.toJSONString(entity));
             String cypherSql = String.format("create (n:`%s` %s) return n", domain, propertiesString);
             graphNodeList = Neo4jUtil.getGraphNode(cypherSql);
@@ -449,7 +491,8 @@ public class KGGraphRepository implements KGGraphDao {
         List<HashMap<String, Object>> ships = new ArrayList<HashMap<String, Object>>();
 
         try {
-            String cypherSqlFmt = "create (n:`%s` {name:'%s',color:'#ff4500',r:30}) return n";
+            String cypherSqlFmt = "create (n:`%s` {name:'%s',color:'#ff4500',style:{fill:'#ff4500'}}) return n";
+
             String cypherSql = String.format(cypherSqlFmt, domain, sourceName);// 概念实体
 
             List<HashMap<String, Object>> graphNodeList = Neo4jUtil.getGraphNode(cypherSql);
@@ -584,17 +627,18 @@ public class KGGraphRepository implements KGGraphDao {
      * 添加关系
      *
      * @param domain   领域
-     * @param sourceId 源节点id
-     * @param targetId 目标节点id
-     * @param ship     关系
+     * @param source 源节点id
+     * @param target 目标节点id
+     * @param label     关系
      */
     @Override
-    public HashMap<String, Object> createLink(String domain, long sourceId, long targetId, String ship) {
+    public HashMap<String, Object> createEdge(String domain, String source, String target, String label) {
 
         HashMap<String, Object> rss = new HashMap<String, Object>();
+
         try {
 
-            String cypherSql = String.format("MATCH (n:`%s`),(m:`%s`) WHERE id(n)=%s AND id(m) = %s " + "CREATE (n)-[r:RE{name:'%s'}]->(m)" + "RETURN r", domain, domain, sourceId, targetId, ship);
+            String cypherSql = String.format("MATCH (n:`%s`),(m:`%s`) WHERE id(n)=%s AND id(m) = %s " + "CREATE (n)-[r:RE{label:'%s',domain:'%s'}]->(m)" + "RETURN r", domain, domain, source, target, label,domain);
 
             List<HashMap<String, Object>> cypherResult = Neo4jUtil.getGraphRelationShip(cypherSql);
 
@@ -633,22 +677,22 @@ public class KGGraphRepository implements KGGraphDao {
      * 更新关系
      *
      * @param domain   领域
-     * @param shipId   关系id
-     * @param shipName 关系名称
+     * @param edge    关系实体
      */
     @Override
-    public HashMap<String, Object> updateLink(String domain, long shipId, String shipName) {
+    public HashMap<String, Object> updateEdge(String domain, EdgeItem edge) {
 
         HashMap<String, Object> rss = new HashMap<String, Object>();
 
+        List<HashMap<String, Object>> graphEdgeList = new ArrayList<HashMap<String, Object>>();
+
         try {
-
-            String cypherSql = String.format("MATCH (n:`%s`) -[r]-> (m) where id(r)=%s set r.name='%s' return r", domain, shipId, shipName);
-
-            List<HashMap<String, Object>> cypherResult = Neo4jUtil.getGraphRelationShip(cypherSql);
-
-            if (cypherResult.size() > 0) {
-                rss = cypherResult.get(0);
+            if (!StringUtils.isEmpty(edge.getId())) {
+                String sqlKeyVal = Neo4jUtil.getKeyValCyphersqlforEdge(edge);
+                String cypherSql = String.format("MATCH (n:`%s`) -[r]-> (m) where id(r)=%s set %s return r", domain, edge.getId(), sqlKeyVal);
+                graphEdgeList = Neo4jUtil.getGraphRelationShip(cypherSql);}
+            if (graphEdgeList.size() > 0) {
+                rss = graphEdgeList.get(0);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -661,7 +705,7 @@ public class KGGraphRepository implements KGGraphDao {
      *
      */
     @Override
-    public List<HashMap<String, Object>> deleteNode(String domain, long nodeId) {
+    public List<HashMap<String, Object>> deleteNode(String domain, String nodeId) {
 
         List<HashMap<String, Object>> result = new ArrayList<HashMap<String, Object>>();
 
@@ -692,10 +736,10 @@ public class KGGraphRepository implements KGGraphDao {
      *
      */
     @Override
-    public void deleteLink(String domain, long shipId) {
+    public void deleteEdge(String domain, String EdgeId) {
 
         try {
-            String cypherSql = String.format("MATCH (n:`%s`) -[r]-(m) where id(r)=%s detach delete r", domain, shipId);
+            String cypherSql = String.format("MATCH (n:`%s`) -[r]-(m) where id(r)=%s detach delete r", domain, EdgeId);
 
             Neo4jUtil.runCypherSql(cypherSql);
 

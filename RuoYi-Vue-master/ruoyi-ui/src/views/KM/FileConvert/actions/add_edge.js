@@ -1,75 +1,91 @@
-import store from '/src/store'
+import * as kgBuilderApi from '@/api/system/KgBuilder'
 
 let obj = {
   source: '',
-  target: ''
+  target: '',
+  domain: '',
+  label:''
 }
 export default{
 
   getEvents () {
     return {
       'node:click': 'onClick',
-      mousemove: 'onMousemove',
+      'mousemove': 'onMousemove',
       'edge:click': 'onEdgeClick'
     }
   },
-  onClick (e) {
-    const node = e.item
-    this.item = e.item
+  onClick (ev) {
+    const node = ev.item
+    this.item = ev.item
     const graph = this.graph
     const point = {
-      x: e.x,
-      y: e.y
+      x: ev.x,
+      y: ev.y
     }
+
     const model = node.getModel()
     if (this.addingEdge && this.edge) {
       graph.updateItem(this.edge, {
         target: model.id
       })
+      console.log(this.edge)
+      let initEdge = {
+        source : this.edge.getModel().source,
+        target : this.edge.getModel().target,
+        domain : this.graph.get('domain'),
+        label: ''
+      }
+      kgBuilderApi.createEdge(initEdge).then(result => {
+        if (result.code === 200) {
+          alert('创建关系成功！')
+          this.graph.removeItem(this.edge.getModel())
+          this.graph.addItem('edge',result.data)
+          this.graph.refresh()
+        }
+        else{
+          alert('创建关系失败！')
+        }
+      })
       this.edge = null
       this.addingEdge = false
+      this.graph.setMode('default');
     } else {
       obj = {
         source: model.id,
-        target: point
+        target: point,
       }
       this.edge = graph.addItem('edge', obj)
-      store.commit('addEdge', obj)
-      // 操作记录
-      let logObj = {
-        id: String('log' + (store.state.log.length + 1)),
-        action: 'addEdge',
-        data: obj
-      }
-      store.commit('addLog', logObj)
       this.addingEdge = true
-      e.item._cfg.model.linkPoints.bottom = false
-      this.graph.refreshItem(e.item)
+      console.log(this.edge)
+      this.graph.refreshItem(ev.item)
     }
   },
-  onMousemove (e) {
+  onMousemove (ev) {
     const point = {
-      x: e.x,
-      y: e.y
+      x: ev.x,
+      y: ev.y
     }
-    if (this.addingEdge && this.edge) {
-      if (e.item !== null && e.item._cfg.type === 'node') { // 判断是否为节点
-        this.graph.updateItem(this.edge, {
-          target: e.item._cfg.id
-        })
-        obj.target = e.item._cfg.id
-      } else {
-        this.graph.updateItem(this.edge, {
-          target: point
-        })
-      }
-    }
+    this.graph.updateItem(this.edge, {
+      target: point
+    })
+    // if (this.addingEdge && this.edge) {
+    //   // 判断是否为节点
+    //   if (ev.item !== null && ev.item.getType() === 'node') {
+    //     this.graph.updateItem(this.edge, {
+    //       target: ev.item.getModel().id
+    //     })
+    //     obj.target = ev.item.getModel().id
+    //   } else {
+    //     this.graph.updateItem(this.edge, {
+    //       target: point
+    //     })
+    //   }
+    // }
   },
-  onEdgeClick (e) {
-    const currentEdge = e.item
+  onEdgeClick (ev) {
+    const currentEdge = ev.item
     if (this.addingEdge && this.edge === currentEdge) { // 点击空白处后移除连线
-      let index = store.state.dataList.edges.length - 1
-      store.commit('deleteEdge', store.state.dataList.edges[index])
       this.graph.removeItem(this.edge)
       this.edge = null
       this.addingEdge = false

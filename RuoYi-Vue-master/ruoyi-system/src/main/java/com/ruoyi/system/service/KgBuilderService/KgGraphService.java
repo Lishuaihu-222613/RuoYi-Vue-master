@@ -3,6 +3,7 @@ package com.ruoyi.system.service.KgBuilderService;
 
 import com.ruoyi.common.utils.Neo4j.GraphPageRecord;
 import com.ruoyi.system.domain.KgBuilderPojo.model.NodeItem;
+import com.ruoyi.system.domain.KgBuilderPojo.request.EdgeItem;
 import com.ruoyi.system.domain.KgBuilderPojo.request.GraphQuery;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -149,7 +150,7 @@ public interface KgGraphService {
 	 *            关系
 	 * @return
 	 */
-	HashMap<String, Object> createLink(String domain, long sourceId, long targetId, String ship);
+	HashMap<String, Object> createEdge(String domain, String sourceId, String targetId, String ship);
 
 	/**
 	 * 更新关系
@@ -162,7 +163,7 @@ public interface KgGraphService {
 	 *            关系名称
 	 * @return
 	 */
-	HashMap<String, Object> updateLink(String domain, long shipId, String shipName);
+	HashMap<String, Object> updateEdge(String domain, EdgeItem edge);
 
 	/**
 	 * 删除节点(先删除关系再删除节点)
@@ -171,7 +172,7 @@ public interface KgGraphService {
 	 * @param nodeId
 	 * @return
 	 */
-	List<HashMap<String, Object>> deleteNode(String domain, long nodeId);
+	List<HashMap<String, Object>> deleteNode(String domain, String nodeId);
 
 	/**
 	 * 删除关系
@@ -179,7 +180,7 @@ public interface KgGraphService {
 	 * @param domain
 	 * @param shipId
 	 */
-	void deleteLink(String domain, long shipId);
+	void deleteEdge(String domain, String EdgeId);
 
 	/**
 	 * 段落识别出的三元组生成图谱

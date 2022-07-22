@@ -1,7 +1,12 @@
-export default{
+import { red, white } from 'chalk'
+
+export default {
   size: [60, 60],
   linkPoints: { // 锚点
+    top: false,
     bottom: false,
+    left: false,
+    right: false,
     stroke: '#4682B4',
     fill: '#fff',
     size: 10
@@ -24,6 +29,16 @@ export default{
       opacity: 1, // 文本透明度
       fontFamily: '微软雅黑', // 文本字体
       fontSize: 18 // 文本字体大小
+    }
+  },
+  stateStyles: {
+    hover: {
+      // keyShape 的状态样式
+      fill: '#d3adf7',
+      // name 为 node-label 的子图形在该状态值下的样式
+      'node-label': {
+        fontSize: 15
+      }
     }
   }
 }

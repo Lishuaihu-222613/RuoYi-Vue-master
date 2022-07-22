@@ -132,11 +132,6 @@
             <artifactId>javax.servlet-api</artifactId>
         </dependency>
 
-        <!--Neo4j支持-->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-neo4j</artifactId>
-        </dependency>
 
         <dependency>
             <groupId>org.neo4j.driver</groupId>
@@ -176,6 +171,18 @@
             <groupId>com.hankcs</groupId>
             <artifactId>hanlp</artifactId>
             <version>${hanlp.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.kie</groupId>
+            <artifactId>kie-api</artifactId>
+            <version>7.68.0.Final</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kie</groupId>
+            <artifactId>kie-internal</artifactId>
+            <version>7.68.0.Final</version>
+            <scope>compile</scope>
         </dependency>
 
     </dependencies>

@@ -154,27 +154,27 @@ export function deleteNode(data){
   })
 }
 
-export function deleteLink(data){
+export function deleteEdge(data){
   return request({
-    url: '/kg/deleteLink',
-    method: 'post',
-    data: JSON.parse(JSON.stringify(data))
-  })
-}
-
-export function createLink(data){
-  return request({
-    url: '/kg/createLink',
+    url: '/kg/deleteEdge',
     method: 'post',
     data: data
   })
 }
 
-export function updateLink(data){
+export function createEdge(data){
   return request({
-    url: '/kg/updateLink',
+    url: '/kg/createEdge',
     method: 'post',
-    data: JSON.parse(JSON.stringify(data))
+    data: data
+  })
+}
+
+export function updateEdge(data){
+  return request({
+    url: '/kg/updateEdge',
+    method: 'post',
+    data: data
   })
 }
 
@@ -235,6 +235,7 @@ export function updateCoordinateOfNode(data){
 }
 
 export function createNode(data){
+  console.log(data)
   return request({
     url: '/kg/createNode',
     method: 'post',

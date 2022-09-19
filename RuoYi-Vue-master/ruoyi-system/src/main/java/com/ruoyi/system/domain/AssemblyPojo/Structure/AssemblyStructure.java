@@ -1,6 +1,5 @@
 package com.ruoyi.system.domain.AssemblyPojo.Structure;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ruoyi.system.domain.AssemblyPojo.GeometricPose.GeometryEntity.AdvancedBerpShape;
 import com.ruoyi.system.domain.AssemblyPojo.GeometricPose.Location.Location;
 import org.springframework.data.neo4j.core.schema.GeneratedValue;

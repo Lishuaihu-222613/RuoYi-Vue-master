@@ -3,16 +3,10 @@ package com.ruoyi.system.domain.AssemblyPojo.Operation;
 import com.ruoyi.system.domain.AssemblyPojo.GeometricPose.Movement.Move;
 import com.ruoyi.system.domain.AssemblyPojo.Resource.AssemblyResource;
 import com.ruoyi.system.domain.AssemblyPojo.Structure.AssemblyStructure;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.springframework.data.neo4j.core.schema.*;
 
 import java.util.Set;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
 @Node("AssemblyOperation")
 public class AssemblyOperation {
 

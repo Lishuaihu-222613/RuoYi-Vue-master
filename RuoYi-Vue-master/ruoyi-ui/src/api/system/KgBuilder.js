@@ -126,7 +126,7 @@ export function getRelationNodeCount(data){
   return request({
     url: '/kg/getRelationNodeCount',
     method: 'post',
-    data: JSON.parse(JSON.stringify(data))
+    data: data
   })
 }
 
@@ -134,7 +134,7 @@ export function deleteDomain(data){
   return request({
     url: '/kg/deleteDomain',
     method: 'post',
-    data: JSON.parse(JSON.stringify(data))
+    data: data
   })
 }
 
@@ -150,7 +150,7 @@ export function deleteNode(data){
   return request({
     url: '/kg/deleteNode',
     method: 'post',
-    params: JSON.parse(JSON.stringify(data))
+    params: data
   })
 }
 
@@ -210,11 +210,19 @@ export function batchCreateSameNode(data){
   })
 }
 
+export function getMoreRelatedNode(params){
+  return request({
+    url: '/kg/getMoreRelatedNode',
+    method: 'get',
+    params: params
+  })
+}
+
 export function exportGraph(data){
   return request({
     url: '/kg/exportGraph',
     method: 'post',
-    data: JSON.parse(JSON.stringify(data))
+    data: data
   })
 }
 

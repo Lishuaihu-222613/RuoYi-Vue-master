@@ -212,7 +212,7 @@ export default {
 
     },
     updateKnowledge() {
-
+      this.OpenDialog();
     },
     deleteKnowledge(dkId) {
       console.log(dkId)

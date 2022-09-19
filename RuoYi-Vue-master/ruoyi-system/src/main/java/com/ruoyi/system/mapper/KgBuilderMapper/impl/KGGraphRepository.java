@@ -327,11 +327,14 @@ public class KGGraphRepository implements KGGraphDao {
         HashMap<String, Object> result = new HashMap<String, Object>();
 
         try {
-
-            String cypherSql = String.format("MATCH (n:`%s`) -[r]- (m) where id(n)=%s  return *", domain, nodeId);
-
+            String cypherSql;
+            if(domain.equals("")){
+                cypherSql = String.format("MATCH (n) -[r]- (m) where id(n)=%s  return r,m", nodeId);
+            }else{
+                cypherSql = String.format("MATCH (n:`%s`) -[r]- (m) where id(n)=%s  return *", domain, nodeId);
+            }
             result = Neo4jUtil.getGraphNodeAndShip(cypherSql);
-
+            ;
         } catch (Exception e) {
             e.printStackTrace();
         }

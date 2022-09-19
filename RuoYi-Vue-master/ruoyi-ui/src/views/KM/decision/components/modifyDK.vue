@@ -55,49 +55,30 @@
       >
         <el-row :gutter="20">
           <el-col :offset="6" :span="6">
-            <el-button @click.prevent="addCondition">新增</el-button>
+            <el-button @click.prevent="addResult">新增</el-button>
           </el-col>
         </el-row>
-        <el-row v-for="(item, index) in dkItem.ruleAntecedents"
+        <el-row v-for="(item, index) in dkItem.ruleConsequents"
                 :key="index"
                 :gutter="20"
                 class="conditions"
         >
           <el-col :span="2">
             <el-tag type="primary">
-              前项{{ index }}
+              后项{{ index }}
             </el-tag>
           </el-col>
           <el-col :span="6">
-            <el-input v-model="item.condition.cluster" placeholder="前项类别" style="width:100%"></el-input>
+            <el-input v-model="item.result.cluster" placeholder="后项类别" style="width:100%"></el-input>
           </el-col>
           <el-col :span="2" class="line">----</el-col>
           <el-col :span="6">
-            <el-input v-model="item.condition.content" placeholder="前项内容" style="width:100%"></el-input>
+            <el-input v-model="item.result.content" placeholder="后项内容" style="width:100%"></el-input>
           </el-col>
           <el-col :span="6">
-            <el-button @click.prevent="removeCondition(item)">删除</el-button>
+            <el-button @click.prevent="removeResult(item)">删除</el-button>
           </el-col>
         </el-row>
-      </el-form-item>
-      <el-form-item
-        v-for="(item, index) in dkItem.ruleConsequents"
-        :key="index"
-        :label="'后项' + index"
-        :prop="'item.result'"
-        :rules="{required: true, message: '后项不能为空', trigger: 'blur'}"
-      >
-        <el-col :span="6">
-          <el-input v-model="item.result.cluster" placeholder="后项类别"></el-input>
-        </el-col>
-        <el-col :span="2" class="line">----</el-col>
-        <el-col :span="6">
-          <el-input v-model="item.result.content" placeholder="后项内容"></el-input>
-        </el-col>
-        <el-col :span="6">
-          <el-button @click.prevent="addResult(item)">新增</el-button>
-          <el-button @click.prevent="removeResult(item)">删除</el-button>
-        </el-col>
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
@@ -110,6 +91,7 @@
 <script>
 
 import * as decisionKnowledge from '@/api/system/decisionKnowledge'
+import { updateDK } from '@/api/system/decisionKnowledge'
 
 export default {
 
@@ -217,7 +199,7 @@ export default {
           id: '',
           content: '',
           cluster: '',
-          condition: {
+          result: {
             id: '',
             cluster: '',
             content: ''
@@ -234,7 +216,7 @@ export default {
     onSubmit() {
       if (this.dkItem.dkName !== '') {
         console.log(this.dkItem)
-        decisionKnowledge.addDK(this.dkItem).then(result => {
+        decisionKnowledge.updateDK(this.dkItem).then(result => {
           if (result.code == 200) {
             alert('创建成功！')
           } else {
@@ -242,7 +224,6 @@ export default {
           }
         })
       }
-
       this.dialogFormVisible = false
     }
   }

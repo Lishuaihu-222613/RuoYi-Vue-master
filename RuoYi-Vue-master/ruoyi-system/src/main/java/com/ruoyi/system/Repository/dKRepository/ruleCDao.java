@@ -1,4 +1,4 @@
-package com.ruoyi.system.Neo4jDao.dKMapper;
+package com.ruoyi.system.Repository.dKRepository;
 
 import com.ruoyi.system.domain.KgBuilderPojo.model.relationships.ruleConsequent;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
@@ -6,6 +6,7 @@ import org.springframework.data.neo4j.repository.query.Query;
 
 import java.util.List;
 import java.util.Optional;
+
 
 public interface ruleCDao extends Neo4jRepository<ruleConsequent,Long> {
 

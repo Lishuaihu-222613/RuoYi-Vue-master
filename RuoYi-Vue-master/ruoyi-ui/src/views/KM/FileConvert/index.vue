@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-container>
       <el-collapse-transition>
-        <el-aside v-show="show3">
+        <el-aside v-show="show3" width="330px">
           <KnowledgeTree ref="KnowledgeTree"
                          @searchDomain="(text) =>{getDomainGraph(text)}"
           ></KnowledgeTree>
@@ -10,18 +10,31 @@
       </el-collapse-transition>
       <el-main data-app="true">
         <Toolbar ref="Toolbar"
-                 :size="size"
                  :graph="graph"
-                 @changeshow3="changeshow3"
-                 :selectedNode.sync="selectedGraphItem.Node"
                  :selectedEdge.sync="selectedGraphItem.Edge"
+                 :selectedNode.sync="selectedGraphItem.Node"
+                 :size="size"
+                 @changeshow3="changeshow3"
         >
         </Toolbar>
-        <div ref="G6" id="G6" class="knowledgeGraph" style="width:100%"></div>
+        <div id="G6" ref="G6" class="knowledgeGraph" style="width:100%"></div>
+        <vue-context-menu :contextMenuData="contextMenuData"
+                          @addEdge="addEdge"
+                          @addNode="addNode"
+                          @deleteEdge="deleteEdge"
+                          @deleteNode="deleteNode"
+                          @expandNode="expandNode"
+                          @findShortestPath="findShortestPath"
+                          @modeMatch="modeMatch"
+                          @openFile="openFile"
+                          @updateEdge="updateEdge"
+                          @updateNode="updateNode"
+        >
+        </vue-context-menu>
         <Sidebar ref="Sidebar"
                  :graph="graph"
-                 :selectedNode="selectedGraphItem.Node"
                  :selectedEdge="selectedGraphItem.Edge"
+                 :selectedNode="selectedGraphItem.Node"
                  :sidebarDrawer="sidebarDrawer"
                  @closeSidebar="() => {this.sidebarDrawer = false}"
                  @restore="() => {this.selectedGraphItem.Node = null; this.selectedGraphItem.Edge = null }"
@@ -46,12 +59,6 @@ import selectEdge from '@/views/KM/FileConvert/actions/select_edge'
 import * as G6 from '@antv/g6'
 import { GraphLayoutPredict } from '@antv/vis-predict-engine'
 import * as kgBuilderApi from '@/api/system/KgBuilder'
-import _ from 'lodash'
-import * as d3 from 'd3'
-import { isNullAndEmpty } from '@/views/KM/FileConvert/actions/commen'
-import { ToolBar } from '@antv/g6-pc'
-import { updateData } from '@/api/system/dict/data'
-// import { contextMenu } from '@/views/KM/FileConvert/actions/canvas_contextmenu'
 
 export default {
   name: 'FileConvert',
@@ -70,6 +77,17 @@ export default {
   },
   data() {
     return {
+      contextMenuData: {
+        menuName: 'test',
+        // 菜单显示的位置
+        axis: {
+          x: null,
+          y: null
+        },
+        // 菜单选项
+        menulists: []
+      },
+      graphEvent : {},
       filterText: '',
       show3: false,
       treeData: [{
@@ -156,7 +174,71 @@ export default {
           cluster: ''
         }]
       },
-      hulls: [{}]
+      hulls: [{}],
+      //画布右键菜单项
+      canvasMenu: [
+        {
+          fnHandler: 'addNode', // 绑定事件
+          icoName: 'el-icon-circle-plus-outline', // 图标
+          btnName: '创建节点' // 菜单名称
+        },
+        {
+          fnHandler: 'addEdge',
+          icoName: 'el-icon-bottom-left',
+          btnName: '创建关系'
+        },
+        {
+          fnHandler: 'modeMatch',
+          icoName: 'el-icon-search',
+          btnName: '模式匹配'
+        },
+        {
+          fnHandler: 'findShortestPath',
+          icoName: 'el-icon-paperclip',
+          btnName: '最短路查找'
+        }
+      ],
+      //节点右键菜单项
+      nodeMenu: [
+        {
+          fnHandler: 'addEdge', // 绑定事件
+          icoName: 'el-icon-bottom-left', // 图标
+          btnName: '添加关系' // 菜单名称
+        },
+        {
+          fnHandler: 'updateNode',
+          icoName: 'el-icon-edit',
+          btnName: '修改节点'
+        },
+        {
+          fnHandler: 'deleteNode',
+          icoName: 'el-icon-delete',
+          btnName: '删除节点'
+        },
+        {
+          fnHandler: 'expandNode',
+          icoName: 'el-icon-rank',
+          btnName: '展开节点'
+        },
+        {
+          fnHandler: '3dModel',
+          icoName: 'el-icon-folder-opened',
+          btnName: '查看关联文件'
+        }
+      ],
+      //关系右键菜单项
+      edgeMenu: [
+        {
+          fnHandler: 'updateEdge', // 绑定事件
+          icoName: 'el-icon-edit', // 图标
+          btnName: '修改关系' // 菜单名称
+        },
+        {
+          fnHandler: 'deleteEdge',
+          icoName: 'el-icon-delete',
+          btnName: '删除关系'
+        }
+      ]
     }
   },
   mounted() {
@@ -166,6 +248,169 @@ export default {
       console.log('bbb' + this.graph)
   },
   methods: {
+
+    //展示右键菜单
+    showMenu(event) {
+      event.preventDefault()
+      let x = event.clientX
+      let y = event.clientY
+      // 获得当前位置
+      this.contextMenuData.axis = {
+        x, y
+      }
+      if (event.target && event.target.isCanvas && event.target.isCanvas()) {
+        this.contextMenuData.menulists = this.canvasMenu
+      } else if (event.item && event.item.getType() === 'node') {
+        this.contextMenuData.menulists = this.nodeMenu
+      } else if (event.item && event.item.getType() === 'edge') {
+        this.contextMenuData.menulists = this.edgeMenu
+      }
+      this.graphEvent = event
+      console.log(this.graphEvent)
+    },
+    //添加节点
+    addNode() {
+      let obj = {
+        label: '',
+        x: this.graphEvent.target.clientX,
+        y: this.graphEvent.target.clientY
+      }
+      obj.domain = this.graph.get('domain')
+      kgBuilderApi.createNode(obj).then(result => {
+        if (result.code === 200) {
+          alert('创建节点成功！')
+          this.graph.addItem('node', result.data)
+        } else {
+          alert('创建节点失败！')
+        }
+      })
+    },
+    //添加关系
+    addEdge() {
+      this.graph.setMode('addEdge')
+    },
+    //删除节点
+    deleteNode() {
+      let obj = {
+        nodeId: this.graphEvent.item._cfg.id,
+        domain: this.graph.get('domain')
+      }
+      kgBuilderApi.deleteNode(obj).then(result => {
+        if (result.code === 200) {
+          alert('删除节点成功！')
+          this.graph.removeItem(this.graphEvent.item)
+        } else {
+          alert('删除节点失败！')
+        }
+      })
+    },
+    //删除关系
+    deleteEdge(){
+      let obj = {
+        domain: this.graph.get('domain'),
+        edgeId: this.graphEvent.item._cfg.id
+      }
+      kgBuilderApi.deleteEdge(obj).then(result => {
+        if (result.code === 200) {
+          alert('删除关系成功！')
+          this.graph.removeItem(this.graphEvent.item)
+        } else {
+          alert('删除关系失败！')
+        }
+      })
+    },
+    //修改节点
+    updateNode() {
+      this.selectedGraphItem.Edge = null
+      this.selectedGraphItem.Node = this.graphEvent.item.getModel()
+      console.log(this.selectedGraphItem)
+      this.sidebarDrawer = true
+    },
+    //修改关系
+    updateEdge(){
+      this.selectedGraphItem.Node = null
+      this.selectedGraphItem.Edge = this.graphEvent.item.getModel()
+      console.log(this.selectedGraphItem)
+      this.sidebarDrawer = true
+    },
+    //模式匹配
+    modeMatch(){
+      const { GADDI } = G6.Algorithm
+      const resultMatches = GADDI(this.graphs, this.patternData, true, undefined, undefined, 'cluster', 'cluster')
+      resultMatches.forEach((match, i) => {
+        this.hulls[i] = this.graph.createHull({
+          id: `${i}`,
+          members: match.nodes.map(node => node.id)
+        })
+      })
+      this.graph.on('afterupdateitem', (e) => {
+        this.hulls.forEach((h, i) => {
+          h.updateData(h.members)
+        })
+      })
+    },
+    //最短路查找
+    findShortestPath(){
+      let selectedNodes = this.graph.findAllByState('node', 'selected')
+      let { findShortestPath } = G6.Algorithm
+      // path 为其中一条最短路径，allPath 为所有的最短路径
+      let { path, allPath } = findShortestPath(
+        this.graphs,
+        selectedNodes[0].getID(),
+        selectedNodes[1].getID()
+      )
+      let pathNodeMap = {}
+      path.forEach((id) => {
+        let pathNode = this.graph.findById(id)
+        pathNode.toFront()
+        this.graph.setItemState(pathNode, 'highlight', true)
+        pathNodeMap[id] = true
+      })
+      this.graph.getEdges().forEach((edge) => {
+        const edgeModel = edge.getModel()
+        const source = edgeModel.source
+        const target = edgeModel.target
+        const sourceInPathIdx = path.indexOf(source)
+        const targetInPathIdx = path.indexOf(target)
+        if (sourceInPathIdx === -1 || targetInPathIdx === -1) return
+        if (Math.abs(sourceInPathIdx - targetInPathIdx) === 1) {
+          this.graph.setItemState(edge, 'highlight', true)
+        } else {
+          this.graph.setItemState(edge, 'inactive', true)
+        }
+      })
+      this.graph.getNodes().forEach((node) => {
+        if (!pathNodeMap[node.getID()]) {
+          this.graph.setItemState(node, 'inactive', true)
+        }
+      })
+    },
+    //查看相关文件
+    openFile(){
+      let url = this.graphEvent.item.getModel().modelLocation
+      window.open(url)
+    },
+    //展开节点
+    expandNode(){
+     let params = {
+       domain:"",
+       nodeId:this.graphEvent.item._cfg.id
+     }
+     kgBuilderApi.getMoreRelatedNode(params).then(result => {
+       if (result.code === 200) {
+         alert('节点展开成功！')
+         for (let item of result.data.nodes) {
+           this.graph.addItem( 'node',item)
+         }
+         for (let item of result.data.edges) {
+           this.graph.addItem( 'edge',item)
+         }
+         this.graph.layout();
+       } else {
+         alert('节点展开失败！')
+       }
+     })
+    },
     filterNode(value, data) {
       if (!value) return true
       return data.label.indexOf(value) !== -1
@@ -242,9 +487,8 @@ export default {
         }
       })
     },
-    updateGraph() {
 
-      console.log(this.graph)
+    updateGraph() {
       this.graph.data(this.graphs)
       this.graph.render()
     },
@@ -283,168 +527,7 @@ export default {
       console.log(data)
     },
 
-    pluginsControl(name) {
-
-      let pluginName = name
-
-      //右键菜单
-      let contextMenu = new G6.Menu({
-        getContent(evt) {
-          if (evt.target && evt.target.isCanvas && evt.target.isCanvas()) {
-            return `
-        <ul>
-            <li title="addNode">创建节点</li>
-            <li title="addEdge">创建关系</li>
-            <li title="modeMatch">模式匹配</li>
-            <li title="findShortestPath">最短路查找</li>
-        </ul>`
-          } else if (evt.item && evt.item.getType() === 'node') {
-            return `
-        <ul>
-            <li title="addNode">添加关系</li>
-            <li title="deleteNode">删除节点</li>
-            <li title="updateNode">修改节点</li>
-            <li title="3dModel">查看模型</li>
-        </ul>`
-          } else if (evt.item && evt.item.getType() === 'edge') {
-            return `
-        <ul>
-            <li title="updateEdge">修改关系</li>
-            <li title="deleteEdge">删除关系</li>
-            <li>li 3</li>
-        </ul>`
-          }
-          let valueX = evt.x
-        },
-        handleMenuClick: (target, item) => {
-          if (target.title === 'addNode') {
-            let obj = {
-              label: '',
-              x: target.offsetTop,
-              y: target.offsetLeft
-            }
-            obj.domain = this.graph.get('domain')
-            kgBuilderApi.createNode(obj).then(result => {
-              if (result.code === 200) {
-                alert('创建节点成功！')
-                this.graph.addItem('node', result.data)
-              } else {
-                alert('创建节点失败！')
-              }
-            })
-          } else if (target.title === 'addEdge') {
-            this.graph.setMode('addEdge')
-          } else if (target.title === 'deleteNode') {
-            console.log(item._cfg.id)
-            let obj = {
-              nodeId: item._cfg.id,
-              domain: this.graph.get('domain')
-            }
-            console.log(obj.nodeId)
-            kgBuilderApi.deleteNode(obj).then(result => {
-              if (result.code === 200) {
-                alert('删除节点成功！')
-                this.graph.removeItem(item)
-              } else {
-                alert('删除节点失败！')
-              }
-            })
-          } else if (target.title === 'deleteEdge') {
-            let obj = {
-              domain: this.graph.get('domain'),
-              edgeId: item._cfg.id
-            }
-            console.log(obj)
-            kgBuilderApi.deleteEdge(obj).then(result => {
-              if (result.code === 200) {
-                alert('删除关系成功！')
-                this.graph.removeItem(item)
-              } else {
-                alert('删除关系失败！')
-              }
-            })
-
-          } else if (target.title === 'updateNode') {
-            this.selectedGraphItem.Edge = null
-            this.selectedGraphItem.Node = item.getModel()
-            console.log(this.selectedGraphItem)
-            this.sidebarDrawer = true
-          } else if (target.title === 'updateEdge') {
-            this.selectedGraphItem.Node = null
-            this.selectedGraphItem.Edge = ev.item.getModel()
-            console.log(this.selectedGraphItem)
-            this.sidebarDrawer = true
-          } else if (target.title === 'modeMatch') {
-            const { GADDI } = G6.Algorithm
-            console.log(this.graphs)
-            console.log(this.patternData)
-            const resultMatches = GADDI(this.graphs, this.patternData, true, undefined, undefined, 'cluster', 'cluster')
-            console.log(resultMatches)
-            resultMatches.forEach((match, i) => {
-              this.hulls[i] = this.graph.createHull({
-                id: `${i}`,
-                members: match.nodes.map(node => node.id)
-              })
-            })
-            this.graph.on('afterupdateitem', (e) => {
-              this.hulls.forEach((h, i) => {
-                h.updateData(h.members)
-              })
-            })
-          } else if (target.title === 'findShortestPath') {
-            const selectedNodes = this.graph.findAllByState('node', 'selected')
-            const { findShortestPath } = G6.Algorithm
-            // path 为其中一条最短路径，allPath 为所有的最短路径
-            const { path, allPath } = findShortestPath(
-              this.graphs,
-              selectedNodes[0].getID(),
-              selectedNodes[1].getID()
-            )
-
-            const pathNodeMap = {}
-            path.forEach((id) => {
-              const pathNode = this.graph.findById(id)
-              pathNode.toFront()
-              this.graph.setItemState(pathNode, 'highlight', true)
-              pathNodeMap[id] = true
-            })
-            this.graph.getEdges().forEach((edge) => {
-              const edgeModel = edge.getModel()
-              const source = edgeModel.source
-              const target = edgeModel.target
-              const sourceInPathIdx = path.indexOf(source)
-              const targetInPathIdx = path.indexOf(target)
-              if (sourceInPathIdx === -1 || targetInPathIdx === -1) return
-              if (Math.abs(sourceInPathIdx - targetInPathIdx) === 1) {
-                this.graph.setItemState(edge, 'highlight', true)
-              } else {
-                this.graph.setItemState(edge, 'inactive', true)
-              }
-            })
-            this.graph.getNodes().forEach((node) => {
-              if (!pathNodeMap[node.getID()]) {
-                this.graph.setItemState(node, 'inactive', true)
-              }
-            })
-
-          } else if (target.title === '3dModel') {
-            let url = item.getModel().modelLocation
-            window.open(url)
-          }
-          console.log(target.position)
-          console.log(target, item)
-        },
-        // offsetX and offsetY include the padding of the parent container
-        // 需要加上父级容器的 padding-left 16 与自身偏移量 10
-        offsetX: 16 + 10,
-        // 需要加上父级容器的 padding-top 24 、画布兄弟元素高度、与自身偏移量 10
-        offsetY: 0,
-        // the types of items that allow the menu show up
-        // 在哪些类型的元素上响应
-        itemTypes: ['node', 'edge', 'canvas']
-      })
-
-      this.graph.addPlugin(contextMenu)
+    pluginsControl() {
 
     },
 
@@ -455,6 +538,7 @@ export default {
       G6.registerBehavior('click-add-node', addNode)
       // 添加连线
       G6.registerBehavior('click-add-edge', addEdge)
+      // 选中连线
       G6.registerBehavior('select-edge', selectEdge)
 
       let grid = new G6.Grid()
@@ -502,13 +586,16 @@ export default {
         plugins: [grid, tooltip],
         layout: {
           type: 'gForce',
-          nodeStrength: 1000,
           preventOverlap: true,
-          nodeSize: 30,
-          edgeStrength: 200,
-          linkDistance: 200,
-          nodespacing: 10,
-          gpuEnabled: true
+          linkDistance: 50,         // 可选，边长
+          nodeStrength: 30,         // 可选
+          edgeStrength: 0.1,        // 可选
+          collideStrength: 0.8,     // 可选
+          nodeSize: 30,             // 可选
+          alpha: 0.3,               // 可选
+          alphaDecay: 0.028,        // 可选
+          alphaMin: 0.01,           // 可选
+          forceSimulation: null,    // 可选
         },
         modes: {
           default: [
@@ -546,12 +633,14 @@ export default {
               },
               trigger: 'drag'
             },
+
             {
               type: 'drag-node' // 拖拽node
             },
             'click-add-node',
             'click-select',
-            'select-edge'
+            'select-edge',
+            'context-menu'
           ],
           dragLasso: [
             'drag-node'
@@ -598,7 +687,6 @@ export default {
           }
         }
       })
-      // this.graph.read(this.$store.state.dataList)
       this.graph.on('node:dblclick', (ev) => {
         this.selectedGraphItem.Edge = null
         this.selectedGraphItem.Node = ev.item.getModel()
@@ -615,6 +703,10 @@ export default {
         this.selectedGraphItem.Node = null
         this.selectedGraphItem.Edge = null
       })
+      this.graph.on('contextmenu', (ev) => {
+          this.showMenu(ev)
+        }
+      )
       this.graph.on('viewportchange', (e) => {
         if (e.action === 'zoom') {
           this.size = Number((Number(this.graph.getZoom()) * 100).toFixed(0))
@@ -627,7 +719,7 @@ export default {
 }
 </script>
 
-<style scoped lang="less">
+<style lang="less" scoped>
 
 .el-header, .el-footer {
   background-color: #B3C0D1;
@@ -640,7 +732,15 @@ export default {
   background-color: #D3DCE6;
   color: #333;
   text-align: center;
+  padding: 12px;
+}
 
+.tree {
+  background-color: #D3DCE6;
+  color: #333;
+  text-align: center;
+  width: 330px;
+  padding: 12px;
 }
 
 .el-main {
@@ -662,6 +762,30 @@ body > .el-container {
 
 .el-container:nth-child(7) .el-aside {
 
+}
+
+.contextmenu {
+  margin: 0;
+  background: #fff;
+  z-index: 3000;
+  position: absolute;
+  list-style-type: none;
+  padding: 5px 0;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 400;
+  color: #333;
+  box-shadow: 2px 2px 3px 0 rgba(0, 0, 0, 0.3);
+}
+
+.contextmenu li {
+  margin: 0;
+  padding: 7px 16px;
+  cursor: pointer;
+}
+
+.contextmenu li:hover {
+  background: #eee;
 }
 
 .knowledgeGraph {
@@ -723,6 +847,44 @@ body > .el-container {
 
 .G6 {
   z-index: 0;
+}
+
+td.table_td_h {
+  padding: 17px 0;
+}
+
+.right-menu {
+  display: none;
+  position: fixed;
+  background: #fff;
+  border: 1px solid #bababa;
+  border-radius: 3px;
+  z-index: 999;
+  box-shadow: 2px 2px 3px 0px rgba(51, 42, 40, 0.7);
+  border-radius: 1px;
+
+  p {
+    margin: 0;
+    display: block;
+    width: 200px;
+    height: 35px;
+    line-height: 35px;
+    text-align: left;
+    padding: 0 24px 0 32px;
+    color: #000000;
+    cursor: pointer;
+    font-size: 15px;
+    border-bottom: 1px solid #e8eaed;
+
+    &:hover {
+      background: #e8eaed;
+    }
+  }
+
+  .menu-disable {
+    cursor: no-drop;
+    color: #80868b;
+  }
 }
 
 </style>

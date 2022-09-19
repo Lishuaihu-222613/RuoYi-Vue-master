@@ -1,6 +1,6 @@
 package com.ruoyi.system.service.dKService.impl;
 
-import com.ruoyi.system.Neo4jDao.dKMapper.*;
+import com.ruoyi.system.Repository.dKRepository.*;
 import com.ruoyi.system.domain.KgBuilderPojo.model.DKSubmitItem;
 import com.ruoyi.system.domain.KgBuilderPojo.model.nodes.conditionItem;
 import com.ruoyi.system.domain.KgBuilderPojo.model.nodes.decisionKnowledge;
@@ -20,7 +20,7 @@ public class dKServiceImpl implements dKService {
     @Autowired
     private conditionItemDao conditionDao;
     @Autowired
-    private dKDao dKDao;
+    private com.ruoyi.system.Repository.dKRepository.dKDao dKDao;
     @Autowired
     private resultItemDao resultDao;
     @Autowired

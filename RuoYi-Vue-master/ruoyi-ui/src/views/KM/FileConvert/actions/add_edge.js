@@ -23,7 +23,6 @@ export default{
       x: ev.x,
       y: ev.y
     }
-
     const model = node.getModel()
     if (this.addingEdge && this.edge) {
       graph.updateItem(this.edge, {

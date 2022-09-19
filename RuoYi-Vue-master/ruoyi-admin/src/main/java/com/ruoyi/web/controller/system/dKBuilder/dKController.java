@@ -64,6 +64,18 @@ public class dKController extends BaseController {
     };
 
     @ResponseBody
+    @PostMapping("/updateDK")
+    public R<decisionKnowledge> updateDecisionKnowledge(@RequestBody decisionKnowledge DK) {
+        try {
+            decisionKnowledge knowledge = dKService.updateDK(DK);
+            return R.success(knowledge);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    };
+
+    @ResponseBody
     @PostMapping("/createSingleDK")
     public R<decisionKnowledge> createSingleDK(@RequestBody decisionKnowledge DI) {
         try {

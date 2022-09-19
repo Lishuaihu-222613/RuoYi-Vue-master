@@ -1,7 +1,7 @@
 <template>
 
   <div style="padding: 0px">
-    <span class="treeFont">装配工艺知识结构树</span>
+    <span class="treeFont">装药总装工艺知识结构树</span>
     <el-autocomplete
       class="KnowledgeSearch"
       placeholder="输入关键字进行检索"
@@ -18,9 +18,10 @@
       class="filter-tree"
       :data="treeData"
       :props="defaultProps"
-      default-expand-all
       :filter-node-method="filterNode"
       :highlight-current= true
+      @node-click="clickSearch"
+      indent="4"
       ref="tree">
     </el-tree>
   </div>
@@ -28,6 +29,8 @@
 </template>
 
 <script>
+
+import * as knowledgeTree from "@/api/knowledgeTree/domainManagement";
 import * as kgBuilderApi from '@/api/system/KgBuilder'
 import * as ruoyiutils from '@/utils/ruoyi'
 import { getDomains } from '@/api/system/KgBuilder'
@@ -40,7 +43,7 @@ export default {
       treeData: [],
       defaultProps: {
         children: 'children',
-        label: 'label'
+        label: 'name'
       }
     };
   },
@@ -77,13 +80,14 @@ export default {
     searchDomain(){
       this.$emit('searchDomain',this.filterText);
     },
+    clickSearch(obj,node,tree){
+      let val = obj.name;
+      this.$emit('searchDomain',val);
+    },
     initKnowledgeTree() {
-      // kgBuilderApi.getDomains().then(result => {
-      //   if (result.code == 200) {
-      //     this.treedata = result.data;
-      //   }
-      // });
-      // // this.treedata = ruoyiutils.handleTree(treedata);
+      knowledgeTree.listDomainManagement().then(response => {
+        this.treeData = this.handleTree(response.data, "id", "parentId");
+      });
     }
   }
 }
@@ -101,7 +105,7 @@ export default {
   font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
 }
 .filter-tree{
-  width: 252px;
+  width: 300px;
   font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
   margin: 5px;
 }

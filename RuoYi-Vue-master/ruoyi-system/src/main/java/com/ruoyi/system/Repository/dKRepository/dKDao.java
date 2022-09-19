@@ -1,4 +1,4 @@
-package com.ruoyi.system.Neo4jDao.dKMapper;
+package com.ruoyi.system.Repository.dKRepository;
 
 import com.ruoyi.system.domain.KgBuilderPojo.model.nodes.decisionKnowledge;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
+
 
 public interface dKDao extends Neo4jRepository<decisionKnowledge,Long> {
 

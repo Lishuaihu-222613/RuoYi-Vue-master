@@ -2,14 +2,17 @@ package com.ruoyi;
 
 import com.ruoyi.common.utils.Neo4j.Neo4jUtil;
 import com.ruoyi.common.utils.poi.WordUtil;
+import com.ruoyi.system.domain.AssemblyPojo.Structure.AssemblyPart;
 import com.ruoyi.system.domain.KgBuilderPojo.model.nodes.conditionItem;
 import com.ruoyi.system.domain.KgBuilderPojo.model.nodes.decisionKnowledge;
 import com.ruoyi.system.domain.KgBuilderPojo.model.nodes.resultItem;
 import com.ruoyi.system.domain.KgBuilderPojo.model.relationships.ruleAntecedent;
 import com.ruoyi.system.domain.KgBuilderPojo.model.relationships.ruleConsequent;
+import com.ruoyi.system.service.StructureService.impl.StructureServiceImpl;
 import com.ruoyi.system.service.dKService.impl.dKServiceImpl;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kie.api.runtime.KieSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
@@ -37,6 +40,13 @@ public class Neo4jTest {
 
     @Autowired
     public dKServiceImpl dKService;
+
+    @Autowired
+    private KieSession kieSession;
+
+    @Autowired
+    private StructureServiceImpl structureService;
+
 
     @Test
     public void ConnectTest(){
@@ -629,8 +639,63 @@ public class Neo4jTest {
 //        DK.setRuleConsequents(ruleCs);
 //
 //        dKService.createDecisionKnowledge(DK);
-        List<decisionKnowledge> knowledges = dKService.getDecisionKnowledge();
-        System.out.println(knowledges);
+//        List<decisionKnowledge> knowledges = dKService.getDecisionKnowledge();
+//        System.out.println(knowledges);
 
     }
+
+    @Test
+    public void DroolsTest(){
+
+        ArrayList<AssemblyPart> parts = new ArrayList<>();
+        AssemblyPart part1 = new AssemblyPart();
+        part1.setPartName("零件1");
+        part1.setPartMass(100);
+
+        AssemblyPart part2 = new AssemblyPart();
+        part2.setPartName("零件2");
+        part2.setPartMass(110);
+
+        AssemblyPart part3 = new AssemblyPart();
+        part3.setPartName("零件3");
+        part3.setPartMass(90);
+
+        parts.add(part1);
+        parts.add(part2);
+        parts.add(part3);
+
+        kieSession.insert(parts); // 插入
+        kieSession.fireAllRules(); // 执行规则
+        System.out.println("----------------------");
+
+    }
+
+    @Test
+    public void StructureMapperTest(){
+
+        AssemblyPart part1 = new AssemblyPart();
+        AssemblyPart part2 = new AssemblyPart();
+        AssemblyPart part3 = new AssemblyPart();
+        AssemblyPart part4 = new AssemblyPart();
+        AssemblyPart part5 = new AssemblyPart();
+        AssemblyPart part6 = new AssemblyPart();
+        AssemblyPart part7 = new AssemblyPart();
+        AssemblyPart part8 = new AssemblyPart();
+        AssemblyPart part9 = new AssemblyPart();
+        AssemblyPart part10 = new AssemblyPart();
+
+        part1.setPartQuantity(1);
+        part1.setPartName("箱体");
+        part1.setPartDensity(1);
+        part1.setPartSource("自制");
+        part1.setPartDescription("泵体主要零件");
+        part1.setPartVolume(4885.23);
+        part1.setPartMass(4885.23);
+        part1.setPartWetArea(8048.38);
+        part1.setPartBoundingBox("374.1*324.231.6");
+
+        AssemblyPart part11 = structureService.createPart(part1);
+        System.out.println(part11);
+    }
+
 }

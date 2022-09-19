@@ -35,7 +35,7 @@ export default {
   },
   data() {
     return {
-      title: '装配工艺决策辅助推荐系统',
+      title: '装药总装工艺决策辅助推荐系统',
       logo: logoImg
     }
   }

@@ -1,5 +1,5 @@
 export default{
-  type: 'quadratic',
+  type: 'line',
   style: {
     stroke: '#C0C4CC', // 颜色
     lineWidth: 1, // 宽度

@@ -1,4 +1,6 @@
 package com.ruoyi.system.domain.AssemblyPojo.Operation;
 
-public class AssemblingStructure {
+import com.ruoyi.system.domain.AssemblyPojo.Structure.AssemblyStructure;
+
+public class AssemblingStructure extends AssemblyStructure {
 }

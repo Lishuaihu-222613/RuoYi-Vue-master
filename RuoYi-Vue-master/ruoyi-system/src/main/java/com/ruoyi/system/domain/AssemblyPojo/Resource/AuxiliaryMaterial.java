@@ -1,6 +1,6 @@
 package com.ruoyi.system.domain.AssemblyPojo.Resource;
 
-import com.ruoyi.system.domain.AssemblyPojo.TypicalKnowledge.TypicalProcess;
+import com.ruoyi.system.domain.AssemblyPojo.Knowledge.TypicalKnowledge.TypicalProcess;
 import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.schema.Property;
 import org.springframework.data.neo4j.core.schema.Relationship;
@@ -14,7 +14,6 @@ public class AuxiliaryMaterial extends AssemblyResource{
     private String MaterialType;
 
     @Relationship(type = "hasSuitableProcess" , direction = Relationship.Direction.OUTGOING)
-    private Set<TypicalProcess> suitableProcess;
-
+    private Set<TypicalProcess> suitableProcesses;
 
 }

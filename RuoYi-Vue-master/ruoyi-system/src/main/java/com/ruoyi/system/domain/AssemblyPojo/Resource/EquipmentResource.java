@@ -1,5 +1,6 @@
 package com.ruoyi.system.domain.AssemblyPojo.Resource;
 
+import com.ruoyi.system.domain.AssemblyPojo.Knowledge.TypicalKnowledge.TypicalProcedure;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.TypicalKnowledge.TypicalProcess;
 import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.schema.Property;
@@ -43,6 +44,9 @@ public class EquipmentResource extends AssemblyResource{
     @Property(name = "Attentions")
     private List<String>  Attentions;
 
+    @Property(name = "principle")
+    private String principle;
+
     @Relationship(type = "hasInstallTool" , direction = Relationship.Direction.OUTGOING)
     private Set<AssemblyResource> installTools;
 
@@ -58,7 +62,13 @@ public class EquipmentResource extends AssemblyResource{
     @Relationship(type = "hasSuitableProcess" , direction = Relationship.Direction.OUTGOING)
     private Set<TypicalProcess> suitableProcesses;
 
+    @Relationship(type = "hasSuitableProcedure" , direction = Relationship.Direction.OUTGOING)
+    private Set<TypicalProcedure> suitableProcedures;
+
     @Relationship(type = "hasUnSuitableProcess" , direction = Relationship.Direction.OUTGOING)
-    private Set<TypicalProcess> UnsuitableProcesses;
+    private Set<TypicalProcess> unsuitableProcesses;
+
+    @Relationship(type = "hasUnSuitableProcedure" , direction = Relationship.Direction.OUTGOING)
+    private Set<TypicalProcedure> unsuitableProcedures;
 
 }

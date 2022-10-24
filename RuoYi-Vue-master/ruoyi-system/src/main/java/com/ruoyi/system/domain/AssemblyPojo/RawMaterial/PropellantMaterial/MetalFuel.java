@@ -3,7 +3,7 @@ package com.ruoyi.system.domain.AssemblyPojo.RawMaterial.PropellantMaterial;
 import com.ruoyi.system.domain.AssemblyPojo.RawMaterial.RawMaterial;
 import org.springframework.data.neo4j.core.schema.Node;
 
-@Node
+@Node("MetalFuel")
 public class MetalFuel extends RawMaterial {
 
     private double aluminium;

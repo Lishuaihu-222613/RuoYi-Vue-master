@@ -2,6 +2,7 @@ package com.ruoyi.system.domain.AssemblyPojo.Structure;
 
 import com.ruoyi.system.domain.AssemblyPojo.GeometricPose.GeometryEntity.AdvancedBerpShape;
 import com.ruoyi.system.domain.AssemblyPojo.GeometricPose.Location.Location;
+import com.ruoyi.system.domain.AssemblyPojo.Knowledge.fileKnowledge.fileKnowledge;
 import org.springframework.data.neo4j.core.schema.GeneratedValue;
 import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
@@ -32,6 +33,9 @@ public abstract class AssemblyStructure {
 
     @Relationship(type = "hasGeometry", direction = Relationship.Direction.OUTGOING)
     private AdvancedBerpShape geometry;
+
+    @Relationship(type = "hasAssociatedFile", direction = Relationship.Direction.OUTGOING)
+    private Set<fileKnowledge> associatedFiles;
 
     public Long getStructureId() {
         return structureId;
@@ -81,16 +85,25 @@ public abstract class AssemblyStructure {
         this.geometry = geometry;
     }
 
+    public Set<fileKnowledge> getAssociatedFiles() {
+        return associatedFiles;
+    }
+
+    public void setAssociatedFiles(Set<fileKnowledge> associatedFiles) {
+        this.associatedFiles = associatedFiles;
+    }
+
     public AssemblyStructure() {
     }
 
-    public AssemblyStructure(Long structureId, Set<AssemblyComponent> components, Set<AssemblyPart> parts, Set<AssemblyConstraint> constraints, Location location, AdvancedBerpShape geometry) {
+    public AssemblyStructure(Long structureId, Set<AssemblyComponent> components, Set<AssemblyPart> parts, Set<AssemblyConstraint> constraints, Location location, AdvancedBerpShape geometry, Set<fileKnowledge> associatedFiles) {
         this.structureId = structureId;
         this.components = components;
         this.parts = parts;
         this.constraints = constraints;
         this.location = location;
         this.geometry = geometry;
+        this.associatedFiles = associatedFiles;
     }
 
     @Override
@@ -98,12 +111,12 @@ public abstract class AssemblyStructure {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AssemblyStructure that = (AssemblyStructure) o;
-        return Objects.equals(structureId, that.structureId) && Objects.equals(components, that.components) && Objects.equals(parts, that.parts) && Objects.equals(constraints, that.constraints) && Objects.equals(location, that.location) && Objects.equals(geometry, that.geometry);
+        return Objects.equals(structureId, that.structureId) && Objects.equals(components, that.components) && Objects.equals(parts, that.parts) && Objects.equals(constraints, that.constraints) && Objects.equals(location, that.location) && Objects.equals(geometry, that.geometry) && Objects.equals(associatedFiles, that.associatedFiles);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(structureId, components, parts, constraints, location, geometry);
+        return Objects.hash(structureId, components, parts, constraints, location, geometry, associatedFiles);
     }
 
     @Override
@@ -112,8 +125,10 @@ public abstract class AssemblyStructure {
                 "structureId=" + structureId +
                 ", components=" + components +
                 ", parts=" + parts +
+                ", constraints=" + constraints +
                 ", location=" + location +
                 ", geometry=" + geometry +
+                ", associatedFiles=" + associatedFiles +
                 '}';
     }
 }

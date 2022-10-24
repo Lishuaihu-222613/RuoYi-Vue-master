@@ -2,6 +2,7 @@ package com.ruoyi.system.domain.AssemblyPojo.Structure;
 
 import com.ruoyi.system.domain.AssemblyPojo.GeometricPose.GeometryEntity.AdvancedBerpShape;
 import com.ruoyi.system.domain.AssemblyPojo.GeometricPose.Location.Location;
+import com.ruoyi.system.domain.AssemblyPojo.Knowledge.fileKnowledge.fileKnowledge;
 import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.schema.Property;
 import org.springframework.data.neo4j.core.schema.Relationship;
@@ -62,12 +63,11 @@ public class AssemblyComponent extends AssemblyStructure {
     public AssemblyComponent() {
     }
 
-    public AssemblyComponent(Long structureId, Set<AssemblyComponent> components, Set<AssemblyPart> parts, Set<AssemblyConstraint> constraints, Location location, AdvancedBerpShape geometry, String componentName, String componentDescription, Set<AssemblyComponent> components1, Set<AssemblyPart> parts1) {
-        super(structureId, components, parts, constraints, location, geometry);
+    public AssemblyComponent(Long structureId, Set<AssemblyComponent> components, Set<AssemblyPart> parts, Set<AssemblyConstraint> constraints, Location location, AdvancedBerpShape geometry, Set<fileKnowledge> associatedFiles, String componentName, String componentDescription, Set<AssemblyComponent> components1, Set<AssemblyPart> parts1) {
+        super(structureId, components, parts, constraints, location, geometry, associatedFiles);
         this.componentName = componentName;
         this.componentDescription = componentDescription;
         this.components = components1;
         this.parts = parts1;
     }
-
 }

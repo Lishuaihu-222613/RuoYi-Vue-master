@@ -10,8 +10,11 @@ import java.util.Set;
 @Node("AuxiliaryMaterial")
 public class AuxiliaryMaterial extends AssemblyResource{
 
+    @Property(name = "Usage")
+    private String materialUsage;
+
     @Property(name = "Material")
-    private String MaterialType;
+    private String materialType;
 
     @Relationship(type = "hasSuitableProcess" , direction = Relationship.Direction.OUTGOING)
     private Set<TypicalProcess> suitableProcesses;

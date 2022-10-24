@@ -10,14 +10,10 @@
     @open="handleOpen"
   >
     <div v-show="loading" class="well loading">正在加载中，请耐心等待...</div>
-    <iframe v-show="!loading" ref="output" :src="url" style="min-height: calc(100vh - 185px); width:100%; border: 0"/>
     <div v-show="!loading" ref="output" class="well"></div>
-    <div>
-      <input class="file-select" type="file" @change="handleChange"/>
-    </div>
     <span slot="footer" class="dialog-footer">
-    <el-button @click="dialogVisible = false">取 消</el-button>
-    <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+      <el-button @click="dialogVisible = false">取 消</el-button>
+      <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
   </span>
   </el-dialog>
 
@@ -25,7 +21,6 @@
 
 <script>
 import { getExtend, readBuffer, render } from './util'
-import { parse } from 'qs'
 import { isExternal } from '@/utils/validate'
 import axios from 'axios'
 
@@ -60,36 +55,39 @@ export default {
       last: null,
       // 隐藏头部，当基于消息机制渲染，将隐藏
       hidden: false,
-      dialogVisible: false
+      dialogVisible: false,
     }
   },
   computed: {
-
     realUrl() {
       let real_url = this.url.split(',')[0]
       if (isExternal(real_url)) {
         return real_url
       }
       return process.env.VUE_APP_BASE_API + real_url
-    }
-
+    },
   },
-  created() {
-    // 允许使用预留的消息机制发送二进制数据，必须在url后添加?name=xxx.xxx&from=xxx
-    const { from, name } = parse(location.search.substr(1))
-    if (from) {
-      window.addEventListener('message', (event) => {
-        const { origin, data: blob } = event
-        if (origin === from && blob instanceof Blob) {
-          // 构造响应，自动渲染
-          const file = new File([blob], name, {})
-          this.hidden = true
-          this.handleChange({ target: { files: [file] } })
-        }
-      })
-    }
-  },
+  created() {},
   methods: {
+    //解析url,下载文件
+    loadFromUrl() {
+      let fileUrl = this.realUrl;
+      let filename = fileUrl.substring(fileUrl.lastIndexOf('/') + 1);
+      axios({
+        fileUrl,
+        method:'get',
+        responseType:'blob',
+      }).then(response =>{
+        if(!response) {
+          this.$modal.alertError("文件不存在，预览失败！");
+        }
+        console.log(response)
+        let file = new File([response], filename,{});
+        this.hidden = true;
+        this.handleChange({ target: { files: [file] } });
+      })
+    },
+    //文件更改方法
     async handleChange(e) {
       this.loading = true
       try {
@@ -103,30 +101,7 @@ export default {
         this.loading = false
       }
     },
-    async loadFromUrl() {
-      // 要预览的文件地址
-      let url = ''
-      // 查看器的源，当前示例为本源
-      const viewerOrigin = location.origin
-      // 拼接iframe请求url
-      this.src = `${viewerOrigin}?name=${encodeURIComponent(name)}&from=${encodeURIComponent(location.origin)}`
-      this.$nextTick(() => {
-        const output = this.$refs.frame
-        output.onload = () => {
-          axios({
-            url,
-            method: 'get',
-            responseType: 'blob'
-          }).then(data => {
-            if (!data) {
-              console.error('文件下载失败')
-            }
-            console.log(data)
-            output.contentWindow.postMessage(data, viewerOrigin)
-          })
-        }
-      })
-    },
+    //文件显示方法
     displayResult(buffer, file) {
       // 取得文件名
       const { name } = file
@@ -148,7 +123,7 @@ export default {
       )
     },
     handleOpen() {
-
+      this.loadFromUrl()
     },
     handleClose(done) {
       this.$confirm('确认关闭？')

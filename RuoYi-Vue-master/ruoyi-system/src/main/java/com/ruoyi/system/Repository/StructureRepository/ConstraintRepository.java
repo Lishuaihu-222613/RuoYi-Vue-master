@@ -16,6 +16,6 @@ public interface ConstraintRepository extends Neo4jRepository<AssemblyConstraint
 
     void deleteById(Long ACId);
 
-    @Query("MATCH (n:AssemblyStructure) -[r:hasConstraint]-> (m:AssemblyConstraint) where n.Id = ASId return m")
-    List<AssemblyConstraint> findAllByASItem(Long ASId);
+    @Query("MATCH (n:AssemblyStructure) -[r:hasConstraint]-> (m:AssemblyConstraint) where n.Id = $ASId return m")
+    List<AssemblyConstraint> findAllByASItem(@Param("ASId") Long ASId);
 }

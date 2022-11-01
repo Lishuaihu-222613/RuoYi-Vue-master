@@ -44,20 +44,22 @@ public class AssemblyOperation {
     private AssembledStructure assembledStructure;
 
     @Relationship(type = "AndOP", direction = Relationship.Direction.OUTGOING)
-    private AssemblyOperation operationAnd;
+    private Set<AssemblyOperation> operationAnd;
 
     @Relationship(type = "OrOP", direction = Relationship.Direction.OUTGOING)
-    private AssemblyOperation operationOr;
+    private Set<AssemblyOperation> operationOr;
 
     @Relationship(type = "assembleBefore", direction = Relationship.Direction.OUTGOING)
-    private AssemblyOperation beforeOperation;
+    private Set<AssemblyOperation> beforeOperation;
 
     @Relationship(type = "assembleAfter", direction = Relationship.Direction.OUTGOING)
-    private AssemblyOperation afterOperation;
+    private Set<AssemblyOperation> afterOperation;
 
     @Relationship(type = "hasAssociatedSteps", direction = Relationship.Direction.OUTGOING)
     private Set<AssemblyStep> associatedSteps;
 
     @Relationship(type = "hasAssociatedFile", direction = Relationship.Direction.OUTGOING)
     private Set<fileKnowledge> associatedFiles;
+
+
 }

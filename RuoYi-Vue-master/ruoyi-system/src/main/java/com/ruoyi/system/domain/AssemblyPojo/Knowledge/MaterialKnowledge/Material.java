@@ -13,7 +13,7 @@ public class Material {
 
     @Id
     @GeneratedValue
-    private Long id;
+    private Long materialId;
 
     @Property(name = "label")
     private String materialName;
@@ -61,7 +61,7 @@ public class Material {
     private Set<StorageRequirement> storageRequirements;
 
     @Relationship(type = "hasProduceMethod", direction = Relationship.Direction.OUTGOING)
-    private Set<produceMethod> productMethods;
+    private Set<ProduceMethod> productMethods;
 
     @Relationship(type = "hasDanger", direction = Relationship.Direction.OUTGOING)
     private Set<Danger> dangers;
@@ -72,12 +72,12 @@ public class Material {
     @Relationship(type = "hasAssociatedFile", direction = Relationship.Direction.OUTGOING)
     private Set<fileKnowledge> associatedFiles;
 
-    public Long getId() {
-        return id;
+    public Long getMaterialId() {
+        return materialId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setMaterialId(Long materialId) {
+        this.materialId = materialId;
     }
 
     public String getMaterialName() {
@@ -200,11 +200,11 @@ public class Material {
         this.storageRequirements = storageRequirements;
     }
 
-    public Set<produceMethod> getProductMethods() {
+    public Set<ProduceMethod> getProductMethods() {
         return productMethods;
     }
 
-    public void setProductMethods(Set<produceMethod> productMethods) {
+    public void setProductMethods(Set<ProduceMethod> productMethods) {
         this.productMethods = productMethods;
     }
 
@@ -235,8 +235,8 @@ public class Material {
     public Material() {
     }
 
-    public Material(Long id, String materialName, String englishName, String nickName, String englishNickName, String relativeMolecularMass, String structuralFormula, String casRegistryNumber, String materialDescription, String materialAppearance, List<String> physicalProperty, List<String> chemicalProperty, List<String> materialUsage, Map<String, String> analysisSpectrogram, Set<InspectProject> inspectProjects, Set<StorageRequirement> storageRequirements, Set<produceMethod> productMethods, Set<Danger> dangers, Set<Protection> protections, Set<fileKnowledge> associatedFiles) {
-        this.id = id;
+    public Material(Long materialId, String materialName, String englishName, String nickName, String englishNickName, String relativeMolecularMass, String structuralFormula, String casRegistryNumber, String materialDescription, String materialAppearance, List<String> physicalProperty, List<String> chemicalProperty, List<String> materialUsage, Map<String, String> analysisSpectrogram, Set<InspectProject> inspectProjects, Set<StorageRequirement> storageRequirements, Set<ProduceMethod> productMethods, Set<Danger> dangers, Set<Protection> protections, Set<fileKnowledge> associatedFiles) {
+        this.materialId = materialId;
         this.materialName = materialName;
         this.englishName = englishName;
         this.nickName = nickName;
@@ -263,11 +263,11 @@ public class Material {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Material material = (Material) o;
-        return Objects.equals(id, material.id) && Objects.equals(materialName, material.materialName) && Objects.equals(englishName, material.englishName) && Objects.equals(nickName, material.nickName) && Objects.equals(englishNickName, material.englishNickName) && Objects.equals(relativeMolecularMass, material.relativeMolecularMass) && Objects.equals(structuralFormula, material.structuralFormula) && Objects.equals(casRegistryNumber, material.casRegistryNumber) && Objects.equals(materialDescription, material.materialDescription) && Objects.equals(materialAppearance, material.materialAppearance) && Objects.equals(physicalProperty, material.physicalProperty) && Objects.equals(chemicalProperty, material.chemicalProperty) && Objects.equals(materialUsage, material.materialUsage) && Objects.equals(analysisSpectrogram, material.analysisSpectrogram) && Objects.equals(inspectProjects, material.inspectProjects) && Objects.equals(storageRequirements, material.storageRequirements) && Objects.equals(productMethods, material.productMethods) && Objects.equals(dangers, material.dangers) && Objects.equals(protections, material.protections) && Objects.equals(associatedFiles, material.associatedFiles);
+        return Objects.equals(materialId, material.materialId) && Objects.equals(materialName, material.materialName) && Objects.equals(englishName, material.englishName) && Objects.equals(nickName, material.nickName) && Objects.equals(englishNickName, material.englishNickName) && Objects.equals(relativeMolecularMass, material.relativeMolecularMass) && Objects.equals(structuralFormula, material.structuralFormula) && Objects.equals(casRegistryNumber, material.casRegistryNumber) && Objects.equals(materialDescription, material.materialDescription) && Objects.equals(materialAppearance, material.materialAppearance) && Objects.equals(physicalProperty, material.physicalProperty) && Objects.equals(chemicalProperty, material.chemicalProperty) && Objects.equals(materialUsage, material.materialUsage) && Objects.equals(analysisSpectrogram, material.analysisSpectrogram) && Objects.equals(inspectProjects, material.inspectProjects) && Objects.equals(storageRequirements, material.storageRequirements) && Objects.equals(productMethods, material.productMethods) && Objects.equals(dangers, material.dangers) && Objects.equals(protections, material.protections) && Objects.equals(associatedFiles, material.associatedFiles);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, materialName, englishName, nickName, englishNickName, relativeMolecularMass, structuralFormula, casRegistryNumber, materialDescription, materialAppearance, physicalProperty, chemicalProperty, materialUsage, analysisSpectrogram, inspectProjects, storageRequirements, productMethods, dangers, protections, associatedFiles);
+        return Objects.hash(materialId, materialName, englishName, nickName, englishNickName, relativeMolecularMass, structuralFormula, casRegistryNumber, materialDescription, materialAppearance, physicalProperty, chemicalProperty, materialUsage, analysisSpectrogram, inspectProjects, storageRequirements, productMethods, dangers, protections, associatedFiles);
     }
 }

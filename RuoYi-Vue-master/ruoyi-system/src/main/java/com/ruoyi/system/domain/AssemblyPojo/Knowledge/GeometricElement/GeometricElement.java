@@ -1,4 +1,4 @@
-package com.ruoyi.system.domain.AssemblyPojo.Knowledge.fileKnowledge.GeometricElement;
+package com.ruoyi.system.domain.AssemblyPojo.Knowledge.GeometricElement;
 
 import org.springframework.data.neo4j.core.schema.*;
 

@@ -1,6 +1,6 @@
 package com.ruoyi.system.domain.AssemblyPojo.Resource.ToolingResource;
 
-import com.ruoyi.system.domain.AssemblyPojo.Knowledge.fileKnowledge.GeometricElement.GeometricElement;
+import com.ruoyi.system.domain.AssemblyPojo.Knowledge.GeometricElement.GeometricElement;
 import org.springframework.data.neo4j.core.schema.Node;
 
 import java.util.Set;

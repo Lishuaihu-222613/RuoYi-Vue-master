@@ -1,6 +1,6 @@
 package com.ruoyi.system.domain.AssemblyPojo.Knowledge.AssemblyMethod;
 
-import com.ruoyi.system.domain.AssemblyPojo.Knowledge.fileKnowledge.GeometricElement.GeometricElement;
+import com.ruoyi.system.domain.AssemblyPojo.Knowledge.GeometricElement.GeometricElement;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.MaterialKnowledge.Material;
 import com.ruoyi.system.domain.AssemblyPojo.Resource.AssemblyResource;
 import org.springframework.data.neo4j.core.schema.GeneratedValue;

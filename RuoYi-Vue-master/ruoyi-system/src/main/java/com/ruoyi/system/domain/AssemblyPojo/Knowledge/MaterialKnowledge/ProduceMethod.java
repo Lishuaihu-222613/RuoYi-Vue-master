@@ -5,6 +5,7 @@ import com.ruoyi.system.domain.AssemblyPojo.Knowledge.TypicalKnowledge.TypicalPr
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.fileKnowledge.fileKnowledge;
 import org.springframework.data.neo4j.core.schema.*;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -20,6 +21,9 @@ public class ProduceMethod {
 
     @Property(name = "Description")
     private String methodDescription;
+
+    @Property(name = "Steps")
+    private List<String> methodSteps;
 
     @Relationship(type = "hasAssociatedFile" , direction = Relationship.Direction.OUTGOING)
     private Set<fileKnowledge> associatedFiles;
@@ -78,13 +82,22 @@ public class ProduceMethod {
         this.associatedProblems = associatedProblems;
     }
 
+    public List<String> getMethodSteps() {
+        return methodSteps;
+    }
+
+    public void setMethodSteps(List<String> methodSteps) {
+        this.methodSteps = methodSteps;
+    }
+
     public ProduceMethod() {
     }
 
-    public ProduceMethod(Long methodId, String methodName, String methodDescription, Set<fileKnowledge> associatedFiles, Set<TypicalProcess> associatedProcesses, Set<QualityProblem> associatedProblems) {
+    public ProduceMethod(Long methodId, String methodName, String methodDescription, List<String> methodSteps, Set<fileKnowledge> associatedFiles, Set<TypicalProcess> associatedProcesses, Set<QualityProblem> associatedProblems) {
         this.methodId = methodId;
         this.methodName = methodName;
         this.methodDescription = methodDescription;
+        this.methodSteps = methodSteps;
         this.associatedFiles = associatedFiles;
         this.associatedProcesses = associatedProcesses;
         this.associatedProblems = associatedProblems;
@@ -95,12 +108,12 @@ public class ProduceMethod {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ProduceMethod that = (ProduceMethod) o;
-        return Objects.equals(methodId, that.methodId) && Objects.equals(methodName, that.methodName) && Objects.equals(methodDescription, that.methodDescription) && Objects.equals(associatedFiles, that.associatedFiles) && Objects.equals(associatedProcesses, that.associatedProcesses) && Objects.equals(associatedProblems, that.associatedProblems);
+        return Objects.equals(methodId, that.methodId) && Objects.equals(methodName, that.methodName) && Objects.equals(methodDescription, that.methodDescription) && Objects.equals(methodSteps, that.methodSteps) && Objects.equals(associatedFiles, that.associatedFiles) && Objects.equals(associatedProcesses, that.associatedProcesses) && Objects.equals(associatedProblems, that.associatedProblems);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(methodId, methodName, methodDescription, associatedFiles, associatedProcesses, associatedProblems);
+        return Objects.hash(methodId, methodName, methodDescription, methodSteps, associatedFiles, associatedProcesses, associatedProblems);
     }
 
     @Override
@@ -109,6 +122,7 @@ public class ProduceMethod {
                 "methodId=" + methodId +
                 ", methodName='" + methodName + '\'' +
                 ", methodDescription='" + methodDescription + '\'' +
+                ", methodSteps=" + methodSteps +
                 ", associatedFiles=" + associatedFiles +
                 ", associatedProcesses=" + associatedProcesses +
                 ", associatedProblems=" + associatedProblems +

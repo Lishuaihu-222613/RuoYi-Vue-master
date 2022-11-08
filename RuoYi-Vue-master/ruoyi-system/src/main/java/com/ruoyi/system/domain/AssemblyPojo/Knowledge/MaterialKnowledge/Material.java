@@ -42,17 +42,17 @@ public class Material {
     @Property(name = "Appearance")
     private String materialAppearance;
 
-    @Property(name = "PhysicalProperty")
-    private List<String> physicalProperty;
-
-    @Property(name = "ChemicalProperty")
-    private List<String> chemicalProperty;
-
     @Property(name = "Usage")
     private List<String> materialUsage;
 
-    @Property(name = "AnalysisSpectrogram")
-    private Map<String, String> analysisSpectrogram;
+    @Relationship(type = "hasPhysicalProperty", direction = Relationship.Direction.OUTGOING)
+    private PhysicalProperty physicalProperty;
+
+    @Relationship(type = "hasChemicalProperty", direction = Relationship.Direction.OUTGOING)
+    private ChemicalProperty chemicalProperty;
+
+    @Relationship(type = "hasAnalysisSpectrogram", direction = Relationship.Direction.OUTGOING)
+    private Set<AnalysisSpectrogram> analysisSpectrogram;
 
     @Relationship(type = "hasInspectProject", direction = Relationship.Direction.OUTGOING)
     private Set<InspectProject> inspectProjects;
@@ -152,22 +152,6 @@ public class Material {
         this.materialAppearance = materialAppearance;
     }
 
-    public List<String> getPhysicalProperty() {
-        return physicalProperty;
-    }
-
-    public void setPhysicalProperty(List<String> physicalProperty) {
-        this.physicalProperty = physicalProperty;
-    }
-
-    public List<String> getChemicalProperty() {
-        return chemicalProperty;
-    }
-
-    public void setChemicalProperty(List<String> chemicalProperty) {
-        this.chemicalProperty = chemicalProperty;
-    }
-
     public List<String> getMaterialUsage() {
         return materialUsage;
     }
@@ -176,11 +160,27 @@ public class Material {
         this.materialUsage = materialUsage;
     }
 
-    public Map<String, String> getAnalysisSpectrogram() {
+    public PhysicalProperty getPhysicalProperty() {
+        return physicalProperty;
+    }
+
+    public void setPhysicalProperty(PhysicalProperty physicalProperty) {
+        this.physicalProperty = physicalProperty;
+    }
+
+    public ChemicalProperty getChemicalProperty() {
+        return chemicalProperty;
+    }
+
+    public void setChemicalProperty(ChemicalProperty chemicalProperty) {
+        this.chemicalProperty = chemicalProperty;
+    }
+
+    public Set<AnalysisSpectrogram> getAnalysisSpectrogram() {
         return analysisSpectrogram;
     }
 
-    public void setAnalysisSpectrogram(Map<String, String> analysisSpectrogram) {
+    public void setAnalysisSpectrogram(Set<AnalysisSpectrogram> analysisSpectrogram) {
         this.analysisSpectrogram = analysisSpectrogram;
     }
 
@@ -235,7 +235,7 @@ public class Material {
     public Material() {
     }
 
-    public Material(Long materialId, String materialName, String englishName, String nickName, String englishNickName, String relativeMolecularMass, String structuralFormula, String casRegistryNumber, String materialDescription, String materialAppearance, List<String> physicalProperty, List<String> chemicalProperty, List<String> materialUsage, Map<String, String> analysisSpectrogram, Set<InspectProject> inspectProjects, Set<StorageRequirement> storageRequirements, Set<ProduceMethod> productMethods, Set<Danger> dangers, Set<Protection> protections, Set<fileKnowledge> associatedFiles) {
+    public Material(Long materialId, String materialName, String englishName, String nickName, String englishNickName, String relativeMolecularMass, String structuralFormula, String casRegistryNumber, String materialDescription, String materialAppearance, List<String> materialUsage, PhysicalProperty physicalProperty, ChemicalProperty chemicalProperty, Set<AnalysisSpectrogram> analysisSpectrogram, Set<InspectProject> inspectProjects, Set<StorageRequirement> storageRequirements, Set<ProduceMethod> productMethods, Set<Danger> dangers, Set<Protection> protections, Set<fileKnowledge> associatedFiles) {
         this.materialId = materialId;
         this.materialName = materialName;
         this.englishName = englishName;
@@ -246,9 +246,9 @@ public class Material {
         this.casRegistryNumber = casRegistryNumber;
         this.materialDescription = materialDescription;
         this.materialAppearance = materialAppearance;
+        this.materialUsage = materialUsage;
         this.physicalProperty = physicalProperty;
         this.chemicalProperty = chemicalProperty;
-        this.materialUsage = materialUsage;
         this.analysisSpectrogram = analysisSpectrogram;
         this.inspectProjects = inspectProjects;
         this.storageRequirements = storageRequirements;
@@ -263,11 +263,37 @@ public class Material {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Material material = (Material) o;
-        return Objects.equals(materialId, material.materialId) && Objects.equals(materialName, material.materialName) && Objects.equals(englishName, material.englishName) && Objects.equals(nickName, material.nickName) && Objects.equals(englishNickName, material.englishNickName) && Objects.equals(relativeMolecularMass, material.relativeMolecularMass) && Objects.equals(structuralFormula, material.structuralFormula) && Objects.equals(casRegistryNumber, material.casRegistryNumber) && Objects.equals(materialDescription, material.materialDescription) && Objects.equals(materialAppearance, material.materialAppearance) && Objects.equals(physicalProperty, material.physicalProperty) && Objects.equals(chemicalProperty, material.chemicalProperty) && Objects.equals(materialUsage, material.materialUsage) && Objects.equals(analysisSpectrogram, material.analysisSpectrogram) && Objects.equals(inspectProjects, material.inspectProjects) && Objects.equals(storageRequirements, material.storageRequirements) && Objects.equals(productMethods, material.productMethods) && Objects.equals(dangers, material.dangers) && Objects.equals(protections, material.protections) && Objects.equals(associatedFiles, material.associatedFiles);
+        return Objects.equals(materialId, material.materialId) && Objects.equals(materialName, material.materialName) && Objects.equals(englishName, material.englishName) && Objects.equals(nickName, material.nickName) && Objects.equals(englishNickName, material.englishNickName) && Objects.equals(relativeMolecularMass, material.relativeMolecularMass) && Objects.equals(structuralFormula, material.structuralFormula) && Objects.equals(casRegistryNumber, material.casRegistryNumber) && Objects.equals(materialDescription, material.materialDescription) && Objects.equals(materialAppearance, material.materialAppearance) && Objects.equals(materialUsage, material.materialUsage) && Objects.equals(physicalProperty, material.physicalProperty) && Objects.equals(chemicalProperty, material.chemicalProperty) && Objects.equals(analysisSpectrogram, material.analysisSpectrogram) && Objects.equals(inspectProjects, material.inspectProjects) && Objects.equals(storageRequirements, material.storageRequirements) && Objects.equals(productMethods, material.productMethods) && Objects.equals(dangers, material.dangers) && Objects.equals(protections, material.protections) && Objects.equals(associatedFiles, material.associatedFiles);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(materialId, materialName, englishName, nickName, englishNickName, relativeMolecularMass, structuralFormula, casRegistryNumber, materialDescription, materialAppearance, physicalProperty, chemicalProperty, materialUsage, analysisSpectrogram, inspectProjects, storageRequirements, productMethods, dangers, protections, associatedFiles);
+        return Objects.hash(materialId, materialName, englishName, nickName, englishNickName, relativeMolecularMass, structuralFormula, casRegistryNumber, materialDescription, materialAppearance, materialUsage, physicalProperty, chemicalProperty, analysisSpectrogram, inspectProjects, storageRequirements, productMethods, dangers, protections, associatedFiles);
+    }
+
+    @Override
+    public String toString() {
+        return "Material{" +
+                "materialId=" + materialId +
+                ", materialName='" + materialName + '\'' +
+                ", englishName='" + englishName + '\'' +
+                ", nickName='" + nickName + '\'' +
+                ", englishNickName='" + englishNickName + '\'' +
+                ", relativeMolecularMass='" + relativeMolecularMass + '\'' +
+                ", structuralFormula='" + structuralFormula + '\'' +
+                ", casRegistryNumber='" + casRegistryNumber + '\'' +
+                ", materialDescription='" + materialDescription + '\'' +
+                ", materialAppearance='" + materialAppearance + '\'' +
+                ", materialUsage=" + materialUsage +
+                ", physicalProperty=" + physicalProperty +
+                ", chemicalProperty=" + chemicalProperty +
+                ", analysisSpectrogram=" + analysisSpectrogram +
+                ", inspectProjects=" + inspectProjects +
+                ", storageRequirements=" + storageRequirements +
+                ", productMethods=" + productMethods +
+                ", dangers=" + dangers +
+                ", protections=" + protections +
+                ", associatedFiles=" + associatedFiles +
+                '}';
     }
 }

@@ -21,7 +21,7 @@ public interface InspectProjectRepository extends Neo4jRepository<InspectProject
     void delete(InspectProject project);
 
     @Override
-    void deleteById(Long aLong);
+    void deleteById(Long projectId);
 
     @Query("MATCH (n:InspectProject)<-[r:hasInspectProject]-(m:Material) where m.id = $materialId return n")
     Collection<InspectProject> findInspectProjectsByMaterialId(Long MaterialId);

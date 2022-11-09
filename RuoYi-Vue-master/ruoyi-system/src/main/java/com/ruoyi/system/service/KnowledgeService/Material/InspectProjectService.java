@@ -3,7 +3,7 @@ package com.ruoyi.system.service.KnowledgeService.Material;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.MaterialKnowledge.InspectProject;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.MaterialKnowledge.Interface.InspectProjectInterface;
 
-import java.util.List;
+import java.util.Collection;
 
 public interface InspectProjectService {
 
@@ -37,10 +37,11 @@ public interface InspectProjectService {
 
     /**
      * 根据材料获得关联检测项目
+     *
      * @param materialId
      * @return
      */
-    List<InspectProjectInterface> getInspectProjectsByMaterialId(Long materialId);
+    Collection<InspectProject> getInspectProjectsByMaterialId(Long materialId);
 
     /**
      * 删除检测项目

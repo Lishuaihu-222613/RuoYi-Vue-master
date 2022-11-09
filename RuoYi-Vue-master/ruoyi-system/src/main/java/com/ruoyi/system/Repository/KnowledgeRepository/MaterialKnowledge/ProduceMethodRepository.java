@@ -1,6 +1,7 @@
 package com.ruoyi.system.Repository.KnowledgeRepository.MaterialKnowledge;
 
 
+import com.ruoyi.system.domain.AssemblyPojo.Knowledge.MaterialKnowledge.Interface.ProduceMethodInterface;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.MaterialKnowledge.ProduceMethod;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
@@ -14,8 +15,11 @@ public interface ProduceMethodRepository extends Neo4jRepository<ProduceMethod,L
     @Override
     Optional<ProduceMethod> findById(Long methodId);
 
+    @Query("MATCH (N:Produce)")
+    Optional<ProduceMethodInterface> findProduceMethodInterfaceId(Long methodId);
+
     @Query("MATCH (n:ProduceMethod) where n.label = $methodName return n")
-    Collection<ProduceMethod> findByMethodName(String methodName);
+    Collection<ProduceMethodInterface> findByMethodName(String methodName);
 
     ProduceMethod save(ProduceMethod produceMethod);
 
@@ -26,5 +30,5 @@ public interface ProduceMethodRepository extends Neo4jRepository<ProduceMethod,L
     void deleteById(Long methodId);
 
     @Query("MATCH (n:ProduceMethod)<-[r:hasProduceMethod]-(m:Material) where m.id = $materialId return n")
-    Collection<ProduceMethod> findProduceMethodByMaterialId(@Param("materialId") Long materialId);
+    Collection<ProduceMethodInterface> findProduceMethodByMaterialId(@Param("materialId") Long materialId);
 }

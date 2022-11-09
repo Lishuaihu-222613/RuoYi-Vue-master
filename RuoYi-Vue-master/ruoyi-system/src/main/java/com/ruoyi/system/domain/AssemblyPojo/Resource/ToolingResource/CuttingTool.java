@@ -1,6 +1,6 @@
 package com.ruoyi.system.domain.AssemblyPojo.Resource.ToolingResource;
 
-import com.ruoyi.system.domain.AssemblyPojo.Knowledge.AssemblyMethod.AssemblyMethod;
+import com.ruoyi.system.domain.AssemblyPojo.Resource.AssemblyMethod.AssemblyMethod;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.MaterialKnowledge.Material;
 import org.springframework.data.neo4j.core.schema.Node;
 

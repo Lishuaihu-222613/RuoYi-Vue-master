@@ -14,7 +14,7 @@ public interface ProtectionRepository extends Neo4jRepository<Protection,Long> {
     Optional<Protection> findById(Long protectionId);
 
     @Query("MATCH (n:Protection) where n.label = $protectionName return n")
-    Optional<Protection> findByProtectionName(String protectionName);
+    Collection<Protection> findByProtectionName(String protectionName);
 
     Protection save(Protection protection);
 
@@ -25,5 +25,5 @@ public interface ProtectionRepository extends Neo4jRepository<Protection,Long> {
     void deleteById(Long protectionId);
 
     @Query("MATCH (n:Protection)<-[r:hasProtection]-(m:Material) where m.id = $materialId return n")
-    Collection<Protection> findProtectionsByMaterialId(@Param("materialId")String materialId);
+    Collection<Protection> findProtectionsByMaterialId(@Param("materialId")Long materialId);
 }

@@ -1,4 +1,4 @@
-package com.ruoyi.system.domain.AssemblyPojo.Knowledge.AssemblyMethod;
+package com.ruoyi.system.domain.AssemblyPojo.Resource.AssemblyMethod;
 
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.GeometricElement.GeometricElement;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.MaterialKnowledge.Material;

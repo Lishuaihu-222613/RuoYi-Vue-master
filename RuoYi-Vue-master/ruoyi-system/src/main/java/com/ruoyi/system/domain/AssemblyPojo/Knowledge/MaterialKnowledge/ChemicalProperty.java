@@ -1,9 +1,6 @@
 package com.ruoyi.system.domain.AssemblyPojo.Knowledge.MaterialKnowledge;
 
-import org.springframework.data.neo4j.core.schema.GeneratedValue;
-import org.springframework.data.neo4j.core.schema.Id;
-import org.springframework.data.neo4j.core.schema.Node;
-import org.springframework.data.neo4j.core.schema.Property;
+import org.springframework.data.neo4j.core.schema.*;
 
 import java.util.Map;
 import java.util.Objects;
@@ -18,7 +15,7 @@ public class ChemicalProperty {
     @Property(name = "label")
     private String propertyName;
 
-    @Property(name = "Attribute")
+    @CompositeProperty(prefix = "Attributes")
     private Map<String,String> propertyAttributes;
 
     public Long getPropertyId() {

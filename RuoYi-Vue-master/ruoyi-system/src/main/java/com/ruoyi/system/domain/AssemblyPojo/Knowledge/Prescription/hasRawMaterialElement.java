@@ -15,4 +15,6 @@ public class hasRawMaterialElement {
 
     @Property(name = "percentage")
     private double percentage;
+
+
 }

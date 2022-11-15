@@ -18,8 +18,8 @@ public class InspectProject {
     @Property(name = "label")
     private String projectName;
 
-    @Property(name = "ClassificationAndIndicators")
-    private Map<String, String> ClassificationAndIndicators;
+    @CompositeProperty(prefix = "Indicators")
+    private Map<String, String> classificationAndIndicators;
 
     @Relationship(type = "hasAssociatedFile" , direction = Relationship.Direction.OUTGOING)
     private Set<fileKnowledge> associatedFiles;
@@ -44,11 +44,11 @@ public class InspectProject {
     }
 
     public Map<String, String> getClassificationAndIndicators() {
-        return ClassificationAndIndicators;
+        return classificationAndIndicators;
     }
 
     public void setClassificationAndIndicators(Map<String, String> classificationAndIndicators) {
-        ClassificationAndIndicators = classificationAndIndicators;
+        this.classificationAndIndicators = classificationAndIndicators;
     }
 
     public Set<InspectionMethod> getInspectionMethods() {
@@ -73,7 +73,7 @@ public class InspectProject {
     public InspectProject(Long projectId, String projectName, Map<String, String> classificationAndIndicators, Set<fileKnowledge> associatedFiles, Set<InspectionMethod> inspectionMethods) {
         this.projectId = projectId;
         this.projectName = projectName;
-        ClassificationAndIndicators = classificationAndIndicators;
+        this.classificationAndIndicators = classificationAndIndicators;
         this.associatedFiles = associatedFiles;
         InspectionMethods = inspectionMethods;
     }
@@ -83,12 +83,12 @@ public class InspectProject {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         InspectProject that = (InspectProject) o;
-        return Objects.equals(projectId, that.projectId) && Objects.equals(projectName, that.projectName) && Objects.equals(ClassificationAndIndicators, that.ClassificationAndIndicators) && Objects.equals(associatedFiles, that.associatedFiles) && Objects.equals(InspectionMethods, that.InspectionMethods);
+        return Objects.equals(projectId, that.projectId) && Objects.equals(projectName, that.projectName) && Objects.equals(classificationAndIndicators, that.classificationAndIndicators) && Objects.equals(associatedFiles, that.associatedFiles) && Objects.equals(InspectionMethods, that.InspectionMethods);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(projectId, projectName, ClassificationAndIndicators, associatedFiles, InspectionMethods);
+        return Objects.hash(projectId, projectName, classificationAndIndicators, associatedFiles, InspectionMethods);
     }
 
     @Override
@@ -96,7 +96,7 @@ public class InspectProject {
         return "InspectProject{" +
                 "projectId=" + projectId +
                 ", projectName='" + projectName + '\'' +
-                ", ClassificationAndIndicators=" + ClassificationAndIndicators +
+                ", classificationAndIndicators=" + classificationAndIndicators +
                 ", associatedFiles=" + associatedFiles +
                 ", InspectionMethods=" + InspectionMethods +
                 '}';

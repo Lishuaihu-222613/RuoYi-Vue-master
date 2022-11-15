@@ -1,6 +1,6 @@
 package com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription;
 
-public class ChemicalStability {
+public class HeatStability {
 
     private Long stabilityId;
 
@@ -11,10 +11,6 @@ public class ChemicalStability {
     private String repetitionVieri;
 
     private String burstPoint;
-
-    private double impactSensitivity;
-
-    private double frictionSensitivity;
 
     private double explosionSensitivity;
 }

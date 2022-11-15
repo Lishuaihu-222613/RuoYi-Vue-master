@@ -35,6 +35,7 @@ public interface MaterialKnowledgeRepository extends Neo4jRepository<MaterialKno
     @Override
     List<MaterialKnowledge> findAll();
 
+    @Query("MATCH (n:MaterialKnowledge) return n")
     Collection<MaterialKnowledgeInterface> findAllMaterialKnowledgeInterfaces();
 
 }

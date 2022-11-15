@@ -44,26 +44,34 @@ public class Prescription {
     @Property(name = "PressureIndex")
     private double pressureIndex;
 
+    @Property(name = "DangerLevel")
+    private String dangerLevel;
+
     @Property(name = "BRPressureIndex")
     private double BRPressureIndex;
 
-    @Property(name = "BurningRate")
+    @CompositeProperty(prefix = "BurningRate")
     private Map<String,String> burningRate;
 
-    @Property(name = "BRTemperatureSensitivity")
+    @CompositeProperty(prefix = "BRTemperatureSensitivity")
     private Map<String,String> BRTemperatureSensitivity;
 
-    @Property(name = "PressureTemperatureSensitivity")
+    @CompositeProperty(prefix = "PressureTemperatureSensitivity")
     private Map<String,String> pressureTemperatureSensitivity;
 
-    @Property(name = "DangerLevel")
-    private String dangerLevel;
+    @CompositeProperty(prefix = "OtherProperty")
+    private Map<String,String> otherProperties;
+
 
     @DynamicLabels
     private Set<String> prescriptionLabels;
 
     @Relationship(type = "hasRawMaterialElement" , direction = Relationship.Direction.OUTGOING)
     private Set<hasRawMaterialElement> materialElements;
+
+    private EnergyProperty energyProperty;
+
+    private ForceProperty forceProperty;
 
     @Relationship(type = "hasUsage" , direction = Relationship.Direction.OUTGOING)
     private Set<AssemblyProduct> product;

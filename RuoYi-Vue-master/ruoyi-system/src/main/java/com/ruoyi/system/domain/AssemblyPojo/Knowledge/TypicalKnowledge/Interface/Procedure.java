@@ -1,4 +1,4 @@
 package com.ruoyi.system.domain.AssemblyPojo.Knowledge.TypicalKnowledge.Interface;
 
-public interface ProcedureRepository {
+public interface Procedure {
 }

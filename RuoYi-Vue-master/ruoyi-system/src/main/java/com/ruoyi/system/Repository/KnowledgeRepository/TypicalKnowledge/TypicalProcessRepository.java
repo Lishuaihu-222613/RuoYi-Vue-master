@@ -1,6 +1,6 @@
 package com.ruoyi.system.Repository.KnowledgeRepository.TypicalKnowledge;
 
-import com.ruoyi.system.domain.AssemblyPojo.Knowledge.TypicalKnowledge.Interface.ProcessRepository;
+import com.ruoyi.system.domain.AssemblyPojo.Knowledge.TypicalKnowledge.Interface.Process;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.TypicalKnowledge.TypicalProcess;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
@@ -25,5 +25,5 @@ public interface TypicalProcessRepository extends Neo4jRepository<TypicalProcess
     void deleteById(Long processId);
 
     @Query("MATCH (n:TypicalProcess)<-[r:hasAssociatedProcess]-(m:Method) where m.id = $methodId return n")
-    Collection<ProcessRepository> findProcessByMethodId(Long methodId);
+    Collection<Process> findProcessByMethodId(Long methodId);
 }

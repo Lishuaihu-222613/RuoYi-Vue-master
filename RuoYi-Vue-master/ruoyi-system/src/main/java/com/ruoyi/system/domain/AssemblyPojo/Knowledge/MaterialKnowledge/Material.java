@@ -18,35 +18,35 @@ public class Material {
     @Property(name = "label")
     private String materialName;
 
-    @Property(name = "EnglishName")
+    @Property(name = "英文名")
     private String englishName;
 
-    @Property(name = "NickName")
+    @Property(name = "别称")
     private String nickName;
 
-    @Property(name = "EnglishNickName")
+    @Property(name = "英文别称")
     private String englishNickName;
 
-    @Property(name = "RelativeMolecularMass")
+    @Property(name = "相对分子质量")
     private String relativeMolecularMass;
 
-    @Property(name = "StructuralFormula")
+    @Property(name = "化学结构式")
     private String structuralFormula;
 
-    @Property(name = "CAS-RegistryNumber")
+    @Property(name = "CAS-登记号")
     private String casRegistryNumber;
 
-    @Property(name = "Description")
+    @Property(name = "描述")
     private String materialDescription;
 
-    @Property(name = "Appearance")
+    @Property(name = "外观")
     private String materialAppearance;
 
-    @Property(name = "Usage")
+    @Property(name = "用途")
     private List<String> materialUsage;
 
     @DynamicLabels
-    private Set<String> prescriptionLabels;
+    private Set<String> materialLabels;
 
     @Relationship(type = "hasPhysicalProperty", direction = Relationship.Direction.OUTGOING)
     private PhysicalProperty physicalProperty;
@@ -163,12 +163,12 @@ public class Material {
         this.materialUsage = materialUsage;
     }
 
-    public Set<String> getPrescriptionLabels() {
-        return prescriptionLabels;
+    public Set<String> getMaterialLabels() {
+        return materialLabels;
     }
 
-    public void setPrescriptionLabels(Set<String> prescriptionLabels) {
-        this.prescriptionLabels = prescriptionLabels;
+    public void setMaterialLabels(Set<String> materialLabels) {
+        this.materialLabels = materialLabels;
     }
 
     public PhysicalProperty getPhysicalProperty() {
@@ -246,7 +246,7 @@ public class Material {
     public Material() {
     }
 
-    public Material(Long materialId, String materialName, String englishName, String nickName, String englishNickName, String relativeMolecularMass, String structuralFormula, String casRegistryNumber, String materialDescription, String materialAppearance, List<String> materialUsage, Set<String> prescriptionLabels, PhysicalProperty physicalProperty, ChemicalProperty chemicalProperty, Set<AnalysisSpectrogram> analysisSpectrogram, Set<InspectProject> inspectProjects, Set<StorageRequirement> storageRequirements, Set<ProduceMethod> productMethods, Set<Danger> dangers, Set<Protection> protections, Set<fileKnowledge> associatedFiles) {
+    public Material(Long materialId, String materialName, String englishName, String nickName, String englishNickName, String relativeMolecularMass, String structuralFormula, String casRegistryNumber, String materialDescription, String materialAppearance, List<String> materialUsage, Set<String> materialLabels, PhysicalProperty physicalProperty, ChemicalProperty chemicalProperty, Set<AnalysisSpectrogram> analysisSpectrogram, Set<InspectProject> inspectProjects, Set<StorageRequirement> storageRequirements, Set<ProduceMethod> productMethods, Set<Danger> dangers, Set<Protection> protections, Set<fileKnowledge> associatedFiles) {
         this.materialId = materialId;
         this.materialName = materialName;
         this.englishName = englishName;
@@ -258,7 +258,7 @@ public class Material {
         this.materialDescription = materialDescription;
         this.materialAppearance = materialAppearance;
         this.materialUsage = materialUsage;
-        this.prescriptionLabels = prescriptionLabels;
+        this.materialLabels = materialLabels;
         this.physicalProperty = physicalProperty;
         this.chemicalProperty = chemicalProperty;
         this.analysisSpectrogram = analysisSpectrogram;
@@ -275,12 +275,12 @@ public class Material {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Material material = (Material) o;
-        return Objects.equals(materialId, material.materialId) && Objects.equals(materialName, material.materialName) && Objects.equals(englishName, material.englishName) && Objects.equals(nickName, material.nickName) && Objects.equals(englishNickName, material.englishNickName) && Objects.equals(relativeMolecularMass, material.relativeMolecularMass) && Objects.equals(structuralFormula, material.structuralFormula) && Objects.equals(casRegistryNumber, material.casRegistryNumber) && Objects.equals(materialDescription, material.materialDescription) && Objects.equals(materialAppearance, material.materialAppearance) && Objects.equals(materialUsage, material.materialUsage) && Objects.equals(prescriptionLabels, material.prescriptionLabels) && Objects.equals(physicalProperty, material.physicalProperty) && Objects.equals(chemicalProperty, material.chemicalProperty) && Objects.equals(analysisSpectrogram, material.analysisSpectrogram) && Objects.equals(inspectProjects, material.inspectProjects) && Objects.equals(storageRequirements, material.storageRequirements) && Objects.equals(productMethods, material.productMethods) && Objects.equals(dangers, material.dangers) && Objects.equals(protections, material.protections) && Objects.equals(associatedFiles, material.associatedFiles);
+        return Objects.equals(materialId, material.materialId) && Objects.equals(materialName, material.materialName) && Objects.equals(englishName, material.englishName) && Objects.equals(nickName, material.nickName) && Objects.equals(englishNickName, material.englishNickName) && Objects.equals(relativeMolecularMass, material.relativeMolecularMass) && Objects.equals(structuralFormula, material.structuralFormula) && Objects.equals(casRegistryNumber, material.casRegistryNumber) && Objects.equals(materialDescription, material.materialDescription) && Objects.equals(materialAppearance, material.materialAppearance) && Objects.equals(materialUsage, material.materialUsage) && Objects.equals(materialLabels, material.materialLabels) && Objects.equals(physicalProperty, material.physicalProperty) && Objects.equals(chemicalProperty, material.chemicalProperty) && Objects.equals(analysisSpectrogram, material.analysisSpectrogram) && Objects.equals(inspectProjects, material.inspectProjects) && Objects.equals(storageRequirements, material.storageRequirements) && Objects.equals(productMethods, material.productMethods) && Objects.equals(dangers, material.dangers) && Objects.equals(protections, material.protections) && Objects.equals(associatedFiles, material.associatedFiles);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(materialId, materialName, englishName, nickName, englishNickName, relativeMolecularMass, structuralFormula, casRegistryNumber, materialDescription, materialAppearance, materialUsage, prescriptionLabels, physicalProperty, chemicalProperty, analysisSpectrogram, inspectProjects, storageRequirements, productMethods, dangers, protections, associatedFiles);
+        return Objects.hash(materialId, materialName, englishName, nickName, englishNickName, relativeMolecularMass, structuralFormula, casRegistryNumber, materialDescription, materialAppearance, materialUsage, materialLabels, physicalProperty, chemicalProperty, analysisSpectrogram, inspectProjects, storageRequirements, productMethods, dangers, protections, associatedFiles);
     }
 
     @Override
@@ -297,7 +297,7 @@ public class Material {
                 ", materialDescription='" + materialDescription + '\'' +
                 ", materialAppearance='" + materialAppearance + '\'' +
                 ", materialUsage=" + materialUsage +
-                ", prescriptionLabels=" + prescriptionLabels +
+                ", materialLabels=" + materialLabels +
                 ", physicalProperty=" + physicalProperty +
                 ", chemicalProperty=" + chemicalProperty +
                 ", analysisSpectrogram=" + analysisSpectrogram +

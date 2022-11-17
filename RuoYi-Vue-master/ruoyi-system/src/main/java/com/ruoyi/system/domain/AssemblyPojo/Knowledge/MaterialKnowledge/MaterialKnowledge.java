@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-@Node("MaterialKnowledge")
+@Node("推进剂材料知识")
 public class MaterialKnowledge {
 
     @Id
@@ -16,16 +16,16 @@ public class MaterialKnowledge {
     @Property(name = "label")
     private String MKName;
 
-    @Property(name = "MaterialType")
+    @Property(name = "材料类别")
     private String materialType;
 
-    @Property(name = "Description")
+    @Property(name = "描述")
     private String materialDescription;
 
-    @Property(name = "materialFunction")
+    @Property(name = "材料功能")
     private List<String> materialFunctions;
 
-    @Property(name = "materialRequirement")
+    @Property(name = "材料要求")
     private List<String> materialRequirements;
 
     @Relationship(type = "hasCommonMaterial" , direction = Relationship.Direction.OUTGOING)

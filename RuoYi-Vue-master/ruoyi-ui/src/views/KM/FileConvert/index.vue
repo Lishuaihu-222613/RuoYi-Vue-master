@@ -87,7 +87,7 @@ export default {
         // 菜单选项
         menulists: []
       },
-      graphEvent : {},
+      graphEvent: {},
       filterText: '',
       show3: false,
       treeData: [{
@@ -305,7 +305,7 @@ export default {
       })
     },
     //删除关系
-    deleteEdge(){
+    deleteEdge() {
       let obj = {
         domain: this.graph.get('domain'),
         edgeId: this.graphEvent.item._cfg.id
@@ -327,14 +327,14 @@ export default {
       this.sidebarDrawer = true
     },
     //修改关系
-    updateEdge(){
+    updateEdge() {
       this.selectedGraphItem.Node = null
       this.selectedGraphItem.Edge = this.graphEvent.item.getModel()
       console.log(this.selectedGraphItem)
       this.sidebarDrawer = true
     },
     //模式匹配
-    modeMatch(){
+    modeMatch() {
       const { GADDI } = G6.Algorithm
       const resultMatches = GADDI(this.graphs, this.patternData, true, undefined, undefined, 'cluster', 'cluster')
       resultMatches.forEach((match, i) => {
@@ -350,7 +350,7 @@ export default {
       })
     },
     //最短路查找
-    findShortestPath(){
+    findShortestPath() {
       let selectedNodes = this.graph.findAllByState('node', 'selected')
       let { findShortestPath } = G6.Algorithm
       // path 为其中一条最短路径，allPath 为所有的最短路径
@@ -386,30 +386,30 @@ export default {
       })
     },
     //查看相关文件
-    openFile(){
+    openFile() {
       let url = this.graphEvent.item.getModel().modelLocation
       window.open(url)
     },
     //展开节点
-    expandNode(){
-     let params = {
-       domain:"",
-       nodeId:this.graphEvent.item._cfg.id
-     }
-     kgBuilderApi.getMoreRelatedNode(params).then(result => {
-       if (result.code === 200) {
-         alert('节点展开成功！')
-         for (let item of result.data.nodes) {
-           this.graph.addItem( 'node',item)
-         }
-         for (let item of result.data.edges) {
-           this.graph.addItem( 'edge',item)
-         }
-         this.graph.layout();
-       } else {
-         alert('节点展开失败！')
-       }
-     })
+    expandNode() {
+      let params = {
+        domain: '',
+        nodeId: this.graphEvent.item._cfg.id
+      }
+      kgBuilderApi.getMoreRelatedNode(params).then(result => {
+        if (result.code === 200) {
+          alert('节点展开成功！')
+          for (let item of result.data.nodes) {
+            this.graph.addItem('node', item)
+          }
+          for (let item of result.data.edges) {
+            this.graph.addItem('edge', item)
+          }
+          this.graph.layout()
+        } else {
+          alert('节点展开失败！')
+        }
+      })
     },
     filterNode(value, data) {
       if (!value) return true
@@ -562,12 +562,18 @@ export default {
         offsetY: 20,
         getContent(e) {
           const outDiv = document.createElement('div')
-          outDiv.style.width = '180px'
+          outDiv.style.width = '300px'
+          const model = e.item.getModel()
+          let li = ""
+          for (let [key, value] of Object.entries(model)) {
+            if (key != 'labelCfg' && key != 'style' && key != 'type' && key != 'x' && key != 'y' && key != 'size' && key != 'anchorPoints'&& key != 'linkPoints'
+              && key != 'stateStyles'&& key != 'id'&& key != 'layoutOrder') {
+              li += "<li>" + key + '：' + value + '<li>'
+            }
+          }
           outDiv.innerHTML = `
       <h4>元素信息</h4>
-      <ul>
-        <li>Label: ${e.item.getModel().label || e.item.getModel().id}</li>
-      </ul>`
+      <ul>`+li+`</ul>`
           return outDiv
         },
         itemTypes: ['node', 'edge']
@@ -595,7 +601,7 @@ export default {
           alpha: 0.3,               // 可选
           alphaDecay: 0.028,        // 可选
           alphaMin: 0.01,           // 可选
-          forceSimulation: null,    // 可选
+          forceSimulation: null    // 可选
         },
         modes: {
           default: [

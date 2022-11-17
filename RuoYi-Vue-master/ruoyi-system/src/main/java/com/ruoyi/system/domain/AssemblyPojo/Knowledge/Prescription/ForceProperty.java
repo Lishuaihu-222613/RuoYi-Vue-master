@@ -1,27 +1,41 @@
 package com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription;
 
+import org.springframework.data.neo4j.core.schema.*;
+
 import java.util.Map;
 
+@Node("力学性质")
 public class ForceProperty {
 
+    @Id
+    @GeneratedValue
     private Long propertyId;
 
+    @Property(name = "label")
     private String propertyName;
 
+    @Property(name = "压应力")
     private String stress;
 
+    @Property(name = "拉应力")
     private String strain;
 
+    @Property(name = "弹性模量")
     private String elasticModulus;
 
-    private String finalViscosity;
+    @CompositeProperty(prefix = "料浆黏度")
+    private Map<String, String> Viscosity;
 
+    @CompositeProperty(prefix = "抗拉强度")
     private Map<String, String> tensileStrength;
 
+    @CompositeProperty(prefix = "抗压强度")
     private Map<String,String> compressiveStrength;
 
-    private Map<String,String> linearExpansionCoefficient;
-
+    @CompositeProperty(prefix = "延伸率")
     private Map<String,String> elongation;
+
+    @CompositeProperty(prefix = "其他属性")
+    private Map<String,String> otherProperty;
 
 }

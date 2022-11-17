@@ -7,7 +7,7 @@ import org.springframework.data.neo4j.core.schema.*;
 import java.util.Map;
 import java.util.Set;
 
-@Node("Prescription")
+@Node("推进剂配方")
 public class Prescription {
 
     @Id
@@ -17,69 +17,77 @@ public class Prescription {
     @Property(name = "label")
     private String prescriptionName;
 
-    @Property(name = "Description")
+    @Property(name = "描述")
     private String prescriptionDescription;
 
-    @Property(name = "Density")
+    @Property(name = "密度")
     private String density;
 
-    @Property(name = "oxygenFuelRatio")
+    @Property(name = "氧燃比")
     private double oxygenFuelRatio;
 
-    @Property(name = "ExplosiveHeat")
+    @Property(name = "爆热")
     private String explosiveHeat;
 
-    @Property(name = "SpecificCapacity")
+    @Property(name = "比容")
     private String specificCapacity;
 
-    @Property(name = "SlurryViscosity")
-    private String slurryViscosity;
-
-    @Property(name = "SpecificImpulse")
-    private String specificImpulse;
-
-    @Property(name = "DensitySpecificImpulse")
-    private String densitySpecificImpulse;
-
-    @Property(name = "PressureIndex")
+    @Property(name = "压力指数")
     private double pressureIndex;
 
-    @Property(name = "DangerLevel")
+    @Property(name = "危险等级")
     private String dangerLevel;
 
-    @Property(name = "BRPressureIndex")
+    @Property(name = "燃速压力指数")
     private double BRPressureIndex;
 
-    @CompositeProperty(prefix = "BurningRate")
+    @CompositeProperty(prefix = "固化时间")
+    private Map<String,String> curingTime;
+
+    @CompositeProperty(prefix = "比冲")
+    private Map<String,String> specificImpulse;
+
+    @CompositeProperty(prefix = "燃速")
     private Map<String,String> burningRate;
 
-    @CompositeProperty(prefix = "BRTemperatureSensitivity")
+    @CompositeProperty(prefix = "燃速温度指数")
     private Map<String,String> BRTemperatureSensitivity;
 
-    @CompositeProperty(prefix = "PressureTemperatureSensitivity")
+    @CompositeProperty(prefix = "压力温度指数")
     private Map<String,String> pressureTemperatureSensitivity;
 
-    @CompositeProperty(prefix = "OtherProperty")
-    private Map<String,String> otherProperties;
-
+    @CompositeProperty(prefix = "其他属性")
+    private Map<String,String> otherProperty;
 
     @DynamicLabels
     private Set<String> prescriptionLabels;
 
-    @Relationship(type = "hasRawMaterialElement" , direction = Relationship.Direction.OUTGOING)
+    @Relationship(type = "hasMaterialElement" , direction = Relationship.Direction.OUTGOING)
     private Set<hasRawMaterialElement> materialElements;
 
+    @Relationship(type = "hasEnergyProperty" , direction = Relationship.Direction.OUTGOING)
     private EnergyProperty energyProperty;
 
+    @Relationship(type = "hasForceProperty" , direction = Relationship.Direction.OUTGOING)
     private ForceProperty forceProperty;
+
+    @Relationship(type = "hasHeatStability" , direction = Relationship.Direction.OUTGOING)
+    private HeatStability heatStability;
+
+    @Relationship(type = "hasImpactStability" , direction = Relationship.Direction.OUTGOING)
+    private ImpactStability impactStability;
+
+    @Relationship(type = "hasRadioStability" , direction = Relationship.Direction.OUTGOING)
+    private RadioStability radioStability;
+
+    @Relationship(type = "hasExplosionStability" , direction = Relationship.Direction.OUTGOING)
+    private ExplosionStability explosionStability;
 
     @Relationship(type = "hasUsage" , direction = Relationship.Direction.OUTGOING)
     private Set<AssemblyProduct> product;
 
     @Relationship(type = "hasTypicalProcess" , direction = Relationship.Direction.OUTGOING)
     private Set<TypicalProcess> typicalProcesses;
-
-
 
 
 

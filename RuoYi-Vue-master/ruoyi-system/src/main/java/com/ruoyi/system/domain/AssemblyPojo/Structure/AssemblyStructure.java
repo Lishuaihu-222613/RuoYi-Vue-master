@@ -12,7 +12,7 @@ import java.util.Objects;
 import java.util.Set;
 
 
-@Node()
+@Node("Structure")
 public abstract class AssemblyStructure {
 
     @Id

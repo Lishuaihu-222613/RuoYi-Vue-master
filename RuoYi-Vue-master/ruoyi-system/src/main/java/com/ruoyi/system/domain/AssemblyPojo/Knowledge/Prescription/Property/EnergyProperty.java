@@ -1,10 +1,10 @@
-package com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription;
+package com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.Property;
 
 import org.springframework.data.neo4j.core.schema.*;
 
 import java.util.Map;
 
-@Node("能量特性热力学计算结果")
+@Node("能量性能")
 public class EnergyProperty {
 
     @Id
@@ -14,8 +14,17 @@ public class EnergyProperty {
     @Property(name = "label")
     private String propertyName;
 
-    @Property(name = "理论比冲")
-    private String theoreticalSpecificImpulse;
+    @Property(name = "爆热")
+    private String explosiveHeat;
+
+    @Property(name = "爆温")
+    private String explosiveTemperature;
+
+    @Property(name = "比容")
+    private String specificCapacity;
+
+    @CompositeProperty(prefix = "比冲")
+    private Map<String,String> specificImpulse;
 
     @Property(name = "特征速度")
     private String characteristicVelocity;
@@ -28,6 +37,9 @@ public class EnergyProperty {
 
     @Property(name = "计算密度")
     private String calculatedDensity;
+
+    @Property(name = "火药力")
+    private String gunpowderPower;
 
     @CompositeProperty(prefix = "其他属性")
     private Map<String,String> otherProperty;

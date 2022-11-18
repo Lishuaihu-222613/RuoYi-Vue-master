@@ -1,10 +1,10 @@
-package com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription;
+package com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.Property;
 
 import org.springframework.data.neo4j.core.schema.*;
 
 import java.util.Map;
 
-@Node("力学性质")
+@Node("力学性能")
 public class ForceProperty {
 
     @Id
@@ -14,10 +14,10 @@ public class ForceProperty {
     @Property(name = "label")
     private String propertyName;
 
-    @Property(name = "压应力")
+    @Property(name = "应力")
     private String stress;
 
-    @Property(name = "拉应力")
+    @Property(name = "应变")
     private String strain;
 
     @Property(name = "弹性模量")

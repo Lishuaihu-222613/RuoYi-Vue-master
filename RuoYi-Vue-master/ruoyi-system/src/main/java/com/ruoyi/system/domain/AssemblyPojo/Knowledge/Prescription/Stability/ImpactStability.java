@@ -1,4 +1,4 @@
-package com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription;
+package com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.Stability;
 
 import org.springframework.data.neo4j.core.schema.*;
 

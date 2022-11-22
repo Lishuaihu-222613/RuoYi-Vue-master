@@ -21,10 +21,10 @@ public interface MaterialRepository extends Neo4jRepository<Material,Long> {
 
     void deleteById(Long materialId);
 
-    @Query("MATCH (n:Material) where n.name = materialName return n")
+    @Query("MATCH (n:Material) where n.name = :materialName return n")
     Optional<Material> findByMaterialName(@Param("materialName") String materialName);
 
-    @Query("MATCH (n:Material)<-[r:hasCommonMaterial]-(m:MaterialKnowledge) where m.id = $MKId return n")
+    @Query("MATCH (n:Material)<-[r:hasCommonMaterial]-(m:MaterialKnowledge) where m.id = :MKId return n")
     Collection<MaterialInterface> findMaterialsByMKId(Long MKId);
 
     @Query("MATCH (n:Material) return n")

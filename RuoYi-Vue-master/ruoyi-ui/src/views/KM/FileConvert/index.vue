@@ -567,7 +567,7 @@ export default {
           let li = ""
           for (let [key, value] of Object.entries(model)) {
             if (key != 'labelCfg' && key != 'style' && key != 'type' && key != 'x' && key != 'y' && key != 'size' && key != 'anchorPoints'&& key != 'linkPoints'
-              && key != 'stateStyles'&& key != 'id'&& key != 'layoutOrder') {
+              && key != 'stateStyles'&& key != 'id'&& key != 'layoutOrder' && key != 'label') {
               li += "<li>" + key + '：' + value + '<li>'
             }
           }

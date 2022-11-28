@@ -32,7 +32,7 @@ public interface CombustionPropertyService {
      * @param prescriptionId
      * @return
      */
-    Collection<CombustionProperty> getCombustionPropertyByPrescriptionId(Long prescriptionId);
+    CombustionProperty getCombustionPropertyByPrescriptionId(Long prescriptionId);
 
     /**
      * 删除节点

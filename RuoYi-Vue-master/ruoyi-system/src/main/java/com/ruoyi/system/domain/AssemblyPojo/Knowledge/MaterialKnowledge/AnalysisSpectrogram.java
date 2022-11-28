@@ -7,7 +7,7 @@ import org.springframework.data.neo4j.core.schema.Property;
 
 import java.util.Objects;
 
-@Node("AnalysisSpectrogram")
+@Node("理化分析谱图")
 public class AnalysisSpectrogram {
 
     @Id
@@ -17,25 +17,25 @@ public class AnalysisSpectrogram {
     @Property(name = "label")
     private String spectrogramName;
 
-    @Property(name = "InfraredSpectrum")
+    @Property(name = "红外光谱图")
     private String infraredSpectrumUrl;
 
-    @Property(name = "ThermalSpectrogram")
+    @Property(name = "热分析谱图")
     private String thermalSpectrogramUrl;
 
-    @Property(name = "NmrSpectrum")
+    @Property(name = "核磁共振谱图")
     private String nmrSpectrumUrl;
 
-    @Property(name = "XraySpectrum")
+    @Property(name = "X射线衍射谱图")
     private String XraySpectrumUrl;
 
-    @Property(name = "RamanSpectrum")
+    @Property(name = "拉曼光谱图")
     private String ramanSpectrumUrl;
 
-    @Property(name = "UltravioletSpectrum")
+    @Property(name = "紫外光谱图")
     private String ultravioletSpectrumUrl;
 
-    @Property(name = "MassSpectrum")
+    @Property(name = "质谱图")
     private String massSpectrumUrl;
 
     public Long getSpectrogramId() {

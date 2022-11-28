@@ -6,14 +6,7 @@ import java.util.Map;
 import java.util.Objects;
 
 @Node("燃烧性能")
-public class CombustionProperty {
-
-    @Id
-    @GeneratedValue
-    private Long propertyId;
-
-    @Property("label")
-    private String propertyName;
+public class CombustionProperty extends PrescriptionProperty{
 
     @Property(name = "燃速压力指数")
     private double BRPressureIndex;
@@ -26,25 +19,6 @@ public class CombustionProperty {
 
     @CompositeProperty(prefix = "压力温度指数")
     private Map<String,String> pressureTemperatureSensitivity;
-
-    @CompositeProperty(prefix = "其他属性")
-    private Map<String,String> otherProperty;
-
-    public Long getPropertyId() {
-        return propertyId;
-    }
-
-    public void setPropertyId(Long propertyId) {
-        this.propertyId = propertyId;
-    }
-
-    public String getPropertyName() {
-        return propertyName;
-    }
-
-    public void setPropertyName(String propertyName) {
-        this.propertyName = propertyName;
-    }
 
     public double getBRPressureIndex() {
         return BRPressureIndex;
@@ -78,50 +52,38 @@ public class CombustionProperty {
         this.pressureTemperatureSensitivity = pressureTemperatureSensitivity;
     }
 
-    public Map<String, String> getOtherProperty() {
-        return otherProperty;
-    }
-
-    public void setOtherProperty(Map<String, String> otherProperty) {
-        this.otherProperty = otherProperty;
-    }
-
     public CombustionProperty() {
     }
 
-    public CombustionProperty(Long propertyId, String propertyName, double BRPressureIndex, Map<String, String> burningRate, Map<String, String> BRTemperatureSensitivity, Map<String, String> pressureTemperatureSensitivity, Map<String, String> otherProperty) {
-        this.propertyId = propertyId;
-        this.propertyName = propertyName;
+    public CombustionProperty(Long propertyId, String propertyName, Map<String, String> otherProperty, double BRPressureIndex, Map<String, String> burningRate, Map<String, String> BRTemperatureSensitivity, Map<String, String> pressureTemperatureSensitivity) {
+        super(propertyId, propertyName, otherProperty);
         this.BRPressureIndex = BRPressureIndex;
         this.burningRate = burningRate;
         this.BRTemperatureSensitivity = BRTemperatureSensitivity;
         this.pressureTemperatureSensitivity = pressureTemperatureSensitivity;
-        this.otherProperty = otherProperty;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         CombustionProperty that = (CombustionProperty) o;
-        return Double.compare(that.BRPressureIndex, BRPressureIndex) == 0 && Objects.equals(propertyId, that.propertyId) && Objects.equals(propertyName, that.propertyName) && Objects.equals(burningRate, that.burningRate) && Objects.equals(BRTemperatureSensitivity, that.BRTemperatureSensitivity) && Objects.equals(pressureTemperatureSensitivity, that.pressureTemperatureSensitivity) && Objects.equals(otherProperty, that.otherProperty);
+        return Double.compare(that.BRPressureIndex, BRPressureIndex) == 0 && Objects.equals(burningRate, that.burningRate) && Objects.equals(BRTemperatureSensitivity, that.BRTemperatureSensitivity) && Objects.equals(pressureTemperatureSensitivity, that.pressureTemperatureSensitivity);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(propertyId, propertyName, BRPressureIndex, burningRate, BRTemperatureSensitivity, pressureTemperatureSensitivity, otherProperty);
+        return Objects.hash(super.hashCode(), BRPressureIndex, burningRate, BRTemperatureSensitivity, pressureTemperatureSensitivity);
     }
 
     @Override
     public String toString() {
         return "CombustionProperty{" +
-                "propertyId=" + propertyId +
-                ", propertyName='" + propertyName + '\'' +
-                ", BRPressureIndex=" + BRPressureIndex +
+                "BRPressureIndex=" + BRPressureIndex +
                 ", burningRate=" + burningRate +
                 ", BRTemperatureSensitivity=" + BRTemperatureSensitivity +
                 ", pressureTemperatureSensitivity=" + pressureTemperatureSensitivity +
-                ", otherProperty=" + otherProperty +
-                '}';
+                "} " + super.toString();
     }
 }

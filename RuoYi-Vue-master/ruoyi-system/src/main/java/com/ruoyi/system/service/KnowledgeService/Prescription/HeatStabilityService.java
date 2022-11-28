@@ -32,7 +32,7 @@ public interface HeatStabilityService {
      * @param prescriptionId
      * @return
      */
-    Collection<HeatStability> getHeatStabilityByPrescriptionId(Long prescriptionId);
+    HeatStability getHeatStabilityByPrescriptionId(Long prescriptionId);
 
     /**
      *

@@ -5,6 +5,7 @@ import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,5 +30,5 @@ public interface HeatStabilityRepository extends Neo4jRepository<HeatStability,L
     Optional<HeatStability> findHeatStabilityByPrescription(@Param("prescriptionId") Long prescriptionId);
 
     @Query("MATCH (n:热敏感性) where n.name = :stabilityName return n")
-    Optional<HeatStability> findHeatStabilityByName(@Param("stabilityName")String stabilityName);
+    Collection<HeatStability> findHeatStabilityByName(@Param("stabilityName")String stabilityName);
 }

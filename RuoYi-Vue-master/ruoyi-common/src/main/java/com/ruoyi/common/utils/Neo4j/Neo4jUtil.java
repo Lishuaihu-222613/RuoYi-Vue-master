@@ -312,6 +312,7 @@ public class Neo4jUtil implements AutoCloseable{
                             Relationship rship = pair.value().asRelationship();
 
                             String uuid = String.valueOf(rship.id());
+                            String label = String.valueOf(rship.type());
                             String sourceId = String.valueOf(rship.startNodeId());
                             String targetId = String.valueOf(rship.endNodeId());
 
@@ -321,6 +322,7 @@ public class Neo4jUtil implements AutoCloseable{
                                 rShips.put(key, JSON.toJSON(entry.getValue()));
                             }
                             rShips.put("id", uuid);
+                            rShips.put("label",label);
                             rShips.put("source", sourceId);
                             rShips.put("target", targetId);
 

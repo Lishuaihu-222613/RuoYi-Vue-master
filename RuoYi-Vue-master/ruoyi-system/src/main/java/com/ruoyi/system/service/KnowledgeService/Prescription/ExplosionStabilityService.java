@@ -32,7 +32,7 @@ public interface ExplosionStabilityService {
      * @param prescriptionId
      * @return
      */
-    Collection<ExplosionStability> getExplosionStabilityByPrescription(Long prescriptionId);
+    ExplosionStability getExplosionStabilityByPrescription(Long prescriptionId);
 
     /**
      *

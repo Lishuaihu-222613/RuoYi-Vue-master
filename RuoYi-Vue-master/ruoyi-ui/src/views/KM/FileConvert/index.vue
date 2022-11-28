@@ -566,13 +566,15 @@ export default {
           const model = e.item.getModel()
           let li = ""
           for (let [key, value] of Object.entries(model)) {
-            if (key != 'labelCfg' && key != 'style' && key != 'type' && key != 'x' && key != 'y' && key != 'size' && key != 'anchorPoints'&& key != 'linkPoints'
-              && key != 'stateStyles'&& key != 'id'&& key != 'layoutOrder' && key != 'label') {
+            if (key != 'labelCfg' && key != 'style' && key != 'type' && key != 'x' && key != 'y'
+              && key != 'size' && key != 'anchorPoints'&& key != 'linkPoints'
+              && key != 'stateStyles'&& key != 'id'&& key != 'layoutOrder' && key != 'label'&& key != 'weight'
+              && key != 'degree' && key != 'source' && key != 'target' && key != 'startPoint' && key != 'endPoint' ) {
               li += "<li>" + key + '：' + value + '<li>'
             }
           }
           outDiv.innerHTML = `
-      <h4>元素信息</h4>
+      <h4>${e.item.getModel().label || e.item.getModel().id}</h4>
       <ul>`+li+`</ul>`
           return outDiv
         },

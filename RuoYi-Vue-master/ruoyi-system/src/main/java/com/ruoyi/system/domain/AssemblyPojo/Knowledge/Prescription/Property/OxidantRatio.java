@@ -6,14 +6,7 @@ import java.util.Map;
 import java.util.Objects;
 
 @Node("氧化剂比例")
-public class OxidantRatio {
-
-    @Id
-    @GeneratedValue
-    private Long propertyId;
-
-    @Property("label")
-    private String propertyName;
+public class OxidantRatio extends PrescriptionProperty{
 
     @Property(name = "氧燃比")
     private double oxygenFuelRatio;
@@ -26,25 +19,6 @@ public class OxidantRatio {
 
     @Property(name = "氧含量")
     private String oxygenContent;
-
-    @CompositeProperty(prefix = "其他属性")
-    private Map<String,String> otherProperty;
-
-    public Long getPropertyId() {
-        return propertyId;
-    }
-
-    public void setPropertyId(Long propertyId) {
-        this.propertyId = propertyId;
-    }
-
-    public String getPropertyName() {
-        return propertyName;
-    }
-
-    public void setPropertyName(String propertyName) {
-        this.propertyName = propertyName;
-    }
 
     public double getOxygenFuelRatio() {
         return oxygenFuelRatio;
@@ -78,50 +52,38 @@ public class OxidantRatio {
         this.oxygenContent = oxygenContent;
     }
 
-    public Map<String, String> getOtherProperty() {
-        return otherProperty;
-    }
-
-    public void setOtherProperty(Map<String, String> otherProperty) {
-        this.otherProperty = otherProperty;
-    }
-
     public OxidantRatio() {
     }
 
-    public OxidantRatio(Long propertyId, String propertyName, double oxygenFuelRatio, String oxygenCoefficient, String oxygenBalance, String oxygenContent, Map<String, String> otherProperty) {
-        this.propertyId = propertyId;
-        this.propertyName = propertyName;
+    public OxidantRatio(Long propertyId, String propertyName, Map<String, String> otherProperty, double oxygenFuelRatio, String oxygenCoefficient, String oxygenBalance, String oxygenContent) {
+        super(propertyId, propertyName, otherProperty);
         this.oxygenFuelRatio = oxygenFuelRatio;
         this.oxygenCoefficient = oxygenCoefficient;
         this.oxygenBalance = oxygenBalance;
         this.oxygenContent = oxygenContent;
-        this.otherProperty = otherProperty;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         OxidantRatio that = (OxidantRatio) o;
-        return Double.compare(that.oxygenFuelRatio, oxygenFuelRatio) == 0 && Objects.equals(propertyId, that.propertyId) && Objects.equals(propertyName, that.propertyName) && Objects.equals(oxygenCoefficient, that.oxygenCoefficient) && Objects.equals(oxygenBalance, that.oxygenBalance) && Objects.equals(oxygenContent, that.oxygenContent) && Objects.equals(otherProperty, that.otherProperty);
+        return Double.compare(that.oxygenFuelRatio, oxygenFuelRatio) == 0 && Objects.equals(oxygenCoefficient, that.oxygenCoefficient) && Objects.equals(oxygenBalance, that.oxygenBalance) && Objects.equals(oxygenContent, that.oxygenContent);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(propertyId, propertyName, oxygenFuelRatio, oxygenCoefficient, oxygenBalance, oxygenContent, otherProperty);
+        return Objects.hash(super.hashCode(), oxygenFuelRatio, oxygenCoefficient, oxygenBalance, oxygenContent);
     }
 
     @Override
     public String toString() {
         return "OxidantRatio{" +
-                "propertyId=" + propertyId +
-                ", propertyName='" + propertyName + '\'' +
-                ", oxygenFuelRatio=" + oxygenFuelRatio +
+                "oxygenFuelRatio=" + oxygenFuelRatio +
                 ", oxygenCoefficient='" + oxygenCoefficient + '\'' +
                 ", oxygenBalance='" + oxygenBalance + '\'' +
                 ", oxygenContent='" + oxygenContent + '\'' +
-                ", otherProperty=" + otherProperty +
-                '}';
+                "} " + super.toString();
     }
 }

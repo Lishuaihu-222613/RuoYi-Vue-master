@@ -7,7 +7,7 @@ import org.springframework.data.neo4j.core.schema.Property;
 
 import java.util.Objects;
 
-@Node("Protection")
+@Node("安全要求")
 public class Protection {
 
     @Id
@@ -17,7 +17,7 @@ public class Protection {
     @Property(name = "label")
     private String protectionName;
 
-    @Property(name = "Description")
+    @Property(name = "描述")
     private String protectionDescription;
 
     public Long getProtectionId() {

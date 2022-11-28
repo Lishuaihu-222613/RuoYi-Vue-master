@@ -6,14 +6,7 @@ import java.util.Map;
 import java.util.Objects;
 
 @Node("能量性能")
-public class EnergyProperty {
-
-    @Id
-    @GeneratedValue
-    private Long propertyId;
-
-    @Property(name = "label")
-    private String propertyName;
+public class EnergyProperty extends PrescriptionProperty{
 
     @Property(name = "爆热")
     private String explosiveHeat;
@@ -41,25 +34,6 @@ public class EnergyProperty {
 
     @Property(name = "火药力")
     private String gunpowderPower;
-
-    @CompositeProperty(prefix = "其他属性")
-    private Map<String,String> otherProperty;
-
-    public Long getPropertyId() {
-        return propertyId;
-    }
-
-    public void setPropertyId(Long propertyId) {
-        this.propertyId = propertyId;
-    }
-
-    public String getPropertyName() {
-        return propertyName;
-    }
-
-    public void setPropertyName(String propertyName) {
-        this.propertyName = propertyName;
-    }
 
     public String getExplosiveHeat() {
         return explosiveHeat;
@@ -133,20 +107,11 @@ public class EnergyProperty {
         this.gunpowderPower = gunpowderPower;
     }
 
-    public Map<String, String> getOtherProperty() {
-        return otherProperty;
-    }
-
-    public void setOtherProperty(Map<String, String> otherProperty) {
-        this.otherProperty = otherProperty;
-    }
-
     public EnergyProperty() {
     }
 
-    public EnergyProperty(Long propertyId, String propertyName, String explosiveHeat, String explosiveTemperature, String specificCapacity, Map<String, String> specificImpulse, String characteristicVelocity, String combustionTemperature, double combustionAverageMolecularMass, String calculatedDensity, String gunpowderPower, Map<String, String> otherProperty) {
-        this.propertyId = propertyId;
-        this.propertyName = propertyName;
+    public EnergyProperty(Long propertyId, String propertyName, Map<String, String> otherProperty, String explosiveHeat, String explosiveTemperature, String specificCapacity, Map<String, String> specificImpulse, String characteristicVelocity, String combustionTemperature, double combustionAverageMolecularMass, String calculatedDensity, String gunpowderPower) {
+        super(propertyId, propertyName, otherProperty);
         this.explosiveHeat = explosiveHeat;
         this.explosiveTemperature = explosiveTemperature;
         this.specificCapacity = specificCapacity;
@@ -156,28 +121,26 @@ public class EnergyProperty {
         this.combustionAverageMolecularMass = combustionAverageMolecularMass;
         this.calculatedDensity = calculatedDensity;
         this.gunpowderPower = gunpowderPower;
-        this.otherProperty = otherProperty;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         EnergyProperty that = (EnergyProperty) o;
-        return Double.compare(that.combustionAverageMolecularMass, combustionAverageMolecularMass) == 0 && Objects.equals(propertyId, that.propertyId) && Objects.equals(propertyName, that.propertyName) && Objects.equals(explosiveHeat, that.explosiveHeat) && Objects.equals(explosiveTemperature, that.explosiveTemperature) && Objects.equals(specificCapacity, that.specificCapacity) && Objects.equals(specificImpulse, that.specificImpulse) && Objects.equals(characteristicVelocity, that.characteristicVelocity) && Objects.equals(combustionTemperature, that.combustionTemperature) && Objects.equals(calculatedDensity, that.calculatedDensity) && Objects.equals(gunpowderPower, that.gunpowderPower) && Objects.equals(otherProperty, that.otherProperty);
+        return Double.compare(that.combustionAverageMolecularMass, combustionAverageMolecularMass) == 0 && Objects.equals(explosiveHeat, that.explosiveHeat) && Objects.equals(explosiveTemperature, that.explosiveTemperature) && Objects.equals(specificCapacity, that.specificCapacity) && Objects.equals(specificImpulse, that.specificImpulse) && Objects.equals(characteristicVelocity, that.characteristicVelocity) && Objects.equals(combustionTemperature, that.combustionTemperature) && Objects.equals(calculatedDensity, that.calculatedDensity) && Objects.equals(gunpowderPower, that.gunpowderPower);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(propertyId, propertyName, explosiveHeat, explosiveTemperature, specificCapacity, specificImpulse, characteristicVelocity, combustionTemperature, combustionAverageMolecularMass, calculatedDensity, gunpowderPower, otherProperty);
+        return Objects.hash(super.hashCode(), explosiveHeat, explosiveTemperature, specificCapacity, specificImpulse, characteristicVelocity, combustionTemperature, combustionAverageMolecularMass, calculatedDensity, gunpowderPower);
     }
 
     @Override
     public String toString() {
         return "EnergyProperty{" +
-                "propertyId=" + propertyId +
-                ", propertyName='" + propertyName + '\'' +
-                ", explosiveHeat='" + explosiveHeat + '\'' +
+                "explosiveHeat='" + explosiveHeat + '\'' +
                 ", explosiveTemperature='" + explosiveTemperature + '\'' +
                 ", specificCapacity='" + specificCapacity + '\'' +
                 ", specificImpulse=" + specificImpulse +
@@ -186,7 +149,6 @@ public class EnergyProperty {
                 ", combustionAverageMolecularMass=" + combustionAverageMolecularMass +
                 ", calculatedDensity='" + calculatedDensity + '\'' +
                 ", gunpowderPower='" + gunpowderPower + '\'' +
-                ", otherProperty=" + otherProperty +
-                '}';
+                "} " + super.toString();
     }
 }

@@ -32,7 +32,7 @@ public interface ForcePropertyService {
      * @param prescriptionId
      * @return
      */
-    Collection<ForceProperty> getForcePropertyByPrescriptionId(Long prescriptionId);
+    ForceProperty getForcePropertyByPrescriptionId(Long prescriptionId);
 
     /**
      * 删除节点

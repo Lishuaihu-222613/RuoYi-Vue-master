@@ -7,7 +7,7 @@ import org.springframework.data.neo4j.core.schema.Property;
 
 import java.util.Objects;
 
-@Node("Danger")
+@Node("危险事项")
 public class Danger {
 
     @Id
@@ -17,7 +17,7 @@ public class Danger {
     @Property(name = "label")
     private String dangerName;
 
-    @Property(name = "Description")
+    @Property(name = "描述")
     private String dangerDescription;
 
     public Long getDangerId() {

@@ -5,6 +5,7 @@ import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,7 +17,8 @@ public interface EnergyPropertyRepository extends Neo4jRepository<EnergyProperty
     @Override
     List<EnergyProperty> findAll();
 
-    EnergyProperty save(EnergyProperty Property);
+    @Override
+    <S extends EnergyProperty> S save(S property);
 
     @Override
     void delete(EnergyProperty Property);
@@ -28,5 +30,5 @@ public interface EnergyPropertyRepository extends Neo4jRepository<EnergyProperty
     Optional<EnergyProperty> findEnergyPropertyByPrescription(@Param("prescriptionId") Long prescriptionId);
 
     @Query("MATCH (n:能量性能) where n.name = :propertyName return n")
-    Optional<EnergyProperty> findEnergyPropertyByName(String propertyName);
+    Collection<EnergyProperty> findEnergyPropertyByName(String propertyName);
 }

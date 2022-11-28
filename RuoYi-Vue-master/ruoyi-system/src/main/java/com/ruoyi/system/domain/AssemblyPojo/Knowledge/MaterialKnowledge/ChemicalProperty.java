@@ -5,7 +5,7 @@ import org.springframework.data.neo4j.core.schema.*;
 import java.util.Map;
 import java.util.Objects;
 
-@Node("ChemicalProperty")
+@Node("化学性质")
 public class ChemicalProperty {
 
     @Id
@@ -15,7 +15,7 @@ public class ChemicalProperty {
     @Property(name = "label")
     private String propertyName;
 
-    @CompositeProperty(prefix = "Attributes")
+    @CompositeProperty(prefix = "相关属性")
     private Map<String,String> propertyAttributes;
 
     public Long getPropertyId() {

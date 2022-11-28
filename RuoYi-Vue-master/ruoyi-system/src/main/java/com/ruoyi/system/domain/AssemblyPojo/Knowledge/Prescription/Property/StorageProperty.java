@@ -6,11 +6,7 @@ import java.util.Map;
 import java.util.Objects;
 
 @Node("贮存性能")
-public class StorageProperty {
-
-    @Id
-    @GeneratedValue
-    private Long propertyId;
+public class StorageProperty extends PrescriptionProperty{
 
     @Property(name = "预估贮存期")
     private String estimatedStoragePeriod;
@@ -32,17 +28,6 @@ public class StorageProperty {
 
     @Property(name = "药柱-衬层（绝热层）界面粘结强度变化")
     private String interfacialBondStrengthChange;
-
-    @CompositeProperty(prefix = "其他属性")
-    private Map<String,String> otherProperty;
-
-    public Long getPropertyId() {
-        return propertyId;
-    }
-
-    public void setPropertyId(Long propertyId) {
-        this.propertyId = propertyId;
-    }
 
     public String getEstimatedStoragePeriod() {
         return estimatedStoragePeriod;
@@ -100,19 +85,11 @@ public class StorageProperty {
         this.interfacialBondStrengthChange = interfacialBondStrengthChange;
     }
 
-    public Map<String, String> getOtherProperty() {
-        return otherProperty;
-    }
-
-    public void setOtherProperty(Map<String, String> otherProperty) {
-        this.otherProperty = otherProperty;
-    }
-
     public StorageProperty() {
     }
 
-    public StorageProperty(Long propertyId, String estimatedStoragePeriod, String appearanceChange, String physicalPropertyChange, String chemicalPropertyChange, String forcePropertyChange, String combustionPropertyChange, String interfacialBondStrengthChange, Map<String, String> otherProperty) {
-        this.propertyId = propertyId;
+    public StorageProperty(Long propertyId, String propertyName, Map<String, String> otherProperty, String estimatedStoragePeriod, String appearanceChange, String physicalPropertyChange, String chemicalPropertyChange, String forcePropertyChange, String combustionPropertyChange, String interfacialBondStrengthChange) {
+        super(propertyId, propertyName, otherProperty);
         this.estimatedStoragePeriod = estimatedStoragePeriod;
         this.appearanceChange = appearanceChange;
         this.physicalPropertyChange = physicalPropertyChange;
@@ -120,34 +97,32 @@ public class StorageProperty {
         this.forcePropertyChange = forcePropertyChange;
         this.combustionPropertyChange = combustionPropertyChange;
         this.interfacialBondStrengthChange = interfacialBondStrengthChange;
-        this.otherProperty = otherProperty;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         StorageProperty that = (StorageProperty) o;
-        return Objects.equals(propertyId, that.propertyId) && Objects.equals(estimatedStoragePeriod, that.estimatedStoragePeriod) && Objects.equals(appearanceChange, that.appearanceChange) && Objects.equals(physicalPropertyChange, that.physicalPropertyChange) && Objects.equals(chemicalPropertyChange, that.chemicalPropertyChange) && Objects.equals(forcePropertyChange, that.forcePropertyChange) && Objects.equals(combustionPropertyChange, that.combustionPropertyChange) && Objects.equals(interfacialBondStrengthChange, that.interfacialBondStrengthChange) && Objects.equals(otherProperty, that.otherProperty);
+        return Objects.equals(estimatedStoragePeriod, that.estimatedStoragePeriod) && Objects.equals(appearanceChange, that.appearanceChange) && Objects.equals(physicalPropertyChange, that.physicalPropertyChange) && Objects.equals(chemicalPropertyChange, that.chemicalPropertyChange) && Objects.equals(forcePropertyChange, that.forcePropertyChange) && Objects.equals(combustionPropertyChange, that.combustionPropertyChange) && Objects.equals(interfacialBondStrengthChange, that.interfacialBondStrengthChange);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(propertyId, estimatedStoragePeriod, appearanceChange, physicalPropertyChange, chemicalPropertyChange, forcePropertyChange, combustionPropertyChange, interfacialBondStrengthChange, otherProperty);
+        return Objects.hash(super.hashCode(), estimatedStoragePeriod, appearanceChange, physicalPropertyChange, chemicalPropertyChange, forcePropertyChange, combustionPropertyChange, interfacialBondStrengthChange);
     }
 
     @Override
     public String toString() {
         return "StorageProperty{" +
-                "propertyId=" + propertyId +
-                ", estimatedStoragePeriod='" + estimatedStoragePeriod + '\'' +
+                "estimatedStoragePeriod='" + estimatedStoragePeriod + '\'' +
                 ", appearanceChange='" + appearanceChange + '\'' +
                 ", physicalPropertyChange='" + physicalPropertyChange + '\'' +
                 ", chemicalPropertyChange='" + chemicalPropertyChange + '\'' +
                 ", forcePropertyChange='" + forcePropertyChange + '\'' +
                 ", combustionPropertyChange='" + combustionPropertyChange + '\'' +
                 ", interfacialBondStrengthChange='" + interfacialBondStrengthChange + '\'' +
-                ", otherProperty=" + otherProperty +
-                '}';
+                "} " + super.toString();
     }
 }

@@ -6,14 +6,7 @@ import java.util.Map;
 import java.util.Objects;
 
 @Node("热敏感性")
-public class HeatStability {
-
-    @Id
-    @GeneratedValue
-    private Long stabilityId;
-
-    @Property(name = "label")
-    private String stabilityName;
+public class HeatStability extends Stability{
 
     @Property(name = "维也里简单法")
     private String simpleVieri;
@@ -38,25 +31,6 @@ public class HeatStability {
 
     @Property(name = "爆炸极限")
     private String explosionLimit;
-
-    @CompositeProperty(prefix = "其他属性")
-    private Map<String,String> otherProperty;
-
-    public Long getStabilityId() {
-        return stabilityId;
-    }
-
-    public void setStabilityId(Long stabilityId) {
-        this.stabilityId = stabilityId;
-    }
-
-    public String getStabilityName() {
-        return stabilityName;
-    }
-
-    public void setStabilityName(String stabilityName) {
-        this.stabilityName = stabilityName;
-    }
 
     public String getSimpleVieri() {
         return simpleVieri;
@@ -122,20 +96,11 @@ public class HeatStability {
         this.explosionLimit = explosionLimit;
     }
 
-    public Map<String, String> getOtherProperty() {
-        return otherProperty;
-    }
-
-    public void setOtherProperty(Map<String, String> otherProperty) {
-        this.otherProperty = otherProperty;
-    }
-
     public HeatStability() {
     }
 
-    public HeatStability(Long stabilityId, String stabilityName, String simpleVieri, String repetitionVieri, String autoignitionTemperature, String openFireSensitivity, String sparkSensitivity, String flashPoint, String ignitionPoint, String explosionLimit, Map<String, String> otherProperty) {
-        this.stabilityId = stabilityId;
-        this.stabilityName = stabilityName;
+    public HeatStability(Long stabilityId, String stabilityName, Map<String, String> otherProperty, String simpleVieri, String repetitionVieri, String autoignitionTemperature, String openFireSensitivity, String sparkSensitivity, String flashPoint, String ignitionPoint, String explosionLimit) {
+        super(stabilityId, stabilityName, otherProperty);
         this.simpleVieri = simpleVieri;
         this.repetitionVieri = repetitionVieri;
         this.autoignitionTemperature = autoignitionTemperature;
@@ -144,28 +109,26 @@ public class HeatStability {
         this.flashPoint = flashPoint;
         this.ignitionPoint = ignitionPoint;
         this.explosionLimit = explosionLimit;
-        this.otherProperty = otherProperty;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         HeatStability that = (HeatStability) o;
-        return Objects.equals(stabilityId, that.stabilityId) && Objects.equals(stabilityName, that.stabilityName) && Objects.equals(simpleVieri, that.simpleVieri) && Objects.equals(repetitionVieri, that.repetitionVieri) && Objects.equals(autoignitionTemperature, that.autoignitionTemperature) && Objects.equals(openFireSensitivity, that.openFireSensitivity) && Objects.equals(sparkSensitivity, that.sparkSensitivity) && Objects.equals(flashPoint, that.flashPoint) && Objects.equals(ignitionPoint, that.ignitionPoint) && Objects.equals(explosionLimit, that.explosionLimit) && Objects.equals(otherProperty, that.otherProperty);
+        return Objects.equals(simpleVieri, that.simpleVieri) && Objects.equals(repetitionVieri, that.repetitionVieri) && Objects.equals(autoignitionTemperature, that.autoignitionTemperature) && Objects.equals(openFireSensitivity, that.openFireSensitivity) && Objects.equals(sparkSensitivity, that.sparkSensitivity) && Objects.equals(flashPoint, that.flashPoint) && Objects.equals(ignitionPoint, that.ignitionPoint) && Objects.equals(explosionLimit, that.explosionLimit);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(stabilityId, stabilityName, simpleVieri, repetitionVieri, autoignitionTemperature, openFireSensitivity, sparkSensitivity, flashPoint, ignitionPoint, explosionLimit, otherProperty);
+        return Objects.hash(super.hashCode(), simpleVieri, repetitionVieri, autoignitionTemperature, openFireSensitivity, sparkSensitivity, flashPoint, ignitionPoint, explosionLimit);
     }
 
     @Override
     public String toString() {
         return "HeatStability{" +
-                "stabilityId=" + stabilityId +
-                ", stabilityName='" + stabilityName + '\'' +
-                ", simpleVieri='" + simpleVieri + '\'' +
+                "simpleVieri='" + simpleVieri + '\'' +
                 ", repetitionVieri='" + repetitionVieri + '\'' +
                 ", autoignitionTemperature='" + autoignitionTemperature + '\'' +
                 ", openFireSensitivity='" + openFireSensitivity + '\'' +
@@ -173,7 +136,6 @@ public class HeatStability {
                 ", flashPoint='" + flashPoint + '\'' +
                 ", ignitionPoint='" + ignitionPoint + '\'' +
                 ", explosionLimit='" + explosionLimit + '\'' +
-                ", otherProperty=" + otherProperty +
-                '}';
+                "} " + super.toString();
     }
 }

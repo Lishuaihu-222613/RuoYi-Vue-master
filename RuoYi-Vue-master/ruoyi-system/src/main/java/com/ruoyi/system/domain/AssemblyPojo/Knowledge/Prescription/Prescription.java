@@ -3,7 +3,7 @@ package com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.Property.*;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.Stability.ExplosionStability;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.Stability.HeatStability;
-import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.Stability.ImpactStability;
+import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.Stability.MechanicalStability;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.Stability.RadioStability;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.TypicalKnowledge.TypicalProcess;
 import com.ruoyi.system.domain.AssemblyPojo.Structure.AssemblyProduct;
@@ -63,7 +63,7 @@ public class Prescription {
     private HeatStability heatStability;
 
     @Relationship(type = "hasImpactStability" , direction = Relationship.Direction.OUTGOING)
-    private ImpactStability impactStability;
+    private MechanicalStability mechanicalStability;
 
     @Relationship(type = "hasRadioStability" , direction = Relationship.Direction.OUTGOING)
     private RadioStability radioStability;
@@ -80,7 +80,7 @@ public class Prescription {
     public Prescription() {
     }
 
-    public Prescription(Long prescriptionId, String prescriptionName, String prescriptionDescription, String density, String dangerLevel, Map<String, String> curingTime, Map<String, String> otherProperty, Set<String> prescriptionLabels, Set<hasMaterialElement> materialElements, EnergyProperty energyProperty, ForceProperty forceProperty, CombustionProperty combustionProperty, StorageProperty storageProperty, OxidantRatio oxidantRatio, HeatStability heatStability, ImpactStability impactStability, RadioStability radioStability, ExplosionStability explosionStability, Set<AssemblyProduct> product, Set<TypicalProcess> typicalProcesses) {
+    public Prescription(Long prescriptionId, String prescriptionName, String prescriptionDescription, String density, String dangerLevel, Map<String, String> curingTime, Map<String, String> otherProperty, Set<String> prescriptionLabels, Set<hasMaterialElement> materialElements, EnergyProperty energyProperty, ForceProperty forceProperty, CombustionProperty combustionProperty, StorageProperty storageProperty, OxidantRatio oxidantRatio, HeatStability heatStability, MechanicalStability mechanicalStability, RadioStability radioStability, ExplosionStability explosionStability, Set<AssemblyProduct> product, Set<TypicalProcess> typicalProcesses) {
         this.prescriptionId = prescriptionId;
         this.prescriptionName = prescriptionName;
         this.prescriptionDescription = prescriptionDescription;
@@ -96,7 +96,7 @@ public class Prescription {
         this.storageProperty = storageProperty;
         this.oxidantRatio = oxidantRatio;
         this.heatStability = heatStability;
-        this.impactStability = impactStability;
+        this.mechanicalStability = mechanicalStability;
         this.radioStability = radioStability;
         this.explosionStability = explosionStability;
         this.product = product;
@@ -223,12 +223,12 @@ public class Prescription {
         this.heatStability = heatStability;
     }
 
-    public ImpactStability getImpactStability() {
-        return impactStability;
+    public MechanicalStability getImpactStability() {
+        return mechanicalStability;
     }
 
-    public void setImpactStability(ImpactStability impactStability) {
-        this.impactStability = impactStability;
+    public void setImpactStability(MechanicalStability mechanicalStability) {
+        this.mechanicalStability = mechanicalStability;
     }
 
     public RadioStability getRadioStability() {
@@ -268,12 +268,12 @@ public class Prescription {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Prescription that = (Prescription) o;
-        return Objects.equals(prescriptionId, that.prescriptionId) && Objects.equals(prescriptionName, that.prescriptionName) && Objects.equals(prescriptionDescription, that.prescriptionDescription) && Objects.equals(density, that.density) && Objects.equals(dangerLevel, that.dangerLevel) && Objects.equals(curingTime, that.curingTime) && Objects.equals(otherProperty, that.otherProperty) && Objects.equals(prescriptionLabels, that.prescriptionLabels) && Objects.equals(materialElements, that.materialElements) && Objects.equals(energyProperty, that.energyProperty) && Objects.equals(forceProperty, that.forceProperty) && Objects.equals(combustionProperty, that.combustionProperty) && Objects.equals(storageProperty, that.storageProperty) && Objects.equals(oxidantRatio, that.oxidantRatio) && Objects.equals(heatStability, that.heatStability) && Objects.equals(impactStability, that.impactStability) && Objects.equals(radioStability, that.radioStability) && Objects.equals(explosionStability, that.explosionStability) && Objects.equals(product, that.product) && Objects.equals(typicalProcesses, that.typicalProcesses);
+        return Objects.equals(prescriptionId, that.prescriptionId) && Objects.equals(prescriptionName, that.prescriptionName) && Objects.equals(prescriptionDescription, that.prescriptionDescription) && Objects.equals(density, that.density) && Objects.equals(dangerLevel, that.dangerLevel) && Objects.equals(curingTime, that.curingTime) && Objects.equals(otherProperty, that.otherProperty) && Objects.equals(prescriptionLabels, that.prescriptionLabels) && Objects.equals(materialElements, that.materialElements) && Objects.equals(energyProperty, that.energyProperty) && Objects.equals(forceProperty, that.forceProperty) && Objects.equals(combustionProperty, that.combustionProperty) && Objects.equals(storageProperty, that.storageProperty) && Objects.equals(oxidantRatio, that.oxidantRatio) && Objects.equals(heatStability, that.heatStability) && Objects.equals(mechanicalStability, that.mechanicalStability) && Objects.equals(radioStability, that.radioStability) && Objects.equals(explosionStability, that.explosionStability) && Objects.equals(product, that.product) && Objects.equals(typicalProcesses, that.typicalProcesses);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(prescriptionId, prescriptionName, prescriptionDescription, density, dangerLevel, curingTime, otherProperty, prescriptionLabels, materialElements, energyProperty, forceProperty, combustionProperty, storageProperty, oxidantRatio, heatStability, impactStability, radioStability, explosionStability, product, typicalProcesses);
+        return Objects.hash(prescriptionId, prescriptionName, prescriptionDescription, density, dangerLevel, curingTime, otherProperty, prescriptionLabels, materialElements, energyProperty, forceProperty, combustionProperty, storageProperty, oxidantRatio, heatStability, mechanicalStability, radioStability, explosionStability, product, typicalProcesses);
     }
 
     @Override
@@ -294,7 +294,7 @@ public class Prescription {
                 ", storageProperty=" + storageProperty +
                 ", oxidantRatio=" + oxidantRatio +
                 ", heatStability=" + heatStability +
-                ", impactStability=" + impactStability +
+                ", impactStability=" + mechanicalStability +
                 ", radioStability=" + radioStability +
                 ", explosionStability=" + explosionStability +
                 ", product=" + product +

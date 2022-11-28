@@ -22,11 +22,10 @@ public interface PrescriptionService {
     PrescriptionInterface updatePrescription(Prescription prescription);
 
     /**
-     *
      * @param prescriptionId
      * @return
      */
-    Prescription getPrescriptionById(Long prescriptionId);
+    PrescriptionInterface getPrescriptionById(Long prescriptionId);
 
     /**
      *

@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-@Node({"ProduceMethod","Method"})
+@Node({"生产方法","方法"})
 public class ProduceMethod {
 
     @Id
@@ -19,10 +19,10 @@ public class ProduceMethod {
     @Property(name = "label")
     private String methodName;
 
-    @Property(name = "Description")
+    @Property(name = "描述")
     private String methodDescription;
 
-    @Property(name = "Steps")
+    @Property(name = "步骤")
     private List<String> methodSteps;
 
     @Relationship(type = "hasAssociatedFile" , direction = Relationship.Direction.OUTGOING)

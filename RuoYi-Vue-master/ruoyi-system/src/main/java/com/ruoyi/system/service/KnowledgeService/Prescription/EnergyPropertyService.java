@@ -32,7 +32,7 @@ public interface EnergyPropertyService {
      * @param prescriptionId
      * @return
      */
-    Collection<EnergyProperty> getEnergyPropertyByPrescriptionId(Long prescriptionId);
+    EnergyProperty getEnergyPropertyByPrescriptionId(Long prescriptionId);
 
     /**
      * 删除节点

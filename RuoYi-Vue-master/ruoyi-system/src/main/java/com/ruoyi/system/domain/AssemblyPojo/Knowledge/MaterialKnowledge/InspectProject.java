@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-@Node("InspectProject")
+@Node("理化指标")
 public class InspectProject {
 
     @Id
@@ -18,7 +18,7 @@ public class InspectProject {
     @Property(name = "label")
     private String projectName;
 
-    @CompositeProperty(prefix = "Indicators")
+    @CompositeProperty(prefix = "指标")
     private Map<String, String> classificationAndIndicators;
 
     @Relationship(type = "hasAssociatedFile" , direction = Relationship.Direction.OUTGOING)

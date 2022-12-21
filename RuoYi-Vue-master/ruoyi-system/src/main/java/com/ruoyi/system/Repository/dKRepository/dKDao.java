@@ -19,8 +19,8 @@ public interface dKDao extends Neo4jRepository<decisionKnowledge,Long> {
 
     List<decisionKnowledge> findAll();
 
-    @Query("MATCH (n:decisionKnowledge) where n.name = $Dname return n")
-    List<decisionKnowledge> findByName(@Param("Dname") String Dname);
+    @Query("MATCH (n:decisionKnowledge) where n.dkName = $Dname return n")
+    decisionKnowledge findByName(@Param("Dname") String Dname);
 
     decisionKnowledge save(decisionKnowledge DI);
 

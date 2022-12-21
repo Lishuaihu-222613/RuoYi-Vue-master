@@ -32,6 +32,13 @@ public interface dKService {
     List<decisionKnowledge> getDecisionKnowledge();
 
     /**
+     *
+     * @param name
+     * @return
+     */
+    decisionKnowledge getDecisionKnowledgeByName(String name);
+
+    /**
      * 获得一条决策规则
      * @param DkId
      * @return

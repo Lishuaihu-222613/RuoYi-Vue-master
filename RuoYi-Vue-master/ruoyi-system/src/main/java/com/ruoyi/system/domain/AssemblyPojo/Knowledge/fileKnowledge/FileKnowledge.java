@@ -1,47 +1,49 @@
 package com.ruoyi.system.domain.AssemblyPojo.Knowledge.fileKnowledge;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.data.neo4j.core.schema.*;
 
 import java.util.Date;
 import java.util.Objects;
 import java.util.Set;
 
-@Node("fileKnowledge")
-public class fileKnowledge {
+@Node("FileKnowledge")
+public class FileKnowledge {
 
     @Id
     @GeneratedValue
-    private Long Id;
+    private Long fileId;
 
     @Property(name = "label")
     private String fileName;
 
-    @Property(name = "Type")
+    @Property(name = "文件类型")
     private String fileType;
 
-    @Property(name = "Size")
+    @Property(name = "文件大小")
     private String fileSize;
 
-    @Property(name = "Description")
+    @Property(name = "文件描述")
     private String fileDescription;
 
     @DynamicLabels
     private Set<String> fileClassification;
 
-    @Property(name = "url")
+    @Property(name = "文件地址")
     private String fileUrl;
 
-    @Property(name = "manager")
+    @Property(name = "经理人")
     private String manager;
 
-    @Property(name = "modifyTime")
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @Property(name = "修改时间")
     private Date modifyTime;
 
-    public fileKnowledge() {
+    public FileKnowledge() {
     }
 
-    public fileKnowledge(Long id, String fileName, String fileType, String fileSize, String fileDescription, Set<String> fileClassification, String fileUrl, String manager, Date modifyTime) {
-        Id = id;
+    public FileKnowledge(Long fileId, String fileName, String fileType, String fileSize, String fileDescription, Set<String> fileClassification, String fileUrl, String manager, Date modifyTime) {
+        this.fileId = fileId;
         this.fileName = fileName;
         this.fileType = fileType;
         this.fileSize = fileSize;
@@ -52,12 +54,12 @@ public class fileKnowledge {
         this.modifyTime = modifyTime;
     }
 
-    public Long getId() {
-        return Id;
+    public Long getFileId() {
+        return fileId;
     }
 
-    public void setId(Long id) {
-        Id = id;
+    public void setFileId(Long id) {
+        this.fileId = id;
     }
 
     public String getFileName() {
@@ -128,19 +130,19 @@ public class fileKnowledge {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        fileKnowledge that = (fileKnowledge) o;
-        return Objects.equals(Id, that.Id) && Objects.equals(fileName, that.fileName) && Objects.equals(fileType, that.fileType) && Objects.equals(fileSize, that.fileSize) && Objects.equals(fileDescription, that.fileDescription) && Objects.equals(fileClassification, that.fileClassification) && Objects.equals(fileUrl, that.fileUrl) && Objects.equals(manager, that.manager) && Objects.equals(modifyTime, that.modifyTime);
+        FileKnowledge that = (FileKnowledge) o;
+        return Objects.equals(fileId, that.fileId) && Objects.equals(fileName, that.fileName) && Objects.equals(fileType, that.fileType) && Objects.equals(fileSize, that.fileSize) && Objects.equals(fileDescription, that.fileDescription) && Objects.equals(fileClassification, that.fileClassification) && Objects.equals(fileUrl, that.fileUrl) && Objects.equals(manager, that.manager) && Objects.equals(modifyTime, that.modifyTime);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(Id, fileName, fileType, fileSize, fileDescription, fileClassification, fileUrl, manager, modifyTime);
+        return Objects.hash(fileId, fileName, fileType, fileSize, fileDescription, fileClassification, fileUrl, manager, modifyTime);
     }
 
     @Override
     public String toString() {
         return "fileKnowledge{" +
-                "Id=" + Id +
+                "fileId=" + fileId +
                 ", fileName='" + fileName + '\'' +
                 ", fileType='" + fileType + '\'' +
                 ", fileSize='" + fileSize + '\'' +

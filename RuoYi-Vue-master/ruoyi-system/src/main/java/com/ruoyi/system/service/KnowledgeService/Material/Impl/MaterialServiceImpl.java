@@ -4,16 +4,16 @@ import com.ruoyi.system.Repository.KnowledgeRepository.MaterialKnowledge.Materia
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.MaterialKnowledge.Interface.MaterialInterface;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.MaterialKnowledge.Material;
 import com.ruoyi.system.service.KnowledgeService.Material.MaterialService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class MaterialServiceImpl implements MaterialService {
 
-    @Autowired
+    @Resource
     private MaterialRepository materialRepository;
 
     @Override
@@ -27,8 +27,13 @@ public class MaterialServiceImpl implements MaterialService {
     }
 
     @Override
-    public Material getMaterialById(Long materialId) {
-        return materialRepository.findById(materialId).get();
+    public List<MaterialInterface> getMaterialsByType(String dynamicLabel) {
+        return new ArrayList<>(materialRepository.findMaterialsByLabel(dynamicLabel));
+    }
+
+    @Override
+    public MaterialInterface getMaterialById(Long materialId) {
+        return  materialRepository.findMaterialInterfaceById(materialId).get();
     }
 
     @Override

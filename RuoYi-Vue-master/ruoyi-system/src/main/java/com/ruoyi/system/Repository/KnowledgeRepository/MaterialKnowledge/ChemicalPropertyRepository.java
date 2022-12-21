@@ -3,6 +3,7 @@ package com.ruoyi.system.Repository.KnowledgeRepository.MaterialKnowledge;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.MaterialKnowledge.ChemicalProperty;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -23,6 +24,6 @@ public interface ChemicalPropertyRepository extends Neo4jRepository<ChemicalProp
     @Override
     void deleteById(Long propertyId);
 
-    @Query("MATCH (n:ChemicalProperty)<-[r:hasChemicalProperty]-(m:Material) where m.id = $materialId return n")
-    Collection<ChemicalProperty> findChemicalPropertiesByMaterialId(Long materialId);
+    @Query("MATCH (n:化学性质)<-[r:hasChemicalProperty]-(m:材料) where id(m) = $materialId return n")
+    Collection<ChemicalProperty> findChemicalPropertiesByMaterialId(@Param("materialId") Long materialId);
 }

@@ -39,7 +39,7 @@ public interface PhysicalPropertyService {
      * @param property
      * @return
      */
-    PhysicalProperty updateProperty(PhysicalProperty property);
+    PhysicalProperty updatePhysicalProperty(PhysicalProperty property);
 
     /**
      * 删除节点

@@ -1,9 +1,8 @@
 package com.ruoyi.system.domain.AssemblyPojo.Operation;
 
 import com.ruoyi.system.domain.AssemblyPojo.GeometricPose.Movement.Move;
-import com.ruoyi.system.domain.AssemblyPojo.Knowledge.fileKnowledge.fileKnowledge;
+import com.ruoyi.system.domain.AssemblyPojo.Knowledge.fileKnowledge.FileKnowledge;
 import com.ruoyi.system.domain.AssemblyPojo.Resource.AssemblyResource;
-import com.ruoyi.system.domain.AssemblyPojo.Structure.AssemblyStructure;
 import org.springframework.data.neo4j.core.schema.*;
 
 import java.util.Date;
@@ -60,7 +59,7 @@ public class AssemblyOperation {
     private Set<AssemblyStep> associatedSteps;
 
     @Relationship(type = "hasAssociatedFile", direction = Relationship.Direction.OUTGOING)
-    private Set<fileKnowledge> associatedFiles;
+    private Set<FileKnowledge> associatedFiles;
 
     public Long getOperationId() {
         return operationId;
@@ -182,18 +181,18 @@ public class AssemblyOperation {
         this.associatedSteps = associatedSteps;
     }
 
-    public Set<fileKnowledge> getAssociatedFiles() {
+    public Set<FileKnowledge> getAssociatedFiles() {
         return associatedFiles;
     }
 
-    public void setAssociatedFiles(Set<fileKnowledge> associatedFiles) {
+    public void setAssociatedFiles(Set<FileKnowledge> associatedFiles) {
         this.associatedFiles = associatedFiles;
     }
 
     public AssemblyOperation() {
     }
 
-    public AssemblyOperation(Long operationId, String operationName, String operationNumber, String operationDescription, Date beginTime, Date endTime, Set<AssemblyResource> resources, Move move, AssemblingStructure assemblingStructure, AssembledStructure assembledStructure, Set<AssemblyOperation> operationAnd, Set<AssemblyOperation> operationOr, Set<AssemblyOperation> beforeOperation, Set<AssemblyOperation> afterOperation, Set<AssemblyStep> associatedSteps, Set<fileKnowledge> associatedFiles) {
+    public AssemblyOperation(Long operationId, String operationName, String operationNumber, String operationDescription, Date beginTime, Date endTime, Set<AssemblyResource> resources, Move move, AssemblingStructure assemblingStructure, AssembledStructure assembledStructure, Set<AssemblyOperation> operationAnd, Set<AssemblyOperation> operationOr, Set<AssemblyOperation> beforeOperation, Set<AssemblyOperation> afterOperation, Set<AssemblyStep> associatedSteps, Set<FileKnowledge> associatedFiles) {
         this.operationId = operationId;
         this.operationName = operationName;
         this.operationNumber = operationNumber;

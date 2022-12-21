@@ -1,6 +1,6 @@
 package com.ruoyi.system.domain.AssemblyPojo.Knowledge.InspectionKnowledge;
 
-import com.ruoyi.system.domain.AssemblyPojo.Knowledge.fileKnowledge.fileKnowledge;
+import com.ruoyi.system.domain.AssemblyPojo.Knowledge.fileKnowledge.FileKnowledge;
 
 import java.util.List;
 import java.util.Set;
@@ -15,6 +15,6 @@ public class InspectionFactor {
 
     private List<String> controlFactors;
 
-    private Set<fileKnowledge> associatedFiles;
+    private Set<FileKnowledge> associatedFiles;
 
 }

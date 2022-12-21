@@ -45,6 +45,11 @@ public class dKServiceImpl implements dKService {
     }
 
     @Override
+    public decisionKnowledge getDecisionKnowledgeByName(String name) {
+        return dKDao.findByName(name);
+    }
+
+    @Override
     public decisionKnowledge getDecisionKnowledgeById(Long DkId) {
         return dKDao.findById(DkId).get();
     }

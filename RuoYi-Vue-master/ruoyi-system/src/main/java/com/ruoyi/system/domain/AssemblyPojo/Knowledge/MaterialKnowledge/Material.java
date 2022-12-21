@@ -1,14 +1,13 @@
 package com.ruoyi.system.domain.AssemblyPojo.Knowledge.MaterialKnowledge;
 
-import com.ruoyi.system.domain.AssemblyPojo.Knowledge.fileKnowledge.fileKnowledge;
+import com.ruoyi.system.domain.AssemblyPojo.Knowledge.fileKnowledge.FileKnowledge;
 import org.springframework.data.neo4j.core.schema.*;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-@Node("材料")
+@Node({"材料","Material"})
 public class Material {
 
     @Id
@@ -73,7 +72,7 @@ public class Material {
     private Set<Protection> protections;
 
     @Relationship(type = "hasAssociatedFile", direction = Relationship.Direction.OUTGOING)
-    private Set<fileKnowledge> associatedFiles;
+    private Set<FileKnowledge> associatedFiles;
 
     public Long getMaterialId() {
         return materialId;
@@ -235,18 +234,18 @@ public class Material {
         this.protections = protections;
     }
 
-    public Set<fileKnowledge> getAssociatedFiles() {
+    public Set<FileKnowledge> getAssociatedFiles() {
         return associatedFiles;
     }
 
-    public void setAssociatedFiles(Set<fileKnowledge> associatedFiles) {
+    public void setAssociatedFiles(Set<FileKnowledge> associatedFiles) {
         this.associatedFiles = associatedFiles;
     }
 
     public Material() {
     }
 
-    public Material(Long materialId, String materialName, String englishName, String nickName, String englishNickName, String relativeMolecularMass, String structuralFormula, String casRegistryNumber, String materialDescription, String materialAppearance, List<String> materialUsage, Set<String> materialLabels, PhysicalProperty physicalProperty, ChemicalProperty chemicalProperty, Set<AnalysisSpectrogram> analysisSpectrogram, Set<InspectProject> inspectProjects, Set<StorageRequirement> storageRequirements, Set<ProduceMethod> productMethods, Set<Danger> dangers, Set<Protection> protections, Set<fileKnowledge> associatedFiles) {
+    public Material(Long materialId, String materialName, String englishName, String nickName, String englishNickName, String relativeMolecularMass, String structuralFormula, String casRegistryNumber, String materialDescription, String materialAppearance, List<String> materialUsage, Set<String> materialLabels, PhysicalProperty physicalProperty, ChemicalProperty chemicalProperty, Set<AnalysisSpectrogram> analysisSpectrogram, Set<InspectProject> inspectProjects, Set<StorageRequirement> storageRequirements, Set<ProduceMethod> productMethods, Set<Danger> dangers, Set<Protection> protections, Set<FileKnowledge> associatedFiles) {
         this.materialId = materialId;
         this.materialName = materialName;
         this.englishName = englishName;

@@ -1,7 +1,7 @@
 package com.ruoyi.system.domain.AssemblyPojo.Knowledge.TypicalKnowledge;
 
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.QualityProblem.QualityProblem;
-import com.ruoyi.system.domain.AssemblyPojo.Knowledge.fileKnowledge.fileKnowledge;
+import com.ruoyi.system.domain.AssemblyPojo.Knowledge.fileKnowledge.FileKnowledge;
 import com.ruoyi.system.domain.AssemblyPojo.Resource.AssemblyResource;
 import org.springframework.data.neo4j.core.schema.*;
 
@@ -31,7 +31,7 @@ public class TypicalProcess {
     private Set<AssemblyResource> usedResources;
 
     @Relationship(type = "hasAssociatedFile",direction = Relationship.Direction.OUTGOING)
-    private Set<fileKnowledge> associatedFiles;
+    private Set<FileKnowledge> associatedFiles;
 
     public Long getProcessId() {
         return processId;
@@ -81,18 +81,18 @@ public class TypicalProcess {
         this.usedResources = usedResources;
     }
 
-    public Set<fileKnowledge> getAssociatedFiles() {
+    public Set<FileKnowledge> getAssociatedFiles() {
         return associatedFiles;
     }
 
-    public void setAssociatedFiles(Set<fileKnowledge> associatedFiles) {
+    public void setAssociatedFiles(Set<FileKnowledge> associatedFiles) {
         this.associatedFiles = associatedFiles;
     }
 
     public TypicalProcess() {
     }
 
-    public TypicalProcess(Long processId, String processName, String processDescription, Set<TypicalProcedure> subProcedures, Set<QualityProblem> associatedProblems, Set<AssemblyResource> usedResources, Set<fileKnowledge> associatedFiles) {
+    public TypicalProcess(Long processId, String processName, String processDescription, Set<TypicalProcedure> subProcedures, Set<QualityProblem> associatedProblems, Set<AssemblyResource> usedResources, Set<FileKnowledge> associatedFiles) {
         this.processId = processId;
         this.processName = processName;
         this.processDescription = processDescription;

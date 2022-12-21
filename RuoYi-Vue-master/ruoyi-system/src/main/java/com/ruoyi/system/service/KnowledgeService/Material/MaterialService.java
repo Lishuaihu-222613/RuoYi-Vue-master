@@ -21,11 +21,18 @@ public interface MaterialService {
     List<MaterialInterface> getAllMaterials();
 
     /**
+     * 根据类型获得材料
+     * @param dynamicLabel
+     * @return
+     */
+    List<MaterialInterface> getMaterialsByType(String dynamicLabel);
+
+    /**
      * 根据Id获得某材料完整信息
      * @param materialId
      * @return
      */
-    Material getMaterialById(Long materialId);
+    MaterialInterface getMaterialById(Long materialId);
 
     /**
      * 创建材料

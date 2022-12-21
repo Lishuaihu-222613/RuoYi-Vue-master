@@ -2,11 +2,10 @@ package com.ruoyi.system.domain.AssemblyPojo.Knowledge.InspectionKnowledge;
 
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.QualityProblem.QualityProblem;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.TypicalKnowledge.TypicalProcess;
-import com.ruoyi.system.domain.AssemblyPojo.Knowledge.fileKnowledge.fileKnowledge;
+import com.ruoyi.system.domain.AssemblyPojo.Knowledge.fileKnowledge.FileKnowledge;
 import com.ruoyi.system.domain.AssemblyPojo.Resource.AssemblyResource;
 import org.springframework.data.neo4j.core.schema.*;
 
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -48,7 +47,7 @@ public class InspectionMethod {
     private Set<AssemblyResource> associatedDevices;
 
     @Relationship(type = "hasAssociatedFile",direction = Relationship.Direction.OUTGOING)
-    private Set<fileKnowledge> associatedFiles;
+    private Set<FileKnowledge> associatedFiles;
 
     public Long getMethodId() {
         return methodId;
@@ -138,18 +137,18 @@ public class InspectionMethod {
         this.associatedDevices = associatedDevices;
     }
 
-    public Set<fileKnowledge> getAssociatedFiles() {
+    public Set<FileKnowledge> getAssociatedFiles() {
         return associatedFiles;
     }
 
-    public void setAssociatedFiles(Set<fileKnowledge> associatedFiles) {
+    public void setAssociatedFiles(Set<FileKnowledge> associatedFiles) {
         this.associatedFiles = associatedFiles;
     }
 
     public InspectionMethod() {
     }
 
-    public InspectionMethod(Long methodId, String methodName, String methodDescription, String methodPrinciple, String futureExpansion, Set<InspectionCondition> methodConditions, Set<InspectionFactor> methodFactors, Set<InspectionMode> methodModes, Set<TypicalProcess> associatedProcesses, Set<QualityProblem> associatedProblems, Set<AssemblyResource> associatedDevices, Set<fileKnowledge> associatedFiles) {
+    public InspectionMethod(Long methodId, String methodName, String methodDescription, String methodPrinciple, String futureExpansion, Set<InspectionCondition> methodConditions, Set<InspectionFactor> methodFactors, Set<InspectionMode> methodModes, Set<TypicalProcess> associatedProcesses, Set<QualityProblem> associatedProblems, Set<AssemblyResource> associatedDevices, Set<FileKnowledge> associatedFiles) {
         this.methodId = methodId;
         this.methodName = methodName;
         this.methodDescription = methodDescription;

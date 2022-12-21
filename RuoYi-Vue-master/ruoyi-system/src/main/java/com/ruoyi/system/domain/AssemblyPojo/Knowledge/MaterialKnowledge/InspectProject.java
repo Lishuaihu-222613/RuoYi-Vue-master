@@ -1,7 +1,7 @@
 package com.ruoyi.system.domain.AssemblyPojo.Knowledge.MaterialKnowledge;
 
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.InspectionKnowledge.InspectionMethod;
-import com.ruoyi.system.domain.AssemblyPojo.Knowledge.fileKnowledge.fileKnowledge;
+import com.ruoyi.system.domain.AssemblyPojo.Knowledge.fileKnowledge.FileKnowledge;
 import org.springframework.data.neo4j.core.schema.*;
 
 import java.util.Map;
@@ -22,7 +22,7 @@ public class InspectProject {
     private Map<String, String> classificationAndIndicators;
 
     @Relationship(type = "hasAssociatedFile" , direction = Relationship.Direction.OUTGOING)
-    private Set<fileKnowledge> associatedFiles;
+    private Set<FileKnowledge> associatedFiles;
 
     @Relationship(type = "hasInspectMethod" , direction = Relationship.Direction.OUTGOING)
     private Set<InspectionMethod> InspectionMethods;
@@ -59,18 +59,18 @@ public class InspectProject {
         InspectionMethods = inspectionMethods;
     }
 
-    public Set<fileKnowledge> getAssociatedFiles() {
+    public Set<FileKnowledge> getAssociatedFiles() {
         return associatedFiles;
     }
 
-    public void setAssociatedFiles(Set<fileKnowledge> associatedFiles) {
+    public void setAssociatedFiles(Set<FileKnowledge> associatedFiles) {
         this.associatedFiles = associatedFiles;
     }
 
     public InspectProject() {
     }
 
-    public InspectProject(Long projectId, String projectName, Map<String, String> classificationAndIndicators, Set<fileKnowledge> associatedFiles, Set<InspectionMethod> inspectionMethods) {
+    public InspectProject(Long projectId, String projectName, Map<String, String> classificationAndIndicators, Set<FileKnowledge> associatedFiles, Set<InspectionMethod> inspectionMethods) {
         this.projectId = projectId;
         this.projectName = projectName;
         this.classificationAndIndicators = classificationAndIndicators;

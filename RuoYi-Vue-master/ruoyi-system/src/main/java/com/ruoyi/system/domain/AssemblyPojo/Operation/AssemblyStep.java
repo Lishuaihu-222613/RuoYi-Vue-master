@@ -1,6 +1,6 @@
 package com.ruoyi.system.domain.AssemblyPojo.Operation;
 
-import com.ruoyi.system.domain.AssemblyPojo.Knowledge.fileKnowledge.fileKnowledge;
+import com.ruoyi.system.domain.AssemblyPojo.Knowledge.fileKnowledge.FileKnowledge;
 import com.ruoyi.system.domain.AssemblyPojo.Resource.AssemblyResource;
 import org.springframework.data.neo4j.core.schema.*;
 
@@ -35,5 +35,5 @@ public class AssemblyStep {
     private AssemblyStep afterStep;
 
     @Relationship(type = "hasAssociatedFile" , direction = Relationship.Direction.OUTGOING)
-    private Set<fileKnowledge> associatedFiles;
+    private Set<FileKnowledge> associatedFiles;
 }

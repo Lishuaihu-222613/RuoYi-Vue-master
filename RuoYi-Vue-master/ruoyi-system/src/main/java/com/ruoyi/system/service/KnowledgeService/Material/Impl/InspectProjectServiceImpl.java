@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
+import java.util.List;
 
 @Service
 public class InspectProjectServiceImpl implements InspectProjectService {
@@ -18,6 +19,16 @@ public class InspectProjectServiceImpl implements InspectProjectService {
     @Override
     public InspectProject createInspectProject(InspectProject project) {
         return inspectProjectRepository.save(project);
+    }
+
+    @Override
+    public InspectProject updateInspectProject(InspectProject project) {
+        return inspectProjectRepository.save(project);
+    }
+
+    @Override
+    public List<InspectProject> updateInspectProjects(List<InspectProject> projects) {
+        return inspectProjectRepository.saveAll(projects);
     }
 
     @Override

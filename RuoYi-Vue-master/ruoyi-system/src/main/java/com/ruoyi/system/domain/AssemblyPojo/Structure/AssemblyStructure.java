@@ -2,7 +2,7 @@ package com.ruoyi.system.domain.AssemblyPojo.Structure;
 
 import com.ruoyi.system.domain.AssemblyPojo.GeometricPose.GeometryEntity.AdvancedBerpShape;
 import com.ruoyi.system.domain.AssemblyPojo.GeometricPose.Location.Location;
-import com.ruoyi.system.domain.AssemblyPojo.Knowledge.fileKnowledge.fileKnowledge;
+import com.ruoyi.system.domain.AssemblyPojo.Knowledge.fileKnowledge.FileKnowledge;
 import org.springframework.data.neo4j.core.schema.GeneratedValue;
 import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
@@ -35,7 +35,7 @@ public abstract class AssemblyStructure {
     private AdvancedBerpShape geometry;
 
     @Relationship(type = "hasAssociatedFile", direction = Relationship.Direction.OUTGOING)
-    private Set<fileKnowledge> associatedFiles;
+    private Set<FileKnowledge> associatedFiles;
 
     public Long getStructureId() {
         return structureId;
@@ -85,18 +85,18 @@ public abstract class AssemblyStructure {
         this.geometry = geometry;
     }
 
-    public Set<fileKnowledge> getAssociatedFiles() {
+    public Set<FileKnowledge> getAssociatedFiles() {
         return associatedFiles;
     }
 
-    public void setAssociatedFiles(Set<fileKnowledge> associatedFiles) {
+    public void setAssociatedFiles(Set<FileKnowledge> associatedFiles) {
         this.associatedFiles = associatedFiles;
     }
 
     public AssemblyStructure() {
     }
 
-    public AssemblyStructure(Long structureId, Set<AssemblyComponent> components, Set<AssemblyPart> parts, Set<AssemblyConstraint> constraints, Location location, AdvancedBerpShape geometry, Set<fileKnowledge> associatedFiles) {
+    public AssemblyStructure(Long structureId, Set<AssemblyComponent> components, Set<AssemblyPart> parts, Set<AssemblyConstraint> constraints, Location location, AdvancedBerpShape geometry, Set<FileKnowledge> associatedFiles) {
         this.structureId = structureId;
         this.components = components;
         this.parts = parts;

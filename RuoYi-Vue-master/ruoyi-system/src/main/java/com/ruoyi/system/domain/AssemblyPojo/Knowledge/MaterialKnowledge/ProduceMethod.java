@@ -2,7 +2,7 @@ package com.ruoyi.system.domain.AssemblyPojo.Knowledge.MaterialKnowledge;
 
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.QualityProblem.QualityProblem;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.TypicalKnowledge.TypicalProcess;
-import com.ruoyi.system.domain.AssemblyPojo.Knowledge.fileKnowledge.fileKnowledge;
+import com.ruoyi.system.domain.AssemblyPojo.Knowledge.fileKnowledge.FileKnowledge;
 import org.springframework.data.neo4j.core.schema.*;
 
 import java.util.List;
@@ -26,7 +26,7 @@ public class ProduceMethod {
     private List<String> methodSteps;
 
     @Relationship(type = "hasAssociatedFile" , direction = Relationship.Direction.OUTGOING)
-    private Set<fileKnowledge> associatedFiles;
+    private Set<FileKnowledge> associatedFiles;
 
     @Relationship(type = "hasAssociatedProcess" , direction = Relationship.Direction.OUTGOING)
     private Set<TypicalProcess> associatedProcesses;
@@ -58,11 +58,11 @@ public class ProduceMethod {
         this.methodDescription = methodDescription;
     }
 
-    public Set<fileKnowledge> getAssociatedFiles() {
+    public Set<FileKnowledge> getAssociatedFiles() {
         return associatedFiles;
     }
 
-    public void setAssociatedFiles(Set<fileKnowledge> associatedFiles) {
+    public void setAssociatedFiles(Set<FileKnowledge> associatedFiles) {
         this.associatedFiles = associatedFiles;
     }
 
@@ -93,7 +93,7 @@ public class ProduceMethod {
     public ProduceMethod() {
     }
 
-    public ProduceMethod(Long methodId, String methodName, String methodDescription, List<String> methodSteps, Set<fileKnowledge> associatedFiles, Set<TypicalProcess> associatedProcesses, Set<QualityProblem> associatedProblems) {
+    public ProduceMethod(Long methodId, String methodName, String methodDescription, List<String> methodSteps, Set<FileKnowledge> associatedFiles, Set<TypicalProcess> associatedProcesses, Set<QualityProblem> associatedProblems) {
         this.methodId = methodId;
         this.methodName = methodName;
         this.methodDescription = methodDescription;

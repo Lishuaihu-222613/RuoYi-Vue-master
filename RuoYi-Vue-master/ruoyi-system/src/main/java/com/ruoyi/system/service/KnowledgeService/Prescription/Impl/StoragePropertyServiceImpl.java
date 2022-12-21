@@ -1,11 +1,18 @@
 package com.ruoyi.system.service.KnowledgeService.Prescription.Impl;
 
+import com.ruoyi.system.Repository.KnowledgeRepository.Prescription.StoragePropertyRepository;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.Property.StorageProperty;
 import com.ruoyi.system.service.KnowledgeService.Prescription.StoragePropertyService;
+import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.Collection;
 
+@Service
 public class StoragePropertyServiceImpl implements StoragePropertyService {
+    @Resource
+    private StoragePropertyRepository storagePropertyRepository;
+
     @Override
     public StorageProperty createStorageProperty(StorageProperty property) {
         return null;

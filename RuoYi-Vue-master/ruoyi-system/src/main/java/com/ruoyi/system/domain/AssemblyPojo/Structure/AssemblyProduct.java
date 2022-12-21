@@ -3,7 +3,7 @@ package com.ruoyi.system.domain.AssemblyPojo.Structure;
 import com.ruoyi.system.domain.AssemblyPojo.AccuracyRequirement.Requirement.Requirement;
 import com.ruoyi.system.domain.AssemblyPojo.GeometricPose.GeometryEntity.AdvancedBerpShape;
 import com.ruoyi.system.domain.AssemblyPojo.GeometricPose.Location.Location;
-import com.ruoyi.system.domain.AssemblyPojo.Knowledge.fileKnowledge.fileKnowledge;
+import com.ruoyi.system.domain.AssemblyPojo.Knowledge.fileKnowledge.FileKnowledge;
 import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.schema.Property;
 import org.springframework.data.neo4j.core.schema.Relationship;
@@ -75,7 +75,7 @@ public class AssemblyProduct extends AssemblyStructure {
     public AssemblyProduct() {
     }
 
-    public AssemblyProduct(Long structureId, Set<AssemblyComponent> components, Set<AssemblyPart> parts, Set<AssemblyConstraint> constraints, Location location, AdvancedBerpShape geometry, Set<fileKnowledge> associatedFiles, String productName, String productDescription, Set<AssemblyComponent> components1, Set<AssemblyPart> parts1, Set<Requirement> requirements) {
+    public AssemblyProduct(Long structureId, Set<AssemblyComponent> components, Set<AssemblyPart> parts, Set<AssemblyConstraint> constraints, Location location, AdvancedBerpShape geometry, Set<FileKnowledge> associatedFiles, String productName, String productDescription, Set<AssemblyComponent> components1, Set<AssemblyPart> parts1, Set<Requirement> requirements) {
         super(structureId, components, parts, constraints, location, geometry, associatedFiles);
         this.productName = productName;
         this.productDescription = productDescription;

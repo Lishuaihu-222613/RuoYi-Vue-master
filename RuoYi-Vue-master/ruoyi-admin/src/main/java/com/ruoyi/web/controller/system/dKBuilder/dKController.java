@@ -39,6 +39,19 @@ public class dKController extends BaseController {
     };
 
     @ResponseBody
+    @GetMapping("/getDecisionKnowledgeByName/{name}")
+    public R<decisionKnowledge> getDecisionKnowledgeByName(@PathVariable String name){
+        try {
+            decisionKnowledge dkList = dKService.getDecisionKnowledgeByName(name);
+            System.out.println(dkList);
+            return R.success(dkList);
+        } catch (Exception e){
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    };
+
+    @ResponseBody
     @GetMapping("/getDecisionKnowledge/{DKId}")
     public R<decisionKnowledge> getDecisionKnowledge(@PathVariable String DKId){
         try {

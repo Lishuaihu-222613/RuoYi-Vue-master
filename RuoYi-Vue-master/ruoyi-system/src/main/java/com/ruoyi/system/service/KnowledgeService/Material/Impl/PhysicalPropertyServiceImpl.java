@@ -35,7 +35,7 @@ public class PhysicalPropertyServiceImpl implements PhysicalPropertyService {
     }
 
     @Override
-    public PhysicalProperty updateProperty(PhysicalProperty property) {
+    public PhysicalProperty updatePhysicalProperty(PhysicalProperty property) {
         return physicalPropertyRepository.save(property);
     }
 

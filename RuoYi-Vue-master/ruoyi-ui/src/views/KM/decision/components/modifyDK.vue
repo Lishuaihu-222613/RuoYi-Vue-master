@@ -108,10 +108,7 @@ export default {
       default: false
     }
   },
-  mounted() {
-    console.log('chushihua')
-
-  },
+  mounted() {},
   watch: {
     selectItem: {
       handler(newVal, oldVal) {

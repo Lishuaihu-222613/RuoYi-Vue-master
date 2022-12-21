@@ -4,6 +4,7 @@ import com.ruoyi.system.domain.AssemblyPojo.Knowledge.MaterialKnowledge.InspectP
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.MaterialKnowledge.Interface.InspectProjectInterface;
 
 import java.util.Collection;
+import java.util.List;
 
 public interface InspectProjectService {
 
@@ -13,6 +14,20 @@ public interface InspectProjectService {
      * @return
      */
     InspectProject createInspectProject(InspectProject project);
+
+    /**
+     * 更新检测项目
+     * @param project
+     * @return
+     */
+    InspectProject updateInspectProject(InspectProject project);
+
+    /**
+     * 更新多个检测项目
+     * @param projects
+     * @return
+     */
+    List<InspectProject> updateInspectProjects(List<InspectProject> projects);
 
     /**
      * 创建单个检测项目节点

@@ -15,11 +15,11 @@ public interface ProduceMethodRepository extends Neo4jRepository<ProduceMethod,L
     @Override
     Optional<ProduceMethod> findById(Long methodId);
 
-    @Query("MATCH (N:Produce)")
-    Optional<ProduceMethodInterface> findProduceMethodInterfaceId(Long methodId);
+    @Query("MATCH (n:生产方法) where id(n) = $methodId return n")
+    Optional<ProduceMethodInterface> findProduceMethodInterfaceById(@Param("methodId") Long methodId);
 
-    @Query("MATCH (n:ProduceMethod) where n.label = $methodName return n")
-    Collection<ProduceMethodInterface> findByMethodName(String methodName);
+    @Query("MATCH (n:生产方法) where n.label = $methodName return n")
+    Collection<ProduceMethodInterface> findByMethodName(@Param("methodName")String methodName);
 
     ProduceMethod save(ProduceMethod produceMethod);
 
@@ -29,6 +29,11 @@ public interface ProduceMethodRepository extends Neo4jRepository<ProduceMethod,L
     @Override
     void deleteById(Long methodId);
 
-    @Query("MATCH (n:ProduceMethod)<-[r:hasProduceMethod]-(m:Material) where m.id = $materialId return n")
+    @Query("MATCH (n:生产方法)<-[r:hasProduceMethod]-(m:材料) where id(m) = $materialId return n")
     Collection<ProduceMethodInterface> findProduceMethodByMaterialId(@Param("materialId") Long materialId);
+
+    @Query("MATCH (n:生产方法) where id(n) = $methodId "
+            + "MATCH (m:材料) where id(m) = $materialId "
+            + "MERGE (m)-[r:hasProduceMethod]->(n)")
+    void createRelationshipForProduceMethod(@Param("materialId") Long materialId, @Param("methodId") Long $methodId);
 }

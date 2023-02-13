@@ -7,13 +7,14 @@ import com.ruoyi.system.service.KnowledgeService.Material.InspectProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.Collection;
 import java.util.List;
 
 @Service
 public class InspectProjectServiceImpl implements InspectProjectService {
 
-    @Autowired
+    @Resource
     private InspectProjectRepository inspectProjectRepository;
 
     @Override
@@ -61,5 +62,10 @@ public class InspectProjectServiceImpl implements InspectProjectService {
     @Override
     public void deleteInspectProjectById(Long projectId) {
         inspectProjectRepository.deleteById(projectId);
+    }
+
+    @Override
+    public void createRelationshipForInspectProject(Long materialId, Long projectId) {
+
     }
 }

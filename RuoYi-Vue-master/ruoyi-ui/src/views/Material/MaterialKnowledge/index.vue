@@ -27,8 +27,7 @@
         </vue-context-menu>
         <modifyMaterial ref="modifyMaterial"
                         :dialog="modifyMaterialShow"
-                        :selectId="selectId"
-                        :dynamiclabels="selectedLabels"
+                        :selectMaterial="selectMaterial"
                         @closeDialog="() =>{ this.modifyMaterialShow = false }"
                         @restore="() =>{this.selectMaterial = {}}"
         >
@@ -83,6 +82,7 @@
             :data="materials"
             :max-height="tableHeight + 'px'" highlight-current-row stripe style="width: 100%"
             @current-change="handleCurrentChange"
+            @row-contextmenu="showContextMenu"
           >
             <el-table-column type="expand">
               <template v-slot="props">
@@ -116,8 +116,8 @@
                   </el-form-item>
                   <el-form-item label="化学结构式">
                     <el-image
-                      :preview-src-list="['${props.row.structuralFormula}']"
-                      :src="'${props.row.structuralFormula}'"
+                      :preview-src-list="[props.row.structuralFormula]"
+                      :src="props.row.structuralFormula"
                       style="width: 100px; height: 100px"
                     >
                     </el-image>
@@ -129,7 +129,7 @@
             <el-table-column align="center" label="材料别称" prop="nickName" width="200"></el-table-column>
             <el-table-column align="center" label="材料描述" prop="materialDescription" width="200"></el-table-column>
             <el-table-column align="center" label="外观" prop="materialAppearance" width="200"></el-table-column>
-            <el-table-column align="center" label="理化分析谱图" prop="materialAppearance" width="200">
+            <el-table-column align="center" label="理化分析谱图"  width="200">
               <template v-slot="scope">
                 <el-button type="info" @click.native.prevent="showAnalysisSpectrogram(scope.row.materialId)">
                   查看理化分析谱图
@@ -226,10 +226,26 @@ export default {
         },
         menulists: []
       },
+      tableMenu: [
+        {
+          fnHandler: 'createMaterial', // 绑定事件
+          icoName: 'el-icon-circle-plus-outline', // 图标
+          btnName: '创建材料' // 菜单名称
+        },
+        {
+          fnHandler: 'updateMaterial',
+          icoName: 'el-icon-search',
+          btnName: '修改材料'
+        },
+        {
+          fnHandler: 'deleteMaterial',
+          icoName: 'el-icon-paperclip',
+          btnName: '删除材料'
+        }
+      ],
       filterText: '',
       materialKnowledge: [],
       materials: [],
-      selectedLabels:[],
       defaultProps: {
         children: 'children',
         label: 'label'
@@ -250,6 +266,7 @@ export default {
     initPage() {
       materialManagement.getMaterialById(24460).then(result => {
         if (result.code == 200) {
+          console.log(result.data)
           this.materials.push(result.data)
         }
       })
@@ -264,10 +281,23 @@ export default {
             </span>
           </span>)
     },
+    showContextMenu(row, column, event){
+      event.preventDefault()
+      let x = event.clientX
+      let y = event.clientY
+      // 获得当前位置
+      this.contextMenuData.axis = {
+        x, y
+      }
+      this.contextMenuData.menulists = this.tableMenu
+      this.selectMaterial = row
+      console.log(row)
+    },
     createMaterial() {
       this.modifyMaterialShow = true
     },
     updateMaterial() {
+      this.modifyMaterialShow = true
 
     },
     deleteMaterial() {

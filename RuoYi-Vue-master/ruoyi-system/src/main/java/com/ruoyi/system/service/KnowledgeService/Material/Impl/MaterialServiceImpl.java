@@ -65,7 +65,20 @@ public class MaterialServiceImpl implements MaterialService {
     }
 
     @Override
-    public Material updateMaterial(Material material) {
-        return materialRepository.save(material);
+    public Material updateMaterial(Material newMaterial) {
+        Long materialId = newMaterial.getMaterialId();
+        Material oldMaterial = materialRepository.findById(materialId).get();
+        oldMaterial.setMaterialName(newMaterial.getMaterialName());
+        oldMaterial.setEnglishName(newMaterial.getEnglishName());
+        oldMaterial.setNickName(newMaterial.getNickName());
+        oldMaterial.setEnglishNickName(newMaterial.getEnglishNickName());
+        oldMaterial.setRelativeMolecularMass(newMaterial.getRelativeMolecularMass());
+        oldMaterial.setStructuralFormula(newMaterial.getStructuralFormula());
+        oldMaterial.setCasRegistryNumber(newMaterial.getCasRegistryNumber());
+        oldMaterial.setMaterialAppearance(newMaterial.getMaterialAppearance());
+        oldMaterial.setMaterialDescription(newMaterial.getMaterialDescription());
+        oldMaterial.setMaterialUsage(newMaterial.getMaterialUsage());
+        oldMaterial.setMaterialLabels(newMaterial.getMaterialLabels());
+        return materialRepository.save(oldMaterial);
     }
 }

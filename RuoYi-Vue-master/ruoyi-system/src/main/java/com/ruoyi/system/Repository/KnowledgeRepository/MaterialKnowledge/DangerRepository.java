@@ -24,6 +24,11 @@ public interface DangerRepository extends Neo4jRepository<Danger,Long> {
     @Override
     void deleteById(Long dangerId);
 
-    @Query("MATCH (n:Danger)<-[r:hasDanger]-(m:Material) where m.id = $materialId return n")
+    @Query("MATCH (n:危险事项)<-[r:hasDanger]-(m:材料) where id(m) = $materialId return n")
     Collection<Danger> findDangersByMaterialId(@Param("materialId") Long materialId);
+
+    @Query("MATCH (n:危险事项) where id(n) = $dangerId "
+            + "MATCH (m:材料) where id(m) = $materialId "
+            + "MERGE (m)-[r:hasDanger]->(n)")
+    void createRelationshipForDanger(@Param("materialId") Long materialId, @Param("dangerId") Long dangerId);
 }

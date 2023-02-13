@@ -1,0 +1,295 @@
+package com.ruoyi.common.algorithm.rules;
+
+import com.ruoyi.system.domain.AssemblyPojo.Structure.AssemblyStructure;
+import com.ruoyi.system.domain.AssemblyPojo.Structure.AssemblyProduct;
+import com.ruoyi.system.domain.AssemblyPojo.Structure.AssemblyPart;
+import com.ruoyi.system.domain.AssemblyPojo.Structure.AssemblyComponent;
+import com.ruoyi.system.domain.AssemblyPojo.Structure.AssemblyConstraint;
+import com.ruoyi.system.domain.AssemblyPojo.Structure.vo.PartWithCNumber;
+import com.ruoyi.system.service.StructureService.StructureService;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.List;
+import java.util.ArrayList;
+import java.lang.Math
+import java.util.Map
+import java.util.Comparator
+import java.util.stream.Collectors
+
+
+global ArrayList<AssemblyPart> unConstraintParts;
+global ArrayList<AssemblyPart> constraintParts;
+global ArrayList<AssemblyComponent> unitComponents;
+global Map<String,Integer> unitNumber;
+global ArrayList<AssemblyPart> partSequence;
+global ArrayList<AssemblyPart> referenceParts;
+global com.ruoyi.system.service.StructureService.impl.StructureServiceImpl structureService;
+
+dialect "java"
+
+//检验是否存在未约束零件
+rule "check_Constraints_Of_Parts"
+    no-loop true
+    lock-on-active true
+    when
+        $partList:List(size > 0)
+        $part:AssemblyPart(getConstraints() == null) from $partList
+    then
+        unConstraintParts.add($part);
+end
+
+//装配单元数计算
+rule "calculate_Unit_Numbers"
+    no-loop true
+    lock-on-active true
+    when
+        $partList:List(size > 0)
+    then
+        unitNumber.put("number",(int)Math.sqrt($partList.size()));
+end
+
+//遍历零件集合
+rule "determineReferencePart--1.1"
+
+    when
+        $partList:List(size > 0)
+        $part:AssemblyPart() from $partList
+    then
+        insert($part);
+end
+
+//根据质量排序
+rule "determineReferencePart--1.2"
+
+    when
+        $maxMass : Number() from accumulate(AssemblyPart($mass : partMass) , max($mass))
+        $maxPart : AssemblyPart(partMass == $maxMass );
+    then
+        partSequence.add($maxPart);
+        delete($maxPart);
+end
+
+//遍历零件集合
+rule "determineReferencePart--2.1"
+
+    when
+        $partList:List(size > 0)
+        $part:AssemblyPart() from $partList
+    then
+        insert($part);
+end
+
+//计算约束数量
+rule "determineReferencePart--2.2"
+
+    when
+        $part:AssemblyPart()
+    then
+        PartWithCNumber p = new PartWithCNumber();
+        p.setPart($part);
+        p.setNumber($part.getConstraints().size());
+        insert(p);
+end
+
+//根据约束数量排序
+rule "determineReferencePart--2.3"
+
+    when
+        $maxConstraint : Number() from accumulate(PartWithCNumber($constraint : number) , max($constraint))
+        $maxPart : PartWithCNumber(number == $maxConstraint);
+    then
+        partSequence.add($maxPart);
+        delete($maxPart);
+end
+//取集合子集
+//rule "determineReferencePart--1.3"
+//
+//    when
+//        $number : Integer()
+//    then
+//        partSequence.subList(0,$number);
+//end
+
+////根据连接关系数量进行排序
+//rule "determineReferencePart--1"
+//    lock-on-active true
+//    when
+//        $unit: Integer()
+//        $reference : ArrayList(size >= 0)
+//    then
+//
+//end
+//
+//rule "determineReferencePart--1"
+//    no-loop true
+//    lock-on-active true
+//    when
+//        $unit : Number()
+//        $reference : ArrayList(size >= 0)
+//                    from accumulate(
+//                                $partList:List(size > 0),
+//                                init(List reference = new ArrayList();),
+//                                action(
+//                                reference = $partList.stream().sorted(Comparator.comparing(AssemblyPart::getPartMass).reversed()).collect(Collectors.toList());
+//                                ),
+//                                result(reference))
+//    then
+//        referenceParts = (ArrayList) $reference.subList(0,(int)$unit);
+//end
+//
+//rule "determineReferencePart--2"
+//    no-loop true
+//    lock-on-active true
+//    when
+//        $unit : Number()
+//        $reference : ArrayList(size >= 0)
+//                        from accumulate(
+//                                $partList:List(),//从工作内存中获取待处理的数据集合
+//                                //声明新数组集合
+//                                init(List reference = new ArrayList()),
+//                                action(
+//                                        reference = $partList.stream().sorted(Comparator.comparing(AssemblyPart::getConstraints.size()).reversed()).collect(Collectors.toList());
+//                                       ),
+//                                result(reference)//返回遍历结果
+//                        )
+//    then
+//        referenceParts = (ArrayList) $reference.subList(0,(int)$unit);
+//end
+
+////构建装配图矩阵
+//function double[][] getMatrixOfParts(List<AssemblyPart> parts,StructureService s){
+//    int n = parts.size();
+//    double[][] weightMatrix=new double[n][n];
+//    AssemblyPart partA;
+//    AssemblyPart partB;
+//    for(int i = 0; i<=n; i++){
+//        partA = (AssemblyPart) parts.get(i);
+//        for(int j = 0; j<=n; j++){
+//            double weight = 0.0;
+//            partB = (AssemblyPart) parts.get(j);
+//            List<AssemblyConstraint> constraintsOfPartA =  s.getAllConstraintByStructureId(partA.getStructureId());
+//            List<AssemblyConstraint> constraintsOfPartB =  s.getAllConstraintByStructureId(partB.getStructureId());
+//            AssemblyConstraint cab;
+//            List<AssemblyConstraint> constraintAB = constraintsOfPartA.stream().map(cA -> constraintsOfPartB.stream()
+//                                                                                             .filter(cB ->Objects.equals(cA.getConstraintId(), cB.getConstraintId()))
+//                                                                                             .findAny()
+//                                                                                             .orElse(null))
+//                                                                                             .filter(Objects::nonNull).collect(Collectors.toList());
+//                if(constraintAB.size() > 0){
+//                    cab =  constraintAB.get(0);
+//                    String cName = cab.getConstraintName();
+//                    switch(cName){
+//                        case "接触":
+//                            weight = 1.0;
+//                            break;
+//                        case "同轴":
+//                            weight = 2.0;
+//                            break;
+//                        case "偏移":
+//                            weight = 0.5;
+//                            break;
+//                        case "角度":
+//                            weight = 0.2;
+//                            break;
+//                        default:
+//                            weight = 0.0;
+//                        break;
+//                    };
+//                };
+//                weightMatrix[i][j] = weight;
+//        }
+//    }
+//
+//}
+////获取两个零件之间的约束权重
+//function double getRelationWeightOfPart(AssemblyPart partA,AssemblyPart partB,StructureService s){
+//
+//    double weight = 0.0;
+//    List<AssemblyConstraint> constraintsOfPartA =  s.getAllConstraintByStructureId(partA.getStructureId());
+//    List<AssemblyConstraint> constraintsOfPartB =  s.getAllConstraintByStructureId(partB.getStructureId());
+//    AssemblyConstraint cab;
+//    List<AssemblyConstraint> constraintAB = constraintsOfPartA.stream().map(cA -> constraintsOfPartB.stream()
+//                                                                                 .filter(cB ->Objects.equals(cA.getConstraintId(), cB.getConstraintId()))
+//                                                                                 .findAny()
+//                                                                                 .orElse(null))
+//                                                                                 .filter(Objects::nonNull).collect(Collectors.toList());
+//    if(constraintAB.size() > 0){
+//        cab =  constraintAB.get(0);
+//        String cName = cab.getConstraintName();
+//        switch(cName){
+//            case "接触":
+//                weight = 1.0;
+//                break;
+//            case "同轴":
+//                weight = 2.0;
+//                break;
+//            case "偏移":
+//                weight = 0.5;
+//                break;
+//            case "角度":
+//                weight = 0.2;
+//                break;
+//            default:
+//                weight = 0.0;
+//            break;
+//        };
+//    };
+//    return weight;
+//}
+
+//待划分零件与关系最紧密的基本件划分至同一装配单元
+//rule "UnitDivision--1"
+//    no-loop true
+//    lock-on-active true
+//    when
+//        $component :ArrayList(size >= 0)
+//                    from accumulate(
+//                        $partList:List(),//待判断零件集合
+//                        //声明新数组集合
+//                        init(List reference = new ArrayList();int n = $partList.length();int m = referenceParts.length();),
+//                        action(
+//                            for(i = 0; i <= n; i++){
+//                                 for(j = 0; j <= m; j++){
+//                                     getRelationWeightOfPart($partList[i])
+//                                 }
+//                            }
+//                               ),
+//                        result(reference)//返回遍历结果
+//                    )
+//    then
+//
+//end
+//
+////获取路径权重矩阵
+//rule "UnitDivision--1.1"
+//    no-loop true
+//    lock-on-active true
+//    when
+//        $partList:List(size > 0)
+//        $service:StructureService()
+//    then
+//
+//end
+//
+////零件应同与其联系最紧密的零件划分至同一装配单元
+//rule "UnitDivision--2"
+//    no-loop true
+//    lock-on-active true
+//    when
+//        $component :ArrayList(size >= 0)
+//                            from accumulate(
+//                                $partList:List(),//待判断零件集合
+//                                //声明新数组集合
+//                                init(List reference = new ArrayList();int n = $partList.length();),
+//                                action(
+//                                    for(i = 0; i <= n; i++){
+//                                        for(j = 0; j <= n; j++){
+//
+//                                        }
+//                                    }
+//                                       ),
+//                                result(reference)//返回遍历结果
+//                            )
+//    then
+//
+//end

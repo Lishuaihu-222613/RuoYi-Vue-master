@@ -13,7 +13,7 @@ public interface ProtectionRepository extends Neo4jRepository<Protection,Long> {
     @Override
     Optional<Protection> findById(Long protectionId);
 
-    @Query("MATCH (n:Protection) where n.label = $protectionName return n")
+    @Query("MATCH (n:安全要求) where n.label = $protectionName return n")
     Collection<Protection> findByProtectionName(String protectionName);
 
     Protection save(Protection protection);
@@ -24,6 +24,11 @@ public interface ProtectionRepository extends Neo4jRepository<Protection,Long> {
     @Override
     void deleteById(Long protectionId);
 
-    @Query("MATCH (n:Protection)<-[r:hasProtection]-(m:Material) where m.id = $materialId return n")
+    @Query("MATCH (n:安全要求)<-[r:hasProtection]-(m:材料) where id(m) = $materialId return n")
     Collection<Protection> findProtectionsByMaterialId(@Param("materialId")Long materialId);
+
+    @Query("MATCH (n:安全要求) where id(n) = $protectionId "
+            + "MATCH (m:材料) where id(m) = $materialId "
+            + "MERGE (m)-[r:hasProtection]->(n)")
+    void createRelationshipForProtection(@Param("materialId") Long materialId, @Param("protectionId") Long protectionId);
 }

@@ -1,0 +1,38 @@
+package com.ruoyi.system.service.algorithm.rules;
+
+import com.ruoyi.system.domain.AssemblyPojo.Structure.AssemblyConstraint
+global java.lang.Double weight
+
+dialect  "java"
+
+rule "weightRule--1"
+    no-loop
+    when
+        $constraint:AssemblyConstraint(constraintName == "同轴")
+    then
+        $constraint.setConstraintValue("2.0");
+end
+
+rule "weightRule--2"
+    no-loop
+    when
+        $constraint:AssemblyConstraint(constraintName == "接触")
+    then
+        $constraint.setConstraintValue("1.0");
+end
+
+rule "weightRule--3"
+    no-loop
+    when
+        $constraint:AssemblyConstraint(constraintName == "偏移")
+    then
+        $constraint.setConstraintValue("0.5");
+end
+
+rule "weightRule--4"
+    no-loop
+    when
+        $constraint:AssemblyConstraint(constraintName == "角度")
+    then
+        $constraint.setConstraintValue("0.2");
+end

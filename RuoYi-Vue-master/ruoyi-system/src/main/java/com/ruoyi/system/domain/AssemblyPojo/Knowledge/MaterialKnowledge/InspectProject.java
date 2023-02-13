@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-@Node("理化指标")
+@Node({"理化指标","InspectProject"})
 public class InspectProject {
 
     @Id

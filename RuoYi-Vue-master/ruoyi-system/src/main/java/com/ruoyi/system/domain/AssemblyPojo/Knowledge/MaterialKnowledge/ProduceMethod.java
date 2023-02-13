@@ -1,7 +1,7 @@
 package com.ruoyi.system.domain.AssemblyPojo.Knowledge.MaterialKnowledge;
 
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.QualityProblem.QualityProblem;
-import com.ruoyi.system.domain.AssemblyPojo.Knowledge.TypicalKnowledge.TypicalProcess;
+import com.ruoyi.system.domain.AssemblyPojo.Knowledge.TypicalKnowledge.Process.TypicalProcess;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.fileKnowledge.FileKnowledge;
 import org.springframework.data.neo4j.core.schema.*;
 
@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-@Node({"生产方法","方法"})
+@Node({"生产方法","方法","ProduceMethod","Method"})
 public class ProduceMethod {
 
     @Id

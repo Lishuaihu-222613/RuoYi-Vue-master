@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :visible.sync="dialogFormVisible" title="材料基本信息编辑" @closed="handleClose" @open="handleOpen">
+  <el-dialog :visible.sync="dialogFormVisible" title="材料基本信息编辑" @closed="handleClose" @open="handleOpen" width="70%">
     <el-form :model="material">
       <el-form-item :label-width="formLabelWidth" label="材料名称">
         <el-input v-model="material.materialName"></el-input>
@@ -55,8 +55,17 @@
         <el-input v-model="material.materialAppearance"></el-input>
       </el-form-item>
       <el-form-item :label-width="formLabelWidth" label="材料用途">
+        <el-button type="primary" @click="addUsage">添加用途</el-button>
         <el-row v-for = "(item,index) in material.materialUsage" :key="index">
-          <el-input v-model="item"></el-input>
+          <el-col :span="20">
+            <el-input v-model="material.materialUsage[index]"></el-input>
+          </el-col>
+          <el-col :span="4">
+            <el-button
+              circle icon="el-icon-delete" type="danger"
+              @click="removeUsage(material.materialUsage[index])"
+            ></el-button>
+          </el-col>
         </el-row>
       </el-form-item>
       <el-form-item :label-width="formLabelWidth" label="材料标签">
@@ -91,18 +100,18 @@
 
 <script>
 
+import ImageUploader from '@/views/Material/MaterialKnowledge/components/ImageUpload'
 import * as materialManagement from '@/api/system/materialManagement'
 
 export default {
   name: 'modifyMaterial',
+  components: {
+    ImageUploader
+  },
   props: {
-    selectId: {
-      type: Number,
-      default: 0
-    },
-    dynamicLabels: {
-      type: Array,
-      default: []
+    selectMaterial: {
+      type: Object,
+      default: {}
     },
     dialog: {
       type: Boolean,
@@ -110,10 +119,10 @@ export default {
     }
   },
   watch: {
-    selectId: {
+    selectMaterial: {
       handler(newVal, oldVal) {
         if (newVal !== null || newVal !== 0) {
-          this.material.materialId = newVal
+          this.material = newVal
         }
       }
     },
@@ -122,11 +131,6 @@ export default {
         this.dialogFormVisible = newVal
       }
     },
-    dynamicLabels:{
-      handler(newVal, oldVal) {
-        this.material.materialLabels = newVal
-      }
-    }
   },
   data: () => ({
     dialogFormVisible: false,
@@ -170,6 +174,15 @@ export default {
         this.$refs.saveTagInput.$refs.input.focus();
       });
     },
+    addUsage(){
+      this.material.materialUsage.push("")
+    },
+    removeUsage(item){
+      let index = this.material.materialUsage.indexOf(item)
+      if (index !== -1) {
+        this.material.materialUsage.splice(index, 1)
+      }
+    },
     handleInputConfirm() {
       let inputValue = this.inputValue;
       if (inputValue) {
@@ -190,6 +203,11 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+
+.upLoader {
+  display: inline-block;
+  float: right;
+}
 
 </style>

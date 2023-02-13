@@ -54,4 +54,11 @@ public interface ProduceMethodService {
      */
     void deleteProduceMethodById(Long methodId);
 
+    /**
+     * 创建关联
+     * @param materialId
+     * @param methodId
+     */
+    void createRelationshipForProduceMethod(Long materialId, Long methodId);
+
 }

@@ -3,12 +3,15 @@ package com.ruoyi.system.service.StructureService.impl;
 import com.ruoyi.system.Repository.StructureRepository.ConstraintRepository;
 import com.ruoyi.system.domain.AssemblyPojo.Structure.*;
 import com.ruoyi.system.Repository.StructureRepository.StructureRepository;
+import com.ruoyi.system.domain.AssemblyPojo.Structure.vo.PartsWithConstraints;
 import com.ruoyi.system.service.StructureService.StructureService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class StructureServiceImpl implements StructureService {
@@ -95,6 +98,52 @@ public class StructureServiceImpl implements StructureService {
     public AssemblyStructure updateStructure(AssemblyStructure structure) {
         AssemblyStructure assemblyStructure = structureMapper.save(structure);
         return assemblyStructure;
+    }
+
+    @Override
+    public Set<AssemblyPart> createUnknownParts(List<PartsWithConstraints> constraints) {
+        Set<AssemblyPart> parts = new HashSet<>();
+        constraints.forEach(c ->{
+            c.getParts().forEach(p -> {
+                parts.add(p);
+            });
+        });
+        parts.forEach(p -> {
+            createPart(p);
+        });
+        Set<AssemblyConstraint> newConstraints = new HashSet<>();
+        constraints.forEach(c ->{
+            AssemblyConstraint constraint = c.getConstraint();
+            c.getParts().forEach(p -> {
+                parts.forEach(p1 -> {
+                    AssemblyPart p2 = p1;
+                    if(p2.getPartName().equals(p.getPartName())){
+                        Set<AssemblyStructure> newParts;
+                        if(constraint.getStructures() == null || constraint.getStructures().isEmpty()){
+                            newParts = new HashSet<>();
+                        } else {
+                            newParts = constraint.getStructures();
+                        }
+                        newParts.add(p1);
+                        constraint.setStructures(newParts);
+                    }
+                });
+            });
+            newConstraints.add(createConstraint(constraint));
+        });
+        newConstraints.forEach(n ->{
+            n.getStructures().forEach(s ->{
+                if(s.getConstraints() == null || s.getConstraints().isEmpty()){
+                    Set<AssemblyConstraint> c1 = new HashSet<>();
+                    c1.add(n);
+                    s.setConstraints(c1);
+                }else {
+                    s.getConstraints().add(n);
+                }
+                updateStructure(s);
+            });
+        });
+        return parts;
     }
 
 }

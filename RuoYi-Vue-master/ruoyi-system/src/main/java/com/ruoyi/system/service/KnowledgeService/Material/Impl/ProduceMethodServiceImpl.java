@@ -7,12 +7,13 @@ import com.ruoyi.system.service.KnowledgeService.Material.ProduceMethodService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.Collection;
 
 @Service
 public class ProduceMethodServiceImpl implements ProduceMethodService {
 
-    @Autowired
+    @Resource
     private ProduceMethodRepository produceMethodRepository;
 
     @Override
@@ -22,7 +23,7 @@ public class ProduceMethodServiceImpl implements ProduceMethodService {
 
     @Override
     public ProduceMethodInterface getProduceMethodInterfaceById(Long methodId) {
-        return produceMethodRepository.findProduceMethodInterfaceId(methodId).get();
+        return produceMethodRepository.findProduceMethodInterfaceById(methodId).get();
     }
 
     @Override
@@ -48,5 +49,10 @@ public class ProduceMethodServiceImpl implements ProduceMethodService {
     @Override
     public void deleteProduceMethodById(Long methodId) {
         produceMethodRepository.deleteById(methodId);
+    }
+
+    @Override
+    public void createRelationshipForProduceMethod(Long materialId, Long methodId) {
+        produceMethodRepository.createRelationshipForProduceMethod(materialId,methodId);
     }
 }

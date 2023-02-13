@@ -46,4 +46,11 @@ public interface DangerService {
      */
     void deleteDangerById(Long dangerId);
 
+    /**
+     * 创建节点关联
+     * @param materialId
+     * @param dangerId
+     */
+    void createRelationshipForDanger(Long materialId,Long dangerId);
+
 }

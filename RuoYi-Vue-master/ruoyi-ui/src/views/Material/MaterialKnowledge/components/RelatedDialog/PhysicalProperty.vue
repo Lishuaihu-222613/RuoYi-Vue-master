@@ -25,6 +25,7 @@
 
 <script>
 import * as materialManagement from '@/api/system/materialManagement'
+import { updatePhysicalProperty } from '@/api/system/materialManagement'
 
 export default {
   name: 'PhysicalProperty',
@@ -85,7 +86,7 @@ export default {
     },
     onSubmit() {
       if (this.physicalProperty.propertyName !== '') {
-        materialManagement.updateChemicalProperty(this.physicalProperty).then(result => {
+        materialManagement.updatePhysicalProperty(this.physicalProperty).then(result => {
           if (result.code == 200) {
             alert('创建成功！')
           } else {

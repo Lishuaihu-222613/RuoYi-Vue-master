@@ -5,7 +5,7 @@ import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.Stability.Exp
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.Stability.HeatStability;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.Stability.MechanicalStability;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.Stability.RadioStability;
-import com.ruoyi.system.domain.AssemblyPojo.Knowledge.TypicalKnowledge.TypicalProcess;
+import com.ruoyi.system.domain.AssemblyPojo.Knowledge.TypicalKnowledge.Process.TypicalProcess;
 import com.ruoyi.system.domain.AssemblyPojo.Structure.AssemblyProduct;
 import org.springframework.data.neo4j.core.schema.*;
 

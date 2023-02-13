@@ -1,6 +1,7 @@
 package com.ruoyi.system.domain.AssemblyPojo.Knowledge.MaterialKnowledge.Interface;
 
 import java.util.List;
+import java.util.Set;
 
 public interface MaterialInterface {
 
@@ -25,4 +26,6 @@ public interface MaterialInterface {
     String getMaterialAppearance();
 
     List<String> getMaterialUsage();
+
+    Set<String> getMaterialLabels();
 }

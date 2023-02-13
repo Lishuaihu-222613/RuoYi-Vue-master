@@ -7,7 +7,7 @@ import org.springframework.data.neo4j.core.schema.Property;
 
 import java.util.Objects;
 
-@Node("安全要求")
+@Node({"安全要求","Protection"})
 public class Protection {
 
     @Id

@@ -69,4 +69,11 @@ public interface InspectProjectService {
      * @param projectId
      */
     void deleteInspectProjectById(Long projectId);
+
+    /**
+     * 创建联系
+     * @param materialId
+     * @param projectId
+     */
+    void createRelationshipForInspectProject(Long materialId, Long projectId);
 }

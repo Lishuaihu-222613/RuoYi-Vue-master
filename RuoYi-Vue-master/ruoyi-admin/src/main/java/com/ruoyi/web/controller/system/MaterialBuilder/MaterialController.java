@@ -4,6 +4,7 @@ import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.utils.Neo4j.R;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.MaterialKnowledge.*;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.MaterialKnowledge.Interface.MaterialInterface;
+import com.ruoyi.system.domain.AssemblyPojo.Knowledge.MaterialKnowledge.Interface.ProduceMethodInterface;
 import com.ruoyi.system.service.KnowledgeService.Material.*;
 import com.ruoyi.system.service.KnowledgeService.Prescription.StoragePropertyService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,6 +100,19 @@ public class MaterialController extends BaseController {
             return R.error(e.getMessage());
         }
     };
+    @ResponseBody
+    @PostMapping("/updateMaterial")
+    public R<Material> updateMaterial(@RequestBody Material material) {
+        try{
+            System.out.println(material);
+            Material newMaterial = materialService.updateMaterial(material);
+            System.out.println(newMaterial);
+            return R.success(newMaterial);
+        }catch(Exception e){
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    };
 
     @ResponseBody
     @PostMapping("/updateAnalysisSpectrogram")
@@ -178,6 +192,20 @@ public class MaterialController extends BaseController {
     };
 
     @ResponseBody
+    @GetMapping("/createDanger/{materialId}")
+    public R<Danger> createDanger(@PathVariable Long materialId) {
+        try{
+            Danger newDanger = dangerService.createDanger(new Danger());
+            dangerService.createRelationshipForDanger(materialId, newDanger.getDangerId());
+            System.out.println(newDanger);
+            return R.success(newDanger);
+        }catch(Exception e){
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    };
+
+    @ResponseBody
     @PostMapping("/updateDanger")
     public R<Danger> updateDanger(@RequestBody Danger danger) {
         try{
@@ -189,14 +217,92 @@ public class MaterialController extends BaseController {
             return R.error(e.getMessage());
         }
     };
+    @ResponseBody
+    @GetMapping("/deleteDanger/{dangerId}")
+    public R<String> deleteDangerById(@PathVariable Long dangerId) {
+        try{
+            System.out.println(dangerId);
+            dangerService.deleteDangerById(dangerId);
+            return R.success(dangerId);
+        }catch(Exception e){
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    };
 
     @ResponseBody
-    @GetMapping("/getDangerByMaterialId/{materialId}")
-    public R<Danger> getDangerByMaterialId(@PathVariable Long materialId) {
+    @GetMapping("/getDangersByMaterialId/{materialId}")
+    public R<List<Danger>> getDangersByMaterialId(@PathVariable Long materialId) {
         try{
-            Danger danger = dangerService.getDangersByMaterialId(materialId).stream().findFirst().get();
-            System.out.println(danger);
-            return R.success(danger);
+            List<Danger> dangers = new ArrayList<>(dangerService.getDangersByMaterialId(materialId));
+            System.out.println(dangers);
+            return R.success(dangers);
+        }catch(Exception e){
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    };
+
+    @ResponseBody
+    @GetMapping("/createProtection/{materialId}")
+    public R<Protection> createProtection(@PathVariable Long materialId) {
+        try{
+            Protection newProtection = protectionService.createProtection(new Protection());
+            protectionService.createRelationshipForProtection(materialId,newProtection.getProtectionId());
+            System.out.println(newProtection);
+            return R.success(newProtection);
+        }catch(Exception e){
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    };
+
+    @ResponseBody
+    @PostMapping("/updateProtection")
+    public R<Protection> updateProtection(@RequestBody Protection protection) {
+        try{
+            Protection newProtection = protectionService.updateProtection(protection);
+            System.out.println(newProtection);
+            return R.success(newProtection);
+        }catch(Exception e){
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    };
+
+    @ResponseBody
+    @GetMapping("/getProtectionsByMaterialId/{materialId}")
+    public R<List<Protection>> getProtectionsByMaterialId(@PathVariable Long materialId) {
+        try{
+            List<Protection> protections = new ArrayList<>(protectionService.getProtectionsByMaterialId(materialId));
+            System.out.println(protections);
+            return R.success(protections);
+        }catch(Exception e){
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    };
+    @ResponseBody
+    @GetMapping("/deleteProtection/{protectionId}")
+    public R<String> deleteProtection(@PathVariable Long protectionId) {
+        try{
+            System.out.println(protectionId);
+            protectionService.deleteProtectionById(protectionId);
+            return R.success(protectionId);
+        }catch(Exception e){
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    };
+
+    @ResponseBody
+    @GetMapping("/createInspectProject/{materialId}")
+    public R<InspectProject> createInspectProject(@PathVariable Long materialId) {
+        try{
+            InspectProject newProject = inspectProjectService.updateInspectProject(new InspectProject());
+            inspectProjectService.createRelationshipForInspectProject(materialId, newProject.getProjectId());
+            System.out.println(newProject);
+            return R.success(newProject);
         }catch(Exception e){
             e.printStackTrace();
             return R.error(e.getMessage());
@@ -236,6 +342,72 @@ public class MaterialController extends BaseController {
             ArrayList<InspectProject> inspectProjects = new ArrayList<>(inspectProjectService.getInspectProjectsByMaterialId(materialId));
             System.out.println(inspectProjects);
             return R.success(inspectProjects);
+        }catch(Exception e){
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    };
+
+    @ResponseBody
+    @GetMapping("/deleteInspectProject/{projectId}")
+    public R<String> deleteInspectProjectById(@PathVariable Long projectId) {
+        try{
+            System.out.println(projectId);
+            inspectProjectService.deleteInspectProjectById(projectId);
+            return R.success(projectId);
+        }catch(Exception e){
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    };
+
+    @ResponseBody
+    @GetMapping("/createProduceMethod/{materialId}")
+    public R<ProduceMethod> createProduceMethod(@PathVariable Long materialId) {
+        try{
+            ProduceMethod newMethod = produceMethodService.createProduceMethod(new ProduceMethod());
+            produceMethodService.createRelationshipForProduceMethod(materialId, newMethod.getMethodId());
+            System.out.println(newMethod);
+            return R.success(newMethod);
+        }catch(Exception e){
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    };
+
+    @ResponseBody
+    @PostMapping("/updateProduceMethod")
+    public R<ProduceMethodInterface> updateProduceMethod(@RequestBody ProduceMethod method) {
+        try{
+            ProduceMethodInterface newMethod = (ProduceMethodInterface)produceMethodService.updateProduceMethod(method);
+            System.out.println(newMethod);
+            return R.success(newMethod);
+        }catch(Exception e){
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    };
+
+    @ResponseBody
+    @GetMapping("/getProduceMethodsByMaterialId/{materialId}")
+    public R<List<ProduceMethodInterface>> getProduceMethodsByMaterialId(@PathVariable Long materialId) {
+        try{
+            ArrayList<ProduceMethodInterface> methods = new ArrayList<>(produceMethodService.getProduceMethodsByMaterialId(materialId));
+            System.out.println(methods);
+            return R.success(methods);
+        }catch(Exception e){
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    };
+
+    @ResponseBody
+    @GetMapping("/deleteProduceMethodById/{methodId}")
+    public R<String> deleteProduceMethodById(@PathVariable Long methodId) {
+        try{
+            System.out.println(methodId);
+            produceMethodService.deleteProduceMethodById(methodId);
+            return R.success(methodId);
         }catch(Exception e){
             e.printStackTrace();
             return R.error(e.getMessage());

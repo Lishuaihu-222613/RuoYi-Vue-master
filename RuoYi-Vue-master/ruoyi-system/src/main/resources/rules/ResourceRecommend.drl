@@ -1,0 +1,7 @@
+package com.ruoyi.common.algorithm.rules;
+dialect  "mvel"
+
+rule "ResourceRecommend"
+    when
+    then
+end

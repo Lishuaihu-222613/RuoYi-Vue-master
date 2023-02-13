@@ -1,8 +1,10 @@
 package com.ruoyi.system.service.StructureService;
 
 import com.ruoyi.system.domain.AssemblyPojo.Structure.*;
+import com.ruoyi.system.domain.AssemblyPojo.Structure.vo.PartsWithConstraints;
 
 import java.util.List;
+import java.util.Set;
 
 public interface StructureService {
 
@@ -103,6 +105,11 @@ public interface StructureService {
      */
     AssemblyStructure updateStructure(AssemblyStructure structure);
 
-
+    /**
+     * 创建待推理零件集并初始化
+     * @param constraints
+     * @return
+     */
+    Set<AssemblyPart> createUnknownParts(List<PartsWithConstraints> constraints);
 
 }

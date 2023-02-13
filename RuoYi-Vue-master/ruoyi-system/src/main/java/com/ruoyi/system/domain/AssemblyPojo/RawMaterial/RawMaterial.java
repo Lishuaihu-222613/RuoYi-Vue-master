@@ -1,6 +1,6 @@
 package com.ruoyi.system.domain.AssemblyPojo.RawMaterial;
 
-import com.ruoyi.system.domain.AssemblyPojo.Knowledge.TypicalKnowledge.TypicalProcess;
+import com.ruoyi.system.domain.AssemblyPojo.Knowledge.TypicalKnowledge.Process.TypicalProcess;
 import org.springframework.data.neo4j.core.schema.*;
 
 import java.util.Date;

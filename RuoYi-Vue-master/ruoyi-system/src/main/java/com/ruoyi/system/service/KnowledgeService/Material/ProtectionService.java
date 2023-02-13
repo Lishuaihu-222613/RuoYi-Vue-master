@@ -52,4 +52,11 @@ public interface ProtectionService {
      * @param protectionId
      */
     void deleteProtectionById(Long protectionId);
+
+    /**
+     * 创建联系
+     * @param materialId
+     * @param protectionId
+     */
+    void createRelationshipForProtection(Long materialId, Long protectionId);
 }

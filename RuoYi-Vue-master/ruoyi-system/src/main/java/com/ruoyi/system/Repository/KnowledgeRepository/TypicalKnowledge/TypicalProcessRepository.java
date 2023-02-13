@@ -1,7 +1,7 @@
 package com.ruoyi.system.Repository.KnowledgeRepository.TypicalKnowledge;
 
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.TypicalKnowledge.Interface.Process;
-import com.ruoyi.system.domain.AssemblyPojo.Knowledge.TypicalKnowledge.TypicalProcess;
+import com.ruoyi.system.domain.AssemblyPojo.Knowledge.TypicalKnowledge.Process.TypicalProcess;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
 

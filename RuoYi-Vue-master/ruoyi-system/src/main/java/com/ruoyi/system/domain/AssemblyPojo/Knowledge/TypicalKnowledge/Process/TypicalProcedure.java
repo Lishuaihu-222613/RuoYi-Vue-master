@@ -1,4 +1,4 @@
-package com.ruoyi.system.domain.AssemblyPojo.Knowledge.TypicalKnowledge;
+package com.ruoyi.system.domain.AssemblyPojo.Knowledge.TypicalKnowledge.Process;
 
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.QualityProblem.QualityProblem;
 import com.ruoyi.system.domain.AssemblyPojo.Resource.AssemblyResource;

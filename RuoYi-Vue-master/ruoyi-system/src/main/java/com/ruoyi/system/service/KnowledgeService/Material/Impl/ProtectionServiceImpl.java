@@ -48,4 +48,9 @@ public class ProtectionServiceImpl implements ProtectionService {
     public void deleteProtectionById(Long protectionId) {
         protectionRepository.deleteById(protectionId);
     }
+
+    @Override
+    public void createRelationshipForProtection(Long materialId, Long protectionId) {
+        protectionRepository.createRelationshipForProtection(materialId, protectionId);
+    }
 }

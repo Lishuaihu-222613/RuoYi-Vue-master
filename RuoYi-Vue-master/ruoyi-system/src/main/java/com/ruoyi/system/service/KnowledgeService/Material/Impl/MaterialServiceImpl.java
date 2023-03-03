@@ -5,12 +5,14 @@ import com.ruoyi.system.domain.AssemblyPojo.Knowledge.MaterialKnowledge.Interfac
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.MaterialKnowledge.Material;
 import com.ruoyi.system.service.KnowledgeService.Material.MaterialService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Transactional
 public class MaterialServiceImpl implements MaterialService {
 
     @Resource

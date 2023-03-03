@@ -4,7 +4,7 @@ import org.springframework.data.neo4j.core.schema.*;
 
 import java.util.Set;
 
-@Node("treeNode")
+@Node({"分类树","treeNode"})
 public class ClassificationTree {
 
     @Id
@@ -14,10 +14,13 @@ public class ClassificationTree {
     @Property(name = "label")
     private String leafName;
 
-    @Property(name = "Description")
+    @Property(name = "节点描述")
     private String leafDescription;
 
-    @Relationship(type = "hasSubLeaf" , direction = Relationship.Direction.OUTGOING)
+    @DynamicLabels
+    private Set<String> dynamicLabels;
+
+    @Relationship(type = "存在子节点" , direction = Relationship.Direction.OUTGOING)
     private Set<ClassificationTree> subLeafs;
 
 }

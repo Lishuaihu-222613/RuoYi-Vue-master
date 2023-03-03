@@ -285,17 +285,18 @@ public class Material {
         this.associatedFiles = associatedFiles;
     }
 
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Material material = (Material) o;
-        return Objects.equals(materialId, material.materialId) && Objects.equals(materialName, material.materialName) && Objects.equals(englishName, material.englishName) && Objects.equals(nickName, material.nickName) && Objects.equals(englishNickName, material.englishNickName) && Objects.equals(relativeMolecularMass, material.relativeMolecularMass) && Objects.equals(structuralFormula, material.structuralFormula) && Objects.equals(casRegistryNumber, material.casRegistryNumber) && Objects.equals(materialDescription, material.materialDescription) && Objects.equals(materialAppearance, material.materialAppearance) && Objects.equals(materialUsage, material.materialUsage) && Objects.equals(materialLabels, material.materialLabels);
+        return Objects.equals(materialId, material.materialId) && Objects.equals(materialName, material.materialName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(materialId, materialName, englishName, nickName, englishNickName, relativeMolecularMass, structuralFormula, casRegistryNumber, materialDescription, materialAppearance, materialUsage, materialLabels, physicalProperty, chemicalProperty, analysisSpectrogram, inspectProjects, storageRequirements, productMethods, dangers, protections, associatedFiles);
+        return Objects.hash(materialId, materialName);
     }
 
     @Override

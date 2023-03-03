@@ -264,7 +264,7 @@ export default {
       return data.label.indexOf(value) !== -1
     },
     initPage() {
-      materialManagement.getMaterialById(24460).then(result => {
+      materialManagement.getMaterialById(25351).then(result => {
         if (result.code == 200) {
           console.log(result.data)
           this.materials.push(result.data)

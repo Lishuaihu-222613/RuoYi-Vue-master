@@ -1,3 +1,4 @@
+
 spring:
   neo4j:
     url: bolt://localhost:7687

@@ -101,6 +101,16 @@ rule "determineReferencePart--2.3"
         partSequence.add($maxPart);
         delete($maxPart);
 end
+
+rule "determineReferencePart--3"
+
+    when
+        $maxConstraint : Number() from accumulate(PartWithCNumber($constraint : number) , max($constraint))
+        $maxPart : PartWithCNumber(number == $maxConstraint);
+    then
+        partSequence.add($maxPart);
+        delete($maxPart);
+end
 //取集合子集
 //rule "determineReferencePart--1.3"
 //

@@ -142,6 +142,7 @@ public class AssemblyUnitDivision {
                 if (constraintAB.size() > 0) {
                     cab = constraintAB.get(0);
                     session.insert(cab);
+                    session.fireAllRules();
                     weightMatrix[i][j] = cab;
                 };
             }
@@ -149,4 +150,24 @@ public class AssemblyUnitDivision {
         return weightMatrix;
     };
 
+    //查找最近基准件
+    public AssemblyPart getClosetPart(AssemblyPart part, List<AssemblyPart> references){
+
+        int n = references.size();
+        KieSession session = kieContainer.newKieSession();
+        for (int i = 0; i < n; i++) {
+            session.insert(references.get(i));
+        }
+        AssemblyPart closetPart = new AssemblyPart();
+        session.setGlobal("closetPart",closetPart);
+        session.fireAllRules(new RuleNameEqualsAgendaFilter("UnitDivision--2"));
+        session.destroy();
+        return closetPart;
+    };
+
+    public List<AssemblyComponent> getUnitComponents(List<AssemblyPart> parts){
+
+        return new ArrayList<AssemblyComponent>();
+
+    };
 }

@@ -4,20 +4,21 @@ import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.utils.Neo4j.R;
 import com.ruoyi.system.domain.AssemblyPojo.Process.Interface.ProcessInterface;
 import com.ruoyi.system.domain.AssemblyPojo.Process.Process;
+import com.ruoyi.system.domain.AssemblyPojo.Process.SpecialSequence.Normal;
 import com.ruoyi.system.domain.AssemblyPojo.Process.SpecialSequence.Sequence;
 import com.ruoyi.system.domain.AssemblyPojo.Process.Step;
 import com.ruoyi.system.domain.AssemblyPojo.Process.vo.*;
 import com.ruoyi.system.service.ProcessService.ProcessService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 @RestController
 @RequestMapping("/process")
 public class ProcessController extends BaseController {
 
-    @Autowired
+    @Resource
     private ProcessService processService;
 
     @ResponseBody
@@ -154,7 +155,7 @@ public class ProcessController extends BaseController {
 
     @ResponseBody
     @PostMapping("/updateSequence")
-    public R<Sequence> updateSequence(@RequestBody Sequence sequence){
+    public R<Sequence> updateSequence(@RequestBody Normal sequence){
         try{
             Sequence newSequence = processService.updateSequence(sequence);
             System.out.println(newSequence);
@@ -348,10 +349,10 @@ public class ProcessController extends BaseController {
 
     @ResponseBody
     @PostMapping("/addStepForSequence")
-    public R<Sequence> addStepForSequence(@RequestBody StepAndSequence sAnds){
+    public R<Step> addStepForSequence(@RequestBody StepAndSequence sAnds){
         try{
-            Sequence newSequence = processService.addStepForSequence(sAnds.getSequenceId(), sAnds.getStep());
-            return R.success(newSequence);
+            Step newStep = processService.addStepForSequence(sAnds.getSequenceId(), sAnds.getStep());
+            return R.success(newStep);
         }catch(Exception e){
             e.printStackTrace();
             return R.error(e.getMessage());

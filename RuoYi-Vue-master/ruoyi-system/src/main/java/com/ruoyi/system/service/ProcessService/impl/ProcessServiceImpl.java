@@ -8,6 +8,7 @@ import com.ruoyi.system.domain.AssemblyPojo.Process.Process;
 import com.ruoyi.system.domain.AssemblyPojo.Process.SpecialSequence.Sequence;
 import com.ruoyi.system.domain.AssemblyPojo.Process.Step;
 import com.ruoyi.system.service.ProcessService.ProcessService;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -111,12 +112,12 @@ public class ProcessServiceImpl implements ProcessService {
     }
 
     @Override
-    public Sequence createSequence(Sequence sequence) {
+    public <T extends Sequence> T createSequence(T sequence) {
         return sequenceRepository.save(sequence);
     }
 
     @Override
-    public Sequence updateSequence(Sequence sequence) {
+    public <T extends Sequence> T updateSequence(@NotNull T sequence) {
         Optional<Sequence> oSequence = sequenceRepository.findById(sequence.getSequenceId());
         if(oSequence.isPresent()){
             Sequence oldSequence = oSequence.get();
@@ -126,7 +127,7 @@ public class ProcessServiceImpl implements ProcessService {
             oldSequence.setQuasiClosingHours(sequence.getQuasiClosingHours());
             oldSequence.setTaktTime(sequence.getTaktTime());
             oldSequence.setSequenceRemark(sequence.getSequenceRemark());
-            Sequence updateSequence = sequenceRepository.save(oldSequence);
+            T updateSequence = (T) sequenceRepository.save(oldSequence);
             return updateSequence;
         }
         return null;
@@ -167,7 +168,7 @@ public class ProcessServiceImpl implements ProcessService {
     }
 
     @Override
-    public Sequence addBeforeSequence(Long sequenceId, Sequence beforeSequence) {
+    public <T extends Sequence> T addBeforeSequence(Long sequenceId, T beforeSequence) {
         Sequence bSequence = sequenceRepository.save(beforeSequence);
         Optional<Sequence> oSequence = sequenceRepository.findById(sequenceId);
         if(oSequence.isPresent()) {
@@ -176,7 +177,7 @@ public class ProcessServiceImpl implements ProcessService {
             beforeSequenceSet.add(bSequence);
             sequence.setBeforeSequence(beforeSequenceSet);
             Sequence newSequence = sequenceRepository.save(sequence);
-            return newSequence;
+            return (T) newSequence;
         }
         return null;
     }
@@ -376,7 +377,7 @@ public class ProcessServiceImpl implements ProcessService {
     }
 
     @Override
-    public Sequence addStepForSequence(Long sequenceId, Step step) {
+    public Step addStepForSequence(Long sequenceId, Step step) {
         Optional<Sequence> oSequence = sequenceRepository.findById(sequenceId);
         if(oSequence.isPresent()) {
             Step newStep = stepRepository.save(step);
@@ -385,13 +386,13 @@ public class ProcessServiceImpl implements ProcessService {
             associatedSteps.add(newStep);
             sequence.setAssociatedSteps(associatedSteps);
             Sequence newSequence = sequenceRepository.save(sequence);
-            return newSequence;
+            return newStep;
         }
         return null;
     }
 
     @Override
-    public Sequence removeStepForSequence(Long sequenceId, Long stepId) {
+    public void removeStepForSequence(Long sequenceId, Long stepId) {
         Optional<Sequence> oSequence = sequenceRepository.findById(sequenceId);
         if(oSequence.isPresent()) {
             Optional<Step> oStep = stepRepository.findById(stepId);
@@ -402,10 +403,8 @@ public class ProcessServiceImpl implements ProcessService {
                 associatedSteps.remove(step);
                 sequence.setAssociatedSteps(associatedSteps);
                 Sequence newSequence = sequenceRepository.save(sequence);
-                return newSequence;
             }
         }
-        return null;
     }
 
     @Override

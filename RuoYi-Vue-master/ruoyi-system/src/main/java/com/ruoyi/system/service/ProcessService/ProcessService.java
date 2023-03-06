@@ -91,14 +91,14 @@ public interface ProcessService {
      * @param sequence
      * @return
      */
-    Sequence createSequence(Sequence sequence);
+    <T extends Sequence> T createSequence(T sequence);
 
     /**
      * 修改工序基本信息
      * @param sequence
      * @return
      */
-    Sequence updateSequence(Sequence sequence);
+    <T extends Sequence> T updateSequence(T sequence);
 
     /**
      * 根据Id删除工序
@@ -127,7 +127,7 @@ public interface ProcessService {
      * @param beforeSequence
      * @return
      */
-    Sequence addBeforeSequence(Long sequenceId, Sequence beforeSequence);
+    <T extends Sequence> T addBeforeSequence(Long sequenceId, T beforeSequence);
 
     /**
      * 为工序移除前项工序
@@ -263,7 +263,7 @@ public interface ProcessService {
      * @param step
      * @return
      */
-    Sequence addStepForSequence(Long sequenceId, Step step);
+    Step addStepForSequence(Long sequenceId, Step step);
 
     /**
      * 向工序移除工步
@@ -271,7 +271,7 @@ public interface ProcessService {
      * @param stepId
      * @return
      */
-    Sequence removeStepForSequence(Long sequenceId, Long stepId);
+    void removeStepForSequence(Long sequenceId, Long stepId);
 
     /**
      * 创建工步

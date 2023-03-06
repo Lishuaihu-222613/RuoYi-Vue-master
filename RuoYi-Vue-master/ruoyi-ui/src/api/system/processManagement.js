@@ -194,11 +194,10 @@ export function addStepForSequence(data){
   })
 };
 
-export function removeStepForSequence(params){
+export function removeStepForSequence(sequenceId,stepId){
   return request({
-    url: '/process/removeStepForSequence/',
-    method: 'get',
-    params:params
+    url: '/process/removeStepForSequence/'+sequenceId+'/'+stepId,
+    method: 'get'
   })
 };
 
@@ -213,6 +212,66 @@ export function createStep(data){
 export function updateStep(data){
   return request({
     url: '/process/updateStep',
+    method: 'post',
+    data: data
+  })
+};
+
+export function deleteStepById(stepId){
+  return request({
+    url: '/process/deleteStepById/'+stepId,
+    method: 'get'
+  })
+};
+
+export function getStepById(stepId){
+  return request({
+    url: '/process/getStepById/'+stepId,
+    method: 'get'
+  })
+};
+
+export function getStepBySequence(sequenceId){
+  return request({
+    url: '/process/getStepBySequence/'+sequenceId,
+    method: 'get'
+  })
+};
+
+export function modifyBeforeStep(data){
+  return request({
+    url: '/process/modifyBeforeStep',
+    method: 'post',
+    data: data
+  })
+};
+export function modifyAfterStep(data){
+  return request({
+    url: '/process/modifyAfterStep',
+    method: 'post',
+    data: data
+  })
+};
+
+export function modifyAndStep(data){
+  return request({
+    url: '/process/modifyAndStep',
+    method: 'post',
+    data: data
+  })
+};
+
+export function modifyOrStep(data){
+  return request({
+    url: '/process/modifyOrStep',
+    method: 'post',
+    data: data
+  })
+};
+
+export function modifySubStep(data){
+  return request({
+    url: '/process/modifySubStep',
     method: 'post',
     data: data
   })

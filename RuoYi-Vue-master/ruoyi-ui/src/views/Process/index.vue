@@ -1,11 +1,20 @@
 <template>
   <el-container style="border: 1px solid #eee;">
     <el-aside style="background-color: rgb(238, 241, 246)" width="400px">
-      <el-input
-        v-model="filterText"
-        placeholder="输入关键字进行过滤"
-      >
-      </el-input>
+      <el-row>
+        <el-col :span="15">
+          <el-input
+            v-model="filterText"
+            placeholder="输入关键字进行过滤"
+          >
+          </el-input>
+        </el-col>
+        <el-col :span="6">
+          <el-button circle icon="el-icon-plus" style="float: right" type="primary"
+                     @click="addProcess"
+          ></el-button>
+        </el-col>
+      </el-row>
       <el-tree
         ref="tree"
         :data="processes"
@@ -19,11 +28,18 @@
     </el-aside>
     <el-container>
       <el-header style="text-align: right; font-size: 12px; height: 150px ; margin: 10px">
+        <ModifyProcess
+          ref="ModifyProcess"
+          :dialog="modifyProcessShow"
+          :selectId="selectProcessId"
+          @closeDialog="() =>{ this.modifyProcessShow = false }"
+        ></ModifyProcess>
         <el-descriptions :column="3" border class="margin-top" title="工艺规程信息">
           <template slot="extra">
             <el-dropdown split-button type="primary" @command="handleMenuClick">
-              信息修改
+              更多操作
               <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item command="modifyProcess">信息修改</el-dropdown-item>
                 <el-dropdown-item command="addSequence">添加工序</el-dropdown-item>
                 <el-dropdown-item command="showGraph">查看图谱</el-dropdown-item>
                 <el-dropdown-item command="deleteProcess">删除工艺</el-dropdown-item>
@@ -84,10 +100,17 @@
         ></vue-context-menu>
         <ModifySequence ref="ModifySequence"
                         :dialog="modifySequenceShow"
+                        :pId="selectProcessId"
                         :selectId="selectSequenceId"
                         @closeDialog="() =>{ this.modifySequenceShow = false }"
         >
         </ModifySequence>
+        <StepTable ref="stepTable"
+                   :dialog="stepTableShow"
+                   :selectId="selectSequenceId"
+                   @closeDialog="() =>{ this.stepTableShow = false }"
+        >
+        </StepTable>
         <div ref="tableBox" class="table-box">
           <el-table
             v-if="tableHeight"
@@ -137,7 +160,8 @@
                   </el-row>
                   <el-row>
                     <el-form-item label="工序备注">
-                      <span>{{ props.row.seuqenceDescription }}</span>
+                      <span v-for="(item, markIndex) in props.row.sequenceRemark" :key="markIndex"
+                      >{{ props.row.sequenceRemark[markIndex] }}</span>
                     </el-form-item>
                   </el-row>
                 </el-form>
@@ -250,15 +274,15 @@ export default {
         }
       ],
       selectedProcess: {
-        processId: '',
+        processId: 0,
         processName: '',
         processDescription: '',
         associatedStructure: {
-          structureId: '0',
+          structureId: 0,
           structureName: ''
         },
         associatedProduct: {
-          structureId: '0',
+          structureId: 0,
           structureName: ''
         }
       },
@@ -269,7 +293,7 @@ export default {
       openProcess: false,
       modifySequenceShow: false,
       modifyProcessShow: false,
-      stepTable: false,
+      stepTableShow: false,
       selectSequenceId: 0,
       selectProcessId: 0
 
@@ -290,10 +314,6 @@ export default {
     initPage() {
       processManagement.getAllProcess().then(result => {
         if (result.code == 200) {
-          let oriData = result.data.map(item => {
-            item.processId = String(item.processId)
-            return item
-          })
           this.processes = result.data
         }
       })
@@ -301,7 +321,21 @@ export default {
     showContextMenu() {
 
     },
+    addProcess() {
+      let newProcess = {
+        processId: 0,
+        processName: '待修改',
+        processDescription: '待修改'
+      }
+      processManagement.createProcess(newProcess).then(result => {
+        if (result.code == 200) {
+          this.$modal.msgSuccess('创建工艺成功！')
+          this.processes.push(result.data)
+        }
+      })
+    },
     handleMenuClick(command) {
+
       if (command == 'addSequence') {
         let newSequence = {
           sequenceId: 0,
@@ -310,7 +344,7 @@ export default {
           sequenceDescription: '待编辑',
           QuasiClosingHours: 0.0,
           TaktTime: 0.0,
-          sequenceRemark: []
+          sequenceRemark: ['待编辑', '待编辑']
         }
         let pAnds = {
           processId: this.selectedProcess.processId,
@@ -323,13 +357,14 @@ export default {
         })
       } else if (command == 'showGraph') {
 
-
       } else if (command == 'deleteProcess') {
         processManagement.deleteProcessById(this.selectedProcess.processId).then(result => {
-          if(result.code == 200) {
+          if (result.code == 200) {
             this.$message.success(result.statusText)
           }
         })
+      } else if (command == 'modifyProcess') {
+        this.modifyProcessShow = true
       }
     },
     filterNode(value, data) {
@@ -338,6 +373,7 @@ export default {
     },
     nodeClick(pro, node, com) {
       this.selectedProcess = pro
+      this.selectProcessId = pro.processId
       this.getSequencesByProcess()
     },
     getSelectedProcess(data) {
@@ -362,13 +398,17 @@ export default {
     expandSequence(row, expandedRows) {
 
     },
-    showModifySequence(sequenceId){
-      this.modifySequenceShow = true;
-      this.selectSequenceId = sequenceId;
+    showModifySequence(sequenceId) {
+      this.selectSequenceId = sequenceId
+      this.modifySequenceShow = true
     },
     handleCurrentChange(val) {
       this.selectSequence = val
       console.log(this.selectSequence)
+    },
+    showStepTable(sequenceId) {
+      this.selectSequenceId = sequenceId
+      this.stepTableShow = true
     }
   }
 }

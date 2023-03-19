@@ -11,37 +11,37 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-@Node("EquipmentResource")
+@Node({"设备资源","EquipmentResource"})
 public class EquipmentResource extends AssemblyResource{
 
-    @Property(name = "Capacity")
+    @Property(name = "设备能力")
     private Map<String,String> equipmentCapacity;
 
-    @Property(name = "Power")
+    @Property(name = "设备功率")
     private double equipmentPower;
 
-    @Property(name = "Price")
+    @Property(name = "设备价格")
     private double equipmentPrice;
 
-    @Property(name = "productionDate")
+    @Property(name = "生产日期")
     private Date productionDate;
 
-    @Property(name = "manufacturer")
+    @Property(name = "制造商")
     private String manufacturer;
 
-    @Property(name = "Size")
+    @Property(name = "设备型号")
     private String equipmentSize;
 
-    @Property(name = "State")
+    @Property(name = "设备状态")
     private String equipmentState;
 
-    @Property(name = "depreciationRate")
+    @Property(name = "折旧率")
     private double depreciationRate;
 
-    @Property(name = "loadRate")
+    @Property(name = "负载率")
     private double loadRate;
 
-    @Property(name = "Attentions")
+    @Property(name = "注意事项")
     private List<String>  Attentions;
 
     @Property(name = "principle")

@@ -142,7 +142,7 @@
             filterable
             style="text-align: left; display: inline-block"
           >
-            <span slot-scope="{ option }">{{ option.label }}-{{ option.number }}</span>
+            <span slot-scope="{ option }">{{ option.number }}-{{ option.label }}</span>
             <el-button slot="right-footer" class="transfer-footer" size="small" @click="modifyRelation">修改工序关系</el-button>
           </el-transfer>
         </div>
@@ -160,10 +160,6 @@ import * as processManagement from '@/api/system/processManagement'
 export default {
 
   name: 'ModifySequence',
-
-  mounted() {
-    this.init()
-  },
 
   watch: {
     selectId: {
@@ -264,7 +260,7 @@ export default {
       });
       let oriSequences;
       processManagement.getSequenceByProcess(this.processId).then(result => {
-        if(result.code == 200){
+        if(result.code === 200){
           oriSequences = result.data
           console.log(oriSequences)
           this.sequences = oriSequences.map(item=>{
@@ -284,9 +280,6 @@ export default {
       this.$emit('restore', null)
     },
 
-    init() {
-      // this.generateData()
-    },
 
     addRemark() {
       this.sequence.sequenceRemark.push('')
@@ -318,23 +311,15 @@ export default {
     },
     selectRelationKind(rel) {
 
-      if (rel == 'before') {
+      if (rel === 'before') {
         this.selectedRelations = this.beforeSequences
-      } else if (rel == 'after') {
+      } else if (rel === 'after') {
         this.selectedRelations = this.afterSequences
-      } else if (rel == 'and') {
+      } else if (rel === 'and') {
         this.selectedRelations = this.andSequences
-      } else if (rel == 'or') {
+      } else if (rel === 'or') {
         this.selectedRelations = this.orSequences
       }
-    },
-    generateData() {
-
-
-    },
-
-    selectRelation() {
-
     },
 
     filterMethod(query, item) {
@@ -342,43 +327,32 @@ export default {
     },
 
     modifyRelation() {
-      if(this.relation == "before"){
-        let ss = {
-          sequenceId:this.sequenceId,
-          sequenceList:this.beforeSequences
-        }
+      let ss = {
+        sequenceId:this.sequenceId,
+        sequenceList:this.selectedRelations
+      }
+
+      if(this.relation === "before"){
         processManagement.modifyBeforeSequence(ss).then(result => {
-          if(result.code ==200){
+          if(result.code === 200){
             this.$modal.msgSuccess("工序关系修改成功！")
           }
         })
-      } else if(this.relation == "after"){
-        let ss = {
-          sequenceId:this.sequenceId,
-          sequenceList:this.afterSequences
-        }
+      } else if(this.relation === "after"){
         processManagement.modifyAfterSequence(ss).then(result => {
-          if(result.code ==200){
+          if(result.code === 200){
             this.$modal.msgSuccess("工序关系修改成功！")
           }
         })
-      } else if(this.relation =="and"){
-        let ss = {
-          sequenceId:this.sequenceId,
-          sequenceList:this.andSequences
-        }
+      } else if(this.relation ==="and"){
         processManagement.modifyAndSequence(ss).then(result => {
-          if(result.code ==200){
+          if(result.code === 200){
             this.$modal.msgSuccess("工序关系修改成功！")
           }
         })
-      } else if(this.relation == "or"){
-        let ss = {
-          sequenceId:this.sequenceId,
-          sequenceList:this.orSequences
-        }
+      } else if(this.relation === "or"){
         processManagement.modifyOrSequence(ss).then(result => {
-          if(result.code ==200){
+          if(result.code === 200){
             this.$modal.msgSuccess("工序关系修改成功！")
           }
         })
@@ -389,7 +363,7 @@ export default {
       processManagement.updateSequence(this.sequence).then(result => {
         if(result.code == 200){
           this.sequence = result.data
-          this.$modal.msgSuccess("修改成功！")
+          this.$modal.msgSuccess("工序修改成功！")
         }
       })
     }

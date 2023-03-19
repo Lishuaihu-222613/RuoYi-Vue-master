@@ -294,7 +294,7 @@ export default {
       modifySequenceShow: false,
       modifyProcessShow: false,
       stepTableShow: false,
-      selectSequenceId: 0,
+       selectSequenceId: 0,
       selectProcessId: 0
 
     }

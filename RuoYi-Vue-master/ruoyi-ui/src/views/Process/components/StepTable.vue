@@ -7,6 +7,7 @@
       :dialog="modifyStepShow"
       :sId="sequenceId"
       :selectId="selectStepId"
+      :available="availableResources"
       @closeDialog="() =>{ this.modifyStepShow = false }"
     ></ModifyStep>
     <el-row>
@@ -84,7 +85,7 @@ export default {
       },
       Steps: [],
       selectStepId: 0,
-      modifyStepShow: false
+      modifyStepShow: false,
     }
   },
   methods: {

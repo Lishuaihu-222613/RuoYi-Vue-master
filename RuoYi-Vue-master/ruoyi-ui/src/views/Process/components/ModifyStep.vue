@@ -15,7 +15,7 @@
           <el-form-item :label-width="formLabelWidth" label="工步内容">
             <el-input v-model="step.sequenceDescription" autosize
                       placeholder="请输入内容"
-                      type="textarea"
+                      type="textarea"20
             ></el-input>
           </el-form-item>
           <el-form-item :label-width="formLabelWidth" label="技术要求">
@@ -53,7 +53,7 @@
       <el-tab-pane label="工步关系编辑">
         <el-row>
           <p style="text-align: center; margin: 0 0 20px">工步关系选择</p>
-          <el-select v-model="relation" clearable placeholder="请选择" style="right :0px"
+          <el-select v-model="relation" clearable placeholder="请选择工步关系" style="right :0px"
                      @change="selectRelationKind"
           >
             <el-option
@@ -154,10 +154,18 @@ export default {
         label: '子工步关系'
       }],
       relation: '',
+      availableResources: {
+        useEquipment: [],
+        useMouldTool: [],
+        useMeasuringTool: [],
+        useSpecialTool: [],
+        useSpreaderTool: []
+      }
     }
   },
   methods: {
     handleOpen() {
+      //初始化工步信息
       processManagement.getStepById(this.stepId).then(result => {
         if (result.code == 200) {
           this.step = result.data
@@ -180,11 +188,11 @@ export default {
           })
         }
       });
+      //得到备选关系
       let oriSteps;
       this.sequenceId = this.sId
-      console.log(this.sequenceId)
       processManagement.getStepBySequence(this.sequenceId).then(result => {
-        if(result.code == 200){
+        if(result.code === 200){
           oriSteps = result.data
           console.log(oriSteps)
           this.steps = oriSteps.map(item=>{
@@ -196,6 +204,13 @@ export default {
           console.log(this.steps)
         }
       });
+      //得到备选资源（从工序资源中选择）
+      processManagement.getSequenceById(this.sequenceId).then(result => {
+        if(result.code === 200){
+          let seq = result.data
+          this.availableResources.useEquipment = seq.useEquipment
+        }
+      })
     },
 
     handleClose() {
@@ -204,13 +219,10 @@ export default {
       this.$emit('restore', null)
     },
 
-    init() {
-
-    },
 
     modifyStep() {
       processManagement.updateStep(this.step).then(result => {
-        if (result.code == 200) {
+        if (result.code === 200) {
           this.step = result.data
         }
       })
@@ -230,7 +242,6 @@ export default {
     },
     selectRelationKind(rel) {
 
-      console.log(rel)
       if (rel === 'before') {
         this.selectedRelations = this.beforeSteps
         console.log(this.beforeSteps)
@@ -245,13 +256,6 @@ export default {
       }
 
       console.log(this.selectedRelations)
-    },
-    generateData() {
-
-    },
-
-    selectRelation() {
-
     },
 
     filterMethod(query, item) {
@@ -288,6 +292,7 @@ export default {
           }
         })
       } else if(this.relation == "sub"){
+        //子工步关系更改（可换）
         // ss.stepIds.forEach(item =>{
         //   processManagement.removeStepForSequence(this.sequenceId,item)
         // })
@@ -303,7 +308,7 @@ export default {
       processManagement.updateStep(this.step).then(result => {
         if(result.code ==200){
           this.step = result.data
-          this.$modal.msgSuccess("修改成功！")
+          this.$modal.msgSuccess("工步修改成功！")
         }
       })
     }

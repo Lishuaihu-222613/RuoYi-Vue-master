@@ -41,7 +41,7 @@ public interface QualityProblemService {
 
     void deleteReasonById(Long reasonId);
 
-    Solution createsSolutionForQualityProblem(Long problemId,Solution solution);
+    Solution createSolutionForQualityProblem(Long problemId,Solution solution);
 
     Solution updateSolution(Solution solution);
 

@@ -5,7 +5,7 @@ import org.springframework.data.neo4j.core.schema.*;
 import java.util.Map;
 import java.util.Objects;
 
-@Node("热敏感性")
+@Node({"热敏感性","HeatStability"})
 public class HeatStability extends Stability{
 
     @Property(name = "维也里简单法")

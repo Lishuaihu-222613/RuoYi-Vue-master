@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-@Node("推进剂配方")
+@Node({"推进剂配方","Prescription"})
 public class Prescription {
 
     @Id
@@ -23,7 +23,7 @@ public class Prescription {
     @Property(name = "label")
     private String prescriptionName;
 
-    @Property(name = "描述")
+    @Property(name = "配方描述")
     private String prescriptionDescription;
 
     @Property(name = "密度")
@@ -62,7 +62,7 @@ public class Prescription {
     @Relationship(type = "hasHeatStability" , direction = Relationship.Direction.OUTGOING)
     private HeatStability heatStability;
 
-    @Relationship(type = "hasImpactStability" , direction = Relationship.Direction.OUTGOING)
+    @Relationship(type = "hasMechanicalStability" , direction = Relationship.Direction.OUTGOING)
     private MechanicalStability mechanicalStability;
 
     @Relationship(type = "hasRadioStability" , direction = Relationship.Direction.OUTGOING)
@@ -223,11 +223,11 @@ public class Prescription {
         this.heatStability = heatStability;
     }
 
-    public MechanicalStability getImpactStability() {
+    public MechanicalStability getMechanicalStability() {
         return mechanicalStability;
     }
 
-    public void setImpactStability(MechanicalStability mechanicalStability) {
+    public void setMechanicalStability(MechanicalStability mechanicalStability) {
         this.mechanicalStability = mechanicalStability;
     }
 

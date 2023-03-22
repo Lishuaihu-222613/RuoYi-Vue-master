@@ -5,7 +5,7 @@ import org.springframework.data.neo4j.core.schema.*;
 import java.util.Map;
 import java.util.Objects;
 
-@Node("爆炸敏感性")
+@Node({"爆炸敏感性","ExplosionStability"})
 public class ExplosionStability extends Stability{
 
     @Property(name = "冲击试验")

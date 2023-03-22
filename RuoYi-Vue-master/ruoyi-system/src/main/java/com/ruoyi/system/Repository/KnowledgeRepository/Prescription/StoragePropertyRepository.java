@@ -5,6 +5,7 @@ import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,7 +17,8 @@ public interface StoragePropertyRepository extends Neo4jRepository<StorageProper
     @Override
     List<StorageProperty> findAll();
 
-    StorageProperty save(StorageProperty Property);
+    @Override
+    <S extends StorageProperty> S save(S property);
 
     @Override
     void delete(StorageProperty Property);
@@ -24,9 +26,9 @@ public interface StoragePropertyRepository extends Neo4jRepository<StorageProper
     @Override
     void deleteById(Long propertyId);
 
-    @Query("MATCH (n:推进剂配方)-[r:hasCombustionProperty]->(m:贮存性能) where n.id = :prescriptionId return m")
+    @Query("MATCH (n:推进剂配方)-[r:hasCombustionProperty]->(m:贮存性能) where id(n) = $prescriptionId return m")
     Optional<StorageProperty> findStoragePropertyByPrescription(@Param("prescriptionId") Long prescriptionId);
 
-    @Query("MATCH (n:贮存性能) where n.name = :propertyName return n")
-    Optional<StorageProperty> findStoragePropertyByName(@Param("propertyName")String propertyName);
+    @Query("MATCH (n:贮存性能) where n.label = $propertyName return n")
+    Collection<StorageProperty> findStoragePropertyByName(@Param("propertyName")String propertyName);
 }

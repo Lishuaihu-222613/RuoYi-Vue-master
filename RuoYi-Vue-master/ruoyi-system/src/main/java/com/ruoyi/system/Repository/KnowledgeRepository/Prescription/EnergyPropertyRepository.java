@@ -26,9 +26,9 @@ public interface EnergyPropertyRepository extends Neo4jRepository<EnergyProperty
     @Override
     void deleteById(Long propertyId);
 
-    @Query("MATCH (n:能量性能)-[r:hasCombustionProperty]->(m:燃烧性能) where n.id = :prescriptionId return m")
+    @Query("MATCH (n:能量性能)-[r:hasCombustionProperty]->(m:燃烧性能) where id(n) = :prescriptionId return m")
     Optional<EnergyProperty> findEnergyPropertyByPrescription(@Param("prescriptionId") Long prescriptionId);
 
-    @Query("MATCH (n:能量性能) where n.name = :propertyName return n")
+    @Query("MATCH (n:能量性能) where n.label = $propertyName return n")
     Collection<EnergyProperty> findEnergyPropertyByName(String propertyName);
 }

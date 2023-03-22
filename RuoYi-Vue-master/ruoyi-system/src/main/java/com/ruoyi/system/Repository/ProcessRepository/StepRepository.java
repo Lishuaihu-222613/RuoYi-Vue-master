@@ -17,7 +17,7 @@ public interface StepRepository extends Neo4jRepository<Step,Long> {
     @Override
     List<Step> findAll();
 
-    @Query("Match (n:Step) <-[r]- (m:Sequence) where id(m) = $sequenceId return n")
+    @Query("Match (n:Step) <-[r]- (m:Sequence) where id(m) = $sequenceId order by n.stepNumber return n")
     Collection<Step> findStepBySequenceId(@Param("sequenceId")Long sequenceId);
 
     @Query("Match (n:Step) where n.label contains $stepName return n")

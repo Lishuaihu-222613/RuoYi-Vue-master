@@ -17,7 +17,8 @@ public interface CombustionPropertyRepository extends Neo4jRepository<Combustion
     @Override
     List<CombustionProperty> findAll();
 
-    CombustionProperty save(CombustionProperty Property);
+    @Override
+    <S extends CombustionProperty> S save(S property);
 
     @Override
     void delete(CombustionProperty Property);
@@ -25,9 +26,9 @@ public interface CombustionPropertyRepository extends Neo4jRepository<Combustion
     @Override
     void deleteById(Long propertyId);
 
-    @Query("MATCH (n:推进剂配方)-[r:hasCombustionProperty]->(m:燃烧性能) where n.id = :prescriptionId return m")
+    @Query("MATCH (n:推进剂配方)-[r:hasCombustionProperty]->(m:燃烧性能) where id(n) = $prescriptionId return m")
     Optional<CombustionProperty> findCombustionPropertyByPrescription(@Param("prescriptionId") Long prescriptionId);
 
-    @Query("MATCH (n:燃烧性能) where n.name = :propertyName return n")
+    @Query("MATCH (n:燃烧性能) where n.label = $propertyName return n")
     Collection<CombustionProperty> findCombustionPropertyByName(@Param("propertyName")String propertyName);
 }

@@ -20,11 +20,11 @@ public interface ForcePropertyRepository extends Neo4jRepository<ForceProperty,L
     @Override
     <S extends ForceProperty> S save(S property);
 
-    @Query("Match (n:推进剂配方)-[r:hasForceProperty]->(m:力学性能) where n.id = :prescriptionId return m")
+    @Query("Match (n:推进剂配方)-[r:hasForceProperty]->(m:力学性能) where id(n) = $prescriptionId return m")
     Optional<ForceProperty> findForcePropertyByPrescriptionId(@Param("prescriptionId")Long prescriptionId);
 
-    @Query("Match (n:力学性能) where n.label = propertyName")
-    Collection<ForceProperty> findForcePropertyByName(String propertyName);
+    @Query("Match (n:力学性能) where n.label = $propertyName")
+    Collection<ForceProperty> findForcePropertyByName(@Param("propertyName") String propertyName);
 
     @Override
     void deleteById(Long propertyId);

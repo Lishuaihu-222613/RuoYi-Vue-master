@@ -5,7 +5,7 @@ import org.springframework.data.neo4j.core.schema.*;
 import java.util.Map;
 import java.util.Objects;
 
-@Node("力学性能")
+@Node({"力学性能","ForceProperty"})
 public class ForceProperty extends PrescriptionProperty{
 
     @Property(name = "应力")

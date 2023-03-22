@@ -5,7 +5,7 @@ import org.springframework.data.neo4j.core.schema.*;
 import java.util.Map;
 import java.util.Objects;
 
-@Node("配方安定性")
+@Node({"配方安定性","Stability"})
 public abstract class Stability {
 
     @Id

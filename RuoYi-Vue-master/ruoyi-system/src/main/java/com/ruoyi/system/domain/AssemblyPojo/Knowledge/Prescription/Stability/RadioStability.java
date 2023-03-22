@@ -5,7 +5,7 @@ import org.springframework.data.neo4j.core.schema.*;
 import java.util.Map;
 import java.util.Objects;
 
-@Node("辐射敏感性")
+@Node({"辐射敏感性","RadioStability"})
 public class RadioStability extends Stability{
 
     @Property(name = "辐射感度")

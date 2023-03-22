@@ -17,7 +17,7 @@ public interface QualityProblemRepository extends Neo4jRepository<QualityProblem
     Optional<QualityProblem> findById(Long problemId);
 
     @Query("Match (n:QualityProblem) where n.label contains $problemName return n")
-    Optional<QualityProblem> findByProblemName(@Param("problemName") String problemName);
+    List<QualityProblem> findByProblemName(@Param("problemName") String problemName);
 
     @Override
     <S extends QualityProblem> S save(S qualityProblem);

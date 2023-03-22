@@ -6,7 +6,6 @@ import com.ruoyi.system.domain.AssemblyPojo.Knowledge.MaterialKnowledge.*;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.MaterialKnowledge.Interface.MaterialInterface;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.MaterialKnowledge.Interface.ProduceMethodInterface;
 import com.ruoyi.system.service.KnowledgeService.Material.*;
-import com.ruoyi.system.service.KnowledgeService.Prescription.StoragePropertyService;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;

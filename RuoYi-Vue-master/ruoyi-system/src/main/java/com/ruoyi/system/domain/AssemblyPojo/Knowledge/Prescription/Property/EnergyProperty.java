@@ -5,7 +5,7 @@ import org.springframework.data.neo4j.core.schema.*;
 import java.util.Map;
 import java.util.Objects;
 
-@Node("能量性能")
+@Node({"能量性能","EnergyProperty"})
 public class EnergyProperty extends PrescriptionProperty{
 
     @Property(name = "爆热")

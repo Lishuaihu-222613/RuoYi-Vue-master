@@ -5,7 +5,7 @@ import org.springframework.data.neo4j.core.schema.*;
 import java.util.Map;
 import java.util.Objects;
 
-@Node("氧化剂比例")
+@Node({"氧化剂比例","OxidantRatio"})
 public class OxidantRatio extends PrescriptionProperty{
 
     @Property(name = "氧燃比")

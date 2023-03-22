@@ -26,9 +26,9 @@ public interface HeatStabilityRepository extends Neo4jRepository<HeatStability,L
     @Override
     void deleteById(Long stabilityId);
 
-    @Query("MATCH (n:推进剂配方)-[r:hasCombustionProperty]->(m:热敏感性) where n.id = :prescriptionId return m")
+    @Query("MATCH (n:推进剂配方)-[r:hasCombustionProperty]->(m:热敏感性) where id(n) = $prescriptionId return m")
     Optional<HeatStability> findHeatStabilityByPrescription(@Param("prescriptionId") Long prescriptionId);
 
-    @Query("MATCH (n:热敏感性) where n.name = :stabilityName return n")
+    @Query("MATCH (n:热敏感性) where n.label = $stabilityName return n")
     Collection<HeatStability> findHeatStabilityByName(@Param("stabilityName")String stabilityName);
 }

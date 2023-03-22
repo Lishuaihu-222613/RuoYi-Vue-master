@@ -5,7 +5,7 @@ import org.springframework.data.neo4j.core.schema.*;
 import java.util.Map;
 import java.util.Objects;
 
-@Node("贮存性能")
+@Node({"贮存性能","StorageProperty"})
 public class StorageProperty extends PrescriptionProperty{
 
     @Property(name = "预估贮存期")

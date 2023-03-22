@@ -5,6 +5,7 @@ import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,9 +26,9 @@ public interface MechanicalStabilityRepository extends Neo4jRepository<Mechanica
     @Override
     void deleteById(Long stabilityId);
 
-    @Query("MATCH (n:推进剂配方)-[r:hasMechanicalStability]->(m:机械敏感性) where n.id = :prescriptionId return m")
+    @Query("MATCH (n:推进剂配方)-[r:hasMechanicalStability]->(m:机械敏感性) where id(n)= $prescriptionId return m")
     Optional<MechanicalStability> findMechanicalStabilityByPrescription(@Param("prescriptionId") Long prescriptionId);
 
-    @Query("MATCH (n:机械敏感性) where n.name = :stabilityName return n")
-    Optional<MechanicalStability> findMechanicalStabilityByName(@Param("stabilityName")String stabilityName);
+    @Query("MATCH (n:机械敏感性) where n.label = $stabilityName return n")
+    Collection<MechanicalStability> findMechanicalStabilityByName(@Param("stabilityName")String stabilityName);
 }

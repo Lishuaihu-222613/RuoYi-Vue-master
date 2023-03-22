@@ -5,7 +5,7 @@ import org.springframework.data.neo4j.core.schema.*;
 import java.util.Map;
 import java.util.Objects;
 
-@Node("配方性能")
+@Node({"配方性能","PrescriptionProperty"})
 public abstract class PrescriptionProperty {
 
     @Id

@@ -2,30 +2,25 @@ package com.ruoyi.system.service.KnowledgeService.Material;
 
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.MaterialKnowledge.*;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.MaterialKnowledge.Interface.MaterialInterface;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
 public interface MaterialService {
 
     /**
-     * 获得某类材料知识下所有常见材料
-     * @param mkId
-     * @return
-     */
-    List<MaterialInterface> getMaterialsByMkId(Long mkId);
-
-    /**
      * 获得所有材料
      * @return
      */
-    List<MaterialInterface> getAllMaterials();
+    Page<MaterialInterface> getAllMaterials(Pageable pageable);
 
     /**
      * 根据类型获得材料
      * @param dynamicLabel
      * @return
      */
-    List<MaterialInterface> getMaterialsByType(String dynamicLabel);
+    Page<MaterialInterface> getMaterialsByType(String dynamicLabel, Pageable pageable);
 
     /**
      * 根据Id获得某材料完整信息
@@ -49,12 +44,6 @@ public interface MaterialService {
     Material createSingleMaterial(Material singleMaterial);
 
     /**
-     * 删除材料
-     * @param material
-     */
-    void deleteMaterial(Material material);
-
-    /**
      * 根据ID删除材料
      * @param MaterialId
      */
@@ -62,9 +51,11 @@ public interface MaterialService {
 
     /**
      * 更新材料
-     * @param material
+     * @param newMaterial
      * @return
      */
-    Material updateMaterial(Material material);
+    Material updateMaterial(Material newMaterial);
+
+
 
 }

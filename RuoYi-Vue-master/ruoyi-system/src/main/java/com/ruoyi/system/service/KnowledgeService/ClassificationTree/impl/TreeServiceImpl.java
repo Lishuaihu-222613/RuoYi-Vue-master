@@ -38,8 +38,9 @@ public class TreeServiceImpl implements TreeService {
     }
 
     @Override
-    public void deleteTree(Long[] treeIds) {
+    public int deleteTree(Long[] treeIds) {
         treeRepository.deleteAllById(Arrays.asList(treeIds));
+        return 0;
     }
 
     @Override

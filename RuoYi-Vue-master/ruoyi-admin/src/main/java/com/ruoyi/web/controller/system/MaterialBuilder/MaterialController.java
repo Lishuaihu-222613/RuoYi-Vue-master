@@ -6,6 +6,7 @@ import com.ruoyi.system.domain.AssemblyPojo.Knowledge.MaterialKnowledge.*;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.MaterialKnowledge.Interface.MaterialInterface;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.MaterialKnowledge.Interface.ProduceMethodInterface;
 import com.ruoyi.system.service.KnowledgeService.Material.*;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -45,9 +46,9 @@ public class MaterialController extends BaseController {
 
     @ResponseBody
     @GetMapping("/getMaterialsByType/{dynamicLabel}")
-    public R<List<MaterialInterface>> getMaterialsByType(@PathVariable String dynamicLabel) {
+    public R<Page<MaterialInterface>> getMaterialsByType(@PathVariable String dynamicLabel) {
         try {
-            List<MaterialInterface> materials = materialService.getMaterialsByType(dynamicLabel);
+            Page<MaterialInterface> materials = materialService.getMaterialsByType(dynamicLabel);
             System.out.println(materials);
             return R.success(materials);
         } catch (Exception e) {

@@ -1,9 +1,12 @@
 package com.ruoyi.system.service.KnowledgeService.Material.Impl;
 
-import com.ruoyi.system.Repository.KnowledgeRepository.MaterialKnowledge.MaterialRepository;
+import com.ruoyi.system.Repository.KnowledgeRepository.MaterialKnowledge.*;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.MaterialKnowledge.Interface.MaterialInterface;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.MaterialKnowledge.Material;
 import com.ruoyi.system.service.KnowledgeService.Material.MaterialService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,19 +21,40 @@ public class MaterialServiceImpl implements MaterialService {
     @Resource
     private MaterialRepository materialRepository;
 
+    @Resource
+    private AnalysisSpectrogramRepository analysisSpectrogramRepository;
+
+    @Resource
+    private ChemicalPropertyRepository chemicalPropertyRepository;
+
+    @Resource
+    private DangerRepository dangerRepository;
+
+    @Resource
+    private InspectProjectRepository inspectProjectRepository;
+
+    @Resource
+    private PhysicalPropertyRepository physicalPropertyRepository;
+
+    @Resource
+    private ProduceMethodRepository produceMethodRepository;
+
+    @Resource
+    private ProtectionRepository protectionRepository;
+
+    @Resource
+    private StorageRequirementRepository storageRequirementRepository;
+
+    PageRequest of = PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, "principleId"));
+
     @Override
-    public List<MaterialInterface> getMaterialsByMkId(Long mkId) {
-        return new ArrayList<>(materialRepository.findMaterialsByMKId(mkId));
+    public Page<MaterialInterface> getAllMaterials() {
+        return materialRepository.findSingleMaterials(of);
     }
 
     @Override
-    public List<MaterialInterface> getAllMaterials() {
-        return new ArrayList<>( materialRepository.findSingleMaterials());
-    }
-
-    @Override
-    public List<MaterialInterface> getMaterialsByType(String dynamicLabel) {
-        return new ArrayList<>(materialRepository.findMaterialsByLabel(dynamicLabel));
+    public Page<MaterialInterface> getMaterialsByType(String dynamicLabel) {
+        return materialRepository.findMaterialsByLabel(dynamicLabel,of);
     }
 
     @Override

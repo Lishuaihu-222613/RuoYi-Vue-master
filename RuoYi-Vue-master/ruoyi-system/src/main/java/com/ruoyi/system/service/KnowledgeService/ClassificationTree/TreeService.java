@@ -35,10 +35,10 @@ public interface TreeService {
     ClassificationTree updateTree(ClassificationTree tree);
 
     /**
-     *
      * @param treeIds
+     * @return
      */
-    void deleteTree(Long[] treeIds);
+    int deleteTree(Long[] treeIds);
 
     /**
      *

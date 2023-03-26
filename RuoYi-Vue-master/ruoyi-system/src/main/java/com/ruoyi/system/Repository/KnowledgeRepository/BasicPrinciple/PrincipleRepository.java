@@ -26,7 +26,5 @@ public interface PrincipleRepository extends Neo4jRepository<Principle,Long> {
     @Override
     void deleteById(Long principleId);
 
-    List<Principle> findPrinciplesByPrincipleConditionsContains(String condition);
-
     List<Principle> findPrinciplesByPrincipleName(String principalName);
 }

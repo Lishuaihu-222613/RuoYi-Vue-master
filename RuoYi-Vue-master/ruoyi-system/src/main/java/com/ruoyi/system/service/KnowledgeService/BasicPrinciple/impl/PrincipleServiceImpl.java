@@ -40,6 +40,11 @@ public class PrincipleServiceImpl implements PrincipleService {
     }
 
     @Override
+    public List<Principle> getAllPrincipleByCondition(String condition) {
+        return null;
+    }
+
+    @Override
     public Principle createPrinciple(Principle principle) {
         return principleRepository.save(principle);
     }

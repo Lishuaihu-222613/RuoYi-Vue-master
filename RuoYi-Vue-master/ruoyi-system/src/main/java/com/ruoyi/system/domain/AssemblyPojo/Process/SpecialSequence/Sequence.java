@@ -34,6 +34,9 @@ public abstract class Sequence {
     @Property(name = "单件工时")
     private double TaktTime;
 
+    @DynamicLabels
+    private Set<String> dynamicLabels;
+
     @Property(name = "工序备注")
     private List<String> sequenceRemark;
 
@@ -70,13 +73,14 @@ public abstract class Sequence {
     public Sequence() {
     }
 
-    public Sequence(Long sequenceId, String sequenceName, String sequenceNumber, String sequenceDescription, double quasiClosingHours, double taktTime, List<String> sequenceRemark, Set<EquipmentResource> useEquipment, Set<MouldTool> useMouldTool, Set<MeasuringTool> useMeasuringTool, Set<SpecialTool> useSpecialTool, Set<SpreaderTool> useSpreaderTool, Set<Step> associatedSteps, Set<Sequence> andSequence, Set<Sequence> orSequence, Set<Sequence> beforeSequence, Set<Sequence> afterSequence) {
+    public Sequence(Long sequenceId, String sequenceName, String sequenceNumber, String sequenceDescription, double quasiClosingHours, double taktTime, Set<String> dynamicLabels, List<String> sequenceRemark, Set<EquipmentResource> useEquipment, Set<MouldTool> useMouldTool, Set<MeasuringTool> useMeasuringTool, Set<SpecialTool> useSpecialTool, Set<SpreaderTool> useSpreaderTool, Set<Step> associatedSteps, Set<Sequence> andSequence, Set<Sequence> orSequence, Set<Sequence> beforeSequence, Set<Sequence> afterSequence) {
         this.sequenceId = sequenceId;
         this.sequenceName = sequenceName;
         this.sequenceNumber = sequenceNumber;
         this.sequenceDescription = sequenceDescription;
         QuasiClosingHours = quasiClosingHours;
         TaktTime = taktTime;
+        this.dynamicLabels = dynamicLabels;
         this.sequenceRemark = sequenceRemark;
         this.useEquipment = useEquipment;
         this.useMouldTool = useMouldTool;
@@ -144,6 +148,14 @@ public abstract class Sequence {
 
     public void setSequenceRemark(List<String> sequenceRemark) {
         this.sequenceRemark = sequenceRemark;
+    }
+
+    public Set<String> getDynamicLabels() {
+        return dynamicLabels;
+    }
+
+    public void setDynamicLabels(Set<String> dynamicLabels) {
+        this.dynamicLabels = dynamicLabels;
     }
 
     public Set<EquipmentResource> getUseEquipment() {
@@ -231,12 +243,12 @@ public abstract class Sequence {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Sequence sequence = (Sequence) o;
-        return Double.compare(sequence.QuasiClosingHours, QuasiClosingHours) == 0 && Double.compare(sequence.TaktTime, TaktTime) == 0 && Objects.equals(sequenceId, sequence.sequenceId) && Objects.equals(sequenceName, sequence.sequenceName) && Objects.equals(sequenceNumber, sequence.sequenceNumber) && Objects.equals(sequenceDescription, sequence.sequenceDescription) && Objects.equals(sequenceRemark, sequence.sequenceRemark);
+        return Double.compare(sequence.QuasiClosingHours, QuasiClosingHours) == 0 && Double.compare(sequence.TaktTime, TaktTime) == 0 && Objects.equals(sequenceId, sequence.sequenceId) && Objects.equals(sequenceName, sequence.sequenceName) && Objects.equals(sequenceNumber, sequence.sequenceNumber) && Objects.equals(sequenceDescription, sequence.sequenceDescription) && Objects.equals(dynamicLabels, sequence.dynamicLabels) && Objects.equals(sequenceRemark, sequence.sequenceRemark);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(sequenceId, sequenceName, sequenceNumber, sequenceDescription, QuasiClosingHours, TaktTime, sequenceRemark);
+        return Objects.hash(sequenceId, sequenceName, sequenceNumber, sequenceDescription, QuasiClosingHours, TaktTime, dynamicLabels, sequenceRemark);
     }
 
     @Override
@@ -248,6 +260,7 @@ public abstract class Sequence {
                 ", sequenceDescription='" + sequenceDescription + '\'' +
                 ", QuasiClosingHours=" + QuasiClosingHours +
                 ", TaktTime=" + TaktTime +
+                ", dynamicLabels=" + dynamicLabels +
                 ", sequenceRemark=" + sequenceRemark +
                 '}';
     }

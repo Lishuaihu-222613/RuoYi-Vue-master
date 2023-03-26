@@ -7,6 +7,7 @@ import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.schema.Property;
 import org.springframework.data.neo4j.core.schema.Relationship;
 
+import java.util.Objects;
 import java.util.Set;
 
 @Node("AssemblyComponent")
@@ -63,11 +64,35 @@ public class AssemblyComponent extends AssemblyStructure {
     public AssemblyComponent() {
     }
 
-    public AssemblyComponent(Long structureId, Set<AssemblyComponent> components, Set<AssemblyPart> parts, Set<AssemblyConstraint> constraints, Location location, AdvancedBerpShape geometry, Set<FileKnowledge> associatedFiles, String componentName, String componentDescription, Set<AssemblyComponent> components1, Set<AssemblyPart> parts1) {
-        super(structureId, components, parts, constraints, location, geometry, associatedFiles);
+    public AssemblyComponent(Long structureId, Set<String> dynamicLabels, Set<AssemblyComponent> components, Set<AssemblyPart> parts, Set<AssemblyConstraint> constraints, Location location, AdvancedBerpShape geometry, Set<FileKnowledge> associatedFiles, String componentName, String componentDescription, Set<AssemblyComponent> components1, Set<AssemblyPart> parts1) {
+        super(structureId, dynamicLabels, components, parts, constraints, location, geometry, associatedFiles);
         this.componentName = componentName;
         this.componentDescription = componentDescription;
         this.components = components1;
         this.parts = parts1;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        AssemblyComponent that = (AssemblyComponent) o;
+        return Objects.equals(componentName, that.componentName) && Objects.equals(componentDescription, that.componentDescription) && Objects.equals(components, that.components) && Objects.equals(parts, that.parts);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), componentName, componentDescription, components, parts);
+    }
+
+    @Override
+    public String toString() {
+        return "AssemblyComponent{" +
+                "componentName='" + componentName + '\'' +
+                ", componentDescription='" + componentDescription + '\'' +
+                ", components=" + components +
+                ", parts=" + parts +
+                "} " + super.toString();
     }
 }

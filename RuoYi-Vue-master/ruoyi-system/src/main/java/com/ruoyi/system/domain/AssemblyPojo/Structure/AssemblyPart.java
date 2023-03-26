@@ -114,8 +114,8 @@ public class AssemblyPart extends AssemblyStructure{
     public AssemblyPart() {
     }
 
-    public AssemblyPart(Long structureId, Set<AssemblyComponent> components, Set<AssemblyPart> parts, Set<AssemblyConstraint> constraints, Location location, AdvancedBerpShape geometry, Set<FileKnowledge> associatedFiles, Integer partQuantity, String partName, String partDescription, String partSource, double partDensity, double partWetArea, double partVolume, double partMass, String partBoundingBox) {
-        super(structureId, components, parts, constraints, location, geometry, associatedFiles);
+    public AssemblyPart(Long structureId, Set<String> dynamicLabels, Set<AssemblyComponent> components, Set<AssemblyPart> parts, Set<AssemblyConstraint> constraints, Location location, AdvancedBerpShape geometry, Set<FileKnowledge> associatedFiles, Integer partQuantity, String partName, String partDescription, String partSource, double partDensity, double partWetArea, double partVolume, double partMass, String partBoundingBox) {
+        super(structureId, dynamicLabels, components, parts, constraints, location, geometry, associatedFiles);
         this.partQuantity = partQuantity;
         this.partName = partName;
         this.partDescription = partDescription;

@@ -28,6 +28,9 @@ public class Process {
     @Property(name = "备注")
     private String processDescription;
 
+    @DynamicLabels
+    private Set<String> dynamicLabels;
+
     @Relationship(type = "包含工序")
     private Set<Sequence> subSequence;
 
@@ -37,12 +40,13 @@ public class Process {
     public Process() {
     }
 
-    public Process(Long processId, String processName, AssemblyStructure associatedStructure, AssemblyProduct associatedProduct, String processDescription, Set<Sequence> subSequence, Set<FileKnowledge> associatedFiles) {
+    public Process(Long processId, String processName, AssemblyStructure associatedStructure, AssemblyProduct associatedProduct, String processDescription, Set<String> dynamicLabels, Set<Sequence> subSequence, Set<FileKnowledge> associatedFiles) {
         this.processId = processId;
         this.processName = processName;
         this.associatedStructure = associatedStructure;
         this.associatedProduct = associatedProduct;
         this.processDescription = processDescription;
+        this.dynamicLabels = dynamicLabels;
         this.subSequence = subSequence;
         this.associatedFiles = associatedFiles;
     }
@@ -61,6 +65,14 @@ public class Process {
 
     public void setProcessName(String processName) {
         this.processName = processName;
+    }
+
+    public Set<String> getDynamicLabels() {
+        return dynamicLabels;
+    }
+
+    public void setDynamicLabels(Set<String> dynamicLabels) {
+        this.dynamicLabels = dynamicLabels;
     }
 
     public AssemblyStructure getAssociatedStructure() {
@@ -108,12 +120,12 @@ public class Process {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Process process = (Process) o;
-        return Objects.equals(processId, process.processId) && Objects.equals(processName, process.processName) && Objects.equals(processDescription, process.processDescription);
+        return Objects.equals(processId, process.processId) && Objects.equals(processName, process.processName) && Objects.equals(associatedStructure, process.associatedStructure) && Objects.equals(associatedProduct, process.associatedProduct) && Objects.equals(processDescription, process.processDescription) && Objects.equals(dynamicLabels, process.dynamicLabels) && Objects.equals(subSequence, process.subSequence) && Objects.equals(associatedFiles, process.associatedFiles);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(processId, processName, processDescription);
+        return Objects.hash(processId, processName, associatedStructure, associatedProduct, processDescription, dynamicLabels, subSequence, associatedFiles);
     }
 
     @Override
@@ -124,6 +136,7 @@ public class Process {
                 ", associatedStructure=" + associatedStructure +
                 ", associatedProduct=" + associatedProduct +
                 ", processDescription='" + processDescription + '\'' +
+                ", dynamicLabels=" + dynamicLabels +
                 ", subSequence=" + subSequence +
                 ", associatedFiles=" + associatedFiles +
                 '}';

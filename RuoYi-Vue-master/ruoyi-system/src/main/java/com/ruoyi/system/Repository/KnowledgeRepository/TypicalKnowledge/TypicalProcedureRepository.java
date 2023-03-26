@@ -1,30 +1,30 @@
 package com.ruoyi.system.Repository.KnowledgeRepository.TypicalKnowledge;
 
-import com.ruoyi.system.domain.AssemblyPojo.Knowledge.TypicalKnowledge.Process.TypicalProcedure;
+import com.ruoyi.system.domain.AssemblyPojo.Knowledge.TypicalKnowledge.Process.TypicalSequence;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
 
 import java.util.Collection;
 import java.util.Optional;
 
-public interface TypicalProcedureRepository extends Neo4jRepository<TypicalProcedure,Long> {
+public interface TypicalProcedureRepository extends Neo4jRepository<TypicalSequence,Long> {
 
     @Override
-    Optional<TypicalProcedure> findById(Long procedureId);
+    Optional<TypicalSequence> findById(Long procedureId);
 
     @Query("MATCH (n:TypicalProcedure) where n.label = $procedureName return n")
-    Collection<TypicalProcedure> findByProcedureName(String procedureName);
+    Collection<TypicalSequence> findByProcedureName(String procedureName);
 
-    TypicalProcedure save(TypicalProcedure procedure);
+    TypicalSequence save(TypicalSequence procedure);
 
     @Override
-    void delete(TypicalProcedure procedure);
+    void delete(TypicalSequence procedure);
 
     @Override
     void deleteById(Long procedureId);
 
     @Query("MATCH (n:TypicalProcedure)<-[r:hasSubProcedure]-(m:TypicalProcess) where m.id = $processId return n")
-    Collection<TypicalProcedure> findTypicalProceduresByProcessId(Long processId);
+    Collection<TypicalSequence> findTypicalProceduresByProcessId(Long processId);
 
 
 }

@@ -1,6 +1,6 @@
 package com.ruoyi.system.domain.AssemblyPojo.Resource;
 
-import com.ruoyi.system.domain.AssemblyPojo.Knowledge.TypicalKnowledge.Process.TypicalProcedure;
+import com.ruoyi.system.domain.AssemblyPojo.Knowledge.TypicalKnowledge.Process.TypicalSequence;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.TypicalKnowledge.Process.TypicalProcess;
 import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.schema.Property;
@@ -63,12 +63,12 @@ public class EquipmentResource extends AssemblyResource{
     private Set<TypicalProcess> suitableProcesses;
 
     @Relationship(type = "hasSuitableProcedure" , direction = Relationship.Direction.OUTGOING)
-    private Set<TypicalProcedure> suitableProcedures;
+    private Set<TypicalSequence> suitableProcedures;
 
     @Relationship(type = "hasUnSuitableProcess" , direction = Relationship.Direction.OUTGOING)
     private Set<TypicalProcess> unsuitableProcesses;
 
     @Relationship(type = "hasUnSuitableProcedure" , direction = Relationship.Direction.OUTGOING)
-    private Set<TypicalProcedure> unsuitableProcedures;
+    private Set<TypicalSequence> unsuitableProcedures;
 
 }

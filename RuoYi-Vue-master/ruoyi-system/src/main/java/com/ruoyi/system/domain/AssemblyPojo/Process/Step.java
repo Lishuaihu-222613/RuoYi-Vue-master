@@ -19,6 +19,9 @@ public class  Step {
     @Property(name = "工步号")
     private String stepNumber;
 
+    @DynamicLabels
+    private Set<String> dynamicLabels;
+
     @Property(name = "工步内容")
     private String stepDescription;
 
@@ -49,10 +52,11 @@ public class  Step {
     public Step() {
     }
 
-    public Step(Long stepId, String stepName, String stepNumber, String stepDescription, String stepRequirement, Set<AssemblyResource> associatedResources, String inspectRequirement, Set<Step> beforeStep, Set<Step> afterStep, Set<Step> andStep, Set<Step> orStep, Set<Step> subStep) {
+    public Step(Long stepId, String stepName, String stepNumber, Set<String> dynamicLabels, String stepDescription, String stepRequirement, Set<AssemblyResource> associatedResources, String inspectRequirement, Set<Step> beforeStep, Set<Step> afterStep, Set<Step> andStep, Set<Step> orStep, Set<Step> subStep) {
         this.stepId = stepId;
         this.stepName = stepName;
         this.stepNumber = stepNumber;
+        this.dynamicLabels = dynamicLabels;
         this.stepDescription = stepDescription;
         this.stepRequirement = stepRequirement;
         this.associatedResources = associatedResources;
@@ -86,6 +90,14 @@ public class  Step {
 
     public void setStepNumber(String stepNumber) {
         this.stepNumber = stepNumber;
+    }
+
+    public Set<String> getDynamicLabels() {
+        return dynamicLabels;
+    }
+
+    public void setDynamicLabels(Set<String> dynamicLabels) {
+        this.dynamicLabels = dynamicLabels;
     }
 
     public String getStepDescription() {
@@ -165,12 +177,12 @@ public class  Step {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Step step = (Step) o;
-        return Objects.equals(stepId, step.stepId) && Objects.equals(stepName, step.stepName) && Objects.equals(stepNumber, step.stepNumber) && Objects.equals(stepDescription, step.stepDescription) && Objects.equals(stepRequirement, step.stepRequirement) && Objects.equals(inspectRequirement, step.inspectRequirement);
+        return Objects.equals(stepId, step.stepId) && Objects.equals(stepName, step.stepName) && Objects.equals(stepNumber, step.stepNumber) && Objects.equals(dynamicLabels, step.dynamicLabels) && Objects.equals(stepDescription, step.stepDescription) && Objects.equals(stepRequirement, step.stepRequirement) && Objects.equals(associatedResources, step.associatedResources) && Objects.equals(inspectRequirement, step.inspectRequirement) && Objects.equals(beforeStep, step.beforeStep) && Objects.equals(afterStep, step.afterStep) && Objects.equals(andStep, step.andStep) && Objects.equals(orStep, step.orStep) && Objects.equals(subStep, step.subStep);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(stepId, stepName, stepNumber, stepDescription, stepRequirement, inspectRequirement);
+        return Objects.hash(stepId, stepName, stepNumber, dynamicLabels, stepDescription, stepRequirement, associatedResources, inspectRequirement, beforeStep, afterStep, andStep, orStep, subStep);
     }
 
     @Override
@@ -179,6 +191,7 @@ public class  Step {
                 "stepId=" + stepId +
                 ", stepName='" + stepName + '\'' +
                 ", stepNumber='" + stepNumber + '\'' +
+                ", dynamicLabels=" + dynamicLabels +
                 ", stepDescription='" + stepDescription + '\'' +
                 ", stepRequirement='" + stepRequirement + '\'' +
                 ", associatedResources=" + associatedResources +

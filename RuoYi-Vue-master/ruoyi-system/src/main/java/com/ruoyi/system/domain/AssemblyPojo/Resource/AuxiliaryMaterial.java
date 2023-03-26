@@ -7,16 +7,16 @@ import org.springframework.data.neo4j.core.schema.Relationship;
 
 import java.util.Set;
 
-@Node("AuxiliaryMaterial")
+@Node({"辅助工具","AuxiliaryMaterial"})
 public class AuxiliaryMaterial extends AssemblyResource{
 
-    @Property(name = "Usage")
+    @Property(name = "工具用途")
     private String materialUsage;
 
-    @Property(name = "Material")
+    @Property(name = "材料类型")
     private String materialType;
 
-    @Relationship(type = "hasSuitableProcess" , direction = Relationship.Direction.OUTGOING)
+    @Relationship(type = "适用工艺" , direction = Relationship.Direction.OUTGOING)
     private Set<TypicalProcess> suitableProcesses;
 
 }

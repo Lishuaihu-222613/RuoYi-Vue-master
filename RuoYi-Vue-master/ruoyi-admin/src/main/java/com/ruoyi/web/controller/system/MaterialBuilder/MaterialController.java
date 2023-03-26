@@ -20,9 +20,6 @@ public class MaterialController extends BaseController {
     private MaterialService materialService;
 
     @Resource
-    private MaterialKnowledgeService materialKnowledgeService;
-
-    @Resource
     private AnalysisSpectrogramService analysisSpectrogramService;
 
     @Resource
@@ -44,7 +41,7 @@ public class MaterialController extends BaseController {
     private ProtectionService protectionService;
 
     @Resource
-    private StoragePropertyService storagePropertyService;
+    private StorageRequirementService storageRequirementService;
 
     @ResponseBody
     @GetMapping("/getMaterialsByType/{dynamicLabel}")

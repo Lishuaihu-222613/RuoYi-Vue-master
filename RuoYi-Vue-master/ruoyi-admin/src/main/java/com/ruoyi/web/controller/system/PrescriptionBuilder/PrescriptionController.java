@@ -833,6 +833,17 @@ public class PrescriptionController extends BaseController {
             return R.error(e.getMessage());
         }
     };
-    
+
+    @ResponseBody
+    @PostMapping("/deleteMaterialElementForProscription/{proscriptionId}/{elementId}")
+    public R<String> deleteMaterialElementForProscription(@PathVariable Long proscriptionId,@PathVariable Long elementId) {
+        try{
+            prescriptionService.deleteMaterialElementForProscription(proscriptionId,elementId);
+            return R.success("删除"+proscriptionId+"配方中的"+elementId+"组分");
+        }catch(Exception e){
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    };
     
 }

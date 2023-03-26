@@ -2,6 +2,7 @@ package com.ruoyi.system.Repository.StructureRepository;
 
 import com.ruoyi.system.domain.AssemblyPojo.Structure.AssemblyProduct;
 import com.ruoyi.system.domain.AssemblyPojo.Structure.AssemblyStructure;
+import org.springframework.data.domain.Example;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
 import org.springframework.data.repository.query.Param;
@@ -22,5 +23,9 @@ public interface StructureRepository extends Neo4jRepository<AssemblyStructure, 
 
     @Query("MATCH (n:AssemblyProduct) return *")
     List<AssemblyProduct> findAllProduct();
+
+    @Override
+    <S extends AssemblyStructure> List<S> findAll(Example<S> example);
+
 
 }

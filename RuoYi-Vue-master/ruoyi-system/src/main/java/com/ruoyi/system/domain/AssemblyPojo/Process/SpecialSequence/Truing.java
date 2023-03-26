@@ -38,8 +38,8 @@ public class Truing extends Sequence{
     public Truing() {
     }
 
-    public Truing(Long sequenceId, String sequenceName, String sequenceNumber, String sequenceDescription, double quasiClosingHours, double taktTime, List<String> sequenceRemark, Set<EquipmentResource> useEquipment, Set<MouldTool> useMouldTool, Set<MeasuringTool> useMeasuringTool, Set<SpecialTool> useSpecialTool, Set<SpreaderTool> useSpreaderTool, Set<Step> associatedSteps, Set<Sequence> andSequence, Set<Sequence> orSequence, Set<Sequence> beforeSequence, Set<Sequence> afterSequence, Prescription associatedPrescription, Integer panNumber, double panQuality, double mixTime, String workshopTemperature, String absoluteHumidity) {
-        super(sequenceId, sequenceName, sequenceNumber, sequenceDescription, quasiClosingHours, taktTime, sequenceRemark, useEquipment, useMouldTool, useMeasuringTool, useSpecialTool, useSpreaderTool, associatedSteps, andSequence, orSequence, beforeSequence, afterSequence);
+    public Truing(Long sequenceId, String sequenceName, String sequenceNumber, String sequenceDescription, double quasiClosingHours, double taktTime, Set<String> dynamicLabels, List<String> sequenceRemark, Set<EquipmentResource> useEquipment, Set<MouldTool> useMouldTool, Set<MeasuringTool> useMeasuringTool, Set<SpecialTool> useSpecialTool, Set<SpreaderTool> useSpreaderTool, Set<Step> associatedSteps, Set<Sequence> andSequence, Set<Sequence> orSequence, Set<Sequence> beforeSequence, Set<Sequence> afterSequence, Prescription associatedPrescription, Integer panNumber, double panQuality, double mixTime, String workshopTemperature, String absoluteHumidity) {
+        super(sequenceId, sequenceName, sequenceNumber, sequenceDescription, quasiClosingHours, taktTime, dynamicLabels, sequenceRemark, useEquipment, useMouldTool, useMeasuringTool, useSpecialTool, useSpreaderTool, associatedSteps, andSequence, orSequence, beforeSequence, afterSequence);
         this.associatedPrescription = associatedPrescription;
         this.panNumber = panNumber;
         this.panQuality = panQuality;

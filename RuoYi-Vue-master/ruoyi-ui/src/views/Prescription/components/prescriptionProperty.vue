@@ -9,7 +9,7 @@
             <el-input v-model="combustionProperty.propertyName"></el-input>
           </el-form-item>
           <el-form-item :label-width="formLabelWidth" label="燃速">
-            <el-button @click="deleteBurningRate"  />
+            <el-button @click="addBurningRate" />
             <el-row v-for="(value, key) in combustionProperty.burningRate" :key="key" :index="key+''">
               <el-col>
                 <el-input v-model="key"></el-input>
@@ -19,7 +19,7 @@
                 <el-input v-model="value"></el-input>
               </el-col>
               <el-col>
-                <el-button @click="deleteBurningRate" :disabled="disabled"/>
+                <el-button @click="deleteBurningRate"/>
               </el-col>
             </el-row>
           </el-form-item>
@@ -27,6 +27,7 @@
             <el-input v-model="combustionProperty.BRPressureIndex"></el-input>
           </el-form-item>
           <el-form-item :label-width="formLabelWidth" label="燃速温度指数">
+            <el-button @click="addBRTemperatureSensitivity" />
             <el-row v-for="(value, key) in combustionProperty.BRTemperatureSensitivity" :key="key" :index="key+''">
               <el-col>
                 <el-input v-model="key"></el-input>
@@ -35,9 +36,13 @@
               <el-col>
                 <el-input v-model="value"></el-input>
               </el-col>
+              <el-col>
+                <el-button @click="deleteBRTemperatureSensitivity"/>
+              </el-col>
             </el-row>
           </el-form-item>
           <el-form-item :label-width="formLabelWidth" label="压力温度指数">
+            <el-button @click="addPressureTemperatureSensitivity" />
             <el-row v-for="(value, key) in combustionProperty.pressureTemperatureSensitivity" :key="key" :index="key+''">
               <el-col>
                 <el-input v-model="key"></el-input>
@@ -45,6 +50,9 @@
               <el-col :span="2" class="line">----</el-col>
               <el-col>
                 <el-input v-model="value"></el-input>
+              </el-col>
+              <el-col>
+                <el-button @click="deletepressureTemperatureSensitivity"/>
               </el-col>
             </el-row>
           </el-form-item>

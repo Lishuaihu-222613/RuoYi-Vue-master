@@ -1,6 +1,8 @@
 <template>
-  <el-dialog :visible.sync="dialogFormVisible" title="理化分析谱图" @closed="handleClose" @open="handleOpen" top="50vh" width="75%" >
-    <el-carousel :interval="1000000" height="700px" >
+  <el-dialog :visible.sync="dialogFormVisible" title="理化分析谱图" top="50vh" width="75%" @closed="handleClose"
+             @open="handleOpen"
+  >
+    <el-carousel :interval="1000000" height="700px">
       <el-carousel-item>
         <el-card class="box-card" shadow="hover">
           <div slot="header" class="clearfix">
@@ -13,10 +15,10 @@
             </el-row>
           </div>
           <el-image
-            fit="cover"
             :preview-src-list="[analysisSpectrogram.infraredSpectrumUrl]"
             :src="analysisSpectrogram.infraredSpectrumUrl"
             class="SpectrogramImage"
+            fit="cover"
           >
             <div slot="placeholder" class="image-slot">
               加载中<span class="dot">...</span>
@@ -39,10 +41,10 @@
             </el-row>
           </div>
           <el-image
-            fit="cover"
             :preview-src-list="[analysisSpectrogram.thermalSpectrogramUrl]"
             :src="analysisSpectrogram.thermalSpectrogramUrl"
             class="SpectrogramImage"
+            fit="cover"
           >
             <div slot="placeholder" class="image-slot">
               加载中<span class="dot">...</span>
@@ -65,10 +67,10 @@
             </el-row>
           </div>
           <el-image
-            fit="cover"
             :preview-src-list="[analysisSpectrogram.nmrSpectrumUrl]"
             :src="analysisSpectrogram.nmrSpectrumUrl"
             class="SpectrogramImage"
+            fit="cover"
           >
             <div slot="placeholder" class="image-slot">
               加载中<span class="dot">...</span>
@@ -91,10 +93,10 @@
             </el-row>
           </div>
           <el-image
-            fit="cover"
             :preview-src-list="[analysisSpectrogram.XraySpectrumUrl]"
             :src="analysisSpectrogram.XraySpectrumUrl"
             class="SpectrogramImage"
+            fit="cover"
           >
             <div slot="placeholder" class="image-slot">
               加载中<span class="dot">...</span>
@@ -117,10 +119,10 @@
             </el-row>
           </div>
           <el-image
-            fit="cover"
             :preview-src-list="[analysisSpectrogram.ramanSpectrumUrl]"
             :src="analysisSpectrogram.ramanSpectrumUrl"
             class="SpectrogramImage"
+            fit="cover"
           >
             <div slot="placeholder" class="image-slot">
               加载中<span class="dot">...</span>
@@ -144,10 +146,10 @@
           </div>
           <div>
             <el-image
-              fit="cover"
               :preview-src-list="[analysisSpectrogram.ultravioletSpectrumUrl]"
               :src="analysisSpectrogram.ultravioletSpectrumUrl"
               class="SpectrogramImage"
+              fit="cover"
             >
               <div slot="placeholder" class="image-slot">
                 加载中<span class="dot">...</span>
@@ -171,10 +173,10 @@
             </el-row>
           </div>
           <el-image
-            fit="cover"
             :preview-src-list="[analysisSpectrogram.massSpectrumUrl]"
             :src="analysisSpectrogram.massSpectrumUrl"
             class="SpectrogramImage"
+            fit="cover"
           >
             <div slot="placeholder" class="image-slot">
               加载中<span class="dot">...</span>
@@ -253,7 +255,9 @@ export default {
     handleOpen() {
       materialManagement.getAnalysisSpectrogramByMaterialId(this.materialId).then(result => {
         if (result.code == 200) {
-          this.analysisSpectrogram = result.data
+          if (result.data.length > 0) {
+            this.analysisSpectrogram = result.data[0]
+          }
         }
       })
     },
@@ -291,24 +295,28 @@ export default {
 
 <style lang="scss" scoped>
 
-el-card{
+el-card {
   color: #121313;
 }
 
-.dialog{
+.dialog {
 
 }
+
 .upLoader {
   display: inline-block;
   float: right;
 }
-.box-card{
-  height:650px;
+
+.box-card {
+  height: 650px;
 }
-.clearfix{
+
+.clearfix {
 
 }
-.SpectrogramImage{
-  height:100%;
+
+.SpectrogramImage {
+  height: 100%;
 }
 </style>

@@ -16,7 +16,8 @@ public interface InspectProjectRepository extends Neo4jRepository<InspectProject
     @Query("MATCH (n:理化指标) where n.label = $projectName return n")
     Collection<InspectProject> findInspectProjectsByProjectName(String projectName);
 
-    InspectProject save(InspectProject project);
+    @Override
+    <S extends InspectProject> S save(S project);
 
     @Override
     void delete(InspectProject project);

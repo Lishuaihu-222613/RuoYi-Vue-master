@@ -1343,7 +1343,7 @@ export default {
       let data = { domain: this.domain };
       kgBuilderApi.exportGraph(data).then(result => {
         if (result.code == 200) {
-          window.location.href = result.fileName
+          window.site.href = result.fileName
         }
       });
     },

@@ -7,14 +7,18 @@ import com.ruoyi.system.domain.AssemblyPojo.Knowledge.QualityProblem.QualityProb
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.QualityProblem.Reason;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.QualityProblem.Solution;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.QualityProblem.vo.AppearanceForProblem;
+import com.ruoyi.system.domain.AssemblyPojo.Knowledge.QualityProblem.vo.ProblemQueryVo;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.QualityProblem.vo.ReasonForProblem;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.QualityProblem.vo.SolutionForProblem;
 import com.ruoyi.system.domain.AssemblyPojo.Process.Process;
 import com.ruoyi.system.service.KnowledgeService.QualityProblem.QualityProblemService;
+import org.springframework.data.domain.*;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
+
+import static org.springframework.data.domain.Sort.by;
 
 @RestController
 @RequestMapping("/qualityProblem")
@@ -50,10 +54,49 @@ public class QualityProblemController extends BaseController {
     };
 
     @ResponseBody
-    @GetMapping("/getAllProblem")
-    public R<List<QualityProblem>> getAllProblem(){
+    @PostMapping("/getAllProblems")
+    public R<Page<QualityProblem>> getAllProblems(@RequestBody ProblemQueryVo params){
         try{
-            List<QualityProblem> problems = qualityProblemService.getAllQualityProblems();
+            //判断排序类型及排序字段
+            Sort sort = "ascending".equals(params.getSortType()) ? by(Sort.Direction.ASC, params.getSortableField()) : by(Sort.Direction.DESC, params.getSortableField());
+            //获取pageable
+            Pageable pageable = PageRequest.of(params.getPageNum()-1,params.getPageSize(),sort);
+            Page<QualityProblem> problems = qualityProblemService.getAllQualityProblems(pageable);
+            System.out.println(problems);
+            return R.success(problems);
+        }catch(Exception e){
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    };
+
+    @ResponseBody
+    @PostMapping("/getAllProblemsByLabel")
+    public R<Page<QualityProblem>> getAllProblemsByLabel(@RequestBody ProblemQueryVo params){
+        try{
+            //判断排序类型及排序字段
+            Sort sort = "ascending".equals(params.getSortType()) ? by(Sort.Direction.ASC, params.getSortableField()) : by(Sort.Direction.DESC, params.getSortableField());
+            //获取pageable
+            Pageable pageable = PageRequest.of(params.getPageNum()-1,params.getPageSize(),sort);
+            Page<QualityProblem> problems = qualityProblemService.getQualityProblemsByLabel(params.getDynamicLabel(),pageable);
+            System.out.println(problems);
+            return R.success(problems);
+        }catch(Exception e){
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    };
+
+    @ResponseBody
+    @PostMapping("/getAllProblemsByParams")
+    public R<Page<QualityProblem>> getAllProblemsByParams(@RequestBody ProblemQueryVo params){
+        try{
+            //判断排序类型及排序字段
+            Sort sort = "ascending".equals(params.getSortType()) ? by(Sort.Direction.ASC, params.getSortableField()) : by(Sort.Direction.DESC, params.getSortableField());
+            //获取pageable
+            Pageable pageable = PageRequest.of(params.getPageNum()-1,params.getPageSize(),sort);
+            Example<QualityProblem> example = Example.of(params.getOriginProblem());
+            Page<QualityProblem> problems = qualityProblemService.getQualityProblemsByParams(example,pageable);
             System.out.println(problems);
             return R.success(problems);
         }catch(Exception e){

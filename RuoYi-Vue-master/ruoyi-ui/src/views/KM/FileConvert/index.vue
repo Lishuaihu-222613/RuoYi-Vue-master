@@ -59,6 +59,7 @@ import selectEdge from '@/views/KM/FileConvert/actions/select_edge'
 import * as G6 from '@antv/g6'
 import { GraphLayoutPredict } from '@antv/vis-predict-engine'
 import * as kgBuilderApi from '@/api/system/KgBuilder'
+import { getTextBoundingRect } from 'echarts/lib/util/format'
 
 export default {
   name: 'FileConvert',
@@ -400,10 +401,18 @@ export default {
         if (result.code === 200) {
           alert('节点展开成功！')
           for (let item of result.data.nodes) {
-            this.graph.addItem('node', item)
+            let node = this.graph.findById(item.id)
+            if(node === undefined){
+              console.log(result.data.nodes)
+              this.graph.addItem('node', item)
+            }
           }
           for (let item of result.data.edges) {
-            this.graph.addItem('edge', item)
+            let edge = this.graph.findById(item.id)
+            if(edge === undefined) {
+              console.log(result.data.edges)
+              this.graph.addItem('edge', item)
+            }
           }
           this.graph.layout()
         } else {
@@ -566,10 +575,12 @@ export default {
           const model = e.item.getModel()
           let li = ""
           for (let [key, value] of Object.entries(model)) {
-            if (key != 'labelCfg' && key != 'style' && key != 'type' && key != 'x' && key != 'y'
+            if (key !== 'labelCfg' && key != 'style' && key != 'type' && key != 'x' && key != 'y'
               && key != 'size' && key != 'anchorPoints'&& key != 'linkPoints'
               && key != 'stateStyles'&& key != 'id'&& key != 'layoutOrder' && key != 'label'&& key != 'weight'
-              && key != 'degree' && key != 'source' && key != 'target' && key != 'startPoint' && key != 'endPoint' ) {
+              && key != 'degree' && key != 'source' && key != 'target' && key != 'startPoint' && key != 'endPoint'
+             && key != '_order'&& key != 'vx'&& key != 'vy'&& key != 'index'
+            ) {
               li += "<li>" + key + '：' + value + '<li>'
             }
           }

@@ -1,7 +1,7 @@
 import { red, white } from 'chalk'
 
 export default {
-  size: [60, 60],
+  size: [100, 100],
   linkPoints: { // 锚点
     top: false,
     bottom: false,

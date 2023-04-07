@@ -9,6 +9,7 @@ import com.ruoyi.system.domain.AssemblyPojo.Knowledge.InspectionKnowledge.vo.Con
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.InspectionKnowledge.vo.FactorForMethod;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.InspectionKnowledge.vo.ModeForMethod;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -20,9 +21,9 @@ public interface InspectionMethodService {
     
     InspectionMethod getInspectionMethodById(Long methodId);
     
-    Page<InspectionMethod> getAllInspectionMethods();
+    Page<InspectionMethod> getAllInspectionMethods(Pageable pageable);
     
-    List<InspectionMethod> getInspectionMethodsByType(String type);
+    Page<InspectionMethod> getInspectionMethodsByType(String type, Pageable pageable);
     
     List<InspectionMethod> getInspectionMethodsByName(String methodName);
     

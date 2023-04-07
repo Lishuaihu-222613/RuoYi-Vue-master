@@ -5,9 +5,9 @@ import com.ruoyi.system.domain.AssemblyPojo.Structure.*;
 import com.ruoyi.system.Repository.StructureRepository.StructureRepository;
 import com.ruoyi.system.domain.AssemblyPojo.Structure.vo.PartsWithConstraints;
 import com.ruoyi.system.service.StructureService.StructureService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -16,10 +16,10 @@ import java.util.Set;
 @Service
 public class StructureServiceImpl implements StructureService {
 
-    @Autowired
+    @Resource
     private StructureRepository structureMapper;
 
-    @Autowired
+    @Resource
     private ConstraintRepository constraintRepository;
 
 

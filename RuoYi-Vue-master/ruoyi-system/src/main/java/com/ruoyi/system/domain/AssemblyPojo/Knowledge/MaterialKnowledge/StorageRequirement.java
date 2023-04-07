@@ -7,7 +7,7 @@ import org.springframework.data.neo4j.core.schema.Property;
 
 import java.util.Objects;
 
-@Node("存储要求")
+@Node({"StorageRequirement","存储要求"})
 public class StorageRequirement {
 
     @Id

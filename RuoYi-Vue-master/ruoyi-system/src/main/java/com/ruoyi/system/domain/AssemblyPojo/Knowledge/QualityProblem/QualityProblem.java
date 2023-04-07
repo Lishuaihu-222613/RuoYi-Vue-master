@@ -19,6 +19,9 @@ public class QualityProblem {
     @Property(name = "问题描述")
     private String problemDescription;
 
+    @DynamicLabels
+    private Set<String> dynamicLabels;
+
     @Relationship(type = "产生原因" , direction = Relationship.Direction.OUTGOING)
     private Set<Reason> reasons;
 
@@ -76,13 +79,22 @@ public class QualityProblem {
         this.appearances = appearances;
     }
 
+    public Set<String> getDynamicLabels() {
+        return dynamicLabels;
+    }
+
+    public void setDynamicLabels(Set<String> dynamicLabels) {
+        this.dynamicLabels = dynamicLabels;
+    }
+
     public QualityProblem() {
     }
 
-    public QualityProblem(Long problemId, String problemName, String problemDescription, Set<Reason> reasons, Set<Solution> solutions, Set<Appearance> appearances) {
+    public QualityProblem(Long problemId, String problemName, String problemDescription, Set<String> dynamicLabels, Set<Reason> reasons, Set<Solution> solutions, Set<Appearance> appearances) {
         this.problemId = problemId;
         this.problemName = problemName;
         this.problemDescription = problemDescription;
+        this.dynamicLabels = dynamicLabels;
         this.reasons = reasons;
         this.solutions = solutions;
         this.appearances = appearances;
@@ -93,12 +105,12 @@ public class QualityProblem {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         QualityProblem that = (QualityProblem) o;
-        return Objects.equals(problemId, that.problemId) && Objects.equals(problemName, that.problemName) && Objects.equals(problemDescription, that.problemDescription) && Objects.equals(reasons, that.reasons) && Objects.equals(solutions, that.solutions) && Objects.equals(appearances, that.appearances);
+        return Objects.equals(problemId, that.problemId) && Objects.equals(problemName, that.problemName) && Objects.equals(problemDescription, that.problemDescription) && Objects.equals(dynamicLabels, that.dynamicLabels) && Objects.equals(reasons, that.reasons) && Objects.equals(solutions, that.solutions) && Objects.equals(appearances, that.appearances);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(problemId, problemName, problemDescription, reasons, solutions, appearances);
+        return Objects.hash(problemId, problemName, problemDescription, dynamicLabels, reasons, solutions, appearances);
     }
 
     @Override
@@ -107,6 +119,7 @@ public class QualityProblem {
                 "problemId=" + problemId +
                 ", problemName='" + problemName + '\'' +
                 ", problemDescription='" + problemDescription + '\'' +
+                ", dynamicLabels=" + dynamicLabels +
                 ", reasons=" + reasons +
                 ", solutions=" + solutions +
                 ", appearances=" + appearances +

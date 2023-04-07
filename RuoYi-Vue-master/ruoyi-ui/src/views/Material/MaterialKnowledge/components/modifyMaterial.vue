@@ -14,7 +14,7 @@
         <el-input v-model="material.englishNickName"></el-input>
       </el-form-item>
       <el-form-item :label-width="formLabelWidth" label="相对分子质量">
-        <el-input v-model="material.englishNickName"></el-input>
+        <el-input v-model="material.relativeMolecularMass"></el-input>
       </el-form-item>
       <el-form-item :label-width="formLabelWidth" >
         <el-card class="box-card" shadow="hover">
@@ -42,10 +42,7 @@
           </el-image>
         </el-card>
       </el-form-item>
-      <el-form-item :label-width="formLabelWidth" label="英文别称">
-        <el-input v-model="material.englishNickName"></el-input>
-      </el-form-item>
-      <el-form-item :label-width="formLabelWidth" label="知识描述">
+      <el-form-item :label-width="formLabelWidth" label="材料描述">
         <el-input v-model="material.materialDescription" autosize type="textarea"></el-input>
       </el-form-item>
       <el-form-item :label-width="formLabelWidth" label="CAS-登记号">
@@ -149,7 +146,16 @@ export default {
       materialDescription:'',
       materialAppearance:'',
       materialUsage:[],
-      materialLabels:[]
+      materialLabels:[],
+      physicalProperty:{},
+      chemicalProperty:{},
+      analysisSpectrogram:[],
+      inspectProjects:[],
+      storageRequirements:[],
+      productMethods:[],
+      dangers:[],
+      protections:[],
+      associatedFiles:[]
     }
   }),
   methods:{
@@ -192,7 +198,7 @@ export default {
       this.inputValue = '';
     },
     onSubmit(){
-      materialManagement.updateMaterial(this.material).then(result => {
+      materialManagement.createMaterial(this.material).then(result => {
         if (result.code == 200) {
           this.$modal.msgSuccess('修改成功')
         }

@@ -1,6 +1,7 @@
 package com.ruoyi.system.Repository.KnowledgeRepository.InspectionMethod;
 
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.InspectionKnowledge.InspectionMethod;
+import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
@@ -10,7 +11,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 import java.util.Optional;
 
-public interface InspectionMethodRepository extends Neo4jRepository<InspectionMethod,Long> {
+public interface InspectionMethodRepository extends Neo4jRepository<InspectionMethod, Long> {
 
     @Override
     <S extends InspectionMethod> S save(S method);
@@ -21,12 +22,18 @@ public interface InspectionMethodRepository extends Neo4jRepository<InspectionMe
     @Override
     Page<InspectionMethod> findAll(Pageable pageable);
 
-    @Query("MATCH (n:InspectionMethod :$dynamicLabel) return n")
-    List<InspectionMethod> findMethodByType(@Param("dynamicLabel") String dynamicLabel);
+    @Query(value = "MATCH (n) where any(label in labels(n) WHERE label in ['InspectionMethod', $dynamicLabel])  return n" +
+            ":#{orderBy(#pageable)} SKIP $skip LIMIT $limit",
+            countQuery = "MATCH (n) where any(label in labels(n) WHERE label in ['InspectionMethod', $dynamicLabel])  return count(n)"
+    )
+    Page<InspectionMethod> findMethodByType(@Param("dynamicLabel") String dynamicLabel, Pageable pageable);
 
-    @Query("MATCH (n:InspectionMethod ) where n.label contains $methodName  return n")
+    @Query("MATCH (n:InspectionMethod ) where n.label contains $methodName return n")
     List<InspectionMethod> findMethodByName(@Param("methodName") String methodName);
 
     @Override
     void deleteById(Long methodId);
+
+    @Override
+    <S extends InspectionMethod> Page<S> findAll(Example<S> example, Pageable pageable);
 }

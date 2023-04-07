@@ -8,6 +8,7 @@ import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.schema.Property;
 import org.springframework.data.neo4j.core.schema.Relationship;
 
+import java.util.Objects;
 import java.util.Set;
 
 @Node("AssemblyProduct")
@@ -75,12 +76,37 @@ public class AssemblyProduct extends AssemblyStructure {
     public AssemblyProduct() {
     }
 
-    public AssemblyProduct(Long structureId, Set<AssemblyComponent> components, Set<AssemblyPart> parts, Set<AssemblyConstraint> constraints, Location location, AdvancedBerpShape geometry, Set<FileKnowledge> associatedFiles, String productName, String productDescription, Set<AssemblyComponent> components1, Set<AssemblyPart> parts1, Set<Requirement> requirements) {
-        super(structureId, components, parts, constraints, location, geometry, associatedFiles);
+    public AssemblyProduct(Long structureId, Set<String> dynamicLabels, Set<AssemblyComponent> components, Set<AssemblyPart> parts, Set<AssemblyConstraint> constraints, Location location, AdvancedBerpShape geometry, Set<FileKnowledge> associatedFiles, String productName, String productDescription, Set<AssemblyComponent> components1, Set<AssemblyPart> parts1, Set<Requirement> requirements) {
+        super(structureId, dynamicLabels, components, parts, constraints, location, geometry, associatedFiles);
         this.productName = productName;
         this.productDescription = productDescription;
         this.components = components1;
         this.parts = parts1;
         this.requirements = requirements;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        AssemblyProduct that = (AssemblyProduct) o;
+        return Objects.equals(productName, that.productName) && Objects.equals(productDescription, that.productDescription) && Objects.equals(components, that.components) && Objects.equals(parts, that.parts) && Objects.equals(requirements, that.requirements);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), productName, productDescription, components, parts, requirements);
+    }
+
+    @Override
+    public String toString() {
+        return "AssemblyProduct{" +
+                "productName='" + productName + '\'' +
+                ", productDescription='" + productDescription + '\'' +
+                ", components=" + components +
+                ", parts=" + parts +
+                ", requirements=" + requirements +
+                "} " + super.toString();
     }
 }

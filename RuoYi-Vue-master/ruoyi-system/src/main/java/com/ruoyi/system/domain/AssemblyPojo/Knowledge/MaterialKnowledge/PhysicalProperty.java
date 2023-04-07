@@ -5,7 +5,7 @@ import org.springframework.data.neo4j.core.schema.*;
 import java.util.Map;
 import java.util.Objects;
 
-@Node("物理性质")
+@Node({"PhysicalProperty","物理性质"})
 public class PhysicalProperty {
 
     @Id

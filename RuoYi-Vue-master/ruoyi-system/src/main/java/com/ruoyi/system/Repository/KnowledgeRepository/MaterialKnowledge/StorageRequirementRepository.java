@@ -16,7 +16,8 @@ public interface StorageRequirementRepository extends Neo4jRepository<StorageReq
     @Query("MATCH (n:StorageRequirement) where n.label = $requirementName return n")
     Collection<StorageRequirement> findByRequirementName(String requirementName);
 
-    StorageRequirement save(StorageRequirementRepository requirement);
+    @Override
+    <S extends StorageRequirement> S save(S requirement);
 
     @Override
     void delete(StorageRequirement requirement);

@@ -171,8 +171,8 @@ public class KGManagerController extends BaseController {
         try {
             HashMap<String, Object> graphModel = kgGraphService.getMoreRelationNode(domain, nodeId);
             if (graphModel != null) {
-                return R.success(graphModel);
 
+                return R.success(graphModel);
             }
         } catch (Exception e) {
             e.printStackTrace();

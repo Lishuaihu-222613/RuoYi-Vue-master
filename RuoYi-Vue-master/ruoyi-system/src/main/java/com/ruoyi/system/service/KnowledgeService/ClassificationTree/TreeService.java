@@ -1,6 +1,7 @@
 package com.ruoyi.system.service.KnowledgeService.ClassificationTree;
 
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.ClassificationTree.ClassificationTree;
+import com.ruoyi.system.domain.AssemblyPojo.Knowledge.ClassificationTree.vo.LeafForParent;
 
 import java.util.List;
 
@@ -33,6 +34,8 @@ public interface TreeService {
      * @return
      */
     ClassificationTree updateTree(ClassificationTree tree);
+
+    ClassificationTree addSubLeafs(LeafForParent leafs);
 
     /**
      * @param treeIds

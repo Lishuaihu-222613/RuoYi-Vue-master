@@ -9,6 +9,9 @@ import com.ruoyi.system.domain.AssemblyPojo.Knowledge.QualityProblem.QualityProb
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.QualityProblem.Reason;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.QualityProblem.Solution;
 import com.ruoyi.system.service.KnowledgeService.QualityProblem.QualityProblemService;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -42,6 +45,25 @@ public class QualityProblemServiceImpl implements QualityProblemService {
             QualityProblem oldProblem = oProblem.get();
             oldProblem.setProblemName(problem.getProblemName());
             oldProblem.setProblemDescription(problem.getProblemDescription());
+            oldProblem.setDynamicLabels(problem.getDynamicLabels());
+            for (Appearance appearance : oldProblem.getAppearances()) {
+                if(!problem.getAppearances().contains(appearance)){
+                    appearanceRepository.deleteById(appearance.getAppearanceId());
+                }
+            }
+            oldProblem.getAppearances().retainAll(problem.getAppearances());
+            for (Reason reason : oldProblem.getReasons()) {
+                if(!problem.getReasons().contains(reason)){
+                    reasonRepository.deleteById(reason.getReasonId());
+                }
+            }
+            oldProblem.getReasons().retainAll(problem.getReasons());
+            for (Solution solution : oldProblem.getSolutions()) {
+                if(!problem.getSolutions().contains(solution)){
+                    solutionRepository.deleteById(solution.getSolutionId());
+                }
+            }
+            oldProblem.getSolutions().retainAll(problem.getSolutions());
             QualityProblem newProblem = qualityProblemRepository.save(oldProblem);
             return newProblem;
         }
@@ -49,9 +71,18 @@ public class QualityProblemServiceImpl implements QualityProblemService {
     }
 
     @Override
-    public List<QualityProblem> getAllQualityProblems() {
-        List<QualityProblem> allProblems = qualityProblemRepository.findAll();
-        return allProblems;
+    public Page<QualityProblem> getAllQualityProblems(Pageable pageable) {
+        return qualityProblemRepository.findAll(pageable);
+    }
+
+    @Override
+    public Page<QualityProblem> getQualityProblemsByLabel(String dynamicLabel, Pageable pageable) {
+        return qualityProblemRepository.findProblemsByLabel(dynamicLabel,pageable);
+    }
+
+    @Override
+    public Page<QualityProblem> getQualityProblemsByParams(Example example, Pageable pageable) {
+        return qualityProblemRepository.findAll(example,pageable);
     }
 
     @Override

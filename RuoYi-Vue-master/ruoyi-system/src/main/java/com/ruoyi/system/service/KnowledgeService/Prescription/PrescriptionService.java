@@ -8,6 +8,8 @@ import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.Stability.Hea
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.Stability.MechanicalStability;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.Stability.RadioStability;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.hasMaterialElement;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.Collection;
 import java.util.List;
@@ -47,7 +49,7 @@ public interface PrescriptionService {
      * @param dynamicLabel
      * @return
      */
-    List<PrescriptionInterface> getPrescriptionsByLabel(String dynamicLabel);
+    Page<PrescriptionInterface> getPrescriptionsByLabel(String dynamicLabel, Pageable pageable);
 
     /**
      *

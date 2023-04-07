@@ -5,9 +5,9 @@ import com.ruoyi.common.utils.Neo4j.R;
 import com.ruoyi.system.domain.AssemblyPojo.Structure.*;
 import com.ruoyi.system.domain.AssemblyPojo.Structure.vo.PartsWithConstraints;
 import com.ruoyi.system.service.StructureService.StructureService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -16,7 +16,7 @@ import java.util.Set;
 @RequestMapping("/structure")
 public class StructureController extends BaseController {
 
-    @Autowired
+    @Resource
     private StructureService structureService;
 
     @ResponseBody
@@ -31,6 +31,8 @@ public class StructureController extends BaseController {
             return R.error(e.getMessage());
         }
     };
+
+
 
     @ResponseBody
     @PostMapping("/createProduct")

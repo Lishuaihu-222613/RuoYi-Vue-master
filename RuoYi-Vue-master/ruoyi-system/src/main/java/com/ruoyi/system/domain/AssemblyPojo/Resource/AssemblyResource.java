@@ -25,7 +25,7 @@ public abstract class AssemblyResource {
     private Set<String> resourceTypes;
 
     @Relationship(type = "存在于" , direction = Relationship.Direction.OUTGOING)
-    private Set<Location> locations;
+    private Set<Site> sites;
 
     @Relationship(type = "被使用在" , direction = Relationship.Direction.OUTGOING)
     private Set<Sequence> sequences;
@@ -36,12 +36,12 @@ public abstract class AssemblyResource {
     public AssemblyResource() {
     }
 
-    public AssemblyResource(Long resourceId, String resourceName, String resourceDescription, Set<String> resourceTypes, Set<Location> locations, Set<Sequence> sequences, Set<Step> steps) {
+    public AssemblyResource(Long resourceId, String resourceName, String resourceDescription, Set<String> resourceTypes, Set<Site> sites, Set<Sequence> sequences, Set<Step> steps) {
         this.resourceId = resourceId;
         this.resourceName = resourceName;
         this.resourceDescription = resourceDescription;
         this.resourceTypes = resourceTypes;
-        this.locations = locations;
+        this.sites = sites;
         this.sequences = sequences;
         this.steps = steps;
     }
@@ -78,12 +78,12 @@ public abstract class AssemblyResource {
         this.resourceTypes = resourceTypes;
     }
 
-    public Set<Location> getLocations() {
-        return locations;
+    public Set<Site> getLocations() {
+        return sites;
     }
 
-    public void setLocations(Set<Location> locations) {
-        this.locations = locations;
+    public void setLocations(Set<Site> sites) {
+        this.sites = sites;
     }
 
     public Set<Sequence> getSequences() {
@@ -122,7 +122,7 @@ public abstract class AssemblyResource {
                 ", resourceName='" + resourceName + '\'' +
                 ", resourceDescription='" + resourceDescription + '\'' +
                 ", resourceTypes=" + resourceTypes +
-                ", locations=" + locations +
+                ", locations=" + sites +
                 ", sequences=" + sequences +
                 ", steps=" + steps +
                 '}';

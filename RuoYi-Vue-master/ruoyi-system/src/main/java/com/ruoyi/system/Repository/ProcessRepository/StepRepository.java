@@ -1,6 +1,7 @@
 package com.ruoyi.system.Repository.ProcessRepository;
 
 import com.ruoyi.system.domain.AssemblyPojo.Process.Step;
+import org.springframework.data.domain.Example;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
 import org.springframework.data.repository.query.Param;
@@ -17,11 +18,14 @@ public interface StepRepository extends Neo4jRepository<Step,Long> {
     @Override
     List<Step> findAll();
 
-    @Query("Match (n:Step) <-[r]- (m:Sequence) where id(m) = $sequenceId order by n.stepNumber return n")
+    @Query("Match (n:Step) <-[r]- (m:Sequence) where id(m) = $sequenceId order by n.工步号 return n")
     Collection<Step> findStepBySequenceId(@Param("sequenceId")Long sequenceId);
 
     @Query("Match (n:Step) where n.label contains $stepName return n")
     Collection<Step> findStepByName(@Param("stepName") String stepName);
+
+    @Override
+    <S extends Step> List<S> findAll(Example<S> example);
 
     @Override
     <S extends Step> S save(S step);

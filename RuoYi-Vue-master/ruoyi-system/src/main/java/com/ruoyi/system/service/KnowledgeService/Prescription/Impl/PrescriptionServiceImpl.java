@@ -10,6 +10,8 @@ import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.Stability.Mec
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.Stability.RadioStability;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.hasMaterialElement;
 import com.ruoyi.system.service.KnowledgeService.Prescription.PrescriptionService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -85,8 +87,8 @@ public class PrescriptionServiceImpl implements PrescriptionService {
     }
 
     @Override
-    public List<PrescriptionInterface> getPrescriptionsByLabel(String dynamicLabel) {
-        return new ArrayList<>(prescriptionRepository.findPrescriptionByType(dynamicLabel)) ;
+    public Page<PrescriptionInterface> getPrescriptionsByLabel(String dynamicLabel, Pageable pageable) {
+        return prescriptionRepository.findPrescriptionByType(dynamicLabel,pageable) ;
     }
 
     @Override

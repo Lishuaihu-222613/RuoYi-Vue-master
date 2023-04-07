@@ -10,7 +10,7 @@
             clearable
             size="small"
             prefix-icon="el-icon-search"
-            style="margin-bottom: 20px"
+            style=" margin-bottom: 20px"
           />
         </div>
         <div class="head-container">
@@ -231,12 +231,12 @@
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item v-if="form.userId == undefined" label="用户名称" prop="userName">
+            <el-form-item v-if="form.userId === undefined" label="用户名称" prop="userName">
               <el-input v-model="form.userName" placeholder="请输入用户名称" maxlength="30" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item v-if="form.userId == undefined" label="用户密码" prop="password">
+            <el-form-item v-if="form.userId === undefined" label="用户密码" prop="password">
               <el-input v-model="form.password" placeholder="请输入用户密码" type="password" maxlength="20" show-password/>
             </el-form-item>
           </el-col>
@@ -470,6 +470,7 @@ export default {
     /** 查询用户列表 */
     getList() {
       this.loading = true;
+      console.log(this.queryParams)
       listUser(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
           this.userList = response.rows;
           this.total = response.total;

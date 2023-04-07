@@ -16,7 +16,8 @@ public interface ProtectionRepository extends Neo4jRepository<Protection,Long> {
     @Query("MATCH (n:安全要求) where n.label = $protectionName return n")
     Collection<Protection> findByProtectionName(String protectionName);
 
-    Protection save(Protection protection);
+    @Override
+    <S extends Protection> S save(S protection);
 
     @Override
     void delete(Protection protection);

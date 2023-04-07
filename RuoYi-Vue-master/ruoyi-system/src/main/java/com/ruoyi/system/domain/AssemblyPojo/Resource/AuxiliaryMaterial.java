@@ -19,4 +19,6 @@ public class AuxiliaryMaterial extends AssemblyResource{
     @Relationship(type = "适用工艺" , direction = Relationship.Direction.OUTGOING)
     private Set<TypicalProcess> suitableProcesses;
 
+
+
 }

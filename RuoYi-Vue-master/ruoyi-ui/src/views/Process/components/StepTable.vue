@@ -14,20 +14,18 @@
       <el-button style="display: inline-block;float: right;" @click="addStep">添加工步</el-button>
     </el-row>
     <el-table id="Steps" :data="Steps" :tree-props="treeProps" border row-key="stepId">
-      <el-table-column label="工步号" prop="stepNumber"></el-table-column>
-      <el-table-column label="工步名" prop="stepName"></el-table-column>
-      <el-table-column label="工步内容" prop="stepDescription"></el-table-column>
-      <el-table-column label="技术要求" prop="stepRequirement"></el-table-column>
-      <el-table-column label="检验要求" prop="inspectRequirement"></el-table-column>
+      <el-table-column label="工步号" prop="stepNumber" ></el-table-column>
+      <el-table-column label="工步名" prop="stepName" ></el-table-column>
+      <el-table-column label="工步内容" prop="stepDescription" ></el-table-column>
+      <el-table-column label="技术要求" prop="stepRequirement" ></el-table-column>
+      <el-table-column label="检验要求" prop="inspectRequirement" ></el-table-column>
       <el-table-column label="使用工具" >
         <template v-slot="scope">
           <el-button size="small" type="text" @click="getResource(scope.row.stepId)">查看工具</el-button>
         </template>
       </el-table-column>
       <el-table-column
-        fixed="right"
         label="操作"
-        width="100"
       >
         <template v-slot="scope">
           <el-button size="small" type="text" @click="deleteStep(scope.row.stepId)">移除工步</el-button>
@@ -96,10 +94,15 @@ export default {
           this.Steps = result.data
         }
       })
-      let subs;
+      let subs = [];
       this.Steps.forEach(item =>{
-        subs.push(...item.subStep)
+        if(item.subStep.length !== 0){
+          item.subStep.forEach(n =>{
+            subs.push(n)
+          })
+        }
       })
+      console.log(subs)
       subs.forEach(item =>{
         let index = this.Steps.indexOf(item)
         if (index !== -1){
@@ -124,7 +127,8 @@ export default {
         stepNumber: '待编辑',
         stepDescription: '待编辑',
         stepRequirement: '待编辑',
-        inspectRequirement: '待编辑'
+        inspectRequirement: '待编辑',
+        dynamicLabels:[],
       }
       let sAnds = {
         sequenceId: this.sequenceId,

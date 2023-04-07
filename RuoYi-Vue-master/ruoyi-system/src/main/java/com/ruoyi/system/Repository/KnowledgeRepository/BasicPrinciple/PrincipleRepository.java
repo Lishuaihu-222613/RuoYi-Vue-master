@@ -1,6 +1,7 @@
 package com.ruoyi.system.Repository.KnowledgeRepository.BasicPrinciple;
 
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.BasicPrinciple.Principle;
+import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
@@ -20,11 +21,18 @@ public interface PrincipleRepository extends Neo4jRepository<Principle,Long> {
 
     @Override
     Optional<Principle> findById(Long principleId);
-    @Query("Match (n:Principle :$dynamicLabel) return n")
+
+    @Query(value = "Match (n) where any(label in labels(n) WHERE label in ['Principle', $dynamicLabel])  return n" +
+            ":#{orderBy(#pageable)} SKIP $skip LIMIT $limit",
+            countQuery = "Match (n) where any(label in labels(n) WHERE label in ['Principle', $dynamicLabel]) return count(n)"
+    )
     Page<Principle> findPrincipleByType(@Param("dynamicLabel") String dynamicLabel,Pageable pageable);
 
     @Override
     void deleteById(Long principleId);
 
     List<Principle> findPrinciplesByPrincipleName(String principalName);
+
+    @Override
+    <S extends Principle> Page<S> findAll(Example<S> example, Pageable pageable);
 }

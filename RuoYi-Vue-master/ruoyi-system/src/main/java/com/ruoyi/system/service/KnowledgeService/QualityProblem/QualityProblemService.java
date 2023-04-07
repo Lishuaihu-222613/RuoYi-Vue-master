@@ -4,6 +4,9 @@ import com.ruoyi.system.domain.AssemblyPojo.Knowledge.QualityProblem.Appearance;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.QualityProblem.QualityProblem;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.QualityProblem.Reason;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.QualityProblem.Solution;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -13,7 +16,11 @@ public interface QualityProblemService {
 
     QualityProblem updateQualityProblem(QualityProblem problem);
 
-    List<QualityProblem> getAllQualityProblems();
+    Page<QualityProblem> getAllQualityProblems(Pageable pageable);
+
+    Page<QualityProblem> getQualityProblemsByLabel(String dynamicLabel, Pageable pageable);
+
+    Page<QualityProblem> getQualityProblemsByParams(Example example, Pageable pageable);
 
     List<QualityProblem> getQualityProblemsByName(String problemName);
 

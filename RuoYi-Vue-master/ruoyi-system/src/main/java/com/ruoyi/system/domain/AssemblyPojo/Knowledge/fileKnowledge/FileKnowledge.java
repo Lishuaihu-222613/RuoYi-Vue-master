@@ -7,7 +7,7 @@ import java.util.Date;
 import java.util.Objects;
 import java.util.Set;
 
-@Node("FileKnowledge")
+@Node({"文件知识","FileKnowledge"})
 public class FileKnowledge {
 
     @Id

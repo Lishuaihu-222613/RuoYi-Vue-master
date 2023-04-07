@@ -1,5 +1,4 @@
 <template>
-
   <el-dialog :visible.sync="dialogFormVisible" title="工步编辑" top="50vh" width="75%"
              @closed="handleClose" @open="handleOpen"
   >
@@ -13,9 +12,9 @@
             <el-input v-model="step.stepName"></el-input>
           </el-form-item>
           <el-form-item :label-width="formLabelWidth" label="工步内容">
-            <el-input v-model="step.sequenceDescription" autosize
+            <el-input v-model="step.stepDescription" autosize
                       placeholder="请输入内容"
-                      type="textarea"20
+                      type="textarea"
             ></el-input>
           </el-form-item>
           <el-form-item :label-width="formLabelWidth" label="技术要求">
@@ -292,7 +291,7 @@ export default {
           }
         })
       } else if(this.relation == "sub"){
-        //子工步关系更改（可换）
+        // 子工步关系更改（可换）
         // ss.stepIds.forEach(item =>{
         //   processManagement.removeStepForSequence(this.sequenceId,item)
         // })

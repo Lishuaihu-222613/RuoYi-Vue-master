@@ -1,17 +1,26 @@
 package com.ruoyi.web.controller.system.MaterialBuilder;
 
 import com.ruoyi.common.core.controller.BaseController;
+import com.ruoyi.common.core.page.PageForNeo4j;
 import com.ruoyi.common.utils.Neo4j.R;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.MaterialKnowledge.*;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.MaterialKnowledge.Interface.MaterialInterface;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.MaterialKnowledge.Interface.ProduceMethodInterface;
+import com.ruoyi.system.domain.AssemblyPojo.Knowledge.MaterialKnowledge.vo.*;
 import com.ruoyi.system.service.KnowledgeService.Material.*;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
+
+import static org.springframework.data.domain.Sort.by;
 
 @RestController
 @RequestMapping("/material")
@@ -20,35 +29,29 @@ public class MaterialController extends BaseController {
     @Resource
     private MaterialService materialService;
 
-    @Resource
-    private AnalysisSpectrogramService analysisSpectrogramService;
-
-    @Resource
-    private ChemicalPropertyService chemicalPropertyService;
-
-    @Resource
-    private DangerService dangerService;
-
-    @Resource
-    private InspectProjectService inspectProjectService;
-
-    @Resource
-    private PhysicalPropertyService physicalPropertyService;
-
-    @Resource
-    private ProduceMethodService produceMethodService;
-
-    @Resource
-    private ProtectionService protectionService;
-
-    @Resource
-    private StorageRequirementService storageRequirementService;
+    @ResponseBody
+    @PostMapping("/getAllMaterialsByType")
+    public R<Page<MaterialInterface>> getMaterialsByType(@RequestBody PageForNeo4j page) {
+        try {
+            //判断排序类型及排序字段
+            Sort sort = "ascending".equals(page.getSortType()) ? by(Sort.Direction.ASC, page.getSortableField()) : by(Sort.Direction.DESC, page.getSortableField());
+            //获取pageable
+            Pageable pageable = PageRequest.of(page.getPageNum()-1,page.getPageSize());
+            Page<MaterialInterface> materials = materialService.getMaterialsByType(page.getDynamicLabel(),pageable);
+            System.out.println(materials);
+            return R.success(materials);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    };
 
     @ResponseBody
-    @GetMapping("/getMaterialsByType/{dynamicLabel}")
-    public R<Page<MaterialInterface>> getMaterialsByType(@PathVariable String dynamicLabel) {
+    @GetMapping("/getAllMaterials/{page}")
+    public R<Page<MaterialInterface>> getAllMaterials(@PathVariable int page) {
         try {
-            Page<MaterialInterface> materials = materialService.getMaterialsByType(dynamicLabel);
+            PageRequest of = PageRequest.of(page, 5, Sort.by(Sort.Direction.ASC, "materialId"));
+            Page<MaterialInterface> materials = materialService.getAllMaterials(of);
             System.out.println(materials);
             return R.success(materials);
         } catch (Exception e) {
@@ -71,10 +74,22 @@ public class MaterialController extends BaseController {
     };
 
     @ResponseBody
-    @PostMapping("/createSingleMaterial")
-    public R<MaterialInterface> createSingleMaterial(Material material) {
+    @GetMapping("/deleteMaterial/{materialId}")
+    public R<String> deleteMaterial(@PathVariable Long materialId) {
         try {
-            MaterialInterface singleMaterial = (MaterialInterface) materialService.createSingleMaterial(material);
+            materialService.deleteMaterialById(materialId);
+            return R.success("删除"+materialId+"的材料");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    };
+
+    @ResponseBody
+    @PostMapping("/createSingleMaterial")
+    public R<Material> createSingleMaterial(Material material) {
+        try {
+            Material singleMaterial = materialService.createSingleMaterial(material);
             System.out.println(singleMaterial);
             return R.success(singleMaterial);
         } catch (Exception e) {
@@ -112,10 +127,23 @@ public class MaterialController extends BaseController {
     };
 
     @ResponseBody
+    @PostMapping("/createAnalysisSpectrogram")
+    public R<AnalysisSpectrogram> createAnalysisSpectrogram(@RequestBody AMvo AM) {
+        try {
+            AnalysisSpectrogram spectrogram = materialService.createAnalysisSpectrogram(AM);
+            System.out.println(spectrogram);
+            return R.success(spectrogram);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    };
+
+    @ResponseBody
     @PostMapping("/updateAnalysisSpectrogram")
     public R<AnalysisSpectrogram> updateAnalysisSpectrogram(@RequestBody AnalysisSpectrogram Spectrogram) {
         try {
-            AnalysisSpectrogram newSpectrogram = analysisSpectrogramService.updateAnalysisSpectrogram(Spectrogram);
+            AnalysisSpectrogram newSpectrogram = materialService.updateAnalysisSpectrogram(Spectrogram);
             System.out.println(newSpectrogram);
             return R.success(newSpectrogram);
         } catch (Exception e) {
@@ -126,11 +154,62 @@ public class MaterialController extends BaseController {
 
     @ResponseBody
     @GetMapping("/getAnalysisSpectrogramByMaterialId/{materialId}")
-    public R<AnalysisSpectrogram> getAnalysisSpectrogramByMaterialId(@PathVariable Long materialId) {
+    public R<Collection<AnalysisSpectrogram>> getAnalysisSpectrogramByMaterialId(@PathVariable Long materialId) {
         try {
-            AnalysisSpectrogram newSpectrogram = analysisSpectrogramService.getAnalysisSpectrogramByMaterialId(materialId).stream().findFirst().get();
-            System.out.println(newSpectrogram);
-            return R.success(newSpectrogram);
+            Collection<AnalysisSpectrogram> spectrograms = materialService.getAnalysisSpectrogramByMaterialId(materialId);
+            System.out.println(spectrograms);
+            return R.success(spectrograms);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    };
+
+    @ResponseBody
+    @GetMapping("/getAnalysisSpectrogramById/{spectrogramId}")
+    public R<AnalysisSpectrogram> getAnalysisSpectrogramById(@PathVariable Long spectrogramId) {
+        try {
+            AnalysisSpectrogram spectrogram = materialService.getAnalysisSpectrogramById(spectrogramId);
+            System.out.println(spectrogram);
+            return R.success(spectrogram);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    };
+
+    @ResponseBody
+    @GetMapping("/getAnalysisSpectrogramByName/{spectrogramName}")
+    public R<Collection<AnalysisSpectrogram>> getAnalysisSpectrogramByName(@PathVariable String spectrogramName) {
+        try {
+            Collection<AnalysisSpectrogram> spectrograms = materialService.getAnalysisSpectrogramByName(spectrogramName);
+            System.out.println(spectrograms);
+            return R.success(spectrograms);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    };
+
+    @ResponseBody
+    @GetMapping("/deleteAnalysisSpectrogramById/{spectrogramId}")
+    public R<String> deleteAnalysisSpectrogramById(@PathVariable Long spectrogramId) {
+        try {
+            materialService.deleteAnalysisSpectrogramById(spectrogramId);
+            return R.success("删除"+spectrogramId+"的理化分析谱图节点");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    };
+
+    @ResponseBody
+    @PostMapping("/createChemicalProperty")
+    public R<ChemicalProperty> createChemicalProperty(@RequestBody CMvo CM) {
+        try {
+            ChemicalProperty property = materialService.createChemicalProperty(CM);
+            System.out.println(property);
+            return R.success(property);
         } catch (Exception e) {
             e.printStackTrace();
             return R.error(e.getMessage());
@@ -141,7 +220,7 @@ public class MaterialController extends BaseController {
     @PostMapping("/updateChemicalProperty")
     public R<ChemicalProperty> updateChemicalProperty(@RequestBody ChemicalProperty property) {
         try {
-            ChemicalProperty newProperty = chemicalPropertyService.updateChemicalProperty(property);
+            ChemicalProperty newProperty = materialService.updateChemicalProperty(property);
             System.out.println(newProperty);
             return R.success(newProperty);
         } catch (Exception e) {
@@ -154,9 +233,47 @@ public class MaterialController extends BaseController {
     @GetMapping("/getChemicalPropertyByMaterialId/{materialId}")
     public R<ChemicalProperty> getChemicalPropertyByMaterialId(@PathVariable Long materialId) {
         try {
-            ChemicalProperty Property = chemicalPropertyService.getChemicalPropertyByMaterialId(materialId).stream().findFirst().get();
+            ChemicalProperty Property = materialService.getChemicalPropertyByMaterialId(materialId);
             System.out.println(Property);
             return R.success(Property);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    };
+
+    @ResponseBody
+    @GetMapping("/getChemicalPropertyById/{propertyId}")
+    public R<ChemicalProperty> getChemicalPropertyById(@PathVariable Long propertyId) {
+        try {
+            ChemicalProperty Property = materialService.getChemicalPropertyById(propertyId);
+            System.out.println(Property);
+            return R.success(Property);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    };
+
+    @ResponseBody
+    @GetMapping("/deleteChemicalProperty/{propertyId}")
+    public R<String> deleteChemicalProperty(@PathVariable Long propertyId) {
+        try {
+            materialService.deleteChemicalPropertyById(propertyId);
+            return R.success("删除"+propertyId+"的化学性质节点");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    };
+
+    @ResponseBody
+    @PostMapping("/createPhysicalProperty")
+    public R<PhysicalProperty> createPhysicalProperty(@RequestBody PMvo PM) {
+        try {
+            PhysicalProperty property = materialService.createPhysicalProperty(PM);
+            System.out.println(property);
+            return R.success(property);
         } catch (Exception e) {
             e.printStackTrace();
             return R.error(e.getMessage());
@@ -167,7 +284,7 @@ public class MaterialController extends BaseController {
     @PostMapping("/updatePhysicalProperty")
     public R<PhysicalProperty> updatePhysicalProperty(@RequestBody PhysicalProperty property) {
         try {
-            PhysicalProperty newProperty = physicalPropertyService.updatePhysicalProperty(property);
+            PhysicalProperty newProperty = materialService.updatePhysicalProperty(property);
             System.out.println(newProperty);
             return R.success(newProperty);
         } catch (Exception e) {
@@ -180,7 +297,7 @@ public class MaterialController extends BaseController {
     @GetMapping("/getPhysicalPropertyByMaterialId/{materialId}")
     public R<PhysicalProperty> getPhysicalPropertyByMaterialId(@PathVariable Long materialId) {
         try {
-            PhysicalProperty Property = physicalPropertyService.getPhysicalPropertyByMaterialId(materialId).stream().findFirst().get();
+            PhysicalProperty Property = materialService.getPhysicalPropertyByMaterialId(materialId);
             System.out.println(Property);
             return R.success(Property);
         } catch (Exception e) {
@@ -190,13 +307,50 @@ public class MaterialController extends BaseController {
     };
 
     @ResponseBody
-    @GetMapping("/createDanger/{materialId}")
-    public R<Danger> createDanger(@PathVariable Long materialId) {
+    @GetMapping("/getPhysicalPropertyByName/{propertyName}")
+    public R<Collection<PhysicalProperty>> getPhysicalPropertyByName(@PathVariable String propertyName) {
         try {
-            Danger newDanger = dangerService.createDanger(new Danger());
-            dangerService.createRelationshipForDanger(materialId, newDanger.getDangerId());
-            System.out.println(newDanger);
-            return R.success(newDanger);
+            Collection<PhysicalProperty> properties = materialService.getPhysicalPropertyByName(propertyName);
+            System.out.println(properties);
+            return R.success(properties);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    };
+
+    @ResponseBody
+    @GetMapping("/getPhysicalPropertyById/{propertyId}")
+    public R<PhysicalProperty> getPhysicalPropertyById(@PathVariable Long propertyId) {
+        try {
+            PhysicalProperty property = materialService.getPhysicalPropertyById(propertyId);
+            System.out.println(property);
+            return R.success(property);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    };
+
+    @ResponseBody
+    @GetMapping("/deletePhysicalProperty/{propertyId}")
+    public R<PhysicalProperty> deletePhysicalProperty(@PathVariable Long propertyId) {
+        try {
+            materialService.deletePhysicalPropertyById(propertyId);
+            return R.success("删除"+propertyId+"的物理性质节点");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    };
+
+    @ResponseBody
+    @PostMapping("/createDanger")
+    public R<Danger> createDanger(@RequestBody DMvo DM) {
+        try {
+            Danger danger = materialService.createDanger(DM);
+            System.out.println(danger);
+            return R.success(danger);
         } catch (Exception e) {
             e.printStackTrace();
             return R.error(e.getMessage());
@@ -207,9 +361,22 @@ public class MaterialController extends BaseController {
     @PostMapping("/updateDanger")
     public R<Danger> updateDanger(@RequestBody Danger danger) {
         try {
-            Danger newDanger = dangerService.updateDanger(danger);
+            Danger newDanger = materialService .updateDanger(danger);
             System.out.println(newDanger);
             return R.success(newDanger);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    };
+
+    @ResponseBody
+    @GetMapping("/getDangerById/{dangerId}")
+    public R<Danger> getDangerById(@PathVariable Long dangerId) {
+        try {
+            System.out.println(dangerId);
+            Danger danger = materialService.getDangerById(dangerId);
+            return R.success(danger);
         } catch (Exception e) {
             e.printStackTrace();
             return R.error(e.getMessage());
@@ -221,7 +388,7 @@ public class MaterialController extends BaseController {
     public R<String> deleteDangerById(@PathVariable Long dangerId) {
         try {
             System.out.println(dangerId);
-            dangerService.deleteDangerById(dangerId);
+            materialService.deleteDangerById(dangerId);
             return R.success(dangerId);
         } catch (Exception e) {
             e.printStackTrace();
@@ -233,7 +400,7 @@ public class MaterialController extends BaseController {
     @GetMapping("/getDangersByMaterialId/{materialId}")
     public R<List<Danger>> getDangersByMaterialId(@PathVariable Long materialId) {
         try {
-            List<Danger> dangers = new ArrayList<>(dangerService.getDangersByMaterialId(materialId));
+            List<Danger> dangers = new ArrayList<>(materialService.getDangersByMaterialId(materialId));
             System.out.println(dangers);
             return R.success(dangers);
         } catch (Exception e) {
@@ -243,13 +410,12 @@ public class MaterialController extends BaseController {
     };
 
     @ResponseBody
-    @GetMapping("/createProtection/{materialId}")
-    public R<Protection> createProtection(@PathVariable Long materialId) {
+    @GetMapping("/createProtection")
+    public R<Protection> createProtection(@RequestBody ProMVO ProM) {
         try {
-            Protection newProtection = protectionService.createProtection(new Protection());
-            protectionService.createRelationshipForProtection(materialId, newProtection.getProtectionId());
-            System.out.println(newProtection);
-            return R.success(newProtection);
+            Protection protection = materialService.createProtection(ProM);
+            System.out.println(protection);
+            return R.success(protection);
         } catch (Exception e) {
             e.printStackTrace();
             return R.error(e.getMessage());
@@ -260,7 +426,7 @@ public class MaterialController extends BaseController {
     @PostMapping("/updateProtection")
     public R<Protection> updateProtection(@RequestBody Protection protection) {
         try {
-            Protection newProtection = protectionService.updateProtection(protection);
+            Protection newProtection = materialService.updateProtection(protection);
             System.out.println(newProtection);
             return R.success(newProtection);
         } catch (Exception e) {
@@ -273,7 +439,7 @@ public class MaterialController extends BaseController {
     @GetMapping("/getProtectionsByMaterialId/{materialId}")
     public R<List<Protection>> getProtectionsByMaterialId(@PathVariable Long materialId) {
         try {
-            List<Protection> protections = new ArrayList<>(protectionService.getProtectionsByMaterialId(materialId));
+            List<Protection> protections = new ArrayList<>(materialService.getProtectionsByMaterialId(materialId));
             System.out.println(protections);
             return R.success(protections);
         } catch (Exception e) {
@@ -287,8 +453,21 @@ public class MaterialController extends BaseController {
     public R<String> deleteProtection(@PathVariable Long protectionId) {
         try {
             System.out.println(protectionId);
-            protectionService.deleteProtectionById(protectionId);
+            materialService.deleteProtectionById(protectionId);
             return R.success(protectionId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    };
+
+    @ResponseBody
+    @GetMapping("/createInspectProjects")
+    public R<Set<InspectProject>> createInspectProjects(@RequestBody IMvo IM) {
+        try {
+            Set<InspectProject> projects = materialService.createInspectProjects(IM);
+            System.out.println(projects);
+            return R.success(projects);
         } catch (Exception e) {
             e.printStackTrace();
             return R.error(e.getMessage());
@@ -299,10 +478,9 @@ public class MaterialController extends BaseController {
     @GetMapping("/createInspectProject/{materialId}")
     public R<InspectProject> createInspectProject(@PathVariable Long materialId) {
         try {
-            InspectProject newProject = inspectProjectService.updateInspectProject(new InspectProject());
-            inspectProjectService.createRelationshipForInspectProject(materialId, newProject.getProjectId());
-            System.out.println(newProject);
-            return R.success(newProject);
+            InspectProject project = materialService.createInspectProject(materialId, new InspectProject());
+            System.out.println(project);
+            return R.success(project);
         } catch (Exception e) {
             e.printStackTrace();
             return R.error(e.getMessage());
@@ -313,7 +491,7 @@ public class MaterialController extends BaseController {
     @PostMapping("/updateInspectProject")
     public R<InspectProject> updateInspectProject(@RequestBody InspectProject project) {
         try {
-            InspectProject newProject = inspectProjectService.updateInspectProject(project);
+            InspectProject newProject = materialService.updateInspectProject(project);
             System.out.println(newProject);
             return R.success(newProject);
         } catch (Exception e) {
@@ -324,9 +502,9 @@ public class MaterialController extends BaseController {
 
     @ResponseBody
     @PostMapping("/updateInspectProjects")
-    public R<List<InspectProject>> updateInspectProject(@RequestBody List<InspectProject> projects) {
+    public R<List<InspectProject>> updateInspectProjects(@RequestBody List<InspectProject> projects) {
         try {
-            List<InspectProject> newProjects = inspectProjectService.updateInspectProjects(projects);
+            List<InspectProject> newProjects = materialService.updateInspectProjects(projects);
             System.out.println(newProjects);
             return R.success(newProjects);
         } catch (Exception e) {
@@ -339,7 +517,7 @@ public class MaterialController extends BaseController {
     @GetMapping("/getInspectProjectsByMaterialId/{materialId}")
     public R<List<InspectProject>> getInspectProjectsByMaterialId(@PathVariable Long materialId) {
         try {
-            ArrayList<InspectProject> inspectProjects = new ArrayList<>(inspectProjectService.getInspectProjectsByMaterialId(materialId));
+            ArrayList<InspectProject> inspectProjects = new ArrayList<>(materialService.getInspectProjectsByMaterialId(materialId));
             System.out.println(inspectProjects);
             return R.success(inspectProjects);
         } catch (Exception e) {
@@ -353,7 +531,7 @@ public class MaterialController extends BaseController {
     public R<String> deleteInspectProjectById(@PathVariable Long projectId) {
         try {
             System.out.println(projectId);
-            inspectProjectService.deleteInspectProjectById(projectId);
+            materialService.deleteInspectProjectById(projectId);
             return R.success(projectId);
         } catch (Exception e) {
             e.printStackTrace();
@@ -362,13 +540,39 @@ public class MaterialController extends BaseController {
     };
 
     @ResponseBody
-    @GetMapping("/createProduceMethod/{materialId}")
-    public R<ProduceMethod> createProduceMethod(@PathVariable Long materialId) {
+    @GetMapping("/getInspectProjectById/{projectId}")
+    public R<InspectProject> getInspectProjectById(@PathVariable Long projectId) {
         try {
-            ProduceMethod newMethod = produceMethodService.createProduceMethod(new ProduceMethod());
-            produceMethodService.createRelationshipForProduceMethod(materialId, newMethod.getMethodId());
-            System.out.println(newMethod);
-            return R.success(newMethod);
+            System.out.println(projectId);
+            InspectProject project = materialService.getInspectProjectById(projectId);
+            return R.success(project);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    };
+
+    @ResponseBody
+    @GetMapping("/createSingleProduceMethod/{materialId}")
+    public R<ProduceMethod> createSingleProduceMethod(@PathVariable Long materialId) {
+        try {
+            PMMvo mvo = new PMMvo(materialId,new ProduceMethod());
+            ProduceMethod produceMethod = materialService.createProduceMethod(mvo);
+            System.out.println(produceMethod);
+            return R.success(produceMethod);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    };
+
+    @ResponseBody
+    @PostMapping("/createProduceMethod")
+    public R<ProduceMethod> createProduceMethod(@RequestBody PMMvo PMM) {
+        try {
+            ProduceMethod produceMethod = materialService.createProduceMethod(PMM);
+            System.out.println(produceMethod);
+            return R.success(produceMethod);
         } catch (Exception e) {
             e.printStackTrace();
             return R.error(e.getMessage());
@@ -377,11 +581,11 @@ public class MaterialController extends BaseController {
 
     @ResponseBody
     @PostMapping("/updateProduceMethod")
-    public R<ProduceMethodInterface> updateProduceMethod(@RequestBody ProduceMethod method) {
+    public R<ProduceMethod> updateProduceMethod(@RequestBody ProduceMethod method) {
         try {
-            ProduceMethodInterface newMethod = (ProduceMethodInterface) produceMethodService.updateProduceMethod(method);
-            System.out.println(newMethod);
-            return R.success(newMethod);
+            ProduceMethod produceMethod = materialService.updateProduceMethod(method);
+            System.out.println(produceMethod);
+            return R.success(produceMethod);
         } catch (Exception e) {
             e.printStackTrace();
             return R.error(e.getMessage());
@@ -392,7 +596,7 @@ public class MaterialController extends BaseController {
     @GetMapping("/getProduceMethodsByMaterialId/{materialId}")
     public R<List<ProduceMethodInterface>> getProduceMethodsByMaterialId(@PathVariable Long materialId) {
         try {
-            ArrayList<ProduceMethodInterface> methods = new ArrayList<>(produceMethodService.getProduceMethodsByMaterialId(materialId));
+            ArrayList<ProduceMethodInterface> methods = new ArrayList<>(materialService.getProduceMethodsByMaterialId(materialId));
             System.out.println(methods);
             return R.success(methods);
         } catch (Exception e) {
@@ -406,8 +610,175 @@ public class MaterialController extends BaseController {
     public R<String> deleteProduceMethodById(@PathVariable Long methodId) {
         try {
             System.out.println(methodId);
-            produceMethodService.deleteProduceMethodById(methodId);
+            materialService.deleteProduceMethodById(methodId);
             return R.success(methodId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    };
+
+    @ResponseBody
+    @GetMapping("/getProduceMethodById/{methodId}")
+    public R<ProduceMethodInterface> getProduceMethodById(@PathVariable Long methodId) {
+        try {
+            System.out.println(methodId);
+            ProduceMethodInterface produceMethod = materialService.getProduceMethodInterfaceById(methodId);
+            return R.success(produceMethod);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    };
+
+    @ResponseBody
+    @GetMapping("/getProduceMethodByName/{methodName}")
+    public R<Collection<ProduceMethodInterface>> getProduceMethodByName(@PathVariable String methodName) {
+        try {
+            Collection<ProduceMethodInterface> methods = materialService.getProduceMethodsByName(methodName);
+            return R.success(methods);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    };
+
+    @ResponseBody
+    @GetMapping("/createSingleProtection/{materialId}")
+    public R<Protection> createSingleProtection(@PathVariable Long materialId) {
+        try {
+            ProMVO mvo = new ProMVO(materialId,new Protection());
+            Protection Protection = materialService.createProtection(mvo);
+            System.out.println(Protection);
+            return R.success(Protection);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    };
+    
+
+    @ResponseBody
+    @GetMapping("/deleteProtectionById/{methodId}")
+    public R<String> deleteProtectionById(@PathVariable Long methodId) {
+        try {
+            System.out.println(methodId);
+            materialService.deleteProtectionById(methodId);
+            return R.success(methodId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    };
+
+    @ResponseBody
+    @GetMapping("/getProtectionByName/{protectionName}")
+    public R<Collection<Protection>> getProtectionByName(@PathVariable String protectionName) {
+        try {
+            Collection<Protection> protections = materialService.getProtectionsByName(protectionName);
+            return R.success(protections);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    };
+
+    @ResponseBody
+    @GetMapping("/getProtectionById/{protectionId}")
+    public R<Protection> getProtectionById(@PathVariable Long  protectionId) {
+        try {
+            Protection protection = materialService.getProtectionById(protectionId);
+            return R.success(protection);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    };
+
+    @ResponseBody
+    @GetMapping("/createStorageRequirement")
+    public R<StorageRequirement> createStorageRequirement(@RequestBody SMvo SM) {
+        try {
+            StorageRequirement StorageRequirement = materialService.createStorageRequirement(SM);
+            System.out.println(StorageRequirement);
+            return R.success(StorageRequirement);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    };
+
+    @ResponseBody
+    @PostMapping("/updateStorageRequirement")
+    public R<StorageRequirement> updateStorageRequirement(@RequestBody StorageRequirement StorageRequirement) {
+        try {
+            StorageRequirement newStorageRequirement = materialService.updateStorageRequirement(StorageRequirement);
+            System.out.println(newStorageRequirement);
+            return R.success(newStorageRequirement);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    };
+
+    @ResponseBody
+    @GetMapping("/deleteStorageRequirement/{StorageRequirementId}")
+    public R<String> deleteStorageRequirementById(@PathVariable Long storageRequirementId) {
+        try {
+            System.out.println(storageRequirementId);
+            materialService.deleteStorageRequirementById(storageRequirementId);
+            return R.success(storageRequirementId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    };
+
+    @ResponseBody
+    @GetMapping("/getStorageRequirementById/{storageRequirementId}")
+    public R<StorageRequirement> getStorageRequirementById(@PathVariable Long storageRequirementId) {
+        try {
+            StorageRequirement requirement = materialService.getStorageRequirementById(storageRequirementId);
+            return R.success(requirement);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    };
+
+    @ResponseBody
+    @GetMapping("/getStorageRequirementByName/{storageRequirementName}")
+    public R<Collection<StorageRequirement>> getStorageRequirementByName(@PathVariable String storageRequirementName) {
+        try {
+            Collection<StorageRequirement> requirements = materialService.getStorageRequirementsByName(storageRequirementName);
+            return R.success(requirements);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    };
+
+    @ResponseBody
+    @GetMapping("/getStorageRequirementsByMaterialId/{materialId}")
+    public R<List<StorageRequirement>> getStorageRequirementsByMaterialId(@PathVariable Long materialId) {
+        try {
+            List<StorageRequirement> StorageRequirements = new ArrayList<>(materialService.getStorageRequirementsByMaterialId(materialId));
+            System.out.println(StorageRequirements);
+            return R.success(StorageRequirements);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    };
+
+    @ResponseBody
+    @GetMapping("/createSingleStorageRequirement/{materialId}")
+    public R<StorageRequirement> createSingleStorageRequirement(@PathVariable Long materialId) {
+        try {
+            SMvo mvo = new SMvo(materialId,new StorageRequirement());
+            StorageRequirement StorageRequirement = materialService.createStorageRequirement(mvo);
+            System.out.println(StorageRequirement);
+            return R.success(StorageRequirement);
         } catch (Exception e) {
             e.printStackTrace();
             return R.error(e.getMessage());

@@ -5,12 +5,12 @@
       <el-tree
         ref="tree"
         :data="materialKnowledge"
+        node-key="leafId"
         :filter-node-method="filterKnowledge"
         :props="defaultProps"
-        :render-content="renderContent"
         class="filter-tree"
         highlight-current
-        indent="0"
+        @node-click="selectLabelClick"
       >
       </el-tree>
     </el-aside>
@@ -81,7 +81,6 @@
             v-if="tableHeight"
             :data="materials"
             :max-height="tableHeight + 'px'" highlight-current-row stripe style="width: 100%"
-            @current-change="handleCurrentChange"
             @row-contextmenu="showContextMenu"
           >
             <el-table-column type="expand">
@@ -118,7 +117,7 @@
                     <el-image
                       :preview-src-list="[props.row.structuralFormula]"
                       :src="props.row.structuralFormula"
-                      style="width: 100px; height: 100px"
+                      style="width: 800px; height: 100px"
                     >
                     </el-image>
                   </el-form-item>
@@ -136,22 +135,40 @@
                 </el-button>
               </template>
             </el-table-column>
-            <el-table-column fixed="right" label="关联信息" width="350">
+            <el-table-column align="center" label="理化性质" width="200">
               <template v-slot="scope">
-                <el-button type="info" @click.native.prevent="showPhysicalProperty(scope.row.materialId)">
-                  物理性质
-                </el-button>
-                <el-button type="info" @click.native.prevent="showChemicalProperty(scope.row.materialId)">
-                  化学性质
-                </el-button>
-                <el-button type="info" @click.native.prevent="showInspectProjectAndMethods(scope.row.materialId)">
-                  理化指标与检验方法
-                </el-button>
+                <el-row>
+                  <el-col>
+                    <el-button type="info" @click.native.prevent="showPhysicalProperty(scope.row.materialId)">
+                      物理性质
+                    </el-button>
+                  </el-col>
+                  <el-col>
+                    <el-button type="info" @click.native.prevent="showChemicalProperty(scope.row.materialId)">
+                      化学性质
+                    </el-button>
+                  </el-col>
+                </el-row>
+              </template>
+            </el-table-column>
+            <el-table-column align="center" label="关联信息"  width="200">
+              <template v-slot="scope">
+                <el-row>
+                    <el-button type="info" @click.native.prevent="showInspectProjectAndMethods(scope.row.materialId)">
+                      理化指标与检验方法
+                    </el-button>
+                </el-row>
+                <el-row>
+                    <el-button type="info" @click.native.prevent="showDangerAndProtection(scope.row.materialId)">
+                      危险事项与防护措施
+                    </el-button>
+                </el-row>
+              </template>
+            </el-table-column>
+            <el-table-column align="center" label="制备方法与要求"  width="200">
+              <template v-slot="scope">
                 <el-button type="info" @click.native.prevent="showProduceMethod(scope.row.materialId)">
                   制备方法
-                </el-button>
-                <el-button type="info" @click.native.prevent="showDangerAndProtection(scope.row.materialId)">
-                  危险事项与防护措施
                 </el-button>
                 <el-button type="info" @click.native.prevent="showStorageRequirement(scope.row.materialId)">
                   存储要求
@@ -162,7 +179,16 @@
               </template>
             </el-table-column>
           </el-table>
-          <el-pagination :total="1000" background class="el-pagination" layout="prev, pager, next"></el-pagination>
+          <el-pagination
+            background
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page="currentPage"
+            :page-sizes="[9, 15, 20, 50]"
+            :page-size="pageParams.pageSize"
+            layout="total, sizes, prev, pager, next, jumper"
+            :total="total">
+          </el-pagination>
         </div>
       </el-main>
     </el-container>
@@ -182,6 +208,8 @@ import ProduceMethod from '@/views/Material/MaterialKnowledge/components/Related
 import RelatedFile from '@/views/Material/MaterialKnowledge/components/RelatedDialog/RelatedFile.vue'
 import StorageRequirement from '@/views/Material/MaterialKnowledge/components/RelatedDialog/StorageRequirement.vue'
 import * as materialManagement from '@/api/system/materialManagement'
+import * as treeManagement from '@/api/system/treeManagement'
+import * as principleManagement from '@/api/system/principleManagement'
 
 export default {
 
@@ -247,14 +275,27 @@ export default {
       materialKnowledge: [],
       materials: [],
       defaultProps: {
-        children: 'children',
-        label: 'label'
+        children: 'subLeafs',
+        label: 'leafName'
       },
-      selectMaterial: {},
-      dialog: false
+      selectMaterial: [],
+      dialog: false,
+      total: null,
+      currentPage: 1,
+      pageParams:{
+        pageNum:1,
+        pageSize:9,
+        sortType:"ascending",
+        sortableField:"materialId",
+        dynamicLabel:"粘合剂"
+      },
     }
   },
   mounted() {
+    treeManagement.getTreeManagement(25451).then(result => {
+      console.log(result.data)
+      this.materialKnowledge.push(result.data)
+    })
     this.initPage()
     this.tableHeight = this.$refs.tableBox.clientHeight - 60
   },
@@ -263,23 +304,18 @@ export default {
       if (!value) return true
       return data.label.indexOf(value) !== -1
     },
+    selectLabelClick(data,node,component){
+      this.pageParams.dynamicLabel = data.leafValue
+      this.initPage()
+    },
     initPage() {
-      materialManagement.getMaterialById(25351).then(result => {
+      materialManagement.getAllMaterialsByType(this.pageParams).then(result => {
         if (result.code == 200) {
           console.log(result.data)
-          this.materials.push(result.data)
+          this.materials = result.data.content
+          comsole.log(this.materials)
         }
       })
-    },
-    renderContent(h, { node, data, store }) {
-      return (
-        <span class="custom-tree-node">
-            <span>{node.label}</span>
-            <span>
-              <el-button size="mini" type="text" on-click={() => this.append(data)}>详情</el-button>
-              <el-button size="mini" type="text" on-click={() => this.remove(node, data)}>删除</el-button>
-            </span>
-          </span>)
     },
     showContextMenu(row, column, event){
       event.preventDefault()
@@ -338,9 +374,23 @@ export default {
     OpenDialog() {
       this.dialog = true
     },
+    //改变·每页显示的条数
+    handleSizeChange(val) {
+      this.pageParams.pageSize = val; //赋值显示条数给处理分页handleCurrentChange()使用
+      materialManagement.getAllMaterialsByType(this.pageParams).then(result => {
+        if(result.code === 200){
+          this.materials = result.data.content;
+        }
+      })
+    },
+    // 处理分页
     handleCurrentChange(val) {
-      this.selectItem = val
-      console.log(this.selectItem)
+      this.pageParams.pageNum = val; //赋值第几页给处理当前页handleSizeChange()使用
+      materialManagement.getAllMaterialsByType(this.pageParams).then(result => {
+        if(result.code === 200){
+          this.materials = result.data.content;
+        }
+      })
     }
   }
 }

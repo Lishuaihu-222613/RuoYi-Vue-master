@@ -5,8 +5,7 @@ import com.ruoyi.system.domain.AssemblyPojo.Knowledge.TypicalKnowledge.Process.T
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.TypicalKnowledge.Process.TypicalSequence;
 import com.ruoyi.system.domain.AssemblyPojo.Process.SpecialSequence.Sequence;
 import com.ruoyi.system.domain.AssemblyPojo.Process.Step;
-import com.ruoyi.system.domain.AssemblyPojo.Resource.Location;
-import org.springframework.data.neo4j.core.schema.DynamicLabels;
+import com.ruoyi.system.domain.AssemblyPojo.Resource.Site;
 import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.schema.Property;
 import org.springframework.data.neo4j.core.schema.Relationship;
@@ -44,8 +43,8 @@ public class MouldTool extends ToolingResource{
     public MouldTool() {
     }
 
-    public MouldTool(Long resourceId, String resourceName, String resourceDescription, Set<String> resourceTypes, Set<Location> locations, Set<Sequence> sequences, Set<Step> steps, double toolPrice, String manufacturer, String toolSize, String materialType, String toolUsage, String toolSpecification, String toolState, double wearCondition, Map<String, Object> toolCapacity, Set<TypicalProcess> suitableProcesses, Set<TypicalProcess> unSuitableProcesses, Set<TypicalSequence> suitableProcedures, Set<TypicalSequence> unSuitableProcedures, Set<Material> suitableMaterials, List<String> designAttentions) {
-        super(resourceId, resourceName, resourceDescription, resourceTypes, locations, sequences, steps, toolPrice, manufacturer, toolSize, materialType, toolUsage, toolSpecification, toolState, wearCondition, toolCapacity, suitableProcesses, unSuitableProcesses, suitableProcedures, unSuitableProcedures);
+    public MouldTool(Long resourceId, String resourceName, String resourceDescription, Set<String> resourceTypes, Set<Site> sites, Set<Sequence> sequences, Set<Step> steps, double toolPrice, String manufacturer, String toolSize, String materialType, String toolUsage, String toolSpecification, String toolState, double wearCondition, Map<String, Object> toolCapacity, Set<TypicalProcess> suitableProcesses, Set<TypicalProcess> unSuitableProcesses, Set<TypicalSequence> suitableProcedures, Set<TypicalSequence> unSuitableProcedures, Set<Material> suitableMaterials, List<String> designAttentions) {
+        super(resourceId, resourceName, resourceDescription, resourceTypes, sites, sequences, steps, toolPrice, manufacturer, toolSize, materialType, toolUsage, toolSpecification, toolState, wearCondition, toolCapacity, suitableProcesses, unSuitableProcesses, suitableProcedures, unSuitableProcedures);
         this.suitableMaterials = suitableMaterials;
         this.designAttentions = designAttentions;
     }

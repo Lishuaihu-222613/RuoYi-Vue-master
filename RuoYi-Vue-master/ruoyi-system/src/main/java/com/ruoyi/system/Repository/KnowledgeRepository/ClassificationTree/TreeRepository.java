@@ -20,8 +20,6 @@ public interface TreeRepository extends Neo4jRepository<ClassificationTree,Long>
     @Query("Match (n:ClassificationTree :$dynamicLabel) return n")
     List<ClassificationTree> findLeafsByType(@Param("dynamicLabel") String dynamicLabel);
 
-    List<ClassificationTree> findByDynamicLabelsContainsOrderByLeafId(String dynamicLabel);
-
     @Query("Match (n:ClassificationTree)<-[r:hasSubLeaf]-(m) where id(m) = $parentId return n")
     List<ClassificationTree> findLeafsByParentId(@Param("parentId") Long parentId, Sort sort);
 

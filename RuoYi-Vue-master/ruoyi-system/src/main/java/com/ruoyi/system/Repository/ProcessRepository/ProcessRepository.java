@@ -2,6 +2,7 @@ package com.ruoyi.system.Repository.ProcessRepository;
 
 import com.ruoyi.system.domain.AssemblyPojo.Process.Interface.ProcessInterface;
 import com.ruoyi.system.domain.AssemblyPojo.Process.Process;
+import org.springframework.data.domain.Example;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
 import org.springframework.data.repository.query.Param;
@@ -24,6 +25,9 @@ public interface ProcessRepository extends Neo4jRepository<Process,Long> {
 
     @Query("Match (n:Process) return n")
     List<ProcessInterface> findAllProcessInterfaces();
+
+    @Override
+    <S extends Process> List<S> findAll(Example<S> example);
 
     @Override
     <S extends Process> S save(S process);

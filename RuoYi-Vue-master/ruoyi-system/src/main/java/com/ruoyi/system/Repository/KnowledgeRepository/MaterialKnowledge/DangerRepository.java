@@ -16,7 +16,8 @@ public interface DangerRepository extends Neo4jRepository<Danger,Long> {
     @Query("MATCH (n:Danger) where n.label = $dangerName return n")
     Collection<Danger> findByDangerName(String dangerName);
 
-    Danger save(Danger danger);
+    @Override
+    <S extends Danger> S save(S danger);
 
     @Override
     void delete(Danger danger);

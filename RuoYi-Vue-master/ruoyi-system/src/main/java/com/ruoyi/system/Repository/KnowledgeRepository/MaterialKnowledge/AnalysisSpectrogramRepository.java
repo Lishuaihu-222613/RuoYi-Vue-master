@@ -14,9 +14,10 @@ public interface AnalysisSpectrogramRepository extends Neo4jRepository<AnalysisS
     Optional<AnalysisSpectrogram> findById(Long spectrogramId);
 
     @Query("MATCH (n:AnalysisSpectrogram) where n.label = $SpectrogramName return n")
-    Collection<AnalysisSpectrogram> findAnalysisSpectrogramsBySpectrogramName(String SpectrogramName);
+    Collection<AnalysisSpectrogram> findAnalysisSpectrogramBySpectrogramName(String SpectrogramName);
 
-    AnalysisSpectrogram save(AnalysisSpectrogram spectrogram);
+    @Override
+    <S extends AnalysisSpectrogram> S save(S spectrogram);
 
     @Override
     void delete(AnalysisSpectrogram spectrogram);
@@ -25,5 +26,5 @@ public interface AnalysisSpectrogramRepository extends Neo4jRepository<AnalysisS
     void deleteById(Long spectrogramId);
 
     @Query("MATCH (n:理化分析谱图)<-[r:hasAnalysisSpectrogram]-(m:材料) where id(m) = $materialId return n")
-    Collection<AnalysisSpectrogram> findAnalysisSpectrogramsByMaterialId(@Param("materialId") Long materialId);
+    Collection<AnalysisSpectrogram> findAnalysisSpectrogramByMaterialId(@Param("materialId") Long materialId);
 }

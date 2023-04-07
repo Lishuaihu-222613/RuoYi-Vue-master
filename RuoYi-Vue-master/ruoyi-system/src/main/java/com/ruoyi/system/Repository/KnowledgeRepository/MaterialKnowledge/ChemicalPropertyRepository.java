@@ -16,7 +16,8 @@ public interface ChemicalPropertyRepository extends Neo4jRepository<ChemicalProp
     @Query("MATCH (n:ChemicalProperty) where n.label = $propertyName return n")
     Collection<ChemicalProperty> findPhysicalPropertiesByPropertyName(String propertyName);
 
-    ChemicalProperty save(String propertyName);
+    @Override
+    <S extends ChemicalProperty> S save(S property);
 
     @Override
     void delete(ChemicalProperty property);
@@ -25,5 +26,5 @@ public interface ChemicalPropertyRepository extends Neo4jRepository<ChemicalProp
     void deleteById(Long propertyId);
 
     @Query("MATCH (n:化学性质)<-[r:hasChemicalProperty]-(m:材料) where id(m) = $materialId return n")
-    Collection<ChemicalProperty> findChemicalPropertiesByMaterialId(@Param("materialId") Long materialId);
+    ChemicalProperty findChemicalPropertiesByMaterialId(@Param("materialId") Long materialId);
 }

@@ -7,7 +7,7 @@ import org.springframework.data.neo4j.core.schema.Property;
 
 import java.util.Objects;
 
-@Node("理化分析谱图")
+@Node({"AnalysisSpectrogram","理化分析谱图"})
 public class AnalysisSpectrogram {
 
     @Id

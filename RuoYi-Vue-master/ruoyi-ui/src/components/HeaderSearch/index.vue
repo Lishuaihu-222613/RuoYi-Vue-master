@@ -88,7 +88,7 @@ export default {
       this.fuse = new Fuse(list, {
         shouldSort: true,
         threshold: 0.4,
-        location: 0,
+        site: 0,
         distance: 100,
         maxPatternLength: 32,
         minMatchCharLength: 1,

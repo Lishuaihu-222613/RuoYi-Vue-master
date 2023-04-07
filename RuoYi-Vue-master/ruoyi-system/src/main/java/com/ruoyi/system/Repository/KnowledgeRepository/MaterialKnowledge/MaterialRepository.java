@@ -18,7 +18,7 @@ public interface MaterialRepository extends Neo4jRepository<Material,Long> {
 
     Optional<Material> findById(Long materialId);
 
-    @Query("MATCH (n:材料) where id(n) = $materialId return n")
+    @Query("MATCH (n:Material) where id(n) = $materialId return n")
     Optional<MaterialInterface> findMaterialInterfaceById(@Param("materialId") Long materialId);
 
     @Override
@@ -29,15 +29,27 @@ public interface MaterialRepository extends Neo4jRepository<Material,Long> {
 
     void deleteById(Long materialId);
 
-    @Query("MATCH (n:Material) where n.name contains $materialName return n")
-    Optional<Material> findByMaterialName(@Param("materialName") String materialName);
+    @Query(value = "MATCH (n:Material) where n.name contains $materialName return n " +
+            ":#{orderBy(#pageable)} SKIP $skip LIMIT $limit",
+            countQuery = "MATCH (n:Material) where n.name contains $materialName return count(n) "
+    )
+    Page<Material> findByMaterialName(@Param("materialName") String materialName ,Pageable pageable);
 
     @Override
     <S extends Material> List<S> findAll(Example<S> example);
 
-    @Query("MATCH (n:Material) return n")
+    @Query(value = "MATCH (n:Material) return n " +
+            ":#{orderBy(#pageable)} SKIP $skip LIMIT $limit",
+            countQuery = "MATCH (n:Material) return count(n)"
+    )
     Page<MaterialInterface> findSingleMaterials(Pageable pageable);
 
-    @Query("MATCH (n:material :$dynamicLabel) return n")
+    @Query(value = "MATCH (n:Material :`:#{literal(#dynamicLabel)}`) return n " +
+            ":#{orderBy(#pageable)} SKIP $skip LIMIT $limit",
+            countQuery = "MATCH (n:Material :`:#{literal(#dynamicLabel)}`) return count(n)"
+    )
     Page<MaterialInterface> findMaterialsByLabel(@Param("dynamicLabel") String dynamicLabel , Pageable pageable);
+
+    @Override
+    <S extends Material> Page<S> findAll(Example<S> example, Pageable pageable);
 }

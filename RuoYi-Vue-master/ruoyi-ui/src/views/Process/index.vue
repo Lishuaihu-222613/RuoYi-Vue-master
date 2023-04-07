@@ -69,7 +69,7 @@
           </el-descriptions-item>
           <el-descriptions-item>
             <template slot="label">
-              <i class="el-icon-location-outline"></i>
+              <i class="el-icon-site-outline"></i>
               关联零、部、组（整）件
             </template>
             <!--            <span>{{ this.selectedProcess.associatedStructure.structureName }}</span>-->
@@ -150,7 +150,7 @@
                   </el-row>
                   <el-row>
                     <el-form-item label="工序内容">
-                      <span>{{ props.row.nickName }}</span>
+                      <span>{{ props.row.sequenceDescription }}</span>
                     </el-form-item>
                   </el-row>
                   <el-row>
@@ -160,17 +160,17 @@
                   </el-row>
                   <el-row>
                     <el-form-item label="工序备注">
-                      <span v-for="(item, markIndex) in props.row.sequenceRemark" :key="markIndex"
-                      >{{ props.row.sequenceRemark[markIndex] }}</span>
+                      <div v-for="(item, markIndex) in props.row.sequenceRemark" :key="markIndex"
+                      >{{ props.row.sequenceRemark[markIndex] }}</div>
                     </el-form-item>
                   </el-row>
                 </el-form>
               </template>
             </el-table-column>
             <el-table-column align="center" label="工序号" prop="sequenceNumber" width="160"></el-table-column>
-            <el-table-column align="center" label="工序名称" prop="sequenceName" width="160"></el-table-column>
-            <el-table-column align="center" label="工序内容" prop="sequenceDescription" width="400"></el-table-column>
-            <el-table-column label="操作" width="250">
+            <el-table-column align="center" label="工序名称" prop="sequenceName" width="250"></el-table-column>
+            <el-table-column align="center" label="工序内容" prop="sequenceDescription" width="500"></el-table-column>
+            <el-table-column  align="center" label="操作" width="250">
               <template v-slot="scope">
                 <el-row>
                   <el-col :span="8">
@@ -215,6 +215,7 @@ import ModifySequence from '@/views/Process/components/ModifySequence.vue'
 import ModifyProcess from '@/views/Process/components/ModifyProcess.vue'
 import StepTable from '@/views/Process/components/StepTable.vue'
 import * as processManagement from '@/api/system/processManagement'
+import * as treeManagement from '@/api/system/treeManagement'
 
 export default {
 
@@ -288,7 +289,7 @@ export default {
       },
       defaultProps: {
         label: 'processName',
-        children: 'children'
+        children: 'subLeafs'
       },
       openProcess: false,
       modifySequenceShow: false,
@@ -312,6 +313,9 @@ export default {
 
   methods: {
     initPage() {
+      // treeManagement.getTreeManagement(25500).then(result =>{
+      //   this.processes.push(result.data);
+      // })
       processManagement.getAllProcess().then(result => {
         if (result.code == 200) {
           this.processes = result.data
@@ -325,8 +329,10 @@ export default {
       let newProcess = {
         processId: 0,
         processName: '待修改',
-        processDescription: '待修改'
+        processDescription: '待修改',
+        dynamicLabels:[],
       }
+
       processManagement.createProcess(newProcess).then(result => {
         if (result.code == 200) {
           this.$modal.msgSuccess('创建工艺成功！')
@@ -335,8 +341,7 @@ export default {
       })
     },
     handleMenuClick(command) {
-
-      if (command == 'addSequence') {
+      if (command === 'addSequence') {
         let newSequence = {
           sequenceId: 0,
           sequenceName: '待编辑',
@@ -344,6 +349,7 @@ export default {
           sequenceDescription: '待编辑',
           QuasiClosingHours: 0.0,
           TaktTime: 0.0,
+          dynamicLabels:[],
           sequenceRemark: ['待编辑', '待编辑']
         }
         let pAnds = {
@@ -351,19 +357,19 @@ export default {
           sequence: newSequence
         }
         processManagement.addSequenceForProcess(pAnds).then(result => {
-          if (result.code == 200) {
+          if (result.code === 200) {
             this.sequences.push(result.data)
           }
         })
-      } else if (command == 'showGraph') {
+      } else if (command === 'showGraph') {
 
-      } else if (command == 'deleteProcess') {
+      } else if (command === 'deleteProcess') {
         processManagement.deleteProcessById(this.selectedProcess.processId).then(result => {
-          if (result.code == 200) {
+          if (result.code === 200) {
             this.$message.success(result.statusText)
           }
         })
-      } else if (command == 'modifyProcess') {
+      } else if (command === 'modifyProcess') {
         this.modifyProcessShow = true
       }
     },
@@ -374,6 +380,7 @@ export default {
     nodeClick(pro, node, com) {
       this.selectedProcess = pro
       this.selectProcessId = pro.processId
+      // this.selectLabel =
       this.getSequencesByProcess()
     },
     getSelectedProcess(data) {
@@ -409,7 +416,14 @@ export default {
     showStepTable(sequenceId) {
       this.selectSequenceId = sequenceId
       this.stepTableShow = true
-    }
+    },
+    removeSequence(sequenceId){
+      processManagement.deleteSequenceById(sequenceId).then(result=>{
+        if(result.code === 200){
+          this.$modal.msgSuccess("删除成功")
+        }
+      })
+    },
   }
 }
 </script>

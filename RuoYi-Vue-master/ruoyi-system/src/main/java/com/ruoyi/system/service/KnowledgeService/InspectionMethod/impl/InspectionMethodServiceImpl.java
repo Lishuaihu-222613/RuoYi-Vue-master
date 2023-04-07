@@ -15,6 +15,7 @@ import com.ruoyi.system.domain.AssemblyPojo.Knowledge.InspectionKnowledge.vo.Mod
 import com.ruoyi.system.service.KnowledgeService.InspectionMethod.InspectionMethodService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -66,14 +67,13 @@ public class InspectionMethodServiceImpl implements InspectionMethodService {
     }
 
     @Override
-    public Page<InspectionMethod> getAllInspectionMethods() {
-        PageRequest of = PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, "methodId"));
-        return inspectionMethodRepository.findAll(of);
+    public Page<InspectionMethod> getAllInspectionMethods(Pageable pageable) {
+        return inspectionMethodRepository.findAll(pageable);
     }
 
     @Override
-    public List<InspectionMethod> getInspectionMethodsByType(String type) {
-        return inspectionMethodRepository.findMethodByType(type);
+    public Page<InspectionMethod> getInspectionMethodsByType(String type, Pageable pageable) {
+        return inspectionMethodRepository.findMethodByType(type,pageable);
     }
 
     @Override

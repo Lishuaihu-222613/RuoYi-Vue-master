@@ -16,7 +16,8 @@ public interface PhysicalPropertyRepository extends Neo4jRepository<PhysicalProp
     @Query("MATCH (n:PhysicalProperty) where n.label = $propertyName return n")
     Collection<PhysicalProperty> findPhysicalPropertiesByPropertyName(String propertyName);
 
-    PhysicalProperty save(String propertyName);
+    @Override
+    <S extends PhysicalProperty> S save(S property);
 
     @Override
     void delete(PhysicalProperty property);
@@ -25,5 +26,5 @@ public interface PhysicalPropertyRepository extends Neo4jRepository<PhysicalProp
     void deleteById(Long propertyId);
 
     @Query("MATCH (n:物理性质)<-[r:hasPhysicalProperty]-(m:材料) where id(m) = $materialId return n")
-    Collection<PhysicalProperty> findPhysicalPropertiesByMaterialId(@Param("materialId")Long materialId);
+    PhysicalProperty findPhysicalPropertiesByMaterialId(@Param("materialId")Long materialId);
 }

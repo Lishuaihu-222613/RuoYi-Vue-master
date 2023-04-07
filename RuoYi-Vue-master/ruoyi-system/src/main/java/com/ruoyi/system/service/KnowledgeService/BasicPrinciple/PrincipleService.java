@@ -1,7 +1,9 @@
 package com.ruoyi.system.service.KnowledgeService.BasicPrinciple;
 
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.BasicPrinciple.Principle;
+import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -11,14 +13,21 @@ public interface PrincipleService {
      *
      * @return
      */
-    Page<Principle> getAllPrinciple();
+    Page<Principle> getAllPrinciple(Pageable pageable);
 
     /**
      *
      * @param label
      * @return
      */
-    Page<Principle> getAllPrincipleByLabel(String label);
+    Page<Principle> getAllPrincipleByLabel(String label,Pageable pageable);
+
+    /**
+     *
+     * @param
+     * @return
+     */
+    Page<Principle> getAllPrincipleByParams(Example example, Pageable pageable);
 
     /**
      *

@@ -5,7 +5,7 @@ import org.springframework.data.neo4j.core.schema.*;
 import java.util.Map;
 import java.util.Objects;
 
-@Node("化学性质")
+@Node({"ChemicalProperty","化学性质"})
 public class ChemicalProperty {
 
     @Id

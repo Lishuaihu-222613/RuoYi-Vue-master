@@ -21,7 +21,8 @@ public interface ProduceMethodRepository extends Neo4jRepository<ProduceMethod,L
     @Query("MATCH (n:生产方法) where n.label = $methodName return n")
     Collection<ProduceMethodInterface> findByMethodName(@Param("methodName")String methodName);
 
-    ProduceMethod save(ProduceMethod produceMethod);
+    @Override
+    <S extends ProduceMethod> S save(S method);
 
     @Override
     void delete(ProduceMethod produceMethod);

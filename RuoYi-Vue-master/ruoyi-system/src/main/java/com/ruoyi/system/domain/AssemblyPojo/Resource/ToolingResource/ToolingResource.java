@@ -5,7 +5,7 @@ import com.ruoyi.system.domain.AssemblyPojo.Knowledge.TypicalKnowledge.Process.T
 import com.ruoyi.system.domain.AssemblyPojo.Process.SpecialSequence.Sequence;
 import com.ruoyi.system.domain.AssemblyPojo.Process.Step;
 import com.ruoyi.system.domain.AssemblyPojo.Resource.AssemblyResource;
-import com.ruoyi.system.domain.AssemblyPojo.Resource.Location;
+import com.ruoyi.system.domain.AssemblyPojo.Resource.Site;
 import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.schema.Property;
 import org.springframework.data.neo4j.core.schema.Relationship;
@@ -163,8 +163,8 @@ public abstract class ToolingResource extends AssemblyResource {
     public ToolingResource() {
     }
 
-    public ToolingResource(Long resourceId, String resourceName, String resourceDescription, Set<String> resourceTypes, Set<Location> locations, Set<Sequence> sequences, Set<Step> steps, double toolPrice, String manufacturer, String toolSize, String materialType, String toolUsage, String toolSpecification, String toolState, double wearCondition, Map<String, Object> toolCapacity, Set<TypicalProcess> suitableProcesses, Set<TypicalProcess> unSuitableProcesses, Set<TypicalSequence> suitableProcedures, Set<TypicalSequence> unSuitableProcedures) {
-        super(resourceId, resourceName, resourceDescription, resourceTypes, locations, sequences, steps);
+    public ToolingResource(Long resourceId, String resourceName, String resourceDescription, Set<String> resourceTypes, Set<Site> sites, Set<Sequence> sequences, Set<Step> steps, double toolPrice, String manufacturer, String toolSize, String materialType, String toolUsage, String toolSpecification, String toolState, double wearCondition, Map<String, Object> toolCapacity, Set<TypicalProcess> suitableProcesses, Set<TypicalProcess> unSuitableProcesses, Set<TypicalSequence> suitableProcedures, Set<TypicalSequence> unSuitableProcedures) {
+        super(resourceId, resourceName, resourceDescription, resourceTypes, sites, sequences, steps);
         this.toolPrice = toolPrice;
         this.manufacturer = manufacturer;
         this.toolSize = toolSize;

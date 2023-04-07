@@ -6,7 +6,7 @@ import com.ruoyi.system.domain.AssemblyPojo.Process.SpecialSequence.Sequence;
 import com.ruoyi.system.domain.AssemblyPojo.Process.Step;
 import com.ruoyi.system.domain.AssemblyPojo.Resource.AssemblyMethod.AssemblyMethod;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.MaterialKnowledge.Material;
-import com.ruoyi.system.domain.AssemblyPojo.Resource.Location;
+import com.ruoyi.system.domain.AssemblyPojo.Resource.Site;
 import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.schema.Property;
 import org.springframework.data.neo4j.core.schema.Relationship;
@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-@Node({"刀具资源","CuttingTool"})
+@Node({"刀具工具","CuttingTool"})
 public class CuttingTool extends ToolingResource{
 
     @Property(name = "切割刃数")
@@ -142,8 +142,8 @@ public class CuttingTool extends ToolingResource{
     public CuttingTool() {
     }
 
-    public CuttingTool(Long resourceId, String resourceName, String resourceDescription, Set<String> resourceTypes, Set<Location> locations, Set<Sequence> sequences, Set<Step> steps, double toolPrice, String manufacturer, String toolSize, String materialType, String toolUsage, String toolSpecification, String toolState, double wearCondition, Map<String, Object> toolCapacity, Set<TypicalProcess> suitableProcesses, Set<TypicalProcess> unSuitableProcesses, Set<TypicalSequence> suitableProcedures, Set<TypicalSequence> unSuitableProcedures, Integer cuttingEdges, double edgeLength, String shankStyle, String maxCuttingAmount, String maxMachiningSize, String economicAccuracy, String machiningRoughness, String unsuitableCondition, Set<AssemblyMethod> suitableMethods, Set<Material> suitableMaterials, Set<Material> unSuitableMaterial) {
-        super(resourceId, resourceName, resourceDescription, resourceTypes, locations, sequences, steps, toolPrice, manufacturer, toolSize, materialType, toolUsage, toolSpecification, toolState, wearCondition, toolCapacity, suitableProcesses, unSuitableProcesses, suitableProcedures, unSuitableProcedures);
+    public CuttingTool(Long resourceId, String resourceName, String resourceDescription, Set<String> resourceTypes, Set<Site> sites, Set<Sequence> sequences, Set<Step> steps, double toolPrice, String manufacturer, String toolSize, String materialType, String toolUsage, String toolSpecification, String toolState, double wearCondition, Map<String, Object> toolCapacity, Set<TypicalProcess> suitableProcesses, Set<TypicalProcess> unSuitableProcesses, Set<TypicalSequence> suitableProcedures, Set<TypicalSequence> unSuitableProcedures, Integer cuttingEdges, double edgeLength, String shankStyle, String maxCuttingAmount, String maxMachiningSize, String economicAccuracy, String machiningRoughness, String unsuitableCondition, Set<AssemblyMethod> suitableMethods, Set<Material> suitableMaterials, Set<Material> unSuitableMaterial) {
+        super(resourceId, resourceName, resourceDescription, resourceTypes, sites, sequences, steps, toolPrice, manufacturer, toolSize, materialType, toolUsage, toolSpecification, toolState, wearCondition, toolCapacity, suitableProcesses, unSuitableProcesses, suitableProcedures, unSuitableProcedures);
         this.cuttingEdges = cuttingEdges;
         this.edgeLength = edgeLength;
         this.shankStyle = shankStyle;

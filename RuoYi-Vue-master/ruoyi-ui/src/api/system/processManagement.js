@@ -77,7 +77,7 @@ export function updateSequence(data){
 
 export function deleteSequenceById(sequenceId){
   return request({
-    url: '/process/deleteSequenceById/'+sequenceId,
+    url: '/process/deleteSequence/'+sequenceId,
     method: 'get'
   })
 };

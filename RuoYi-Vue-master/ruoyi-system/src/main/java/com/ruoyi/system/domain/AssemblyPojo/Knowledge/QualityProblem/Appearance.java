@@ -17,7 +17,7 @@ public class Appearance {
     @Property(name = "label")
     private String appearanceName;
 
-    @Property(name = "问题描述")
+    @Property(name = "外观描述")
     private String appearanceDescription;
 
     public Long getAppearanceId() {

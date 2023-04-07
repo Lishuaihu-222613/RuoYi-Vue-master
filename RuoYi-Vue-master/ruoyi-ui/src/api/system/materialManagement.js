@@ -1,10 +1,11 @@
 import request from '@/utils/request'
 
 //获取材料数据
-export function getAllMaterialsByType(){
+export function getAllMaterialsByType(data){
   return request({
-    url: '/static/kgData.json',
-    method: 'get'
+    url: '/material/getAllMaterialsByType',
+    method: 'post',
+    data: data
   })
 };
 
@@ -12,6 +13,14 @@ export function getMaterialById(materialId){
   return request({
     url: '/material/getMaterialById/'+materialId,
     method: 'get'
+  })
+};
+
+export function createMaterial(data){
+  return request({
+    url: '/material/createMaterial',
+    method: 'post',
+    data: data
   })
 };
 

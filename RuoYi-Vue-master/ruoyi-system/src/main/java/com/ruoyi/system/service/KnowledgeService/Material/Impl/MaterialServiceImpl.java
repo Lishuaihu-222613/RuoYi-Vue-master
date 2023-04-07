@@ -1,18 +1,21 @@
 package com.ruoyi.system.service.KnowledgeService.Material.Impl;
 
 import com.ruoyi.system.Repository.KnowledgeRepository.MaterialKnowledge.*;
+import com.ruoyi.system.domain.AssemblyPojo.Knowledge.MaterialKnowledge.*;
+import com.ruoyi.system.domain.AssemblyPojo.Knowledge.MaterialKnowledge.Interface.InspectProjectInterface;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.MaterialKnowledge.Interface.MaterialInterface;
-import com.ruoyi.system.domain.AssemblyPojo.Knowledge.MaterialKnowledge.Material;
+import com.ruoyi.system.domain.AssemblyPojo.Knowledge.MaterialKnowledge.Interface.ProduceMethodInterface;
+import com.ruoyi.system.domain.AssemblyPojo.Knowledge.MaterialKnowledge.vo.*;
 import com.ruoyi.system.service.KnowledgeService.Material.MaterialService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Service
 @Transactional
@@ -45,16 +48,14 @@ public class MaterialServiceImpl implements MaterialService {
     @Resource
     private StorageRequirementRepository storageRequirementRepository;
 
-    PageRequest of = PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, "principleId"));
-
     @Override
-    public Page<MaterialInterface> getAllMaterials() {
-        return materialRepository.findSingleMaterials(of);
+    public Page<MaterialInterface> getAllMaterials(Pageable pageable) {
+        return materialRepository.findSingleMaterials(pageable);
     }
 
     @Override
-    public Page<MaterialInterface> getMaterialsByType(String dynamicLabel) {
-        return materialRepository.findMaterialsByLabel(dynamicLabel,of);
+    public Page<MaterialInterface> getMaterialsByType(String dynamicLabel,Pageable pageable) {
+        return materialRepository.findMaterialsByLabel(dynamicLabel,pageable);
     }
 
     @Override
@@ -69,20 +70,36 @@ public class MaterialServiceImpl implements MaterialService {
 
     @Override
     public Material createSingleMaterial(Material singleMaterial) {
-        singleMaterial.setAnalysisSpectrogram(null);
-        singleMaterial.setChemicalProperty(null);
+        AnalysisSpectrogram analysisSpectrogram = analysisSpectrogramRepository.save(new AnalysisSpectrogram());
+        Set<AnalysisSpectrogram> spectrograms = singleMaterial.getAnalysisSpectrogram();
+        spectrograms.add(analysisSpectrogram);
+        singleMaterial.setAnalysisSpectrogram(spectrograms);
+        ChemicalProperty chemicalProperty = chemicalPropertyRepository.save(new ChemicalProperty());
+        singleMaterial.setChemicalProperty(chemicalProperty);
         singleMaterial.setAssociatedFiles(null);
-        singleMaterial.setDangers(null);
-        singleMaterial.setInspectProjects(null);
-        singleMaterial.setPhysicalProperty(null);
-        singleMaterial.setProductMethods(null);
-        singleMaterial.setProtections(null);
-        singleMaterial.setStorageRequirements(null);
+        Set<Danger> dangers = singleMaterial.getDangers();
+        Danger danger = dangerRepository.save(new Danger());
+        dangers.add(danger);
+        singleMaterial.setDangers(dangers);
+        Set<InspectProject> inspectProjects = singleMaterial.getInspectProjects();
+        InspectProject project = inspectProjectRepository.save(new InspectProject());
+        inspectProjects.add(project);
+        singleMaterial.setInspectProjects(inspectProjects);
+        PhysicalProperty physicalProperty = physicalPropertyRepository.save(new PhysicalProperty());
+        singleMaterial.setPhysicalProperty(physicalProperty);
+        Set<ProduceMethod> productMethods = singleMaterial.getProductMethods();
+        ProduceMethod produceMethod = produceMethodRepository.save(new ProduceMethod());
+        productMethods.add(produceMethod);
+        singleMaterial.setProductMethods(productMethods);
+        Protection protection = protectionRepository.save(new Protection());
+        Set<Protection> protections = singleMaterial.getProtections();
+        protections.add(protection);
+        singleMaterial.setProtections(protections);
+        StorageRequirement storageRequirement = storageRequirementRepository.save(new StorageRequirement());
+        Set<StorageRequirement> storageRequirements = singleMaterial.getStorageRequirements();
+        storageRequirements.add(storageRequirement);
+        singleMaterial.setStorageRequirements(storageRequirements);
         return materialRepository.save(singleMaterial);
-    }
-    @Override
-    public void deleteMaterial(Material material) {
-        materialRepository.delete(material);
     }
 
     @Override
@@ -106,5 +123,369 @@ public class MaterialServiceImpl implements MaterialService {
         oldMaterial.setMaterialUsage(newMaterial.getMaterialUsage());
         oldMaterial.setMaterialLabels(newMaterial.getMaterialLabels());
         return materialRepository.save(oldMaterial);
+    }
+
+    @Override
+    public AnalysisSpectrogram createAnalysisSpectrogram(AMvo AM) {
+        Optional<Material> optionalMaterial = materialRepository.findById(AM.getMaterialId());
+        if (optionalMaterial.isPresent()) {
+            Material material = optionalMaterial.get();
+            AnalysisSpectrogram spectrogram = analysisSpectrogramRepository.save(AM.getAnalysisSpectrogram());
+            Set<AnalysisSpectrogram> spectrograms = material.getAnalysisSpectrogram();
+            spectrograms.add(spectrogram);
+            material.setAnalysisSpectrogram(spectrograms);
+            materialRepository.save(material);
+            return spectrogram;
+        }
+        return null;
+    }
+
+    @Override
+    public AnalysisSpectrogram getAnalysisSpectrogramById(Long spectrogramId) {
+        return analysisSpectrogramRepository.findById(spectrogramId).get();
+    }
+
+    @Override
+    public Collection<AnalysisSpectrogram> getAnalysisSpectrogramByMaterialId(Long materialId) {
+        return analysisSpectrogramRepository.findAnalysisSpectrogramByMaterialId(materialId);
+    }
+
+    @Override
+    public AnalysisSpectrogram updateAnalysisSpectrogram(AnalysisSpectrogram analysisSpectrogram) {
+        return analysisSpectrogramRepository.save(analysisSpectrogram);
+    }
+
+
+    @Override
+    public void deleteAnalysisSpectrogramById(Long spectrogramId) {
+        analysisSpectrogramRepository.deleteById(spectrogramId);
+    }
+
+    @Override
+    public Collection<AnalysisSpectrogram> getAnalysisSpectrogramByName(String spectrogramName) {
+        return analysisSpectrogramRepository.findAnalysisSpectrogramBySpectrogramName(spectrogramName);
+    }
+
+    @Override
+    public ChemicalProperty createChemicalProperty(CMvo CM) {
+        Optional<Material> optionalMaterial = materialRepository.findById(CM.getMaterialId());
+        if (optionalMaterial.isPresent()) {
+            Material material = optionalMaterial.get();
+            ChemicalProperty property = chemicalPropertyRepository.save(CM.getChemicalProperty());
+            material.setChemicalProperty(property);
+            materialRepository.save(material);
+            return property;
+        }
+        return null;
+    }
+
+    @Override
+    public ChemicalProperty getChemicalPropertyById(Long propertyId) {
+        return chemicalPropertyRepository.findById(propertyId).get();
+    }
+
+    @Override
+    public ChemicalProperty getChemicalPropertyByMaterialId(Long materialId) {
+        return chemicalPropertyRepository.findChemicalPropertiesByMaterialId(materialId);
+    }
+
+    @Override
+    public ChemicalProperty updateChemicalProperty(ChemicalProperty property) {
+        return chemicalPropertyRepository.save(property);
+    }
+
+    @Override
+    public void deleteChemicalPropertyById(Long propertyId) {
+        chemicalPropertyRepository.deleteById(propertyId);
+    }
+
+    @Override
+    public PhysicalProperty createPhysicalProperty(PMvo PM) {
+        Optional<Material> optionalMaterial = materialRepository.findById(PM.getMaterialId());
+        if (optionalMaterial.isPresent()) {
+            Material material = optionalMaterial.get();
+            PhysicalProperty property = physicalPropertyRepository.save(PM.getPhysicalProperty());
+            material.setPhysicalProperty(property);
+            materialRepository.save(material);
+            return property;
+        }
+        return null;
+    }
+
+    @Override
+    public PhysicalProperty getPhysicalPropertyByMaterialId(Long materialId) {
+        return physicalPropertyRepository.findPhysicalPropertiesByMaterialId(materialId);
+    }
+
+    @Override
+    public Collection<PhysicalProperty> getPhysicalPropertyByName(String propertyName) {
+        return physicalPropertyRepository.findPhysicalPropertiesByPropertyName(propertyName);
+    }
+
+    @Override
+    public PhysicalProperty getPhysicalPropertyById(Long propertyId) {
+        return physicalPropertyRepository.findById(propertyId).get();
+    }
+
+    @Override
+    public PhysicalProperty updatePhysicalProperty(PhysicalProperty property) {
+        return physicalPropertyRepository.save(property);
+    }
+
+    @Override
+    public void deletePhysicalPropertyById(Long propertyId) {
+        physicalPropertyRepository.deleteById(propertyId);
+    }
+
+    @Override
+    public Collection<Danger> getDangersByMaterialId(Long materialId) {
+        return dangerRepository.findDangersByMaterialId(materialId);
+    }
+
+    @Override
+    public Danger getDangerById(Long dangerId) {
+        return dangerRepository.findById(dangerId).get();
+    }
+
+    @Override
+    public Danger createDanger(DMvo DM) {
+        Optional<Material> optionalMaterial = materialRepository.findById(DM.getMaterialId());
+        if (optionalMaterial.isPresent()) {
+            Material material = optionalMaterial.get();
+            Danger danger = dangerRepository.save(DM.getDanger());
+            Set<Danger> dangers = material.getDangers();
+            dangers.add(danger);
+            material.setDangers(dangers);
+            materialRepository.save(material);
+            return danger;
+        }
+        return null;
+    }
+
+    @Override
+    public Danger updateDanger(Danger danger) {
+        return dangerRepository.save(danger);
+    }
+
+
+    @Override
+    public void deleteDangerById(Long dangerId) {
+        dangerRepository.deleteById(dangerId);
+    }
+
+    @Override
+    public void createRelationshipForDanger(Long materialId, Long dangerId) {
+        dangerRepository.createRelationshipForDanger(materialId, dangerId);
+    }
+
+    @Override
+    public Set<InspectProject> createInspectProjects(IMvo IM) {
+        Optional<Material> optionalMaterial = materialRepository.findById(IM.getMaterialId());
+        if (optionalMaterial.isPresent()) {
+            Material material = optionalMaterial.get();
+            Set<InspectProject> projects = material.getInspectProjects();
+            for (InspectProject project : IM.getInspectProjects()) {
+                InspectProject newProject = inspectProjectRepository.save(project);
+                projects.add(newProject);
+            }
+            material.setInspectProjects(projects);
+            materialRepository.save(material);
+            return projects;
+        }
+        return null;
+    }
+
+    @Override
+    public InspectProject createInspectProject(Long materialId, InspectProject project) {
+        Optional<Material> optionalMaterial = materialRepository.findById(materialId);
+        if (optionalMaterial.isPresent()) {
+            Material material = optionalMaterial.get();
+            Set<InspectProject> projects = material.getInspectProjects();
+            InspectProject newProject = inspectProjectRepository.save(project);
+            projects.add(newProject);
+            material.setInspectProjects(projects);
+            materialRepository.save(material);
+            return newProject;
+        }
+        return null;
+    }
+
+    @Override
+    public InspectProject updateInspectProject(InspectProject project) {
+        Optional<InspectProject> optionalInspectProject = inspectProjectRepository.findById(project.getProjectId());
+        if (optionalInspectProject.isPresent()) {
+            InspectProject inspectProject = optionalInspectProject.get();
+            inspectProject.setProjectName(project.getProjectName());
+            inspectProject.setClassificationAndIndicators(project.getClassificationAndIndicators());
+            InspectProject newProject = inspectProjectRepository.save(inspectProject);
+            return newProject;
+        }
+        return null;
+    }
+
+    @Override
+    public List<InspectProject> updateInspectProjects(List<InspectProject> projects) {
+        ArrayList<InspectProject> inspectProjects = new ArrayList<>();
+        for (InspectProject project : projects) {
+            Optional<InspectProject> optionalInspectProject = inspectProjectRepository.findById(project.getProjectId());
+            if (optionalInspectProject.isPresent()) {
+                InspectProject inspectProject = optionalInspectProject.get();
+                inspectProject.setProjectName(project.getProjectName());
+                inspectProject.setClassificationAndIndicators(project.getClassificationAndIndicators());
+                InspectProject newProject = inspectProjectRepository.save(inspectProject);
+                inspectProjects.add(newProject);
+            }
+        }
+        return inspectProjects;
+    }
+
+    @Override
+    public InspectProject getInspectProjectById(Long projectId) {
+        return inspectProjectRepository.findById(projectId).get();
+    }
+
+    @Override
+    public Collection<InspectProject> getInspectProjectsByMaterialId(Long materialId) {
+        return inspectProjectRepository.findInspectProjectsByMaterialId(materialId);
+    }
+
+    @Override
+    public void deleteInspectProjectById(Long projectId) {
+        inspectProjectRepository.deleteById(projectId);
+    }
+
+    @Override
+    public void createRelationshipForInspectProject(Long materialId, Long projectId) {
+        inspectProjectRepository.createRelationshipForInspectProject(materialId,projectId);
+    }
+
+    @Override
+    public ProduceMethod createProduceMethod(PMMvo PMM) {
+        Optional<Material> optionalMaterial = materialRepository.findById(PMM.getMaterialId());
+        if (optionalMaterial.isPresent()) {
+            Material material = optionalMaterial.get();
+            Set<ProduceMethod> productMethods = material.getProductMethods();
+            ProduceMethod produceMethod = produceMethodRepository.save(PMM.getProduceMethod());
+            productMethods.add(produceMethod);
+            material.setProductMethods(productMethods);
+            materialRepository.save(material);
+            return produceMethod;
+        }
+        return null;
+    }
+
+    @Override
+    public ProduceMethodInterface getProduceMethodInterfaceById(Long methodId) {
+        return produceMethodRepository.findProduceMethodInterfaceById(methodId).get();
+    }
+
+    @Override
+    public Collection<ProduceMethodInterface> getProduceMethodsByMaterialId(Long materialId) {
+        return produceMethodRepository.findProduceMethodByMaterialId(materialId);
+    }
+
+    @Override
+    public Collection<ProduceMethodInterface> getProduceMethodsByName(String methodName) {
+        return produceMethodRepository.findByMethodName(methodName);
+    }
+
+    @Override
+    public ProduceMethod updateProduceMethod(ProduceMethod produceMethod) {
+        return produceMethodRepository.save(produceMethod);
+    }
+
+    @Override
+    public void deleteProduceMethodById(Long methodId) {
+        produceMethodRepository.deleteById(methodId);
+    }
+
+    @Override
+    public void createRelationshipForProduceMethod(Long materialId, Long methodId) {
+        produceMethodRepository.createRelationshipForProduceMethod(materialId,methodId);
+    }
+
+    @Override
+    public Protection createProtection(ProMVO PM) {
+        Optional<Material> optionalMaterial = materialRepository.findById(PM.getMaterialId());
+        if (optionalMaterial.isPresent()) {
+            Material material = optionalMaterial.get();
+            Set<Protection> protections = material.getProtections();
+            Protection protection = protectionRepository.save(PM.getProtection());
+            protections.add(protection);
+            material.setProtections(protections);
+            materialRepository.save(material);
+            return protection;
+        }
+        return null;
+    }
+
+    @Override
+    public Collection<Protection> getProtectionsByMaterialId(Long materialId) {
+        return protectionRepository.findProtectionsByMaterialId(materialId);
+    }
+
+    @Override
+    public Collection<Protection> getProtectionsByName(String protectionName) {
+        return protectionRepository.findByProtectionName(protectionName);
+    }
+
+    @Override
+    public Protection getProtectionById(Long protectionId) {
+        return protectionRepository.findById(protectionId).get();
+    }
+
+    @Override
+    public Protection updateProtection(Protection protection) {
+        return protectionRepository.save(protection);
+    }
+
+    @Override
+    public void deleteProtectionById(Long protectionId) {
+        protectionRepository.deleteById(protectionId);
+    }
+
+    @Override
+    public void createRelationshipForProtection(Long materialId, Long protectionId) {
+        protectionRepository.createRelationshipForProtection(materialId, protectionId);
+    }
+
+    @Override
+    public StorageRequirement createStorageRequirement(SMvo SM) {
+        Optional<Material> optionalMaterial = materialRepository.findById(SM.getMaterialId());
+        if (optionalMaterial.isPresent()) {
+            Material material = optionalMaterial.get();
+            Set<StorageRequirement> storageRequirements = material.getStorageRequirements();
+            StorageRequirement storageRequirement = storageRequirementRepository.save(SM.getStorageRequirement());
+            storageRequirements.add(storageRequirement);
+            material.setStorageRequirements(storageRequirements);
+            materialRepository.save(material);
+            return storageRequirement;
+        }
+        return null;
+    }
+
+    @Override
+    public Collection<StorageRequirement> getStorageRequirementsByMaterialId(Long materialId) {
+        return storageRequirementRepository.findStorageRequirementsByMaterialId(materialId);
+    }
+
+    @Override
+    public Collection<StorageRequirement> getStorageRequirementsByName(String requirementName) {
+        return storageRequirementRepository.findByRequirementName(requirementName);
+    }
+
+    @Override
+    public StorageRequirement getStorageRequirementById(Long requirementId) {
+        return storageRequirementRepository.findById(requirementId).get();
+    }
+
+    @Override
+    public StorageRequirement updateStorageRequirement(StorageRequirement requirement) {
+        return storageRequirementRepository.save(requirement);
+    }
+
+    @Override
+    public void deleteStorageRequirementById(Long requirementId) {
+        storageRequirementRepository.deleteById(requirementId);
     }
 }

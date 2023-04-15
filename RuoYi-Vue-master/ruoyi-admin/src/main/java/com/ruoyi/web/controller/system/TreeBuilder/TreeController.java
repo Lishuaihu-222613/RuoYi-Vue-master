@@ -4,9 +4,11 @@ import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.enums.BusinessType;
+import com.ruoyi.common.utils.Neo4j.R;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.ClassificationTree.ClassificationTree;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.ClassificationTree.vo.LeafForParent;
+import com.ruoyi.system.domain.AssemblyPojo.Resource.AuxiliaryResource;
 import com.ruoyi.system.domain.KgBuilderPojo.entity.KgDomain;
 import com.ruoyi.system.service.KnowledgeService.ClassificationTree.TreeService;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -26,52 +28,130 @@ public class TreeController  extends BaseController {
     /**
      * 查询知识树管理列表
      */
+    @ResponseBody
     @GetMapping("/list")
-    public AjaxResult list(ClassificationTree tree)
+    public R<List<ClassificationTree>> list(@RequestBody ClassificationTree tree)
     {
-        List<ClassificationTree> list = treeService.selectTreeList(tree);
-        return AjaxResult.success(list);
+        try {
+            List<ClassificationTree> list = treeService.selectTreeList(tree);
+            System.out.println(list);
+            return R.success(list);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    }
+
+    /**
+     * 查询知识树管理列表
+     */
+    @ResponseBody
+    @GetMapping("/getAllRoot")
+    public R<List<ClassificationTree>> getAllRoot()
+    {
+        try {
+            List<ClassificationTree> list = treeService.selectAllRoot();
+            System.out.println(list);
+            return R.success(list);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
     }
 
     /**
      * 获取知识树管理详细信息
      */
+    @ResponseBody
     @GetMapping(value = "/{id}")
-    public AjaxResult getInfo(@PathVariable("id") Long id)
+    public R<ClassificationTree> getInfo(@PathVariable("id") Long id)
     {
-        return AjaxResult.success(treeService.selectTreeById(id));
+        try {
+            ClassificationTree leaf = treeService.selectTreeById(id);
+            System.out.println(leaf);
+            return R.success(leaf);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    }
+
+    @ResponseBody
+    @GetMapping("getParentLeaf/{id}")
+    public R<Long> getParentLeaf(@PathVariable("id") Long id)
+    {
+        try {
+            ClassificationTree leaf = treeService.selectTreeById(id);
+            System.out.println(leaf);
+            return R.success(leaf);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
     }
 
     /**
      * 新增知识树管理
      */
+    @ResponseBody
     @PostMapping
-    public AjaxResult add(@RequestBody ClassificationTree tree)
+    public R<ClassificationTree> add(@RequestBody ClassificationTree tree)
     {
-        return AjaxResult.success(treeService.createTree(tree));
+        try {
+            ClassificationTree leaf = treeService.createTree(tree);
+            System.out.println(leaf);
+            return R.success(leaf);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
     }
 
-    @PostMapping("/addSubLeafs")
-    public AjaxResult addSubLeafs(@RequestBody LeafForParent leafs)
+    @ResponseBody
+    @PostMapping("/addSubLeaf")
+    public R<ClassificationTree> addSubLeaf(@RequestBody LeafForParent leaf)
     {
-        return AjaxResult.success(treeService.addSubLeafs(leafs));
+        try {
+            ClassificationTree subLeaf = treeService.addSubLeafs(leaf);
+            System.out.println(subLeaf);
+            return R.success(subLeaf);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
     }
 
     /**
      * 修改知识树管理
      */
+    @ResponseBody
     @PutMapping
-    public AjaxResult edit(@RequestBody ClassificationTree tree)
+    public R<ClassificationTree> edit(@RequestBody LeafForParent leaf)
     {
-        return AjaxResult.success(treeService.updateTree(tree));
+        try {
+            ClassificationTree subLeaf = treeService.updateTree(leaf);
+            System.out.println(subLeaf);
+            return R.success(subLeaf);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
     }
 
     /**
      * 删除知识树管理
      */
+    @ResponseBody
     @DeleteMapping("/{ids}")
-    public AjaxResult remove(@PathVariable Long[] ids)
+    public R<String> remove(@PathVariable Long[] ids)
     {
-        return toAjax(treeService.deleteTree(ids));
+        try {
+            treeService.deleteTree(ids);
+            System.out.println(ids);
+            return R.success("删除成功");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
     }
 }

@@ -10,12 +10,27 @@ import java.util.Optional;
 
 public interface ConstraintRepository extends Neo4jRepository<AssemblyConstraint, Long> {
 
-    Optional<AssemblyConstraint> findById(@Param("Id") Long ACId);
+    @Override
+    Optional<AssemblyConstraint> findById(Long constraintId);
 
-    AssemblyConstraint save(AssemblyConstraint ACItem);
+    @Override
+    <S extends AssemblyConstraint> S save(S constraint);
 
-    void deleteById(Long ACId);
+    @Override
+    void deleteById(Long constraintId);
 
-    @Query("MATCH (n:AssemblyStructure) -[r:hasConstraint]-> (m:AssemblyConstraint) where n.Id = $ASId return m")
-    List<AssemblyConstraint> findAllByASItem(@Param("ASId") Long ASId);
+    @Query("MATCH (n:AssemblyElement) -[r:hasConstraint]-> (m:AssemblyConstraint) where id(n) = $elementId return m")
+    List<AssemblyConstraint> findConstraintsByElementId(@Param("elementId") Long elementId);
+
+    @Query("Match (n:AssemblyElement) -[r:hasConstraint]-> (m:AssemblyConstraint) where id(m) = $constraintId return m ,collect(n)")
+    AssemblyConstraint findSingleConstraintById(@Param("constraintId") Long constraintId);
+
+    @Query("Match (n:AssemblyElement) -[r:hasConstraint]- (m:AssemblyConstraint) where id(m) = $constraintId delete r")
+    void deleteRelationForConstraint(@Param("constraintId") Long constraintId);
+
+    @Query("Match (n:AssemblyElement) where id(n) = $elementId " +
+            "Match (m:AssemblyConstraint) where id(m) = $constraintId " +
+            "Merge (n)-[r:hasConstraint]->(m) " +
+            "Merge (n)<-[r:with]-(m)")
+    void updateRelationShipForConstraint(@Param("constraintId") Long constraintId,@Param("elementId") Long elementId);
 }

@@ -1,8 +1,8 @@
 package com.ruoyi.system.domain.AssemblyPojo.Resource;
 
 
-import com.ruoyi.system.domain.AssemblyPojo.Process.SpecialSequence.Sequence;
-import com.ruoyi.system.domain.AssemblyPojo.Process.Step;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.springframework.data.neo4j.core.schema.*;
 
 import java.util.Objects;
@@ -20,31 +20,11 @@ public abstract class AssemblyResource {
 
     @Property(name = "资源描述")
     private String resourceDescription;
-
     @DynamicLabels
     private Set<String> resourceTypes;
 
-    @Relationship(type = "存在于" , direction = Relationship.Direction.OUTGOING)
-    private Set<Site> sites;
-
-    @Relationship(type = "被使用在" , direction = Relationship.Direction.OUTGOING)
-    private Set<Sequence> sequences;
-
-    @Relationship(type = "使用于" , direction = Relationship.Direction.OUTGOING)
-    private Set<Step> steps;
-
-    public AssemblyResource() {
-    }
-
-    public AssemblyResource(Long resourceId, String resourceName, String resourceDescription, Set<String> resourceTypes, Set<Site> sites, Set<Sequence> sequences, Set<Step> steps) {
-        this.resourceId = resourceId;
-        this.resourceName = resourceName;
-        this.resourceDescription = resourceDescription;
-        this.resourceTypes = resourceTypes;
-        this.sites = sites;
-        this.sequences = sequences;
-        this.steps = steps;
-    }
+    @Property(name = "存储地址")
+    private String site;
 
     public Long getResourceId() {
         return resourceId;
@@ -78,28 +58,23 @@ public abstract class AssemblyResource {
         this.resourceTypes = resourceTypes;
     }
 
-    public Set<Site> getLocations() {
-        return sites;
+    public String getSite() {
+        return site;
     }
 
-    public void setLocations(Set<Site> sites) {
-        this.sites = sites;
+    public void setSite(String site) {
+        this.site = site;
     }
 
-    public Set<Sequence> getSequences() {
-        return sequences;
+    public AssemblyResource() {
     }
 
-    public void setSequences(Set<Sequence> sequences) {
-        this.sequences = sequences;
-    }
-
-    public Set<Step> getSteps() {
-        return steps;
-    }
-
-    public void setSteps(Set<Step> steps) {
-        this.steps = steps;
+    public AssemblyResource(Long resourceId, String resourceName, String resourceDescription, Set<String> resourceTypes, String site) {
+        this.resourceId = resourceId;
+        this.resourceName = resourceName;
+        this.resourceDescription = resourceDescription;
+        this.resourceTypes = resourceTypes;
+        this.site = site;
     }
 
     @Override
@@ -107,12 +82,12 @@ public abstract class AssemblyResource {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AssemblyResource that = (AssemblyResource) o;
-        return Objects.equals(resourceId, that.resourceId) && Objects.equals(resourceName, that.resourceName) && Objects.equals(resourceDescription, that.resourceDescription) && Objects.equals(resourceTypes, that.resourceTypes);
+        return Objects.equals(resourceId, that.resourceId) && Objects.equals(resourceName, that.resourceName) && Objects.equals(resourceDescription, that.resourceDescription) && Objects.equals(resourceTypes, that.resourceTypes) && Objects.equals(site, that.site);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(resourceId, resourceName, resourceDescription, resourceTypes);
+        return Objects.hash(resourceId, resourceName, resourceDescription, resourceTypes, site);
     }
 
     @Override
@@ -122,9 +97,7 @@ public abstract class AssemblyResource {
                 ", resourceName='" + resourceName + '\'' +
                 ", resourceDescription='" + resourceDescription + '\'' +
                 ", resourceTypes=" + resourceTypes +
-                ", locations=" + sites +
-                ", sequences=" + sequences +
-                ", steps=" + steps +
+                ", site='" + site + '\'' +
                 '}';
     }
 }

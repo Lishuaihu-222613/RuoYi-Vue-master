@@ -4,6 +4,7 @@ import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.page.PageForNeo4j;
 import com.ruoyi.common.utils.Neo4j.R;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.Interface.PrescriptionInterface;
+import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.Interface.hasMaterialElementInterface;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.Prescription;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.Property.*;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.Stability.ExplosionStability;
@@ -13,10 +14,7 @@ import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.Stability.Rad
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.hasMaterialElement;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.vo.*;
 import com.ruoyi.system.service.KnowledgeService.Prescription.*;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -36,13 +34,13 @@ public class PrescriptionController extends BaseController {
 
     @ResponseBody
     @PostMapping("/getAllPrescriptionsByType")
-    public R<Page<PrescriptionInterface>> getAllPrescriptionsByType(@RequestBody PageForNeo4j pageForNeo4j) {
+    public R<Page<PrescriptionInterface>> getAllPrescriptionsByType(@RequestBody PrescriptionQueryVo params) {
         try {
             //判断排序类型及排序字段
-            Sort sort = "ascending".equals(pageForNeo4j.getSortType()) ? by(Sort.Direction.ASC, pageForNeo4j.getSortableField()) : by(Sort.Direction.DESC, pageForNeo4j.getSortableField());
+            Sort sort = "ascending".equals(params.getSortType()) ? by(Sort.Direction.ASC, params.getSortableField()) : by(Sort.Direction.DESC, params.getSortableField());
             //获取pageable
-            Pageable pageable = PageRequest.of(pageForNeo4j.getPageNum()-1,pageForNeo4j.getPageSize(),sort);
-            Page<PrescriptionInterface> prescriptions = prescriptionService.getPrescriptionsByLabel(pageForNeo4j.getDynamicLabel(),pageable);
+            Pageable pageable = PageRequest.of(params.getPageNum()-1,params.getPageSize(),sort);
+            Page<PrescriptionInterface> prescriptions = prescriptionService.getPrescriptionsByLabel(params.getDynamicLabel(),pageable);
             System.out.println(prescriptions);
             return R.success(prescriptions);
         } catch (Exception e) {
@@ -112,19 +110,39 @@ public class PrescriptionController extends BaseController {
     ;
 
     @ResponseBody
-    @GetMapping("/getAllPrescriptions")
-    public R<List<PrescriptionInterface>> getAllPrescriptions() {
+    @PostMapping("/getAllPrescriptions")
+    public R<Page<Prescription>> getAllPrescriptions(@RequestBody PrescriptionQueryVo params) {
         try {
-            List<Prescription> allPrescriptions = prescriptionService.getAllPrescriptions();
+            //判断排序类型及排序字段
+            Sort sort = "ascending".equals(params.getSortType()) ? by(Sort.Direction.ASC, params.getSortableField()) : by(Sort.Direction.DESC, params.getSortableField());
+            //获取pageable
+            Pageable pageable = PageRequest.of(params.getPageNum()-1,params.getPageSize(),sort);
+            Page<Prescription> allPrescriptions = prescriptionService.getAllPrescriptions(pageable);
             System.out.println(allPrescriptions);
             return R.success(allPrescriptions);
         } catch (Exception e) {
             e.printStackTrace();
             return R.error(e.getMessage());
         }
-    }
+    };
 
-    ;
+    @ResponseBody
+    @PostMapping("/getAllPrescriptionsByParams")
+    public R<Page<Prescription>> getAllPrescriptionsByParams(@RequestBody PrescriptionQueryVo params) {
+        try {
+            //判断排序类型及排序字段
+            Sort sort = "ascending".equals(params.getSortType()) ? by(Sort.Direction.ASC, params.getSortableField()) : by(Sort.Direction.DESC, params.getSortableField());
+            //获取pageable
+            Pageable pageable = PageRequest.of(params.getPageNum()-1,params.getPageSize(),sort);
+            Example<Prescription> example = Example.of(params.getOriginPrescription());
+            Page<Prescription> allPrescriptions = prescriptionService.getAllPrescriptionsByParams(example,pageable);
+            System.out.println(allPrescriptions);
+            return R.success(allPrescriptions);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    };
 
     @ResponseBody
     @GetMapping("/getPrescriptionInterfaceByName/{prescriptionName}")
@@ -137,9 +155,20 @@ public class PrescriptionController extends BaseController {
             e.printStackTrace();
             return R.error(e.getMessage());
         }
-    }
+    };
 
-    ;
+    @ResponseBody
+    @GetMapping("/getElementsByPrescriptionId/{prescriptionId}")
+    public R<List<hasMaterialElementInterface>> getElementsByPrescriptionId(@PathVariable Long prescriptionId) {
+        try {
+            List<hasMaterialElementInterface> elements = prescriptionService.getAllMaterialElementsByProscriptionId(prescriptionId);
+            System.out.println(elements);
+            return R.success(elements);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    };
 
     @ResponseBody
     @GetMapping("/deletePrescriptionById/{prescriptionId}")
@@ -930,24 +959,10 @@ public class PrescriptionController extends BaseController {
     ;
 
     @ResponseBody
-    @GetMapping("/getAllMaterialElementsByProscriptionId/{proscriptionId}")
-    public R<List<hasMaterialElement>> getAllMaterialElementsByProscriptionId(@PathVariable Long proscriptionId) {
-        try {
-            Set<hasMaterialElement> elements = prescriptionService.getAllMaterialElementsByProscriptionId(proscriptionId);
-            return R.success(new ArrayList<>(elements));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return R.error(e.getMessage());
-        }
-    }
-
-    ;
-
-    @ResponseBody
     @PostMapping("/modifyAllMaterialElementsByProscriptionId")
-    public R<List<hasMaterialElement>> modifyAllMaterialElementsByProscriptionId(@RequestBody PrescriptionAndElement PE) {
+    public R<List<hasMaterialElementInterface>> modifyAllMaterialElementsByProscriptionId(@RequestBody PrescriptionAndElement PE) {
         try {
-            Set<hasMaterialElement> newMaterialElements = prescriptionService.modifyAllMaterialElementsByProscriptionId(PE.getPrescriptionId(), PE.getElements());
+            List<hasMaterialElementInterface> newMaterialElements = prescriptionService.modifyAllMaterialElementsByProscriptionId(PE.getPrescriptionId(), PE.getElements());
             System.out.println(newMaterialElements);
             return R.success(newMaterialElements);
         } catch (Exception e) {

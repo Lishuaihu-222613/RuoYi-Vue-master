@@ -24,6 +24,13 @@ export function getPrescriptionsByParams(data) {
   })
 }
 
+export function getElementsByPrescriptionId(prescriptionId) {
+  return request({
+    url: '/prescription/getElementsByPrescriptionId/' + prescriptionId,
+    method: 'get'
+  })
+}
+
 export function getPrescriptionById(prescriptionId) {
   return request({
     url: '/prescription/getPrescriptionById/' + prescriptionId,
@@ -52,5 +59,12 @@ export function deletePrescription(prescriptionId) {
     url: '/prescription/deletePrescription/' + prescriptionId,
     method: 'get'
   })
+}
 
+export function modifyElements(data) {
+  return request({
+    url: '/prescription/modifyAllMaterialElementsByProscriptionId',
+    method: 'post',
+    data: data
+  })
 }

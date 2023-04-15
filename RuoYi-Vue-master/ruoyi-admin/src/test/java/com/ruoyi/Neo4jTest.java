@@ -3,12 +3,7 @@ package com.ruoyi;
 import com.ruoyi.common.utils.Neo4j.Neo4jUtil;
 import com.ruoyi.common.utils.poi.WordUtil;
 import com.ruoyi.system.domain.AssemblyPojo.Structure.AssemblyPart;
-import com.ruoyi.system.domain.KgBuilderPojo.model.nodes.conditionItem;
-import com.ruoyi.system.domain.KgBuilderPojo.model.nodes.decisionKnowledge;
-import com.ruoyi.system.domain.KgBuilderPojo.model.nodes.resultItem;
-import com.ruoyi.system.domain.KgBuilderPojo.model.relationships.ruleAntecedent;
-import com.ruoyi.system.domain.KgBuilderPojo.model.relationships.ruleConsequent;
-import com.ruoyi.system.service.StructureService.impl.StructureServiceImpl;
+import com.ruoyi.system.service.ElementService.impl.ElementServiceImpl;
 import com.ruoyi.system.service.dKService.impl.dKServiceImpl;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,14 +11,10 @@ import org.kie.api.runtime.KieSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.*;
 
 @RunWith(SpringJUnit4ClassRunner.class) // SpringJUnit支持，由此引入Spring-Test框架支持！
@@ -45,7 +36,7 @@ public class Neo4jTest {
     private KieSession kieSession;
 
     @Autowired
-    private StructureServiceImpl structureService;
+    private ElementServiceImpl structureService;
 
 
     @Test

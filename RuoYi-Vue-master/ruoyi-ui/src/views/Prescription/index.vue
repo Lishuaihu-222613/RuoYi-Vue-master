@@ -6,7 +6,7 @@
           <el-input
             v-model="filterText"
             clearable
-            placeholder="请输入分类名称"
+            placeholder="请输入配方分类名称"
             prefix-icon="el-icon-search"
             size="small"
             style=" margin-bottom: 20px"
@@ -131,6 +131,10 @@
                           @createPrescription="createPrescription"
                           @deletePrescription="deletePrescription"
                           @updatePrescription="updatePrescription"
+                          @expandPrescription="expandPrescription"
+                          @queryProperty="() =>{ this.prescriptionPropertyShow = true }"
+                          @queryStability="() =>{ this.prescriptionStabilityShow = true }"
+                          @queryElements="() =>{ this.prescriptionElementsShow = true }"
         >
         </vue-context-menu>
 
@@ -163,7 +167,7 @@
 
         <PrescriptionElements ref="prescriptionElements"
                             :dialog="prescriptionElementsShow"
-                            :selectPrescription="selectPrescription"
+                            :selectPrescriptionId="selectPrescription.prescriptionId"
                             :title="title"
                             @closeDialog="() =>{ this.prescriptionElementsShow = false }"
                             @restore="() =>{this.selectPrescription = {}}"
@@ -183,17 +187,17 @@
                            align="center"
                            label="配方描述" prop="prescriptionDescription"
           />
-          <el-table-column v-if="columns[3].visible" key="appearances" :show-overflow-tooltip="true"
+          <el-table-column v-if="columns[3].visible" key="density" :show-overflow-tooltip="true"
                            align="center"
-                           label="配方密度" prop="appearances"
+                           label="配方密度" prop="density"
           />
-          <el-table-column v-if="columns[4].visible" key="appearances" :show-overflow-tooltip="true"
+          <el-table-column v-if="columns[4].visible" key="dangerLevel" :show-overflow-tooltip="true"
                            align="center"
-                           label="危险等级" prop="appearances"
+                           label="危险等级" prop="dangerLevel"
           />
-          <el-table-column v-if="columns[5].visible" key="reasons" :show-overflow-tooltip="true"
+          <el-table-column v-if="columns[5].visible" key="curingTime" :show-overflow-tooltip="true"
                            align="center"
-                           label="固化时间" prop="reasons"
+                           label="固化时间" prop="curingTime"
           >
             <template slot-scope="scope">
               <el-tag v-for="(value, key) in scope.row.curingTime" :key="key" :index="key+''" type="success">
@@ -211,9 +215,8 @@
               </el-tag>
             </template>
           </el-table-column>
-          <el-table-column v-if="columns[7].visible" key="solutions" :show-overflow-tooltip="true" align="center"
+          <el-table-column v-if="columns[7].visible" :show-overflow-tooltip="true" align="center"
                            label="相关性质"
-                           prop="solutions"
           >
             <template slot-scope="scope">
               <el-button
@@ -225,9 +228,8 @@
               </el-button>
             </template>
           </el-table-column>
-          <el-table-column v-if="columns[8].visible" key="solutions" :show-overflow-tooltip="true" align="center"
+          <el-table-column v-if="columns[8].visible" :show-overflow-tooltip="true" align="center"
                            label="稳定性指标"
-                           prop="solutions"
           >
             <template slot-scope="scope">
               <el-button
@@ -239,9 +241,8 @@
               </el-button>
             </template>
           </el-table-column>
-          <el-table-column v-if="columns[9].visible" key="solutions" :show-overflow-tooltip="true" align="center"
+          <el-table-column v-if="columns[9].visible" :show-overflow-tooltip="true" align="center"
                            label="配方组分"
-                           prop="solutions"
           >
             <template slot-scope="scope">
               <el-button
@@ -307,7 +308,7 @@
         <div slot="tip" class="el-upload__tip text-center">
           <div slot="tip" class="el-upload__tip">
             <el-checkbox v-model="upload.updateSupport"/>
-            是否更新已经存在的用户数据
+            是否更新已经存在的配方数据
           </div>
           <span>仅允许导入xls、xlsx格式文件。</span>
           <el-link :underline="false" style="font-size:12px;vertical-align: baseline;" type="primary"
@@ -334,6 +335,7 @@ import ModifyPrescription from '@/views/Prescription/components/modifyPrescripti
 import PrescriptionProperty from '@/views/Prescription/components/prescriptionProperty.vue'
 import PrescriptionStability from '@/views/Prescription/components/prescriptionStability.vue'
 import PrescriptionElements from '@/views/Prescription/components/prescriptionElements.vue'
+
 export default {
   name: 'index',
   components: { Treeselect,ModifyPrescription,PrescriptionProperty,PrescriptionStability,PrescriptionElements },
@@ -378,7 +380,7 @@ export default {
           dynamicLabels:[],
           density:'',
           dangerLevel:'',
-          prescriptionDescription:"",
+          prescriptionDescription:'',
         }
       },
       // 列信息
@@ -421,6 +423,11 @@ export default {
           fnHandler: 'updatePrescription',
           icoName: 'el-icon-search',
           btnName: '修改质量配方'
+        },
+        {
+          fnHandler: 'expandPrescription',
+          icoName: 'el-icon-search',
+          btnName: '展开质量配方'
         },
         {
           fnHandler: 'deletePrescription',
@@ -559,6 +566,9 @@ export default {
       this.modifyPrescriptionShow = true
       this.modifyState = true
     },
+    expandPrescription(){
+      this.prescriptionElementsShow = true
+    },
     deletePrescription() {
       prescriptionManagement.deleteQualityPrescription(this.selectId).then(result => {
         if (result.code === 200) {
@@ -578,18 +588,18 @@ export default {
       this.selectPrescription = row;
     },
     handleProperty(row) {
-      this.modifyPrescriptionShow = true;
-      this.title = "修改配方";
+      this.prescriptionPropertyShow = true;
+      this.title = "查看性质";
       this.selectPrescription = row;
     },
     handleStability(row) {
-      this.modifyPrescriptionShow = true;
-      this.title = "修改配方";
+      this.prescriptionStabilityShow = true;
+      this.title = "查看稳定性";
       this.selectPrescription = row;
     },
     handleElements(row) {
-      this.modifyPrescriptionShow = true;
-      this.title = "修改配方";
+      this.prescriptionElementsShow = true;
+      this.title = "查看组分";
       this.selectPrescription = row;
     },
     /** 删除按钮操作 */

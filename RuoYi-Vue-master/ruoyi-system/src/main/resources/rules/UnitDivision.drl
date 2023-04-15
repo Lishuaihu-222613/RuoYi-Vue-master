@@ -6,7 +6,7 @@ import com.ruoyi.system.domain.AssemblyPojo.Structure.AssemblyPart;
 import com.ruoyi.system.domain.AssemblyPojo.Structure.AssemblyComponent;
 import com.ruoyi.system.domain.AssemblyPojo.Structure.AssemblyConstraint;
 import com.ruoyi.system.domain.AssemblyPojo.Structure.vo.PartWithCNumber;
-import com.ruoyi.system.service.StructureService.StructureService;
+import com.ruoyi.system.service.ElementService.ElementService;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.List;
@@ -23,7 +23,7 @@ global ArrayList<AssemblyComponent> unitComponents;
 global Map<String,Integer> unitNumber;
 global ArrayList<AssemblyPart> partSequence;
 global ArrayList<AssemblyPart> referenceParts;
-global com.ruoyi.system.service.StructureService.impl.StructureServiceImpl structureService;
+global com.ruoyi.system.service.ElementService.impl.ElementServiceImpl structureService;
 
 dialect "java"
 
@@ -167,7 +167,7 @@ end
 //end
 
 ////构建装配图矩阵
-//function double[][] getMatrixOfParts(List<AssemblyPart> parts,StructureService s){
+//function double[][] getMatrixOfParts(List<AssemblyPart> parts,ElementService s){
 //    int n = parts.size();
 //    double[][] weightMatrix=new double[n][n];
 //    AssemblyPart partA;
@@ -212,7 +212,7 @@ end
 //
 //}
 ////获取两个零件之间的约束权重
-//function double getRelationWeightOfPart(AssemblyPart partA,AssemblyPart partB,StructureService s){
+//function double getRelationWeightOfPart(AssemblyPart partA,AssemblyPart partB,ElementService s){
 //
 //    double weight = 0.0;
 //    List<AssemblyConstraint> constraintsOfPartA =  s.getAllConstraintByStructureId(partA.getStructureId());
@@ -276,7 +276,7 @@ end
 //    lock-on-active true
 //    when
 //        $partList:List(size > 0)
-//        $service:StructureService()
+//        $service:ElementService()
 //    then
 //
 //end

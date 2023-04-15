@@ -26,6 +26,7 @@ import java.util.Map;
 @Controller
 @RequestMapping("/")
 public class FileController extends BaseController {
+
 	@Autowired
 	private KgBuilderConfig appConfig;
 	@Autowired

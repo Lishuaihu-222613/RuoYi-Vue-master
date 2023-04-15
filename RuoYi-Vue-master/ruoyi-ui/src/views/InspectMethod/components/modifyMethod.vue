@@ -106,7 +106,7 @@
       </el-tab-pane>
       <el-tab-pane label="关联信息">
         <el-form :model="method" :rules="rules" ref="relatedForm">
-          <el-form-item :label-width="formLabelWidth" label="关联典型工艺">
+          <el-form-item :label-width="formLabelWidth" label="关联工艺实例">
             <el-row class="row-bg" justify="space-around" type="flex">
               <treeselect v-model="processLabel"
                           :clearable="true"

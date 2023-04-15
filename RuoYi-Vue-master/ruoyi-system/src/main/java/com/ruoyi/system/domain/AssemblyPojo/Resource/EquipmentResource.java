@@ -1,15 +1,11 @@
 package com.ruoyi.system.domain.AssemblyPojo.Resource;
 
-import com.ruoyi.system.domain.AssemblyPojo.Knowledge.TypicalKnowledge.Process.TypicalSequence;
-import com.ruoyi.system.domain.AssemblyPojo.Knowledge.TypicalKnowledge.Process.TypicalProcess;
+import com.ruoyi.system.domain.AssemblyPojo.Process.SpecialSequence.Sequence;
+import com.ruoyi.system.domain.AssemblyPojo.Process.Step;
 import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.schema.Property;
-import org.springframework.data.neo4j.core.schema.Relationship;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Node({"设备资源","EquipmentResource"})
 public class EquipmentResource extends AssemblyResource{
@@ -42,33 +38,145 @@ public class EquipmentResource extends AssemblyResource{
     private double loadRate;
 
     @Property(name = "注意事项")
-    private List<String>  Attentions;
+    private List<String>  attentions;
 
-    @Property(name = "principle")
+    @Property(name = "使用原则")
     private String principle;
 
-    @Relationship(type = "hasInstallTool" , direction = Relationship.Direction.OUTGOING)
-    private Set<AssemblyResource> installTools;
+    public Map<String, String> getEquipmentCapacity() {
+        return equipmentCapacity;
+    }
 
-    @Relationship(type = "hasSubEquipments" , direction = Relationship.Direction.OUTGOING)
-    private Set<AssemblyResource> subEquipments;
+    public void setEquipmentCapacity(Map<String, String> equipmentCapacity) {
+        this.equipmentCapacity = equipmentCapacity;
+    }
 
-    @Relationship(type = "hasSuitableTool" , direction = Relationship.Direction.OUTGOING)
-    private Set<AssemblyResource> suitableTools;
+    public double getEquipmentPower() {
+        return equipmentPower;
+    }
 
-    @Relationship(type = "hasUnSuitableTool" , direction = Relationship.Direction.OUTGOING)
-    private Set<AssemblyResource> unsuitableTools;
+    public void setEquipmentPower(double equipmentPower) {
+        this.equipmentPower = equipmentPower;
+    }
 
-    @Relationship(type = "hasSuitableProcess" , direction = Relationship.Direction.OUTGOING)
-    private Set<TypicalProcess> suitableProcesses;
+    public double getEquipmentPrice() {
+        return equipmentPrice;
+    }
 
-    @Relationship(type = "hasSuitableProcedure" , direction = Relationship.Direction.OUTGOING)
-    private Set<TypicalSequence> suitableProcedures;
+    public void setEquipmentPrice(double equipmentPrice) {
+        this.equipmentPrice = equipmentPrice;
+    }
 
-    @Relationship(type = "hasUnSuitableProcess" , direction = Relationship.Direction.OUTGOING)
-    private Set<TypicalProcess> unsuitableProcesses;
+    public Date getProductionDate() {
+        return productionDate;
+    }
 
-    @Relationship(type = "hasUnSuitableProcedure" , direction = Relationship.Direction.OUTGOING)
-    private Set<TypicalSequence> unsuitableProcedures;
+    public void setProductionDate(Date productionDate) {
+        this.productionDate = productionDate;
+    }
 
+    public String getManufacturer() {
+        return manufacturer;
+    }
+
+    public void setManufacturer(String manufacturer) {
+        this.manufacturer = manufacturer;
+    }
+
+    public String getEquipmentSize() {
+        return equipmentSize;
+    }
+
+    public void setEquipmentSize(String equipmentSize) {
+        this.equipmentSize = equipmentSize;
+    }
+
+    public String getEquipmentState() {
+        return equipmentState;
+    }
+
+    public void setEquipmentState(String equipmentState) {
+        this.equipmentState = equipmentState;
+    }
+
+    public double getDepreciationRate() {
+        return depreciationRate;
+    }
+
+    public void setDepreciationRate(double depreciationRate) {
+        this.depreciationRate = depreciationRate;
+    }
+
+    public double getLoadRate() {
+        return loadRate;
+    }
+
+    public void setLoadRate(double loadRate) {
+        this.loadRate = loadRate;
+    }
+
+    public List<String> getAttentions() {
+        return attentions;
+    }
+
+    public void setAttentions(List<String> attentions) {
+        this.attentions = attentions;
+    }
+
+    public String getPrinciple() {
+        return principle;
+    }
+
+    public void setPrinciple(String principle) {
+        this.principle = principle;
+    }
+
+    public EquipmentResource() {
+    }
+
+    public EquipmentResource(Long resourceId, String resourceName, String resourceDescription, Set<String> resourceTypes, String site, Map<String, String> equipmentCapacity, double equipmentPower, double equipmentPrice, Date productionDate, String manufacturer, String equipmentSize, String equipmentState, double depreciationRate, double loadRate, List<String> attentions, String principle) {
+        super(resourceId, resourceName, resourceDescription, resourceTypes, site);
+        this.equipmentCapacity = equipmentCapacity;
+        this.equipmentPower = equipmentPower;
+        this.equipmentPrice = equipmentPrice;
+        this.productionDate = productionDate;
+        this.manufacturer = manufacturer;
+        this.equipmentSize = equipmentSize;
+        this.equipmentState = equipmentState;
+        this.depreciationRate = depreciationRate;
+        this.loadRate = loadRate;
+        this.attentions = attentions;
+        this.principle = principle;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        EquipmentResource that = (EquipmentResource) o;
+        return Double.compare(that.equipmentPower, equipmentPower) == 0 && Double.compare(that.equipmentPrice, equipmentPrice) == 0 && Double.compare(that.depreciationRate, depreciationRate) == 0 && Double.compare(that.loadRate, loadRate) == 0 && Objects.equals(equipmentCapacity, that.equipmentCapacity) && Objects.equals(productionDate, that.productionDate) && Objects.equals(manufacturer, that.manufacturer) && Objects.equals(equipmentSize, that.equipmentSize) && Objects.equals(equipmentState, that.equipmentState) && Objects.equals(attentions, that.attentions) && Objects.equals(principle, that.principle);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), equipmentCapacity, equipmentPower, equipmentPrice, productionDate, manufacturer, equipmentSize, equipmentState, depreciationRate, loadRate, attentions, principle);
+    }
+
+    @Override
+    public String toString() {
+        return "EquipmentResource{" +
+                "equipmentCapacity=" + equipmentCapacity +
+                ", equipmentPower=" + equipmentPower +
+                ", equipmentPrice=" + equipmentPrice +
+                ", productionDate=" + productionDate +
+                ", manufacturer='" + manufacturer + '\'' +
+                ", equipmentSize='" + equipmentSize + '\'' +
+                ", equipmentState='" + equipmentState + '\'' +
+                ", depreciationRate=" + depreciationRate +
+                ", loadRate=" + loadRate +
+                ", attentions=" + attentions +
+                ", principle='" + principle + '\'' +
+                "} " + super.toString();
+    }
 }

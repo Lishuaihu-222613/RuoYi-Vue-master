@@ -17,10 +17,49 @@ export function getTreeManagement(id) {
   })
 }
 
+export function getAllRootNode() {
+  return request({
+    url: '/ClassificationTree/getAllRoot',
+    method: 'get'
+  })
+}
+
+export function getleafsByParams(data) {
+  return request({
+    url: '/ClassificationTree/getleafsByParams',
+    method: 'post',
+    data:data
+  })
+}
+
+export function getParentLeaf(id) {
+  return request({
+    url: '/ClassificationTree/getParentLeaf/'+id,
+    method: 'get',
+  })
+}
+
 // 新增知识树管理
 export function addTreeManagement(data) {
   return request({
     url: '/ClassificationTree',
+    method: 'post',
+    data: data
+  })
+}
+
+export function getSubLeafsByParentId(data) {
+  return request({
+    url: '/ClassificationTree/getSubLeafs',
+    method: 'post',
+    data: data
+  })
+}
+
+
+export function addSubLeaf(data) {
+  return request({
+    url: '/ClassificationTree/addSubLeaf',
     method: 'post',
     data: data
   })

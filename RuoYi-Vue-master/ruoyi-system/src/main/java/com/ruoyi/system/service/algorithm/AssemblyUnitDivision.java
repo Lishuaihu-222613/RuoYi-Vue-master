@@ -3,13 +3,11 @@ package com.ruoyi.system.service.algorithm;
 import com.ruoyi.system.domain.AssemblyPojo.Structure.AssemblyComponent;
 import com.ruoyi.system.domain.AssemblyPojo.Structure.AssemblyConstraint;
 import com.ruoyi.system.domain.AssemblyPojo.Structure.AssemblyPart;
-import com.ruoyi.system.service.StructureService.StructureService;
+import com.ruoyi.system.service.ElementService.ElementService;
 import org.drools.core.base.RuleNameEqualsAgendaFilter;
 import org.drools.core.base.RuleNameStartsWithAgendaFilter;
-import org.kie.api.runtime.Globals;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
-import org.kie.api.runtime.rule.FactHandle;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -23,7 +21,7 @@ public class AssemblyUnitDivision {
     private KieContainer kieContainer;
 
     @Resource
-    private StructureService structureService;
+    private ElementService elementService;
 
     //传入待推理零件集合
     private List<AssemblyPart> originalParts;
@@ -131,8 +129,8 @@ public class AssemblyUnitDivision {
             partA = parts.get(i);
             for (int j = 0; j <= n; j++) {
                 partB = parts.get(j);
-                List<AssemblyConstraint> constraintsOfPartA = structureService.getAllConstraintByStructureId(partA.getStructureId());
-                List<AssemblyConstraint> constraintsOfPartB = structureService.getAllConstraintByStructureId(partB.getStructureId());
+                List<AssemblyConstraint> constraintsOfPartA = elementService.getAllConstraintByStructureId(partA.getStructureId());
+                List<AssemblyConstraint> constraintsOfPartB = elementService.getAllConstraintByStructureId(partB.getStructureId());
                 AssemblyConstraint cab;
                 List<AssemblyConstraint> constraintAB = constraintsOfPartA.stream().map(cA -> constraintsOfPartB.stream()
                                 .filter(cB -> Objects.equals(cA.getConstraintId(), cB.getConstraintId()))

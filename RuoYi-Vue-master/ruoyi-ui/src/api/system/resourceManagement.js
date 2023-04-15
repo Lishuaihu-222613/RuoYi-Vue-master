@@ -24,6 +24,32 @@ export function getResourcesByParams(data) {
   })
 }
 
+
+
+export function getAllAuxiliaryResources(data) {
+  return request({
+    url: '/resource/getAllAuxiliaryResources',
+    method: 'post',
+    data: data
+  })
+}
+
+export function getAllAuxiliaryResourcesByLabel(data) {
+  return request({
+    url: '/resource/getAllAuxiliaryResourcesByLabel',
+    method: 'post',
+    data: data
+  })
+}
+
+export function getAuxiliaryResourcesByParams(data) {
+  return request({
+    url: '/resource/getAuxiliaryResourcesByParams',
+    method: 'post',
+    data: data
+  })
+}
+
 export function getResourceById(resourceId) {
   return request({
     url: '/resource/getResourceById/' + resourceId,

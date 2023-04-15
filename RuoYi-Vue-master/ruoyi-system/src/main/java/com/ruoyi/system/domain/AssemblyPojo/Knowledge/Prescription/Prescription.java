@@ -5,7 +5,7 @@ import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.Stability.Exp
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.Stability.HeatStability;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.Stability.MechanicalStability;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.Stability.RadioStability;
-import com.ruoyi.system.domain.AssemblyPojo.Knowledge.TypicalKnowledge.Process.TypicalProcess;
+import com.ruoyi.system.domain.AssemblyPojo.Process.Process;
 import com.ruoyi.system.domain.AssemblyPojo.Structure.AssemblyProduct;
 import org.springframework.data.neo4j.core.schema.*;
 
@@ -74,13 +74,13 @@ public class Prescription {
     @Relationship(type = "hasUsage" , direction = Relationship.Direction.OUTGOING)
     private Set<AssemblyProduct> product;
 
-    @Relationship(type = "hasTypicalProcess" , direction = Relationship.Direction.OUTGOING)
-    private Set<TypicalProcess> typicalProcesses;
+    @Relationship(type = "hasProcess" , direction = Relationship.Direction.OUTGOING)
+    private Set<Process> typicalProcesses;
 
     public Prescription() {
     }
 
-    public Prescription(Long prescriptionId, String prescriptionName, String prescriptionDescription, String density, String dangerLevel, Map<String, String> curingTime, Map<String, String> otherProperty, Set<String> prescriptionLabels, Set<hasMaterialElement> materialElements, EnergyProperty energyProperty, ForceProperty forceProperty, CombustionProperty combustionProperty, StorageProperty storageProperty, OxidantRatio oxidantRatio, HeatStability heatStability, MechanicalStability mechanicalStability, RadioStability radioStability, ExplosionStability explosionStability, Set<AssemblyProduct> product, Set<TypicalProcess> typicalProcesses) {
+    public Prescription(Long prescriptionId, String prescriptionName, String prescriptionDescription, String density, String dangerLevel, Map<String, String> curingTime, Map<String, String> otherProperty, Set<String> prescriptionLabels, Set<hasMaterialElement> materialElements, EnergyProperty energyProperty, ForceProperty forceProperty, CombustionProperty combustionProperty, StorageProperty storageProperty, OxidantRatio oxidantRatio, HeatStability heatStability, MechanicalStability mechanicalStability, RadioStability radioStability, ExplosionStability explosionStability, Set<AssemblyProduct> product, Set<Process> typicalProcesses) {
         this.prescriptionId = prescriptionId;
         this.prescriptionName = prescriptionName;
         this.prescriptionDescription = prescriptionDescription;
@@ -255,11 +255,11 @@ public class Prescription {
         this.product = product;
     }
 
-    public Set<TypicalProcess> getTypicalProcesses() {
+    public Set<Process> getTypicalProcesses() {
         return typicalProcesses;
     }
 
-    public void setTypicalProcesses(Set<TypicalProcess> typicalProcesses) {
+    public void setTypicalProcesses(Set<Process> typicalProcesses) {
         this.typicalProcesses = typicalProcesses;
     }
 
@@ -294,7 +294,7 @@ public class Prescription {
                 ", storageProperty=" + storageProperty +
                 ", oxidantRatio=" + oxidantRatio +
                 ", heatStability=" + heatStability +
-                ", impactStability=" + mechanicalStability +
+                ", mechanicalStability=" + mechanicalStability +
                 ", radioStability=" + radioStability +
                 ", explosionStability=" + explosionStability +
                 ", product=" + product +

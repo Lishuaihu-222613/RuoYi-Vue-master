@@ -7,7 +7,15 @@ export function getAllMaterialsByType(data){
     method: 'post',
     data: data
   })
+}
+
+export function getAllMaterialOptions(){
+  return request({
+    url: '/material/getAllMaterialOptions',
+    method: 'get'
+  })
 };
+
 
 export function getMaterialById(materialId){
   return request({

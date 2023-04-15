@@ -21,7 +21,6 @@
 </template>
 
 <script>
-import E from "wangeditor"
 export default {
   props: {
     data: Object

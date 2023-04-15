@@ -6,7 +6,7 @@
           <el-input
             v-model="filterText"
             clearable
-            placeholder="请输入分类名称"
+            placeholder="请输入方法分类名称"
             prefix-icon="el-icon-search"
             size="small"
             style=" margin-bottom: 20px"
@@ -182,7 +182,7 @@
           >
             <template slot-scope="scope">
               <el-tag v-for="(item,index) in scope.row.methodFactors" :key="index" :index="index+''" type="success">
-                {{ item.methodFactors + ':' + item.methodFactors }}
+                {{ item.factorName + ':' + item.factorDescription }}
               </el-tag>
             </template>
           </el-table-column>
@@ -209,13 +209,6 @@
                 type="text"
                 @click="handleUpdate(scope.row)"
               >修改
-              </el-button>
-              <el-button
-                icon="el-icon-search"
-                size="mini"
-                type="text"
-                @click="handleRelation(scope.row)"
-              >关联信息
               </el-button>
               <el-button
                 icon="el-icon-delete"
@@ -281,11 +274,10 @@ import * as treeManagement from '@/api/system/treeManagement'
 import { getToken } from '@/utils/auth'
 import * as methodManagement from '@/api/system/inspectMethodManagement'
 import ModifyMethod from '@/views/InspectMethod/components/modifyMethod.vue'
-import RelatedWindows from '@/views/InspectMethod/components/relatedWindows.vue'
 export default {
   name: 'index',
 
-  components: { ModifyMethod, Treeselect, RelatedWindows},
+  components: { ModifyMethod, Treeselect},
 
   data() {
     return {
@@ -508,9 +500,7 @@ export default {
       this.modifyMethodShow = true
       this.modifyState = true
     },
-    openRelationWindow(){
-      this.relationWindow = true
-    },
+
     deleteMethod() {
       methodManagement.deleteInspectMethod(this.selectId).then(result => {
         if (result.code === 200) {
@@ -528,10 +518,6 @@ export default {
       this.modifyMethodShow = true;
       this.title = "修改原则";
       this.selectMethod = row;
-    },
-    handleRelationWindow(row) {
-      this.relationWindow = true;
-      this.title = "关联信息"
     },
     /** 删除按钮操作 */
     handleDelete(row) {

@@ -19,11 +19,17 @@ public interface ResourceRepository extends Neo4jRepository<AssemblyResource,Lon
     @Override
     List<AssemblyResource> findAll(Sort sort);
 
-    @Query(value = " Match (n) where any(label in labels(n) WHERE label in ['AssemblyResource', $dynamicLabel]) return n" +
+    @Query(value = " Match (n) where any(label in labels(n) WHERE label in ['AssemblyResource', $dynamicLabel]) return n " +
             ":#{orderBy(#pageable)} SKIP $skip LIMIT $limit",
             countQuery = "Match (n) where any(label in labels(n) WHERE label in ['AssemblyResource', $dynamicLabel]) return count(n)"
     )
     Page<AssemblyResource> findResourcesByResourceType(String resourceType, Pageable pageable);
+
+    @Query(value = "MATCH (n:`:#{allOf(#label)}`) RETURN n " +
+            ":#{orderBy(#pageable)} SKIP $skip LIMIT $limit",
+            countQuery = "MATCH (n:`:#{allOf(#label)}`) RETURN count(n) "
+    )
+    Page<AssemblyResource> findSingleResourcesByType(List<String> labels, Pageable pageable);
 
     @Override
     Optional<AssemblyResource> findById(Long resourceId);
@@ -37,4 +43,5 @@ public interface ResourceRepository extends Neo4jRepository<AssemblyResource,Lon
 
     @Override
     <S extends AssemblyResource> Page<S> findAll(Example<S> example, Pageable pageable);
+
 }

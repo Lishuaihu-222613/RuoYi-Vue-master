@@ -12,7 +12,9 @@ import org.springframework.data.repository.query.Param;
 import java.util.Collection;
 import java.util.Optional;
 
-public interface PrescriptionRepository extends Neo4jRepository<Prescription,Long> {
+public interface
+
+PrescriptionRepository extends Neo4jRepository<Prescription,Long> {
 
     @Override
     Optional<Prescription> findById(Long prescriptionId);
@@ -40,4 +42,10 @@ public interface PrescriptionRepository extends Neo4jRepository<Prescription,Lon
 
     @Override
     <S extends Prescription> Page<S> findAll(Example<S> example, Pageable pageable);
+    @Query("Match (n:Prescription)-[r]->(m:Material) where id(n) = $prescriptionId delete r")
+    void deleteRelationForMaterial(@Param("prescriptionId") Long prescriptionId);
+
+    @Query("CREATE (n:Prescription)-[r:hasMaterialElement{percentage: $percentage}]->(m:Material) where id(n) = $prescriptionId and id(m) = $materialId")
+    void createRelationForMaterial(@Param("prescriptionId") Long prescriptionId,@Param("$materialId") Long $materialId,@Param("percentage") double percentage);
+
 }

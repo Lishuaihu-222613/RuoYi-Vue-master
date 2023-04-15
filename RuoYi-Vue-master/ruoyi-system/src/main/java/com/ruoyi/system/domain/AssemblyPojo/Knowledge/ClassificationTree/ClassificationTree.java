@@ -28,6 +28,9 @@ public class ClassificationTree {
     @Property(name = "节点要求")
     private List<String> leafRequirements;
 
+    @Property(name = "存在子节点")
+    private boolean hasSubLeafs;
+
     @DynamicLabels
     private Set<String> dynamicLabels;
 
@@ -90,6 +93,14 @@ public class ClassificationTree {
         this.subLeafs = subLeafs;
     }
 
+    public boolean isHasSubLeafs() {
+        return hasSubLeafs;
+    }
+
+    public void setHasSubLeafs(boolean hasSubLeafs) {
+        this.hasSubLeafs = hasSubLeafs;
+    }
+
     public String getLeafValue() {
         return leafValue;
     }
@@ -101,13 +112,14 @@ public class ClassificationTree {
     public ClassificationTree() {
     }
 
-    public ClassificationTree(Long leafId, String leafName, String leafDescription, String leafValue, List<String> leafAttributes, List<String> leafRequirements, Set<String> dynamicLabels, Set<ClassificationTree> subLeafs) {
+    public ClassificationTree(Long leafId, String leafName, String leafDescription, String leafValue, List<String> leafAttributes, List<String> leafRequirements, boolean hasSubLeafs, Set<String> dynamicLabels, Set<ClassificationTree> subLeafs) {
         this.leafId = leafId;
         this.leafName = leafName;
         this.leafDescription = leafDescription;
         this.leafValue = leafValue;
         this.leafAttributes = leafAttributes;
         this.leafRequirements = leafRequirements;
+        this.hasSubLeafs = hasSubLeafs;
         this.dynamicLabels = dynamicLabels;
         this.subLeafs = subLeafs;
     }
@@ -117,12 +129,12 @@ public class ClassificationTree {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ClassificationTree that = (ClassificationTree) o;
-        return Objects.equals(leafId, that.leafId) && Objects.equals(leafName, that.leafName) && Objects.equals(leafDescription, that.leafDescription) && Objects.equals(leafValue, that.leafValue) && Objects.equals(leafAttributes, that.leafAttributes) && Objects.equals(leafRequirements, that.leafRequirements) && Objects.equals(dynamicLabels, that.dynamicLabels) && Objects.equals(subLeafs, that.subLeafs);
+        return hasSubLeafs == that.hasSubLeafs && Objects.equals(leafId, that.leafId) && Objects.equals(leafName, that.leafName) && Objects.equals(leafDescription, that.leafDescription) && Objects.equals(leafValue, that.leafValue) && Objects.equals(leafAttributes, that.leafAttributes) && Objects.equals(leafRequirements, that.leafRequirements) && Objects.equals(dynamicLabels, that.dynamicLabels) && Objects.equals(subLeafs, that.subLeafs);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(leafId, leafName, leafDescription, leafValue, leafAttributes, leafRequirements, dynamicLabels, subLeafs);
+        return Objects.hash(leafId, leafName, leafDescription, leafValue, leafAttributes, leafRequirements, hasSubLeafs, dynamicLabels, subLeafs);
     }
 
     @Override
@@ -134,6 +146,7 @@ public class ClassificationTree {
                 ", leafValue='" + leafValue + '\'' +
                 ", leafAttributes=" + leafAttributes +
                 ", leafRequirements=" + leafRequirements +
+                ", hasSubLeafs=" + hasSubLeafs +
                 ", dynamicLabels=" + dynamicLabels +
                 ", subLeafs=" + subLeafs +
                 '}';

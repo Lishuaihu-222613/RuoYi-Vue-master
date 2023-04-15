@@ -4,8 +4,7 @@ import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.utils.Neo4j.R;
 import com.ruoyi.system.domain.AssemblyPojo.Structure.AssemblyPart;
 import com.ruoyi.system.domain.AssemblyPojo.Structure.vo.PartsWithConstraints;
-import com.ruoyi.system.domain.KgBuilderPojo.model.nodes.decisionKnowledge;
-import com.ruoyi.system.service.StructureService.StructureService;
+import com.ruoyi.system.service.ElementService.ElementService;
 import com.ruoyi.system.service.algorithm.AssemblyUnitDivision;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,13 +21,13 @@ public class algorithmController extends BaseController {
     private AssemblyUnitDivision assemblyUnitDivision;
 
     @Resource
-    private StructureService structureService;
+    private ElementService elementService;
 
     @ResponseBody
     @PostMapping("/checkConstraints")
     public R<Boolean> checkConstraints(@RequestBody List<PartsWithConstraints> constraints){
         try {
-            Set<AssemblyPart> unknownParts = structureService.createUnknownParts(constraints);
+            Set<AssemblyPart> unknownParts = elementService.createUnknownParts(constraints);
             boolean check = assemblyUnitDivision.checkConstraintsOfParts(new ArrayList<>(unknownParts));
 //            int numbers = assemblyUnitDivision.calculateUnitNumbers(new ArrayList<>(unknownParts));
 //            System.out.println(numbers);

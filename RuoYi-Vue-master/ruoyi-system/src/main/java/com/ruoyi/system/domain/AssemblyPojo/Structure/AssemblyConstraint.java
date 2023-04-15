@@ -8,7 +8,7 @@ import java.util.Set;
 
 
 
-@Node("AssemblyConstraint")
+@Node({"约束","AssemblyConstraint"})
 public class AssemblyConstraint {
 
     @Id
@@ -24,9 +24,8 @@ public class AssemblyConstraint {
     @Property(name = "Value")
     private String constraintValue;
 
-    @JsonIgnore
     @Relationship(type = "with", direction = Relationship.Direction.OUTGOING)
-    private Set<AssemblyStructure> structures;
+    private Set<AssemblyElement> elements;
 
     public Long getConstraintId() {
         return constraintId;
@@ -60,23 +59,23 @@ public class AssemblyConstraint {
         this.constraintValue = constraintValue;
     }
 
-    public Set<AssemblyStructure> getStructures() {
-        return structures;
+    public Set<AssemblyElement> getElements() {
+        return elements;
     }
 
-    public void setStructures(Set<AssemblyStructure> structures) {
-        this.structures = structures;
+    public void setElements(Set<AssemblyElement> elements) {
+        this.elements = elements;
     }
 
     public AssemblyConstraint() {
     }
 
-    public AssemblyConstraint(Long constraintId, String constraintName, String constraintType, String constraintValue, Set<AssemblyStructure> structures) {
+    public AssemblyConstraint(Long constraintId, String constraintName, String constraintType, String constraintValue, Set<AssemblyElement> elements) {
         this.constraintId = constraintId;
         this.constraintName = constraintName;
         this.constraintType = constraintType;
         this.constraintValue = constraintValue;
-        this.structures = structures;
+        this.elements = elements;
     }
 
     @Override
@@ -84,12 +83,12 @@ public class AssemblyConstraint {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AssemblyConstraint that = (AssemblyConstraint) o;
-        return Objects.equals(constraintId, that.constraintId) && Objects.equals(constraintName, that.constraintName) && Objects.equals(constraintType, that.constraintType) && Objects.equals(constraintValue, that.constraintValue) && Objects.equals(structures, that.structures);
+        return Objects.equals(constraintId, that.constraintId) && Objects.equals(constraintName, that.constraintName) && Objects.equals(constraintType, that.constraintType) && Objects.equals(constraintValue, that.constraintValue) && Objects.equals(elements, that.elements);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(constraintId, constraintName, constraintType, constraintValue);
+        return Objects.hash(constraintId, constraintName, constraintType, constraintValue, elements);
     }
 
     @Override
@@ -99,6 +98,7 @@ public class AssemblyConstraint {
                 ", constraintName='" + constraintName + '\'' +
                 ", constraintType='" + constraintType + '\'' +
                 ", constraintValue='" + constraintValue + '\'' +
+                ", elements=" + elements +
                 '}';
     }
 }

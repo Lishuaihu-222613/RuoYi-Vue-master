@@ -17,11 +17,23 @@ public interface TreeRepository extends Neo4jRepository<ClassificationTree,Long>
     @Override
     Optional<ClassificationTree> findById(Long leafId);
 
-    @Query("Match (n:ClassificationTree :$dynamicLabel) return n")
+    @Query("Match (n:分类树 :`:#{literal(#dynamicLabel)}`) return n")
     List<ClassificationTree> findLeafsByType(@Param("dynamicLabel") String dynamicLabel);
 
-    @Query("Match (n:ClassificationTree)<-[r:hasSubLeaf]-(m) where id(m) = $parentId return n")
-    List<ClassificationTree> findLeafsByParentId(@Param("parentId") Long parentId, Sort sort);
+    @Query("Match (n:分类树 :根节点) return n")
+    List<ClassificationTree> findAllRoot();
+
+    @Query("Match (n:分类树)<-[r:hasSubLeaf]-(m) where id(m) = $parentId return n")
+    List<ClassificationTree> findLeafsByParentId(@Param("parentId") Long parentId);
+
+    @Query("Match (n:分类树)<-[r:hasSubLeaf]-(m) where id(n) = $leafId return m")
+    Optional<ClassificationTree> getParentLeafById(@Param("leafId") Long leafId);
+
+    @Query("Match (n:分类树)<-[r:hasSubLeaf]-(m) where id(n) = $leafId delete r")
+    void deleteParentRelationShip(@Param("leafId") Long leafId);
+
+    @Query("Merge (n:分类树)<-[r:hasSubLeaf]-(m) where id(n) = $leafId and id(m) = $parentId")
+    void addParentRelationShip(@Param("leafId") Long leafId,@Param("parentId") Long parentId);
 
     @Override
     void deleteById(Long leafId);

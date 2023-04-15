@@ -2,6 +2,7 @@ package com.ruoyi.system.service.KnowledgeService.Prescription.Impl;
 
 import com.ruoyi.system.Repository.KnowledgeRepository.Prescription.*;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.Interface.PrescriptionInterface;
+import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.Interface.hasMaterialElementInterface;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.Prescription;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.Property.*;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.Stability.ExplosionStability;
@@ -9,7 +10,9 @@ import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.Stability.Hea
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.Stability.MechanicalStability;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.Stability.RadioStability;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.hasMaterialElement;
+import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.vo.MaterialAndValue;
 import com.ruoyi.system.service.KnowledgeService.Prescription.PrescriptionService;
+import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -82,8 +85,13 @@ public class PrescriptionServiceImpl implements PrescriptionService {
     }
 
     @Override
-    public List<Prescription> getAllPrescriptions() {
-        return prescriptionRepository.findAll();
+    public Page<Prescription> getAllPrescriptions(Pageable pageable) {
+        return prescriptionRepository.findAll(pageable);
+    }
+
+    @Override
+    public Page<Prescription> getAllPrescriptionsByParams(Example example, Pageable pageable) {
+        return prescriptionRepository.findAll(example,pageable);
     }
 
     @Override
@@ -449,26 +457,24 @@ public class PrescriptionServiceImpl implements PrescriptionService {
     }
 
     @Override
-    public Set<hasMaterialElement> getAllMaterialElementsByProscriptionId(Long proscriptionId) {
+    public List<hasMaterialElementInterface> getAllMaterialElementsByProscriptionId(Long proscriptionId) {
         Optional<Prescription> optionalPrescription = prescriptionRepository.findById(proscriptionId);
         if(optionalPrescription.isPresent()) {
-            Set<hasMaterialElement> materialElements = new HashSet<>(materialElementRepository.findMaterialElementByPrescriptionId(proscriptionId));
-            return materialElements;
+            return materialElementRepository.findMaterialElementByPrescriptionId(proscriptionId);
         }
         return null;
     }
 
     @Override
-    public Set<hasMaterialElement> modifyAllMaterialElementsByProscriptionId(Long proscriptionId,Set<hasMaterialElement> materialElements) {
+    public List<hasMaterialElementInterface> modifyAllMaterialElementsByProscriptionId(Long proscriptionId,List<MaterialAndValue> materialElements) {
         Optional<Prescription> optionalPrescription = prescriptionRepository.findById(proscriptionId);
         if(optionalPrescription.isPresent()){
             Prescription prescription = optionalPrescription.get();
-            Set<hasMaterialElement> oldMaterialElements = prescription.getMaterialElements();
-            oldMaterialElements.clear();
-            oldMaterialElements.addAll(materialElements);
-            prescription.setMaterialElements(oldMaterialElements);
-            Prescription newPrescription = prescriptionRepository.save(prescription);
-            return newPrescription.getMaterialElements();
+            prescriptionRepository.deleteRelationForMaterial(proscriptionId);
+            for (MaterialAndValue materialElement : materialElements) {
+                prescriptionRepository.createRelationForMaterial(proscriptionId,materialElement.getMaterialId(),materialElement.getValue());
+            }
+            return materialElementRepository.findMaterialElementByPrescriptionId(proscriptionId);
         }
         return null;
     }

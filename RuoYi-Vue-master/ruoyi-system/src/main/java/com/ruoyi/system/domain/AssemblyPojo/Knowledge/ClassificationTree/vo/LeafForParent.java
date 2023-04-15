@@ -2,13 +2,14 @@ package com.ruoyi.system.domain.AssemblyPojo.Knowledge.ClassificationTree.vo;
 
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.ClassificationTree.ClassificationTree;
 
+import java.util.Objects;
 import java.util.Set;
 
 public class LeafForParent {
 
     private Long parentId;
 
-    private Set<ClassificationTree> subLeafs;
+    private ClassificationTree subLeaf;
 
     public Long getParentId() {
         return parentId;
@@ -18,27 +19,32 @@ public class LeafForParent {
         this.parentId = parentId;
     }
 
-    public Set<ClassificationTree> getSubLeafs() {
-        return subLeafs;
+    public ClassificationTree getSubLeaf() {
+        return subLeaf;
     }
 
-    public void setSubLeafs(Set<ClassificationTree> subLeafs) {
-        this.subLeafs = subLeafs;
+    public void setSubLeaf(ClassificationTree subLeaf) {
+        this.subLeaf = subLeaf;
     }
 
-    public LeafForParent() {
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        LeafForParent that = (LeafForParent) o;
+        return Objects.equals(parentId, that.parentId) && Objects.equals(subLeaf, that.subLeaf);
     }
 
-    public LeafForParent(Long parentId, Set<ClassificationTree> subLeafs) {
-        this.parentId = parentId;
-        this.subLeafs = subLeafs;
+    @Override
+    public int hashCode() {
+        return Objects.hash(parentId, subLeaf);
     }
 
     @Override
     public String toString() {
-        return "leafForParent{" +
+        return "LeafForParent{" +
                 "parentId=" + parentId +
-                ", subLeafs=" + subLeafs +
+                ", subLeaf=" + subLeaf +
                 '}';
     }
 }

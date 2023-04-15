@@ -26,8 +26,8 @@ public class SpecialTool extends AssemblyResource{
     public SpecialTool() {
     }
 
-    public SpecialTool(Long resourceId, String resourceName, String resourceDescription, Set<String> resourceTypes, Set<Site> sites, Set<Sequence> sequences, Set<Step> steps, Map<String, String> capacityDescriptions) {
-        super(resourceId, resourceName, resourceDescription, resourceTypes, sites, sequences, steps);
+    public SpecialTool(Long resourceId, String resourceName, String resourceDescription, Set<String> resourceTypes, String site, Map<String, String> capacityDescriptions) {
+        super(resourceId, resourceName, resourceDescription, resourceTypes, site);
         this.capacityDescriptions = capacityDescriptions;
     }
 

@@ -15,7 +15,7 @@
         <div class="head-container">
           <el-tree
             ref="tree"
-            :data="methodTree"
+            :data="fileTree"
             node-key="leafId"
             :expand-on-click-node="false"
             :filter-node-method="filterNode"
@@ -134,14 +134,8 @@
         >
         </vue-context-menu>
 
-        <modifyMethod ref="modifyMethod"
-                      :dialog="modifyMethodShow"
-                      :selectMethod="selectMethod"
-                      :title="title"
-                      @closeDialog="() =>{ this.modifyMethodShow = false }"
-                      @restore="() =>{this.selectMethod = {}}"
-        >
-        </modifyMethod>
+        <FilePreview :url="this.fileUrl" :visible="this.dialogVisible"
+        ></FilePreview>
 
         <el-table v-loading="loading" :data="methods" @selection-change="handleSelectionChange"
                   @row-contextmenu="showContextMenu"

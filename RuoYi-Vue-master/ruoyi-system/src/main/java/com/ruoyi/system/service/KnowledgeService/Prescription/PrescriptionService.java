@@ -1,6 +1,7 @@
 package com.ruoyi.system.service.KnowledgeService.Prescription;
 
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.Interface.PrescriptionInterface;
+import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.Interface.hasMaterialElementInterface;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.Prescription;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.Property.*;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.Stability.ExplosionStability;
@@ -8,6 +9,8 @@ import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.Stability.Hea
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.Stability.MechanicalStability;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.Stability.RadioStability;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.hasMaterialElement;
+import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.vo.MaterialAndValue;
+import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -42,7 +45,13 @@ public interface PrescriptionService {
      *
      * @return
      */
-    List<Prescription> getAllPrescriptions();
+    Page<Prescription> getAllPrescriptions(Pageable pageable);
+
+    /**
+     *
+     * @return
+     */
+    Page<Prescription> getAllPrescriptionsByParams(Example example, Pageable pageable);
 
     /**
      *
@@ -441,9 +450,9 @@ public interface PrescriptionService {
      */
     void deleteStoragePropertyById(Long propertyId);
 
-    Set<hasMaterialElement> getAllMaterialElementsByProscriptionId(Long proscriptionId);
+    List<hasMaterialElementInterface> getAllMaterialElementsByProscriptionId(Long proscriptionId);
 
-    Set<hasMaterialElement> modifyAllMaterialElementsByProscriptionId(Long proscriptionId,Set<hasMaterialElement> materialElements);
+    List<hasMaterialElementInterface> modifyAllMaterialElementsByProscriptionId(Long proscriptionId,List<MaterialAndValue> materialElements);
 
     hasMaterialElement addMaterialElementForProscription(Long proscriptionId,hasMaterialElement newMaterialElement);
 

@@ -8,10 +8,7 @@ import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class TreeServiceImpl implements TreeService {
@@ -22,6 +19,22 @@ public class TreeServiceImpl implements TreeService {
     @Override
     public ClassificationTree selectTreeById(Long treeId) {
         return treeRepository.findById(treeId).get();
+    }
+
+    @Override
+    public List<ClassificationTree> selectAllRoot() {
+        List<ClassificationTree> roots = new ArrayList<>();
+        for (ClassificationTree rootNode : treeRepository.findAllRoot()) {
+            ClassificationTree root = selectTreeById(rootNode.getLeafId());
+            roots.add(root);
+        }
+        return roots;
+    }
+
+    @Override
+    public List<ClassificationTree> selectSubLeafs(Long parentId){
+        List<ClassificationTree> subleafs = treeRepository.findLeafsByParentId(parentId);
+        return subleafs;
     }
 
     @Override
@@ -36,21 +49,40 @@ public class TreeServiceImpl implements TreeService {
     }
 
     @Override
-    public ClassificationTree updateTree(ClassificationTree tree) {
-        return treeRepository.save(tree);
+    public ClassificationTree updateTree(LeafForParent leaf) {
+        Optional<ClassificationTree> optional = treeRepository.findById(leaf.getSubLeaf().getLeafId());
+        if(optional.isPresent()){
+            ClassificationTree oldLeaf = optional.get();
+            oldLeaf.setLeafName(leaf.getSubLeaf().getLeafName());
+            oldLeaf.setLeafDescription(leaf.getSubLeaf().getLeafDescription());
+            oldLeaf.setLeafValue(leaf.getSubLeaf().getLeafValue());
+            oldLeaf.setDynamicLabels(leaf.getSubLeaf().getDynamicLabels());
+            oldLeaf.setLeafAttributes(leaf.getSubLeaf().getLeafAttributes());
+            oldLeaf.setLeafRequirements(leaf.getSubLeaf().getLeafRequirements());
+            oldLeaf.setHasSubLeafs(leaf.getSubLeaf().isHasSubLeafs());
+            ClassificationTree newLeaf = treeRepository.save(oldLeaf);
+            treeRepository.deleteParentRelationShip(leaf.getSubLeaf().getLeafId());
+            treeRepository.addParentRelationShip(leaf.getSubLeaf().getLeafId(),leaf.getParentId());
+            return newLeaf;
+        }
+        return null;
     }
 
     @Override
-    public ClassificationTree addSubLeafs(LeafForParent leafs) {
-        Optional<ClassificationTree> parentLeaf = treeRepository.findById(leafs.getParentId());
+    public ClassificationTree getParentLeaf(Long leafId) {
+        return treeRepository.getParentLeafById(leafId).get();
+    }
+
+    @Override
+    public ClassificationTree addSubLeafs(LeafForParent leaf) {
+        Optional<ClassificationTree> parentLeaf = treeRepository.findById(leaf.getParentId());
         if (parentLeaf.isPresent()){
             ClassificationTree tree = parentLeaf.get();
-            List<ClassificationTree> subLeafs = treeRepository.saveAll(leafs.getSubLeafs());
+            ClassificationTree subLeaf = treeRepository.save(leaf.getSubLeaf());
             Set<ClassificationTree> treeSubLeafs = tree.getSubLeafs();
-            treeSubLeafs.addAll(subLeafs);
+            treeSubLeafs.add(subLeaf);
             tree.setSubLeafs(treeSubLeafs);
-            ClassificationTree newTree = treeRepository.save(tree);
-            return newTree;
+            return treeRepository.save(tree);
         }
         return null;
     }

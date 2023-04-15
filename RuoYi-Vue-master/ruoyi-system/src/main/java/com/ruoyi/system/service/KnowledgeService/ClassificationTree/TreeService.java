@@ -14,6 +14,10 @@ public interface TreeService {
      */
     ClassificationTree selectTreeById(Long treeId);
 
+    List<ClassificationTree> selectAllRoot();
+
+    List<ClassificationTree> selectSubLeafs(Long parentId);
+
     /**
      *
      * @param tree
@@ -33,9 +37,11 @@ public interface TreeService {
      * @param tree
      * @return
      */
-    ClassificationTree updateTree(ClassificationTree tree);
+    ClassificationTree updateTree(LeafForParent leaf);
 
-    ClassificationTree addSubLeafs(LeafForParent leafs);
+    ClassificationTree getParentLeaf(Long leafId);
+
+    ClassificationTree addSubLeafs(LeafForParent leaf);
 
     /**
      * @param treeIds

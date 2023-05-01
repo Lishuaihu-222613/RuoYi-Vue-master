@@ -152,8 +152,7 @@
             </template>
           </el-table-column>
           <el-table-column label="创建时间" align="center" prop="createTime" v-if="columns[6].visible" width="160">
-
-
+            <span>{{ parseTime(scope.row.createTime) }}</span>
           </el-table-column>
           <el-table-column
             label="操作"

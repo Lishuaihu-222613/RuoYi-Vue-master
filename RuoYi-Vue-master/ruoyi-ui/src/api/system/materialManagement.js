@@ -9,12 +9,43 @@ export function getAllMaterialsByType(data){
   })
 }
 
+export function getMaterialsByParams(data){
+  return request({
+    url: '/material/getMaterialsByParams',
+    method: 'post',
+    data: data
+  })
+}
+
+export function getAllMaterials(data){
+  return request({
+    url: '/material/getAllMaterials',
+    method: 'post',
+    data: data
+  })
+}
+
+export function deleteMaterial(data){
+  return request({
+    url: '/material/deleteMaterial',
+    method: 'post',
+    data: data
+  })
+}
+
 export function getAllMaterialOptions(){
   return request({
     url: '/material/getAllMaterialOptions',
     method: 'get'
   })
-};
+}
+
+export function getMaterialOptionsByLabel(label){
+  return request({
+    url: '/material/getAllMaterialOptions/'+label,
+    method: 'get'
+  })
+}
 
 
 export function getMaterialById(materialId){

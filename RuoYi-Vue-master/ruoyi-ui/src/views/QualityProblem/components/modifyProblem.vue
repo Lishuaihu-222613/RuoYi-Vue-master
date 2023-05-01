@@ -21,23 +21,27 @@
           />
         </el-row>
       </el-form-item>
-      <el-form-item :label-width="formLabelWidth" label="外观表现" :prop="'problem.appearences'">
-        <el-button type="primary" @click="addAppearance" style="float: right">添加</el-button>
-        <el-row v-for="(item, index) in problem.appearences"
+      <el-form-item :label-width="formLabelWidth" label="外观表现" :prop="'problem.appearances'">
+        <el-row>
+          <el-col :offset="18" :span="6">
+            <el-button type="primary" @click="addAppearance" >添加外观</el-button>
+          </el-col>
+        </el-row>
+        <el-row v-for="(item, index) in problem.appearances"
                 :key="index"
                 :gutter="20"
         >
           <el-col :span="2">
             <el-tag type="primary">
-              外观表现{{ index }}
+              外观表现{{ index+1 }}
             </el-tag>
           </el-col>
           <el-col :span="6">
-            <el-input v-model="item.appearanceName" placeholder="名称" style="width:100%"></el-input>
+            <el-input v-model="problem.appearances[index].appearanceName" placeholder="名称" style="width:100%"></el-input>
           </el-col>
           <el-col :span="2" class="line">----</el-col>
           <el-col :span="6">
-            <el-input v-model="item.appearanceDescription" placeholder="内容" style="width:100%"></el-input>
+            <el-input v-model="problem.appearances[index].appearanceDescription" placeholder="内容" style="width:100%"></el-input>
           </el-col>
           <el-col :span="6">
             <el-button @click.prevent="removeAppearance(item)">删除</el-button>
@@ -45,22 +49,26 @@
         </el-row>
       </el-form-item>
       <el-form-item :label-width="formLabelWidth" label="产生原因">
-        <el-button type="primary" @click="addReason" style="float: right">添加</el-button>
+        <el-row>
+          <el-col :offset="18" :span="6">
+            <el-button type="primary" @click="addReason" >添加原因</el-button>
+          </el-col>
+        </el-row>
         <el-row v-for="(item, index) in problem.reasons"
                 :key="index"
                 :gutter="20"
         >
           <el-col :span="2">
             <el-tag type="primary">
-              产生原因{{ index }}
+              产生原因{{ index+1 }}
             </el-tag>
           </el-col>
           <el-col :span="6">
-            <el-input v-model="item.reasonName" placeholder="名称" style="width:100%"></el-input>
+            <el-input v-model="problem.reasons[index].reasonName" placeholder="名称" style="width:100%"></el-input>
           </el-col>
           <el-col :span="2" class="line">----</el-col>
           <el-col :span="6">
-            <el-input v-model="item.reasonDescription" placeholder="内容" style="width:100%"></el-input>
+            <el-input v-model="problem.reasons[index].reasonDescription" placeholder="内容" style="width:100%"></el-input>
           </el-col>
           <el-col :span="6">
             <el-button @click.prevent="removeReason(item)">删除</el-button>
@@ -68,22 +76,27 @@
         </el-row>
       </el-form-item>
       <el-form-item :label-width="formLabelWidth" label="解决方法">
-        <el-button type="primary" @click="addSolution" style="float: right">添加</el-button>
+        <el-row>
+          <el-col :offset="18" :span="6">
+            <el-button type="primary" @click="addSolution">添加方法</el-button>
+          </el-col>
+        </el-row>
+
         <el-row v-for="(item, index) in problem.solutions"
                 :key="index"
                 :gutter="20"
         >
           <el-col :span="2">
             <el-tag type="primary">
-              外观表现{{ index }}
+              解决方法{{ index+1 }}
             </el-tag>
           </el-col>
           <el-col :span="6">
-            <el-input v-model="item.solutionName" placeholder="名称" style="width:100%"></el-input>
+            <el-input v-model="problem.solutions[index].solutionName" placeholder="名称" style="width:100%"></el-input>
           </el-col>
           <el-col :span="2" class="line">----</el-col>
           <el-col :span="6">
-            <el-input v-model="item.solutionDescription" placeholder="内容" style="width:100%"></el-input>
+            <el-input v-model="problem.solutions[index].solutionDescription" placeholder="内容" style="width:100%"></el-input>
           </el-col>
           <el-col :span="6">
             <el-button @click.prevent="removeSolution(item)">删除</el-button>
@@ -109,9 +122,9 @@ export default {
   name: 'modifyProblem',
   components: { Treeselect },
   props: {
-    selectProblem: {
-      type: Object,
-      default: {}
+    selectProblemId: {
+      type: Number,
+      default: 0
     },
     dialog: {
       type: Boolean,
@@ -123,10 +136,10 @@ export default {
     }
   },
   watch: {
-    selectProblem: {
+    selectProblemId: {
       handler(newVal, oldVal) {
         if (newVal !== null || newVal !== 0) {
-          this.problem = newVal
+          this.problemId = newVal
         }
       }
     },
@@ -161,6 +174,7 @@ export default {
         reasons: [],
         solutions:[]
       },
+      problemId:0,
       dialogFormVisible: false,
       formLabelWidth: '120px',
       inputVisible: false,
@@ -181,6 +195,7 @@ export default {
     /** 查询标签列表 */
     getLabelList() {
       this.loading = true
+      this.options = []
       treeManagement.getTreeManagement(25500).then(response => {
         console.log(response.data)
         this.options.push(response.data)
@@ -192,13 +207,30 @@ export default {
         delete node.children;
       }
       return {
-        id: node.leafId,
+        id: node.leafName,
         label: node.leafName,
         children: node.subLeafs
       }
     },
     handleOpen() {
       this.getLabelList();
+      if(this.problemId === 0){
+        this.problem = {
+          problemId: 0,
+          problemName: '',
+          dynamicLabels: [],
+          problemDescription: '',
+          appearances: [],
+          reasons: [],
+          solutions:[]
+        }
+      }else {
+        problemManagement.getQualityProblemById(this.problemId).then(result =>{
+          if(result.code === 200){
+            this.problem = result.data
+          }
+        })
+      }
     },
     // 取消按钮
     cancel() {
@@ -251,16 +283,16 @@ export default {
       }
     },
     addSolution() {
-      this.problem.reasons.push({
+      this.problem.solutions.push({
         solutionId:0,
         solutionName:'',
         solutionDescription:''
       })
     },
     removeSolution(item) {
-      let index = this.problem.reasons.indexOf(item)
+      let index = this.problem.solutions.indexOf(item)
       if (index !== -1) {
-        this.problem.reasons.splice(index, 1)
+        this.problem.solutions.splice(index, 1)
       }
     },
     onSubmit(){

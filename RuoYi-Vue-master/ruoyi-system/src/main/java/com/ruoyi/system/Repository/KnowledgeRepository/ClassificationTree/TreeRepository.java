@@ -32,7 +32,7 @@ public interface TreeRepository extends Neo4jRepository<ClassificationTree,Long>
     @Query("Match (n:分类树)<-[r:hasSubLeaf]-(m) where id(n) = $leafId delete r")
     void deleteParentRelationShip(@Param("leafId") Long leafId);
 
-    @Query("Merge (n:分类树)<-[r:hasSubLeaf]-(m) where id(n) = $leafId and id(m) = $parentId")
+    @Query("Match (n:分类树),(m:分类树) where id(n) = $leafId and id(m) = $parentId " + "Create (n)<-[r:hasSubLeaf]-(m) ")
     void addParentRelationShip(@Param("leafId") Long leafId,@Param("parentId") Long parentId);
 
     @Override

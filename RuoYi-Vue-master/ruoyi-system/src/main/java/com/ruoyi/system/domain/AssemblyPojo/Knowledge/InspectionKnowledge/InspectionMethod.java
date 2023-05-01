@@ -3,6 +3,7 @@ package com.ruoyi.system.domain.AssemblyPojo.Knowledge.InspectionKnowledge;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.QualityProblem.QualityProblem;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.TypicalKnowledge.Process.TypicalProcess;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.fileKnowledge.FileKnowledge;
+import com.ruoyi.system.domain.AssemblyPojo.Process.ProcessElement;
 import com.ruoyi.system.domain.AssemblyPojo.Resource.AssemblyResource;
 import org.springframework.data.neo4j.core.schema.*;
 
@@ -39,9 +40,6 @@ public class InspectionMethod {
 
     @Relationship(type = "hasMode",direction = Relationship.Direction.OUTGOING)
     private Set<InspectionMode> methodModes;
-
-    @Relationship(type = "hasAssociatedProcess",direction = Relationship.Direction.OUTGOING)
-    private Set<TypicalProcess> associatedProcesses;
 
     @Relationship(type = "hasAssociatedProblem",direction = Relationship.Direction.OUTGOING)
     private Set<QualityProblem> associatedProblems;
@@ -124,14 +122,6 @@ public class InspectionMethod {
         this.methodModes = methodModes;
     }
 
-    public Set<TypicalProcess> getAssociatedProcesses() {
-        return associatedProcesses;
-    }
-
-    public void setAssociatedProcesses(Set<TypicalProcess> associatedProcesses) {
-        this.associatedProcesses = associatedProcesses;
-    }
-
     public Set<QualityProblem> getAssociatedProblems() {
         return associatedProblems;
     }
@@ -159,7 +149,16 @@ public class InspectionMethod {
     public InspectionMethod() {
     }
 
-    public InspectionMethod(Long methodId, String methodName, String methodDescription, String methodPrinciple, String futureExpansion, Set<String> dynamicLabels, Set<InspectionCondition> methodConditions, Set<InspectionFactor> methodFactors, Set<InspectionMode> methodModes, Set<TypicalProcess> associatedProcesses, Set<QualityProblem> associatedProblems, Set<AssemblyResource> associatedDevices, Set<FileKnowledge> associatedFiles) {
+    public InspectionMethod(Long methodId, String methodName, String methodDescription, String methodPrinciple, String futureExpansion, Set<String> dynamicLabels) {
+        this.methodId = methodId;
+        this.methodName = methodName;
+        this.methodDescription = methodDescription;
+        this.methodPrinciple = methodPrinciple;
+        this.futureExpansion = futureExpansion;
+        this.dynamicLabels = dynamicLabels;
+    }
+
+    public InspectionMethod(Long methodId, String methodName, String methodDescription, String methodPrinciple, String futureExpansion, Set<String> dynamicLabels, Set<InspectionCondition> methodConditions, Set<InspectionFactor> methodFactors, Set<InspectionMode> methodModes, Set<QualityProblem> associatedProblems, Set<AssemblyResource> associatedDevices, Set<FileKnowledge> associatedFiles) {
         this.methodId = methodId;
         this.methodName = methodName;
         this.methodDescription = methodDescription;
@@ -169,7 +168,6 @@ public class InspectionMethod {
         this.methodConditions = methodConditions;
         this.methodFactors = methodFactors;
         this.methodModes = methodModes;
-        this.associatedProcesses = associatedProcesses;
         this.associatedProblems = associatedProblems;
         this.associatedDevices = associatedDevices;
         this.associatedFiles = associatedFiles;
@@ -180,12 +178,12 @@ public class InspectionMethod {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         InspectionMethod that = (InspectionMethod) o;
-        return Objects.equals(methodId, that.methodId) && Objects.equals(methodName, that.methodName) && Objects.equals(methodDescription, that.methodDescription) && Objects.equals(methodPrinciple, that.methodPrinciple) && Objects.equals(futureExpansion, that.futureExpansion) && Objects.equals(dynamicLabels, that.dynamicLabels) && Objects.equals(methodConditions, that.methodConditions) && Objects.equals(methodFactors, that.methodFactors) && Objects.equals(methodModes, that.methodModes) && Objects.equals(associatedProcesses, that.associatedProcesses) && Objects.equals(associatedProblems, that.associatedProblems) && Objects.equals(associatedDevices, that.associatedDevices) && Objects.equals(associatedFiles, that.associatedFiles);
+        return Objects.equals(methodId, that.methodId) && Objects.equals(methodName, that.methodName) && Objects.equals(methodDescription, that.methodDescription) && Objects.equals(methodPrinciple, that.methodPrinciple) && Objects.equals(futureExpansion, that.futureExpansion) && Objects.equals(dynamicLabels, that.dynamicLabels) && Objects.equals(methodConditions, that.methodConditions) && Objects.equals(methodFactors, that.methodFactors) && Objects.equals(methodModes, that.methodModes) && Objects.equals(associatedProblems, that.associatedProblems) && Objects.equals(associatedDevices, that.associatedDevices) && Objects.equals(associatedFiles, that.associatedFiles);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(methodId, methodName, methodDescription, methodPrinciple, futureExpansion, dynamicLabels, methodConditions, methodFactors, methodModes, associatedProcesses, associatedProblems, associatedDevices, associatedFiles);
+        return Objects.hash(methodId, methodName, methodDescription, methodPrinciple, futureExpansion, dynamicLabels, methodConditions, methodFactors, methodModes, associatedProblems, associatedDevices, associatedFiles);
     }
 
     @Override
@@ -200,7 +198,6 @@ public class InspectionMethod {
                 ", methodConditions=" + methodConditions +
                 ", methodFactors=" + methodFactors +
                 ", methodModes=" + methodModes +
-                ", associatedProcesses=" + associatedProcesses +
                 ", associatedProblems=" + associatedProblems +
                 ", associatedDevices=" + associatedDevices +
                 ", associatedFiles=" + associatedFiles +

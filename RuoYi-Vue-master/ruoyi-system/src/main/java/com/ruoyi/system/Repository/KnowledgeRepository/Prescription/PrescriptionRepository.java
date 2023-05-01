@@ -25,11 +25,11 @@ PrescriptionRepository extends Neo4jRepository<Prescription,Long> {
     @Query("MATCH (n:Prescription) WHERE n.label contains $prescriptionName return n")
     Collection<PrescriptionInterface> findPrescriptionInterfaceByName(@Param("prescriptionName") String prescriptionName);
 
-    @Query(value = "MATCH (n) where any(label in labels(n) WHERE label in ['Principle', $dynamicLabel])  return n" +
+    @Query(value = "MATCH (n) where any(label in labels(n) WHERE label in ['Prescription', $dynamicLabel])  return n " +
             ":#{orderBy(#pageable)} SKIP $skip LIMIT $limit",
             countQuery = "MATCH (n:Prescription :$prescriptionType) return count(n)"
     )
-    Page<PrescriptionInterface> findPrescriptionByType(@Param("dynamicLabel") String dynamicLabel, Pageable pageable);
+    Page<Prescription> findPrescriptionByType(@Param("dynamicLabel") String dynamicLabel, Pageable pageable);
 
     @Override
     <S extends Prescription> S save(S prescription);
@@ -48,4 +48,6 @@ PrescriptionRepository extends Neo4jRepository<Prescription,Long> {
     @Query("CREATE (n:Prescription)-[r:hasMaterialElement{percentage: $percentage}]->(m:Material) where id(n) = $prescriptionId and id(m) = $materialId")
     void createRelationForMaterial(@Param("prescriptionId") Long prescriptionId,@Param("$materialId") Long $materialId,@Param("percentage") double percentage);
 
+    @Query("Match (n:Prescription)-[r:hasMaterialElement]->(m:Material) where id(n) = $prescriptionId return n,collect(r),collect(m)")
+    Prescription getMaterialElementsById(@Param("prescriptionId") Long prescriptionId);
 }

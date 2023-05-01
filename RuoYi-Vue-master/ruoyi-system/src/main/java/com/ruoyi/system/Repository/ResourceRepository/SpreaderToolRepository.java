@@ -6,12 +6,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
+import org.springframework.data.repository.query.Param;
 
 public interface SpreaderToolRepository extends Neo4jRepository<SpreaderTool,Long> {
 
-    @Query(value = " Match (n) where any(label in labels(n) WHERE label in ['SpreaderTool', $dynamicLabel]) return n" +
+    @Query(value = " Match (n:SpreaderTool :`:#{literal(#dynamicLabel)}`) return n " +
             ":#{orderBy(#pageable)} SKIP $skip LIMIT $limit",
-            countQuery = "Match (n) where any(label in labels(n) WHERE label in ['SpreaderTool', $dynamicLabel]) return count(n)"
+            countQuery = "Match (n:SpreaderTool :`:#{literal(#dynamicLabel)}`) return count(n)"
     )
-    Page<SpreaderTool> findResourcesByResourceType(String dynamicLabel, Pageable pageable);
+    Page<SpreaderTool> findResourcesByResourceType(@Param("dynamicLabel")String dynamicLabel, Pageable pageable);
 }

@@ -20,7 +20,7 @@ public interface QualityProblemService {
 
     Page<QualityProblem> getQualityProblemsByLabel(String dynamicLabel, Pageable pageable);
 
-    Page<QualityProblem> getQualityProblemsByParams(Example example, Pageable pageable);
+    Page<QualityProblem> getQualityProblemsByParams(Example<QualityProblem> example, Pageable pageable);
 
     List<QualityProblem> getQualityProblemsByName(String problemName);
 

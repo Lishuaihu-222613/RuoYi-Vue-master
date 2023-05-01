@@ -6,12 +6,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
+import org.springframework.data.repository.query.Param;
 
 public interface SpecialRepository extends Neo4jRepository<SpecialTool,Long> {
 
-    @Query(value = " Match (n) where any(label in labels(n) WHERE label in ['SpecialTool', $dynamicLabel]) return n" +
+    @Query(value = " Match (n:SpecialTool :`:#{literal(#dynamicLabel)}`) return n " +
             ":#{orderBy(#pageable)} SKIP $skip LIMIT $limit",
-            countQuery = "Match (n) where any(label in labels(n) WHERE label in ['SpecialTool', $dynamicLabel]) return count(n)"
+            countQuery = "Match (n:SpecialTool :`:#{literal(#dynamicLabel)}`) return count(n)"
     )
-    Page<SpecialTool> findResourcesByResourceType(String dynamicLabel, Pageable pageable);
+    Page<SpecialTool> findResourcesByResourceType(@Param("dynamicLabel")String dynamicLabel, Pageable pageable);
 }

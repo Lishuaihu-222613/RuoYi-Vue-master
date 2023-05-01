@@ -34,13 +34,13 @@ public class PrescriptionController extends BaseController {
 
     @ResponseBody
     @PostMapping("/getAllPrescriptionsByType")
-    public R<Page<PrescriptionInterface>> getAllPrescriptionsByType(@RequestBody PrescriptionQueryVo params) {
+    public R<Page<Prescription>> getAllPrescriptionsByType(@RequestBody PrescriptionQueryVo params) {
         try {
             //判断排序类型及排序字段
             Sort sort = "ascending".equals(params.getSortType()) ? by(Sort.Direction.ASC, params.getSortableField()) : by(Sort.Direction.DESC, params.getSortableField());
             //获取pageable
             Pageable pageable = PageRequest.of(params.getPageNum()-1,params.getPageSize(),sort);
-            Page<PrescriptionInterface> prescriptions = prescriptionService.getPrescriptionsByLabel(params.getDynamicLabel(),pageable);
+            Page<Prescription> prescriptions = prescriptionService.getPrescriptionsByLabel(params.getDynamicLabel(),pageable);
             System.out.println(prescriptions);
             return R.success(prescriptions);
         } catch (Exception e) {
@@ -134,7 +134,17 @@ public class PrescriptionController extends BaseController {
             Sort sort = "ascending".equals(params.getSortType()) ? by(Sort.Direction.ASC, params.getSortableField()) : by(Sort.Direction.DESC, params.getSortableField());
             //获取pageable
             Pageable pageable = PageRequest.of(params.getPageNum()-1,params.getPageSize(),sort);
-            Example<Prescription> example = Example.of(params.getOriginPrescription());
+            ExampleMatcher matcher = ExampleMatcher.matching()
+                    .withMatcher("prescriptionName", ExampleMatcher.GenericPropertyMatcher::contains)
+                    .withMatcher("prescriptionDescription",ExampleMatcher.GenericPropertyMatcher::contains)
+                    .withMatcher("density",ExampleMatcher.GenericPropertyMatcher::contains)
+                    .withMatcher("dangerLevel",ExampleMatcher.GenericPropertyMatcher::contains);
+            Prescription prescription = new Prescription();
+            prescription.setPrescriptionName(params.getOriginPrescription().getPrescriptionName());
+            prescription.setPrescriptionDescription(params.getOriginPrescription().getPrescriptionDescription());
+            prescription.setDensity(params.getOriginPrescription().getDensity());
+            prescription.setDangerLevel(params.getOriginPrescription().getDangerLevel());
+            Example<Prescription> example = Example.of(prescription,matcher);
             Page<Prescription> allPrescriptions = prescriptionService.getAllPrescriptionsByParams(example,pageable);
             System.out.println(allPrescriptions);
             return R.success(allPrescriptions);
@@ -159,9 +169,9 @@ public class PrescriptionController extends BaseController {
 
     @ResponseBody
     @GetMapping("/getElementsByPrescriptionId/{prescriptionId}")
-    public R<List<hasMaterialElementInterface>> getElementsByPrescriptionId(@PathVariable Long prescriptionId) {
+    public R<List<hasMaterialElement>> getElementsByPrescriptionId(@PathVariable Long prescriptionId) {
         try {
-            List<hasMaterialElementInterface> elements = prescriptionService.getAllMaterialElementsByProscriptionId(prescriptionId);
+            List<hasMaterialElement> elements = prescriptionService.getAllMaterialElementsByProscriptionId(prescriptionId);
             System.out.println(elements);
             return R.success(elements);
         } catch (Exception e) {
@@ -960,9 +970,9 @@ public class PrescriptionController extends BaseController {
 
     @ResponseBody
     @PostMapping("/modifyAllMaterialElementsByProscriptionId")
-    public R<List<hasMaterialElementInterface>> modifyAllMaterialElementsByProscriptionId(@RequestBody PrescriptionAndElement PE) {
+    public R<List<hasMaterialElement>> modifyAllMaterialElementsByProscriptionId(@RequestBody PrescriptionAndElement PE) {
         try {
-            List<hasMaterialElementInterface> newMaterialElements = prescriptionService.modifyAllMaterialElementsByProscriptionId(PE.getPrescriptionId(), PE.getElements());
+            List<hasMaterialElement> newMaterialElements = prescriptionService.modifyAllMaterialElementsByProscriptionId(PE.getPrescriptionId(), PE.getElements());
             System.out.println(newMaterialElements);
             return R.success(newMaterialElements);
         } catch (Exception e) {

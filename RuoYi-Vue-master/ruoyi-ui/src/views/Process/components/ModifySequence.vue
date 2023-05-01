@@ -281,21 +281,7 @@ export default {
     },
 
 
-    addRemark() {
-      this.sequence.sequenceRemark.push('')
-    },
 
-    deleteRemark(markIndex) {
-      this.sequence.sequenceRemark.removeAt(markIndex)
-    },
-
-    modifySequence() {
-      processManagement.updateSequence(this.sequence).then(result => {
-        if (result.code == 200) {
-          this.sequence = result.data
-        }
-      })
-    },
 
     removeItemSelf(arr){
       let index = NaN;

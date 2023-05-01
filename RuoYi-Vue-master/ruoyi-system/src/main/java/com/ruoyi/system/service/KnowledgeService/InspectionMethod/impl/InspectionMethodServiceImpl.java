@@ -13,16 +13,11 @@ import com.ruoyi.system.domain.AssemblyPojo.Knowledge.InspectionKnowledge.vo.Con
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.InspectionKnowledge.vo.FactorForMethod;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.InspectionKnowledge.vo.ModeForMethod;
 import com.ruoyi.system.service.KnowledgeService.InspectionMethod.InspectionMethodService;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class InspectionMethodServiceImpl implements InspectionMethodService {
@@ -42,7 +37,28 @@ public class InspectionMethodServiceImpl implements InspectionMethodService {
 
     @Override
     public InspectionMethod createInspectionMethod(InspectionMethod method) {
-        return inspectionMethodRepository.save(method);
+        InspectionMethod inspectionMethod = new InspectionMethod(method.getMethodId(), method.getMethodName(),
+                method.getMethodDescription(), method.getMethodPrinciple(), method.getFutureExpansion(), method.getDynamicLabels());
+        InspectionMethod singleMethod = inspectionMethodRepository.save(inspectionMethod);
+        HashSet<InspectionCondition> conditions = new HashSet<>();
+        HashSet<InspectionFactor> factors = new HashSet<>();
+        HashSet<InspectionMode> modes = new HashSet<>();
+        for (InspectionCondition methodCondition : method.getMethodConditions()) {
+            InspectionCondition condition = inspectionConditionRepository.save(methodCondition);
+            conditions.add(condition);
+        };
+        for (InspectionFactor methodFactor : method.getMethodFactors()) {
+            InspectionFactor factor = inspectionFactorRepository.save(methodFactor);
+            factors.add(factor);
+        }
+        for (InspectionMode methodMode : method.getMethodModes()) {
+            InspectionMode mode = inspectionModeRepository.save(methodMode);
+            modes.add(mode);
+        }
+        singleMethod.setMethodConditions(conditions);
+        singleMethod.setMethodFactors(factors);
+        singleMethod.setMethodModes(modes);
+        return inspectionMethodRepository.save(singleMethod);
     }
 
     @Override
@@ -55,6 +71,15 @@ public class InspectionMethodServiceImpl implements InspectionMethodService {
             oldMethod.setDynamicLabels(method.getDynamicLabels());
             oldMethod.setFutureExpansion(method.getFutureExpansion());
             oldMethod.setMethodPrinciple(method.getMethodPrinciple());
+            inspectionConditionRepository.deleteAll(oldMethod.getMethodConditions());
+            List<InspectionCondition> inspectionConditions = inspectionConditionRepository.saveAll(method.getMethodConditions());
+            inspectionFactorRepository.deleteAll(oldMethod.getMethodFactors());
+            List<InspectionFactor> inspectionFactors = inspectionFactorRepository.saveAll(method.getMethodFactors());
+            inspectionModeRepository.deleteAll(oldMethod.getMethodModes());
+            List<InspectionMode> inspectionModes = inspectionModeRepository.saveAll(method.getMethodModes());
+            oldMethod.setMethodConditions(new HashSet<>(inspectionConditions));
+            oldMethod.setMethodFactors(new HashSet<>(inspectionFactors));
+            oldMethod.setMethodModes(new HashSet<>(inspectionModes));
             InspectionMethod newMethod = inspectionMethodRepository.save(oldMethod);
             return newMethod;
         }
@@ -63,7 +88,12 @@ public class InspectionMethodServiceImpl implements InspectionMethodService {
 
     @Override
     public InspectionMethod getInspectionMethodById(Long methodId) {
-        return inspectionMethodRepository.findById(methodId).get();
+        Optional<InspectionMethod> optionalInspectionMethod = inspectionMethodRepository.findById(methodId);
+        if(optionalInspectionMethod.isPresent()){
+            InspectionMethod inspectionMethod = optionalInspectionMethod.get();
+            return inspectionMethod;
+        }
+        return null;
     }
 
     @Override
@@ -77,13 +107,18 @@ public class InspectionMethodServiceImpl implements InspectionMethodService {
     }
 
     @Override
+    public Page<InspectionMethod> getInspectionMethodsByParams(Example<InspectionMethod> example, Pageable pageable) {
+        return inspectionMethodRepository.findAll(example,pageable);
+    }
+
+    @Override
     public List<InspectionMethod> getInspectionMethodsByName(String methodName) {
         return inspectionMethodRepository.findMethodByName(methodName);
     }
 
     @Override
-    public void deleteInspectionMethod(Long methodId) {
-        inspectionMethodRepository.deleteById(methodId);
+    public void deleteInspectionMethod(Long[] methodIds) {
+        inspectionMethodRepository.deleteAllById(Arrays.asList(methodIds));
     }
 
     @Override

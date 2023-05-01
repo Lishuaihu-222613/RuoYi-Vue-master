@@ -58,7 +58,7 @@ public interface PrescriptionService {
      * @param dynamicLabel
      * @return
      */
-    Page<PrescriptionInterface> getPrescriptionsByLabel(String dynamicLabel, Pageable pageable);
+    Page<Prescription> getPrescriptionsByLabel(String dynamicLabel, Pageable pageable);
 
     /**
      *
@@ -450,9 +450,9 @@ public interface PrescriptionService {
      */
     void deleteStoragePropertyById(Long propertyId);
 
-    List<hasMaterialElementInterface> getAllMaterialElementsByProscriptionId(Long proscriptionId);
+    List<hasMaterialElement> getAllMaterialElementsByProscriptionId(Long proscriptionId);
 
-    List<hasMaterialElementInterface> modifyAllMaterialElementsByProscriptionId(Long proscriptionId,List<MaterialAndValue> materialElements);
+    List<hasMaterialElement> modifyAllMaterialElementsByProscriptionId(Long proscriptionId,List<MaterialAndValue> materialElements);
 
     hasMaterialElement addMaterialElementForProscription(Long proscriptionId,hasMaterialElement newMaterialElement);
 

@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function getAllQualityProblems(data) {
   return request({
-    url: '/problem/getAllQualityProblems',
+    url: '/qualityProblem/getAllProblems',
     method: 'post',
     data: data
   })
@@ -10,7 +10,7 @@ export function getAllQualityProblems(data) {
 
 export function getAllQualityProblemsByLabel(data) {
   return request({
-    url: '/problem/getAllQualityProblemsByLabel',
+    url: '/qualityProblem/getAllProblemsByLabel',
     method: 'post',
     data: data
   })
@@ -18,7 +18,7 @@ export function getAllQualityProblemsByLabel(data) {
 
 export function getQualityProblemsByParams(data) {
   return request({
-    url: '/problem/getQualityProblemsByParams',
+    url: '/qualityProblem/getQualityProblemsByParams',
     method: 'post',
     data: data
   })
@@ -26,14 +26,14 @@ export function getQualityProblemsByParams(data) {
 
 export function getQualityProblemById(problemId) {
   return request({
-    url: '/problem/getQualityProblemById/' + problemId,
+    url: '/qualityProblem/getProblemById/' + problemId,
     method: 'get'
   })
 }
 
 export function createQualityProblem(data) {
   return request({
-    url: '/problem/createQualityProblem',
+    url: '/qualityProblem/createProblem',
     method: 'post',
     data: data
   })
@@ -41,23 +41,16 @@ export function createQualityProblem(data) {
 
 export function updateQualityProblem(data) {
   return request({
-    url: '/problem/updateQualityProblem',
+    url: '/qualityProblem/updateProblem',
     method: 'post',
     data: data
   })
 }
 
-export function changeRelations(data) {
-  return request({
-    url: '/problem/changeRelations',
-    method: 'post',
-    data: data
-  })
-}
 
 export function deleteQualityProblem(problemId) {
   return request({
-    url: '/problem/deleteQualityProblem/' + problemId,
+    url: '/qualityProblem/deleteQualityProblem/' + problemId,
     method: 'get'
   })
 }

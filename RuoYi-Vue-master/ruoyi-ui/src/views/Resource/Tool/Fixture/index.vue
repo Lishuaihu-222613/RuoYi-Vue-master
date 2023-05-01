@@ -42,7 +42,7 @@
             <el-input
               v-model="queryParams.resourceDescription"
               clearable
-              placeholder="请输入资源内容"
+              placeholder="请输入资源描述"
               style="width: 240px"
               @keyup.enter.native="handleQuery"
             />
@@ -219,7 +219,7 @@
           >
             <template slot-scope="scope">
               <el-tag v-for="(value, key) in scope.row.toolCapacity" :key="key" :index="key+''" type="success">
-                {{ key + ':' + value }}
+                {{ key + ':' + scope.row.toolCapacity[key+''] }}
               </el-tag>
             </template>
           </el-table-column>
@@ -279,7 +279,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="资源类别" prop="resourceTypes">
-              <treeselect v-model="selectResource.resourceTypes" :options="labelTree" :multiple="true" :show-count="true" placeholder="请选择资源类别" />
+              <treeselect v-model="selectResource.resourceTypes" :options="labelTree" :normalizer="normalizer" :multiple="true" :show-count="true" placeholder="请选择资源类别" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -390,20 +390,31 @@
         <el-row>
           <el-col :span="24">
             <el-form-item label="工具能力">
-              <el-button @click="addToolCapacity" />
-              <el-row v-for="(value, key) in selectResource.toolCapacity"
-                      :key="key"
+              <el-row>
+                <el-col :span="8">
+                  <el-input v-model="newToolCapacityName" placeholder="名称"></el-input>
+                </el-col>
+                <el-col :span="2" class="line">--</el-col>
+                <el-col :span="8">
+                  <el-input v-model="newToolCapacityValue" placeholder="内容"></el-input>
+                </el-col>
+                <el-col :span="6">
+                  <el-button type="primary" @click="addToolCapacity">添加</el-button>
+                </el-col>
+              </el-row>
+              <el-row v-for="(value,name,index) in selectResource.toolCapacity"
+                      :key="name"
                       :gutter="20"
               >
                 <el-col :span="6">
-                  <el-input v-model="key" placeholder="名称" style="width:100%"></el-input>
+                  <el-input v-model="name" placeholder="名称" :disabled="true"></el-input>
                 </el-col>
                 <el-col :span="2" class="line">----</el-col>
                 <el-col :span="6">
-                  <el-input v-model="selectResource.toolCapacity[key]" placeholder="内容" style="width:100%"></el-input>
+                  <el-input v-model="selectResource.toolCapacity[name]" placeholder="内容" ></el-input>
                 </el-col>
                 <el-col :span="6">
-                  <el-button @click.prevent="removeToolCapacity(key)">删除</el-button>
+                  <el-button type="text" @click.prevent="removeToolCapacity(name)">删除</el-button>
                 </el-col>
               </el-row>
             </el-form-item>
@@ -419,7 +430,7 @@
               <el-col :span="4">
                 <el-button
                   circle icon="el-icon-delete" type="danger"
-                  @click="removeAttention(selectResource.suitableProcesses[index])"
+                  @click="removeSuitableProcess(selectResource.suitableProcesses[index])"
                 ></el-button>
               </el-col>
             </el-row>
@@ -521,7 +532,6 @@ export default {
         sortType: 'ascending',
         dynamicLabel: '',
         originResource: {
-          resourceId: 0,
           resourceName: '',
           resourceTypes: [],
           resourceDescription: '',
@@ -602,8 +612,8 @@ export default {
         toolSpecification:'',
         toolState:'',
         wearCondition:0.0,
-        toolCapacity:new Map(),
-        suitableProcesses:[],
+        toolCapacity:{},
+        suitableProcesses:[""],
         clampElement:'',
         clampStyle:'',
         positionElement:'',
@@ -615,7 +625,9 @@ export default {
       labelTree: [],
       dialog: false,
       total: 0,
-      currentPage: 1
+      currentPage: 1,
+      newToolCapacityName:'',
+      newToolCapacityValue:''
     }
   },
 
@@ -668,6 +680,18 @@ export default {
         this.labelTree.push(response.data)
       })
     },
+    /** 转换知识树管理数据结构 */
+    normalizer(node) {
+      if (node.children && !node.children.length) {
+        delete node.children;
+      }
+      return {
+        id: node.leafName,
+        label: node.leafName,
+        value:node.leafValue,
+        children: node.subLeafs
+      }
+    },
     // 筛选节点
     filterNode(value, data) {
       if (!value) return true
@@ -675,8 +699,9 @@ export default {
     },
     // 节点单击事件
     handleNodeClick(data) {
-      this.queryParams.dynamicLabel = data.leafValue
+      this.queryParams.dynamicLabel = data.leafName
       this.loading = true
+      this.queryParams.sortableField = "n.label"
       resourceManagement.getAllFixtureToolsByLabel(this.queryParams).then(result => {
           if (result.code === 200) {
             this.resources = result.data.content
@@ -791,18 +816,18 @@ export default {
       this.$refs.upload.submit()
     },
     addToolCapacity(){
-      this.selectResource.equipmentCapacity.set("","")
+      this.$set(this.selectResource.toolCapacity,this.newToolCapacityName+"",this.newToolCapacityValue+"")
     },
     removeToolCapacity(key){
-      this.selectResource.equipmentCapacity.delete(key)
+      this.$delete(this.selectResource.toolCapacity,key+"")
     },
     addSuitableProcess(){
-      this.selectResource.attentions.push('')
+      this.selectResource.suitableProcesses.push('')
     },
-    removeAttention(item){
-      let index = this.selectResource.attentions.indexOf(item)
+    removeSuitableProcess(item){
+      let index = this.selectResource.suitableProcesses.indexOf(item)
       if (index !== -1) {
-        this.selectResource.attentions.splice(index, 1)
+        this.selectResource.suitableProcesses.splice(index, 1)
       }
     },
     submitForm:function() {
@@ -843,8 +868,8 @@ export default {
         toolSpecification:'',
         toolState:'',
         wearCondition:0.0,
-        toolCapacity:new Map(),
-        suitableProcesses:[],
+        toolCapacity:{},
+        suitableProcesses:[""],
         clampElement:'',
         clampStyle:'',
         positionElement:'',

@@ -16,7 +16,7 @@
         <div class="head-container">
           <el-tree
             ref="tree"
-            :data="elementOptions"
+            :data="elementTree"
             :expand-on-click-node="false"
             :filter-node-method="filterNode"
             :props="defaultProps"
@@ -25,6 +25,7 @@
           />
         </div>
         <div class="head-container">
+          <el-divider></el-divider>
           <el-tree
             ref="productTree"
             :data="products"
@@ -32,6 +33,7 @@
             :props="productProps"
             default-expand-all
             @node-click="handleProductClick"
+            @node-contextmenu="showContextMenu"
           />
         </div>
       </el-col>
@@ -40,23 +42,32 @@
         <el-form v-show="showSearch" ref="queryForm" :inline="true" :model="queryParams" label-width="68px"
                  size="small"
         >
-          <el-form-item label="产品名称" prop="elementName">
+          <el-form-item label="结构名称" prop="elementName">
             <el-input
               v-model="queryParams.originElement.elementName"
               clearable
-              placeholder="请输入产品名称"
+              placeholder="请输入结构名称"
               style="width: 240px"
               @keyup.enter.native="handleQuery"
             />
           </el-form-item>
-          <el-form-item label="产品描述" prop="elementDescription">
+          <el-form-item label="结构描述" prop="elementDescription">
             <el-input
               v-model="queryParams.originElement.elementDescription"
               clearable
-              placeholder="请输入产品描述"
+              placeholder="请输入结构描述"
               style="width: 240px"
               @keyup.enter.native="handleQuery"
             />
+          </el-form-item>
+          <el-form-item label="只看典型">
+            <template slot-scope="scope">
+                <el-switch
+                  v-model="typical"
+                  active-color="#13ce66"
+                  inactive-color="#ff4949">
+                </el-switch>
+            </template>
           </el-form-item>
           <el-form-item>
             <el-button icon="el-icon-search" size="mini" type="primary" @click="handleQuery">搜索</el-button>
@@ -120,16 +131,11 @@
           <right-toolbar :columns="columns" :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
         </el-row>
 
-        <vue-context-menu :contextMenuData="contextMenuData"
-                          @createElement="createElement"
-                          @deleteElement="deleteElement"
-                          @updateElement="updateElement"
-        >
-        </vue-context-menu>
-
-        <modifyElement ref="modifyElement"
+        <ModifyElement ref="modifyElement"
                        :dialog="modifyElementShow"
-                       :selectElement="selectElement"
+                       :selectElementId="selectElementId"
+                       :pId="productId"
+                       :proId="parentId"
                        :title="title"
                        @closeDialog="() =>{ this.modifyElementShow = false }"
                        @restore="() =>{this.selectElement = {}}"
@@ -142,20 +148,21 @@
                     @restore="() =>{this.selectElement = {}}"
         />
 
-        <el-table v-loading="loading" :data="elements" row-key="elementId" @selection-change="handleSelectionChange">
+        <el-table v-loading="loading" :data="elements" row-key="elementId"
+                  :tree-props="{children: 'subElements', hasChildren: 'hasChildren'}" @selection-change="handleSelectionChange">
           <el-table-column align="center" type="selection" width="50"/>
-          <el-table-column v-if="columns[0].visible" key="elementId" align="center" label="零件编号" prop="elementId"/>
+          <el-table-column v-if="columns[0].visible" key="elementId" align="center" label="结构编号" prop="elementId"/>
           <el-table-column v-if="columns[1].visible" key="elementName" :show-overflow-tooltip="true" align="center"
-                           label="零件名称" prop="elementName"
+                           label="结构名称" prop="elementName"
           />
           <el-table-column v-if="columns[2].visible" key="elementQuantity" :show-overflow-tooltip="true" align="center"
-                           label="零件数量" prop="elementQuantity"
+                           label="结构数量" prop="elementQuantity"
           />
-          <el-table-column v-if="columns[3].visible" key="elementDescription" align="center" label="零件编号"
+          <el-table-column v-if="columns[3].visible" key="elementDescription" align="center" label="结构描述"
                            prop="elementDescription"
           />
           <el-table-column v-if="columns[4].visible" key="elementSource" :show-overflow-tooltip="true" align="center"
-                           label="零件来源" prop="elementSource"
+                           label="结构来源" prop="elementSource"
           >
             <template slot-scope="scope">
               <el-radio v-model="scope.row.elementSource" label="自制">自制</el-radio>
@@ -163,18 +170,18 @@
             </template>
           </el-table-column>
           <el-table-column v-if="columns[5].visible" key="elementDensity" :show-overflow-tooltip="true" align="center"
-                           label="零件密度" prop="elementDensity"
+                           label="结构密度" prop="elementDensity"
           />
-          <el-table-column v-if="columns[6].visible" key="elementWetArea" align="center" label="零件表面积"
+          <el-table-column v-if="columns[6].visible" key="elementWetArea" align="center" label="表面积"
                            prop="elementWetArea" width="120"
           />
-          <el-table-column v-if="columns[7].visible" key="elementVolume" align="center" label="零件体积"
+          <el-table-column v-if="columns[7].visible" key="elementVolume" align="center" label="体积"
                            prop="elementVolume" width="160"
           />
-          <el-table-column v-if="columns[8].visible" key="elementMass" align="center" label="零件质量"
+          <el-table-column v-if="columns[8].visible" key="elementMass" align="center" label="质量"
                            prop="elementMass" width="160"
           />
-          <el-table-column v-if="columns[9].visible" key="elementBoundingBox" align="center" label="零件包容盒"
+          <el-table-column v-if="columns[9].visible" key="elementBoundingBox" align="center" label="包容盒"
                            prop="elementBoundingBox" width="160"
           />
           <el-table-column
@@ -266,14 +273,15 @@
 <script>
 
 import * as elementManagement from '@/api/system/elementManagement'
-import modifyElement from '@/views/Element/components/modifyElement.vue'
 import constrains from '@/views/Element/components/constrains.vue'
 import { getToken } from '@/utils/auth'
 import * as treeManagement from '@/api/system/treeManagement'
+import ModifyElement from '@/views/Element/components/modifyElement.vue'
+import { getAllElementsByParams } from '@/api/system/elementManagement'
 
 export default {
   name: 'index',
-  components: { ModifyElement, modifyElement, constrains },
+  components: { ModifyElement, constrains },
 
   watch: {
     filterText(val) {
@@ -312,7 +320,7 @@ export default {
         // 设置上传的请求头部
         headers: { Authorization: 'Bearer ' + getToken() },
         // 上传的地址
-        url: process.env.VUE_APP_BASE_API + '/structure/importData'
+        url: process.env.VUE_APP_BASE_API + '/element/importData'
       },
       queryParams: {
         pageNum: 1,
@@ -349,31 +357,6 @@ export default {
       selectId: 0,
       tableHeight: 0,
       selectLabel: '',
-      contextMenuData: {
-        menuName: 'elementManage',
-        axis: {
-          x: null,
-          y: null
-        },
-        menulists: []
-      },
-      tableMenu: [
-        {
-          fnHandler: 'createElement', // 绑定事件
-          icoName: 'el-icon-circle-plus-outline', // 图标
-          btnName: '创建装配结构' // 菜单名称
-        },
-        {
-          fnHandler: 'updateElement',
-          icoName: 'el-icon-search',
-          btnName: '修改装配结构'
-        },
-        {
-          fnHandler: 'deleteElement',
-          icoName: 'el-icon-paperclip',
-          btnName: '删除装配结构'
-        }
-      ],
       filterText: '',
       elementOptions: [],
       products: [],
@@ -396,7 +379,11 @@ export default {
       elementTree: [],
       dialog: false,
       total: 0,
-      currentPage: 1
+      currentPage: 1,
+      typical:false,
+      selectElementId:0,
+      productId:0,
+      parentId:0,
     }
   },
 
@@ -414,7 +401,7 @@ export default {
           }
         )
       } else if (this.queryParams.dynamicLabel !== '') {
-        elementManagement.getAllProductsByLabel(this.queryParams).then(result => {
+        elementManagement.getProductListByLabel(this.queryParams).then(result => {
             if (result.code === 200) {
               this.elements = result.data.content
               this.total = result.data.totalElements
@@ -423,7 +410,7 @@ export default {
           }
         )
       } else if (this.queryParams.originProblem.elementName !== '' || this.queryParams.originProblem.elementDescription !== '') {
-        elementManagement.getAllproductsByParams(this.queryParams).then(result => {
+        elementManagement.getAllElementsByParams(this.queryParams).then(result => {
             if (result.code === 200) {
               this.elements = result.data.content
               this.total = result.data.totalElements
@@ -437,6 +424,7 @@ export default {
     /** 查询知识下拉树结构 */
     getTreeselect() {
       treeManagement.getTreeManagement(25500).then(response => {
+        this.elementTree = []
         console.log(response.data)
         this.elementTree.push(response.data)
       })
@@ -460,9 +448,11 @@ export default {
     },
     //产品树节点单击
     handleProductClick(data) {
-      this.queryParams.originElement.elementId = data.elementId
+      this.productId = data.elementId
+      this.parentId = data.elementId
+      // this.queryParams.originElement.elementId = data.elementId
       this.loading = true
-      elementManagement.getProductById(this.queryParams).then(result => {
+      elementManagement.getProductById(data.elementId).then(result => {
           if (result.code === 200) {
             this.elements = result.data.subElements
             this.loading = false
@@ -490,15 +480,14 @@ export default {
     handleModel(data) {
       this.modelShow = true
       this.model = data.model
-      File
     },
 
     /** 搜索按钮操作 */
     handleQuery() {
       this.queryParams.pageNum = 1
-      this.queryParams.originElement.dynamicLabels.push('AssemblyProduct')
+      // this.queryParams.originElement.dynamicLabels.push('AssemblyProduct')
       this.loading = true
-      elementManagement.getAllProductsByParams(this.queryParams).then(result => {
+      elementManagement.getAllElementsByParams(this.queryParams).then(result => {
           if (result.code === 200) {
             this.products = result.data
             this.loading = false
@@ -517,7 +506,7 @@ export default {
       this.single = selection.length !== 1
       this.multiple = !selection.length
     },
-    showContextMenu(row, column, event) {
+    showContextMenu(event, product, node, nodeComponent) {
       event.preventDefault()
       let x = event.clientX
       let y = event.clientY
@@ -526,33 +515,23 @@ export default {
         x, y
       }
       this.contextMenuData.menulists = this.tableMenu
-      this.selectProblem = row
+      this.selectElement = product
     },
-    createProblem() {
-      this.modifyProblemShow = true
-      this.modifyState = false
+    show3DModel(){
+      this.model = this.selectElement.modelFile;
+      this.modelShow =true;
     },
-    updateProblem(data) {
-      this.modifyProblemShow = true
-      this.modifyState = true
-    },
-    deleteProblem() {
-      elementManagement.deleteQualityProblem(this.selectId).then(result => {
-        if (result.code === 200) {
-          this.$modal.msgSuccess('删除原则成功！')
-        }
-      })
-    },
+
     /** 新增按钮操作 */
     handleAdd() {
       this.modifyElementShow = true
-      this.title = '新增结构'
+      this.title = '创建元素'
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.modifyElementShow = true
       this.title = '修改结构'
-      this.selectProblem = row
+      this.selectElementId = row.elementId
     },
     /** 删除按钮操作 */
     handleDelete(row) {

@@ -49,10 +49,10 @@ public class Material {
     private Set<String> materialLabels;
 
     @Relationship(type = "hasPhysicalProperty", direction = Relationship.Direction.OUTGOING)
-    private PhysicalProperty physicalProperty;
+    private Set<PhysicalProperty> physicalProperty;
 
     @Relationship(type = "hasChemicalProperty", direction = Relationship.Direction.OUTGOING)
-    private ChemicalProperty chemicalProperty;
+    private Set<ChemicalProperty> chemicalProperty;
 
     @Relationship(type = "hasAnalysisSpectrogram", direction = Relationship.Direction.OUTGOING)
     private Set<AnalysisSpectrogram> analysisSpectrogram;
@@ -171,19 +171,19 @@ public class Material {
         this.materialLabels = materialLabels;
     }
 
-    public PhysicalProperty getPhysicalProperty() {
+    public Set<PhysicalProperty> getPhysicalProperty() {
         return physicalProperty;
     }
 
-    public void setPhysicalProperty(PhysicalProperty physicalProperty) {
+    public void setPhysicalProperty(Set<PhysicalProperty> physicalProperty) {
         this.physicalProperty = physicalProperty;
     }
 
-    public ChemicalProperty getChemicalProperty() {
+    public Set<ChemicalProperty> getChemicalProperty() {
         return chemicalProperty;
     }
 
-    public void setChemicalProperty(ChemicalProperty chemicalProperty) {
+    public void setChemicalProperty(Set<ChemicalProperty> chemicalProperty) {
         this.chemicalProperty = chemicalProperty;
     }
 
@@ -246,22 +246,7 @@ public class Material {
     public Material() {
     }
 
-    public Material(MaterialInterface singleMaterial) {
-        this.materialId = singleMaterial.getMaterialId();
-        this.materialName = singleMaterial.getMaterialName();
-        this.englishName = singleMaterial.getEnglishName();
-        this.nickName = singleMaterial.getNickName();
-        this.englishNickName = singleMaterial.getEnglishNickName();
-        this.relativeMolecularMass = singleMaterial.getRelativeMolecularMass();
-        this.structuralFormula = singleMaterial.getStructuralFormula();
-        this.casRegistryNumber = singleMaterial.getCasRegistryNumber();
-        this.materialDescription = singleMaterial.getMaterialDescription();
-        this.materialAppearance = singleMaterial.getMaterialAppearance();
-        this.materialUsage = singleMaterial.getMaterialUsage();
-        this.materialLabels = singleMaterial.getMaterialLabels();
-    }
-
-    public Material(Long materialId, String materialName, String englishName, String nickName, String englishNickName, String relativeMolecularMass, String structuralFormula, String casRegistryNumber, String materialDescription, String materialAppearance, List<String> materialUsage, Set<String> materialLabels, PhysicalProperty physicalProperty, ChemicalProperty chemicalProperty, Set<AnalysisSpectrogram> analysisSpectrogram, Set<InspectProject> inspectProjects, Set<StorageRequirement> storageRequirements, Set<ProduceMethod> productMethods, Set<Danger> dangers, Set<Protection> protections, Set<FileKnowledge> associatedFiles) {
+    public Material(Long materialId, String materialName, String englishName, String nickName, String englishNickName, String relativeMolecularMass, String structuralFormula, String casRegistryNumber, String materialDescription, String materialAppearance, List<String> materialUsage, Set<String> materialLabels, Set<PhysicalProperty> physicalProperty, Set<ChemicalProperty> chemicalProperty, Set<AnalysisSpectrogram> analysisSpectrogram, Set<InspectProject> inspectProjects, Set<StorageRequirement> storageRequirements, Set<ProduceMethod> productMethods, Set<Danger> dangers, Set<Protection> protections, Set<FileKnowledge> associatedFiles) {
         this.materialId = materialId;
         this.materialName = materialName;
         this.englishName = englishName;
@@ -284,7 +269,6 @@ public class Material {
         this.protections = protections;
         this.associatedFiles = associatedFiles;
     }
-
 
     @Override
     public boolean equals(Object o) {

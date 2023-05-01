@@ -62,7 +62,13 @@ public class PrincipleController extends BaseController {
             Sort sort = "ascending".equals(params.getSortType()) ? by(Sort.Direction.ASC, params.getSortableField()) : by(Sort.Direction.DESC, params.getSortableField());
             //获取pageable
             Pageable pageable = PageRequest.of(params.getPageNum()-1,params.getPageSize(),sort);
-            Example<Principle> example = Example.of(params.getOriginPrinciple());
+            ExampleMatcher matcher = ExampleMatcher.matching()
+                    .withMatcher("principleName", ExampleMatcher.GenericPropertyMatcher::contains)
+                    .withMatcher("principleDescription",ExampleMatcher.GenericPropertyMatcher::contains);
+            Principle principle = new Principle();
+            principle.setPrincipleName(params.getOriginPrinciple().getPrincipleName());
+            principle.setPrincipleDescription(params.getOriginPrinciple().getPrincipleDescription());
+            Example<Principle> example = Example.of(principle,matcher);
             Page<Principle> principles = principleService.getAllPrincipleByParams(example,pageable);
             System.out.println(principles);
             return R.success(principles);

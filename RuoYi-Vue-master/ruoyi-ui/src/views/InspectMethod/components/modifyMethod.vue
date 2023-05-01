@@ -30,7 +30,11 @@
             </el-row>
           </el-form-item>
           <el-form-item :label-width="formLabelWidth" label="检验条件" :prop="'method.methodConditions'">
-            <el-button type="primary" @click="addConditions" style="float: right">添加</el-button>
+            <el-row>
+              <el-col :offset="18" :span="6">
+                <el-button type="primary" @click="addConditions">添加</el-button>
+              </el-col>
+            </el-row>
             <el-row v-for="(item, index) in method.methodConditions"
                     :key="index"
                     :gutter="20"
@@ -41,11 +45,11 @@
                 </el-tag>
               </el-col>
               <el-col :span="6">
-                <el-input v-model="item.conditionName" placeholder="名称" style="width:100%"></el-input>
+                <el-input v-model="item.conditionName" placeholder="名称"></el-input>
               </el-col>
               <el-col :span="2" class="line">----</el-col>
               <el-col :span="6">
-                <el-input v-model="item.conditionDescription" placeholder="内容" style="width:100%"></el-input>
+                <el-input v-model="item.conditionDescription" placeholder="内容"></el-input>
               </el-col>
               <el-col :span="6">
                 <el-button @click.prevent="removeCondition(item)">删除</el-button>
@@ -53,7 +57,11 @@
             </el-row>
           </el-form-item>
           <el-form-item :label-width="formLabelWidth" label="影响因素" :prop="'method.methodFactors'">
-            <el-button type="primary" @click="addFactor" style="float: right">添加</el-button>
+            <el-row>
+              <el-col :offset="18" :span="6">
+                <el-button type="primary" @click="addFactor" >添加</el-button>
+              </el-col>
+            </el-row>
             <el-row v-for="(item, index) in method.methodFactors"
                     :key="index"
                     :gutter="20"
@@ -76,7 +84,11 @@
             </el-row>
           </el-form-item>
           <el-form-item :label-width="formLabelWidth" label="检测模式" :prop="'method.methodModes'">
-            <el-button type="primary" @click="addMode" style="float: right">添加</el-button>
+            <el-row>
+              <el-col :offset="18" :span="6">
+                <el-button type="primary" @click="addMode">添加</el-button>
+              </el-col>
+            </el-row>
             <el-row v-for="(item, index) in method.methodModes"
                     :key="index"
                     :gutter="20"
@@ -106,80 +118,116 @@
       </el-tab-pane>
       <el-tab-pane label="关联信息">
         <el-form :model="method" :rules="rules" ref="relatedForm">
-          <el-form-item :label-width="formLabelWidth" label="关联工艺实例">
-            <el-row class="row-bg" justify="space-around" type="flex">
-              <treeselect v-model="processLabel"
-                          :clearable="true"
-                          :searchable="true"
-                          :normalizer="normalizer"
-                          :options="processLabelOptions"
-                          placeholder="请选择工艺标签"
-              />
-              <el-select v-model="processIds" multiple placeholder="请选择">
-                <el-option
-                  v-for="item in processOptions"
-                  :key="item.processId"
-                  :label="item.processName"
-                  :value="item.processId">
-                </el-option>
-              </el-select>
-            </el-row>
-          </el-form-item>
           <el-form-item :label-width="formLabelWidth" label="关联质量问题">
+            <el-row>
+              <el-tag
+                v-for="problem in problems"
+                :key="problem.problemId"
+                closable
+                @close="handleCloseProblem(problem)"
+                type="info">
+                {{problem.problemName}}
+              </el-tag>
+            </el-row>
             <el-row class="row-bg" justify="space-around" type="flex">
-              <treeselect v-model="problemLabel"
-                          :clearable="true"
-                          :searchable="true"
-                          :normalizer="normalizer"
-                          :options="problemLabelOptions"
-                          placeholder="请选择问题标签"
-              />
-              <el-select v-model="problemIds" multiple placeholder="请选择">
-                <el-option
-                  v-for="item in problemOptions"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
-                </el-option>
-              </el-select>
+              <el-col :span="10">
+                <treeselect v-model="problemLabel"
+                            :clearable="true"
+                            :searchable="true"
+                            :normalizer="normalizer"
+                            @select="selectProblemLabel"
+                            :options="problemLabelOptions"
+                            placeholder="请选择问题标签"
+                />
+              </el-col>
+              <el-col :span="10">
+                <el-select value-key="problemId" v-model="newProblem" placeholder="请选择">
+                  <el-option
+                    v-for="item in problemOptions"
+                    :key="item.problemId"
+                    :label="item.problemName"
+                    :value="item">
+                  </el-option>
+                </el-select>
+              </el-col>
+              <el-col :span="4">
+                <el-button @click.prevent="addProblem">添加</el-button>
+              </el-col>
+
             </el-row>
           </el-form-item>
-          <el-form-item :label-width="formLabelWidth" label="使用设备">
+          <el-form-item :label-width="formLabelWidth" label="使用资源">
+            <el-row>
+              <el-tag
+                v-for="resource in resources"
+                :key="resource.resourceId"
+                closable
+                @close="handleCloseResource(resource)"
+                type="info">
+                {{resource.resourceName}}
+              </el-tag>
+            </el-row>
             <el-row class="row-bg" justify="space-around" type="flex">
-              <treeselect v-model="resourceLabel"
-                          :clearable="true"
-                          :searchable="true"
-                          :normalizer="normalizer"
-                          :options="resourceLabelOptions"
-                          placeholder="请选择标签"
-              />
-              <el-select v-model="resourceIds" multiple placeholder="请选择">
-                <el-option
-                  v-for="item in resourceOptions"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
-                </el-option>
-              </el-select>
+              <el-col :span="10">
+                <treeselect v-model="resourceLabel"
+                            :clearable="true"
+                            :searchable="true"
+                            :normalizer="normalizer"
+                            @select="selectResourceType"
+                            :options="resourceLabelOptions"
+                            placeholder="请选择资源标签"
+                />
+              </el-col>
+              <el-col :span="10">
+                <el-select value-key="resourceId" v-model="newResource" multiple placeholder="请选择">
+                  <el-option
+                    v-for="item in resourceOptions"
+                    :key="item.resourceId"
+                    :label="item.resourceName"
+                    :value="item">
+                  </el-option>
+                </el-select>
+              </el-col>
+              <el-col :span="4">
+                <el-button @click.prevent="addResource">添加</el-button>
+              </el-col>
             </el-row>
           </el-form-item>
           <el-form-item :label-width="formLabelWidth" label="相关文件">
+            <el-row>
+              <el-tag
+                v-for="file in files"
+                :key="file.fileId"
+                closable
+                @close="handleCloseFile(file)"
+                type="info">
+                {{file.fileName}}
+              </el-tag>
+            </el-row>
             <el-row class="row-bg" justify="space-around" type="flex">
-              <treeselect v-model="fileLabel"
-                          :clearable="true"
-                          :searchable="true"
-                          :normalizer="normalizer"
-                          :options="fileLabelOptions"
-                          placeholder="请选择标签"
-              />
-              <el-select v-model="fileIds" multiple placeholder="请选择">
-                <el-option
-                  v-for="item in fileOptions"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
-                </el-option>
-              </el-select>
+              <el-col :span="10">
+                <treeselect v-model="fileLabel"
+                            :clearable="true"
+                            :searchable="true"
+                            :normalizer="normalizer"
+                            @select="selectFileLabel"
+                            :options="fileLabelOptions"
+                            placeholder="请选择标签"
+                />
+              </el-col>
+              <el-col :span="10">
+                <el-select value-key="fileId" v-model="newFile" multiple placeholder="请选择">
+                  <el-option
+                    v-for="item in fileOptions"
+                    :key="item.fileId"
+                    :label="item.fileName"
+                    :value="item">
+                  </el-option>
+                </el-select>
+              </el-col>
+              <el-col :span="4">
+                <el-button @click.prevent="addFile">添加</el-button>
+              </el-col>
             </el-row>
           </el-form-item>
         </el-form>
@@ -196,15 +244,19 @@
 <script>
 import Treeselect from '@riophae/vue-treeselect'
 import * as treeManagement from '@/api/system/treeManagement'
-import * as methodManagement from '@/api/system/qualityProblemManagement'
+import * as methodManagement from '@/api/system/inspectMethodManagement'
+import * as processManagement from '@/api/system/processManagement'
+import * as resourceManagement from '@/api/system/resourceManagement'
+import * as problemManagement from '@/api/system/qualityProblemManagement'
+import * as fileManagement from '@/api/system/fileManagement'
 
 export default {
   name: 'modifyMethod',
   components: { Treeselect },
   props: {
-    selectProblem: {
-      type: Object,
-      default: {}
+    selectMethodId: {
+      type: Number,
+      default: 0
     },
     dialog: {
       type: Boolean,
@@ -216,10 +268,10 @@ export default {
     }
   },
   watch: {
-    selectProblem: {
+    selectMethodId: {
       handler(newVal, oldVal) {
         if (newVal !== null || newVal !== 0) {
-          this.method = newVal
+          this.methodId = newVal
         }
       }
     },
@@ -229,11 +281,6 @@ export default {
       }
     },
     title:{
-      handler(newVal, oldVal) {
-        this.windowTitle = newVal
-      }
-    },
-    precessLabel:{
       handler(newVal, oldVal) {
         this.windowTitle = newVal
       }
@@ -251,6 +298,7 @@ export default {
       options: [],
       tabPosition:"left",
       windowTitle:"创建问题",
+      methodId:0,
       method: {
         methodId: 0,
         methodName: '',
@@ -265,19 +313,22 @@ export default {
       processLabel:'',
       processLabelOptions: [],
       processOptions: [],
-      processIds: [],
+      processId: undefined,
       problemLabel:'',
       problemLabelOptions: [],
       problemOptions: [],
-      problemIds:[],
+      newProblem:{},
+      problems:[],
       resourceLabel:'',
       resourceLabelOptions: [],
       resourceOptions: [],
-      resourceIds:[],
+      newResource:{},
+      resources:[],
       fileLabel:'',
       fileLabelOptions: [],
       fileOptions:[],
-      fileIds:[],
+      newFile: {},
+      files:[],
       dialogFormVisible: false,
       formLabelWidth: '120px',
       inputVisible: false,
@@ -325,7 +376,7 @@ export default {
         delete node.children;
       }
       return {
-        id: node.leafId,
+        id: node.leafName,
         label: node.leafName,
         children: node.subLeafs
       }
@@ -343,11 +394,11 @@ export default {
       this.method = {
         methodId: 0,
         methodName: '',
-        dynamicLabels: [],
+        dynamicLabels: [""],
         methodDescription: '',
-        appearances: [],
-        reasons: [],
-        solutions:[]
+        appearances: [""],
+        reasons: [""],
+        solutions:[""]
       }
       this.resetForm('form')
     },
@@ -357,47 +408,91 @@ export default {
       this.$emit('closeDialog', null);
       this.$emit('restore', null);
     },
-    addAppearance() {
-      this.method.appearances.push({
-        appearanceId:0,
-        appearanceName:'',
-        appearanceDescription:''
+    addConditions() {
+      this.method.methodConditions.push({
+        conditionId:0,
+        conditionName:'',
+        conditionDescription:''
       })
     },
-    removeAppearance(item) {
-      let index = this.method.appearances.indexOf(item)
+    removeCondition(item) {
+      let index = this.method.methodConditions.indexOf(item)
       if (index !== -1) {
-        this.method.appearances.splice(index, 1)
+        this.method.methodConditions.splice(index, 1)
       }
     },
-    addReason() {
-      this.method.reasons.push({
-        reasonId:0,
-        reasonName:'',
-        reasonDescription:''
+    addFactor() {
+      this.method.methodFactors.push({
+        factorId:0,
+        factorName:'',
+        factorDescription:''
       })
     },
-    removeReason(item) {
-      let index = this.method.reasons.indexOf(item)
+    removeFactor(item) {
+      let index = this.method.methodFactors.indexOf(item)
       if (index !== -1) {
-        this.method.reasons.splice(index, 1)
+        this.method.methodFactors.splice(index, 1)
       }
     },
-    addSolution() {
-      this.method.reasons.push({
-        solutionId:0,
-        solutionName:'',
-        solutionDescription:''
+    addMode() {
+      this.method.methodModes.push({
+        modeId:0,
+        modeName:'',
+        modeDescription:''
       })
     },
-    removeSolution(item) {
-      let index = this.method.reasons.indexOf(item)
+    removeMode(item) {
+      let index = this.method.methodModes.indexOf(item)
       if (index !== -1) {
-        this.method.reasons.splice(index, 1)
+        this.method.methodModes.splice(index, 1)
       }
+    },
+    selectProblemLabel(node,instanceId){
+      problemManagement.getQualityProblemOptionsByLabel(node.label).then(result =>{
+        if(result.code === 200){
+          this.problemOptions = result.data
+        }
+      })
+    },
+    addProblem(){
+      this.problems.push(this.newProblem)
+      this.newProblem = {}
+    },
+    handleCloseProblem(data){
+      this.problems.splice(this.problems.indexOf(data), 1);
+    },
+    addResource(){
+      this.resources.push(this.newResource)
+      this.newResource = {}
+    },
+    handleCloseResource(data){
+      this.resources.splice(this.resources.indexOf(data), 1);
+    },
+    addFile(){
+      this.files.push(this.newFile)
+      this.newFile = {}
+    },
+    handleCloseFile(data){
+      this.files.splice(this.files.indexOf(data), 1);
+    },
+    selectResourceType(node,instanceId){
+      this.resourceOptions = []
+      resourceManagement.getResourceOptionsByLabel(node.label).then(result =>{
+        if(result.code === 200 ){
+          this.resourceOptions.push(result.data)
+        }
+      })
+    },
+    selectFileLabel(node,instanceId){
+      this.fileOptions = []
+      fileManagement.getFileOptionsByLabel(node.label).then(result =>{
+        if(result.code === 200){
+          this.files.push(result.data)
+        }
+      })
     },
     onSubmit(){
-      if(this.windowTitle === "创建问题"){
+      if(this.windowTitle === "创建方法"){
         methodManagement.createQualityProblem(this.method).then(result =>{
           if(result.code === 200){
             this.method = result.data;
@@ -415,10 +510,9 @@ export default {
     },
     changeRelation(){
       let relations = {
-        processIds:this.processIds,
-        problemIds:this.problemIds,
-        resourceIds:this.resourceIds,
-        fileIds:this.fileIds,
+        problems:this.problems,
+        resources:this.resources,
+        files:this.files
       }
       methodManagement.changeRelations(relations).then(result =>{
         if(result.code === 200){

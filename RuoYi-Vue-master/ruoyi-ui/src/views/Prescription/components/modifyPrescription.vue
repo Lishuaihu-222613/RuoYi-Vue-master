@@ -1,68 +1,109 @@
 <template>
-  <el-dialog :visible.sync="dialogFormVisible" title="推进剂配方编辑" top="50vh" width="50%"
+  <el-dialog :visible.sync="dialogFormVisible" :title="windowTitle" top="50vh" width="50%"
              @closed="handleClose" @open="handleOpen"
   >
-    <el-form :model="prescription" :rules="rules" ref="form">
-      <el-form-item :label-width="formLabelWidth" label="推进剂配方名称">
-        <el-input v-model="prescription.prescriptionName"></el-input>
-      </el-form-item>
-      <el-form-item :label-width="formLabelWidth" label="推进剂配方描述">
-        <el-input v-model="prescription.prescriptionDescription"></el-input>
-      </el-form-item>
-      <el-form-item :label-width="formLabelWidth" label="推进剂配方密度">
-        <el-input v-model="prescription.density"></el-input>
-      </el-form-item>
-      <el-form-item :label-width="formLabelWidth" label="推进剂配方危险等级">
-        <el-input v-model="prescription.dangerLevel"></el-input>
-      </el-form-item>
-      <el-form-item :label-width="formLabelWidth" label="推进剂配方标签">
-        <el-row class="row-bg" justify="space-around" type="flex">
-          <treeselect v-model="prescription.dynamicLabels"
-                      :multiple="true"
-                      :clearable="true"
-                      :searchable="true"
-                      :normalizer="normalizer"
-                      :options="options"
-                      placeholder="请选择分类标签"
-          />
-        </el-row>
-      </el-form-item>
-      <el-form-item :label-width="formLabelWidth" label="固化时间" :prop="'prescription.curingTime'">
-        <el-button type="primary" @click="addCuringTime" style="float: right">添加</el-button>
-        <el-row v-for="(value, key) in prescription.curingTime"
-                :key="key"
-                :gutter="20"
-        >
-          <el-col :span="6">
-            <el-input v-model="key" placeholder="名称" style="width:100%"></el-input>
-          </el-col>
-          <el-col :span="2" class="line">----</el-col>
-          <el-col :span="6">
-            <el-input v-model="value" placeholder="内容" style="width:100%"></el-input>
-          </el-col>
-          <el-col :span="6">
-            <el-button @click.prevent="removeCuringTime(key)">删除</el-button>
-          </el-col>
-        </el-row>
-      </el-form-item>
-      <el-form-item :label-width="formLabelWidth" label="其他属性">
-        <el-button type="primary" @click="addOtherProperty" style="float: right">添加</el-button>
-        <el-row v-for="(value, key) in prescription.otherProperty"
-                :key="key"
-                :gutter="20"
-        >
-          <el-col :span="6">
-            <el-input v-model="key" placeholder="名称" style="width:100%"></el-input>
-          </el-col>
-          <el-col :span="2" class="line">----</el-col>
-          <el-col :span="6">
-            <el-input v-model="value" placeholder="内容" style="width:100%"></el-input>
-          </el-col>
-          <el-col :span="6">
-            <el-button @click.prevent="removeOtherProperty(key)">删除</el-button>
-          </el-col>
-        </el-row>
-      </el-form-item>
+    <el-form ref="form" :model="prescription" :rules="rules">
+      <el-row>
+        <el-col :span="12">
+          <el-form-item :label-width="formLabelWidth" label="推进剂配方名称">
+            <el-input v-model="prescription.prescriptionName"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item :label-width="formLabelWidth" label="推进剂配方标签">
+            <el-row class="row-bg" justify="space-around" type="flex">
+              <treeselect v-model="prescription.prescriptionLabels"
+                          :clearable="true"
+                          :multiple="true"
+                          :normalizer="normalizer"
+                          :options="options"
+                          :searchable="true"
+                          placeholder="请选择分类标签"
+              >
+              </treeselect>
+            </el-row>
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="12">
+          <el-form-item :label-width="formLabelWidth" label="推进剂配方密度">
+            <el-input v-model="prescription.density"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item :label-width="formLabelWidth" label="推进剂配方危险等级">
+            <el-input v-model="prescription.dangerLevel"></el-input>
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-form-item :label-width="formLabelWidth" label="推进剂配方描述">
+          <el-input v-model="prescription.prescriptionDescription"></el-input>
+        </el-form-item>
+      </el-row>
+      <el-row>
+        <el-form-item :label-width="formLabelWidth" label="固化时间">
+          <el-row>
+            <el-col :span="8">
+              <el-input v-model="newCurTingTimeName" placeholder="名称"></el-input>
+            </el-col>
+            <el-col :span="2" class="line"></el-col>
+            <el-col :span="8">
+              <el-input v-model="newCurTingTimeValue" placeholder="内容"></el-input>
+            </el-col>
+            <el-col :span="6">
+              <el-button type="primary" @click="addCuringTime">添加</el-button>
+            </el-col>
+          </el-row>
+          <el-row v-for="(value,name,index) in prescription.curingTime"
+                  :key="name"
+                  :gutter="20"
+          >
+            <el-col :span="8">
+              <el-input v-model="name" :disabled="true" placeholder="名称"></el-input>
+            </el-col>
+            <el-col :span="2" class="line">----</el-col>
+            <el-col :span="8">
+              <el-input v-model="prescription.curingTime[name]" placeholder="内容" > </el-input>
+            </el-col>
+            <el-col :span="6">
+              <el-button @click.prevent="removeCuringTime(name)">删除</el-button>
+            </el-col>
+          </el-row>
+        </el-form-item>
+      </el-row>
+      <el-row>
+        <el-form-item :label-width="formLabelWidth" label="其他属性">
+          <el-row>
+            <el-col :span="8">
+              <el-input v-model="newPropertyName" placeholder="名称"></el-input>
+            </el-col>
+            <el-col :span="2" class="line"></el-col>
+            <el-col :span="8">
+              <el-input v-model="newPropertyValue" placeholder="内容"></el-input>
+            </el-col>
+            <el-col :span="6">
+              <el-button type="primary" @click="addOtherProperty">添加</el-button>
+            </el-col>
+          </el-row>
+          <el-row v-for="(value, name ,index) in prescription.otherProperty"
+                  :key="name"
+                  :gutter="20"
+          >
+            <el-col :span="8">
+              <el-input v-model="name" :disabled="true" placeholder="名称"></el-input>
+            </el-col>
+            <el-col :span="2" class="line">----</el-col>
+            <el-col :span="8">
+              <el-input v-model="prescription.otherProperty[name]" placeholder="内容"></el-input>
+            </el-col>
+            <el-col :span="6">
+              <el-button @click.prevent="removeOtherProperty(name)">删除</el-button>
+            </el-col>
+          </el-row>
+        </el-form-item>
+      </el-row>
     </el-form>
     <div slot="footer" class="dialog-footer">
       <el-button type="primary" @click="onSubmit">确 定</el-button>
@@ -75,30 +116,31 @@
 import Treeselect from '@riophae/vue-treeselect'
 import * as treeManagement from '@/api/system/treeManagement'
 import * as prescriptionManagement from '@/api/system/prescriptionManagement'
+import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 
 export default {
   name: 'modifyPrescription',
-  components:{Treeselect},
+  components: { Treeselect },
 
   props: {
-    selectPrescription: {
-      type: Object,
-      default: {}
+    selectPrescriptionId: {
+      type: Number,
+      default: 0
     },
     dialog: {
       type: Boolean,
       default: false
     },
-    title:{
+    title: {
       type: String,
-      default: ""
+      default: ''
     }
   },
   watch: {
-    selectPrescription: {
+    selectPrescriptionId: {
       handler(newVal, oldVal) {
-        if (newVal !== null || newVal !== 0) {
-          this.Prescription = newVal
+        if (newVal !== null || newVal !== oldVal) {
+          this.prescriptionId = newVal
         }
       }
     },
@@ -107,7 +149,7 @@ export default {
         this.dialogFormVisible = newVal
       }
     },
-    title:{
+    title: {
       handler(newVal, oldVal) {
         this.windowTitle = newVal
       }
@@ -123,29 +165,34 @@ export default {
       loading: true,
       // 知识树管理树选项
       options: [],
-      windowTitle:"创建配方",
+      windowTitle: '创建配方',
       prescription: {
         prescriptionId: 0,
         prescriptionName: '',
         prescriptionLabels: [],
         prescriptionDescription: '',
-        density:'',
-        dangerLevel:'',
-        curingTime: new Map(),
-        otherProperty: new Map(),
+        density: '',
+        dangerLevel: '',
+        curingTime: {},
+        otherProperty: {}
       },
+      prescriptionId: 0,
       dialogFormVisible: false,
       formLabelWidth: '120px',
       inputVisible: false,
       inputValue: '',
+      newPropertyName: '',
+      newPropertyValue: '',
+      newCurTingTimeName: '',
+      newCurTingTimeValue: '',
       // 表单校验
       rules: {
         prescriptionName: [
-          { required: true, message: "配方名称不能为空", trigger: "blur" },
+          { required: true, message: '配方名称不能为空', trigger: 'blur' },
           { min: 2, max: 20, message: '配方名称长度必须介于 2 和 20 之间', trigger: 'blur' }
         ],
         prescriptionDescription: [
-          { required: true, message: "配方内容不能为空", trigger: "blur" }
+          { required: true, message: '配方内容不能为空', trigger: 'blur' }
         ]
       }
     }
@@ -155,6 +202,7 @@ export default {
     getLabelList() {
       this.loading = true
       treeManagement.getTreeManagement(25500).then(response => {
+        this.options = []
         console.log(response.data)
         this.options.push(response.data)
       })
@@ -162,16 +210,25 @@ export default {
     /** 转换知识树管理数据结构 */
     normalizer(node) {
       if (node.children && !node.children.length) {
-        delete node.children;
+        delete node.children
       }
       return {
-        id: node.leafId,
+        id: node.leafName,
         label: node.leafName,
+        value: node.leafValue,
         children: node.subLeafs
       }
     },
     handleOpen() {
-      this.getLabelList();
+      if (this.prescriptionId !== 0) {
+        prescriptionManagement.getPrescriptionById(this.prescriptionId).then(result => {
+            if (result.code === 200) {
+              this.prescription = result.data
+            }
+          }
+        )
+      }
+      this.getLabelList()
     },
     // 取消按钮
     cancel() {
@@ -185,44 +242,44 @@ export default {
         prescriptionName: '',
         prescriptionLabels: [],
         prescriptionDescription: '',
-        density:'',
-        dangerLevel:'',
-        curingTime: new Map(),
-        otherProperty: new Map(),
-      },
+        density: '',
+        dangerLevel: '',
+        curingTime: {},
+        otherProperty: {}
+      };
         this.resetForm('form')
     },
     handleClose() {
-      this.dialogFormVisible = false;
-      this.reset();
-      this.$emit('closeDialog', null);
-      this.$emit('restore', null);
+      this.dialogFormVisible = false
+      this.reset()
+      this.$emit('closeDialog', null)
+      this.$emit('restore', null)
     },
     addCuringTime() {
-      this.prescription.curingTime.push("","")
+      this.$set(this.prescription.curingTime, this.newCurTingTimeName+"", this.newCurTingTimeValue+"")
     },
     removeCuringTime(key) {
-      this.prescription.curingTime.delete(key)
+      this.$delete(this.prescription.curingTime, key+"")
     },
     addOtherProperty() {
-      this.prescription.otherProperty.push("","")
+      this.$set(this.prescription.otherProperty, this.newPropertyName+"", this.newPropertyValue+"")
     },
     removeOtherProperty(key) {
-      this.prescription.otherProperty.delete(key)
+      this.$delete(this.prescription.otherProperty, key+"")
     },
-    onSubmit(){
-      if(this.windowTitle === "创建配方"){
-        prescriptionManagement.createPrescription(this.prescription).then(result =>{
-          if(result.code === 200){
-            this.prescription = result.data;
-            this.$modal.msgSuccess("创建成功！")
+    onSubmit() {
+      if (this.windowTitle === '新增配方') {
+        prescriptionManagement.createPrescription(this.prescription).then(result => {
+          if (result.code === 200) {
+            this.prescription = result.data
+            this.$modal.msgSuccess('创建成功！')
           }
         })
       } else {
-        prescriptionManagement.updatePrescription(this.prescription).then(result =>{
-          if(result.code === 200){
-            this.prescription = result.data;
-            this.$modal.msgSuccess("修改成功！")
+        prescriptionManagement.updatePrescription(this.prescription).then(result => {
+          if (result.code === 200) {
+            this.prescription = result.data
+            this.$modal.msgSuccess('修改成功！')
           }
         })
       }

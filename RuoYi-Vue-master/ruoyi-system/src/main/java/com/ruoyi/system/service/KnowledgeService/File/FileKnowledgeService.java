@@ -3,6 +3,9 @@ package com.ruoyi.system.service.KnowledgeService.File;
 import java.util.List;
 
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.fileKnowledge.FileKnowledge;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  * 文件信息Service接口
@@ -12,6 +15,12 @@ import com.ruoyi.system.domain.AssemblyPojo.Knowledge.fileKnowledge.FileKnowledg
  */
 public interface FileKnowledgeService
 {
+    Page<FileKnowledge> getAllFileKnowledge(Pageable pageable);
+
+    Page<FileKnowledge> getAllFileKnowledgeByType(String label, Pageable pageable);
+
+    Page<FileKnowledge> getAllFileKnowledgeByParams(Example<FileKnowledge> example, Pageable pageable);
+
     /**
      * 查询文件信息
      * 

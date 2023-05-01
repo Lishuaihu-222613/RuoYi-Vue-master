@@ -22,9 +22,9 @@ public interface InspectionMethodRepository extends Neo4jRepository<InspectionMe
     @Override
     Page<InspectionMethod> findAll(Pageable pageable);
 
-    @Query(value = "MATCH (n) where any(label in labels(n) WHERE label in ['InspectionMethod', $dynamicLabel])  return n" +
+    @Query(value = "MATCH (n:InspectionMethod :`:#{literal(#dynamicLabel)}`) return n " +
             ":#{orderBy(#pageable)} SKIP $skip LIMIT $limit",
-            countQuery = "MATCH (n) where any(label in labels(n) WHERE label in ['InspectionMethod', $dynamicLabel])  return count(n)"
+            countQuery = "MATCH (n:InspectionMethod :`:#{literal(#dynamicLabel)}`) return count(n)"
     )
     Page<InspectionMethod> findMethodByType(@Param("dynamicLabel") String dynamicLabel, Pageable pageable);
 

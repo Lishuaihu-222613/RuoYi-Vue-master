@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
+import org.springframework.data.repository.query.Param;
 
 public interface AuxiliaryRepository extends Neo4jRepository<AuxiliaryResource,Long> {
 
@@ -16,9 +17,9 @@ public interface AuxiliaryRepository extends Neo4jRepository<AuxiliaryResource,L
     @Override
     <S extends AuxiliaryResource> Page<S> findAll(Example<S> example, Pageable pageable);
 
-    @Query(value = " Match (n) where any(label in labels(n) WHERE label in ['AuxiliaryResource', $dynamicLabel]) return n" +
+    @Query(value = " Match (n:AuxiliaryResource :`:#{literal(#dynamicLabel)}`) return n " +
             ":#{orderBy(#pageable)} SKIP $skip LIMIT $limit",
-            countQuery = "Match (n) where any(label in labels(n) WHERE label in ['AuxiliaryResource', $dynamicLabel]) return count(n)"
+            countQuery = "Match (n:AuxiliaryResource :`:#{literal(#dynamicLabel)}`) return count(n)"
     )
-    Page<AuxiliaryResource> findResourcesByResourceType(String resourceType, Pageable pageable);
+    Page<AuxiliaryResource> findResourcesByResourceType(@Param("dynamicLabel")String resourceType, Pageable pageable);
 }

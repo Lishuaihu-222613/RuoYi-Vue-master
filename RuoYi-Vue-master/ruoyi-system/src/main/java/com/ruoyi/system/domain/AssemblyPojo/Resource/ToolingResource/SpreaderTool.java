@@ -27,7 +27,7 @@ public class SpreaderTool extends ToolingResource{
     public SpreaderTool() {
     }
 
-    public SpreaderTool(Long resourceId, String resourceName, String resourceDescription, Set<String> resourceTypes, String site, double toolPrice, String manufacturer, String toolSize, String materialType, String toolUsage, String toolSpecification, String toolState, double wearCondition, Map<String, Object> toolCapacity, List<String> suitableProcesses, String maximumLoad) {
+    public SpreaderTool(Long resourceId, String resourceName, String resourceDescription, Set<String> resourceTypes, String site, double toolPrice, String manufacturer, String toolSize, String materialType, String toolUsage, String toolSpecification, String toolState, double wearCondition, Map<String, String> toolCapacity, List<String> suitableProcesses, String maximumLoad) {
         super(resourceId, resourceName, resourceDescription, resourceTypes, site, toolPrice, manufacturer, toolSize, materialType, toolUsage, toolSpecification, toolState, wearCondition, toolCapacity, suitableProcesses);
         this.maximumLoad = maximumLoad;
     }

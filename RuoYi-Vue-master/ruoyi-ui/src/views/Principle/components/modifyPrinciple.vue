@@ -15,6 +15,7 @@
                       :multiple="true"
                       :clearable="true"
                       :searchable="true"
+                      @select=""
                       :normalizer="normalizer"
                       :options="options"
                       placeholder="请选择标签"
@@ -22,30 +23,38 @@
         </el-row>
       </el-form-item>
       <el-form-item :label-width="formLabelWidth" label="应用条件">
-        <el-button type="primary" @click="addCondition" style="float: right">添加条件</el-button>
+        <el-row>
+          <el-col :offset="18" :span="6">
+            <el-button type="primary" @click.prevent="addCondition" >添加条件</el-button>
+          </el-col>
+        </el-row>
         <el-row v-for="(item,index) in principle.principleConditions" :key="index">
-          <el-col :span="20">
+          <el-col :span="18">
             <el-input v-model="principle.principleConditions[index]"></el-input>
           </el-col>
-          <el-col :span="4">
+          <el-col :span="6">
             <el-button
-              circle icon="el-icon-delete" type="danger"
+              type="text"
               @click="removeCondition(principle.principleConditions[index])"
-            ></el-button>
+            > 删除</el-button>
           </el-col>
         </el-row>
       </el-form-item>
       <el-form-item :label-width="formLabelWidth" label="应用效果">
-        <el-button type="primary" @click="addResult" style="float: right">添加用途</el-button>
+        <el-row>
+          <el-col :offset="18" :span="6">
+            <el-button type="primary" @click.prevent="addResult" >添加用途</el-button>
+          </el-col>
+        </el-row>
         <el-row v-for="(item,index) in principle.principleResults" :key="index">
-          <el-col :span="20">
+          <el-col :span="18">
             <el-input v-model="principle.principleResults[index]"></el-input>
           </el-col>
-          <el-col :span="4">
+          <el-col :span="6">
             <el-button
-              circle icon="el-icon-delete" type="danger"
+              type="text"
               @click="removeResult(principle.principleResults[index])"
-            ></el-button>
+            > 删除</el-button>
           </el-col>
         </el-row>
       </el-form-item>
@@ -73,9 +82,9 @@ export default {
 
 
   props: {
-    selectPrinciple: {
-      type: Object,
-      default: {}
+    selectPrincipleId: {
+      type: Number,
+      default: 0
     },
     dialog: {
       type: Boolean,
@@ -87,10 +96,10 @@ export default {
     }
   },
   watch: {
-    selectPrinciple: {
+    selectPrincipleId: {
       handler(newVal, oldVal) {
         if (newVal !== null || newVal !== 0) {
-          this.principle = newVal
+          this.principleId = newVal
         }
       }
     },
@@ -121,9 +130,10 @@ export default {
         principleName: '',
         dynamicLabels: [],
         principleDescription: '',
-        principleConditions: [],
-        principleResults: []
+        principleConditions: [""],
+        principleResults: [""]
       },
+      principleId:0,
       dialogFormVisible: false,
       formLabelWidth: '120px',
       inputVisible: false,
@@ -144,7 +154,8 @@ export default {
     /** 查询标签列表 */
     getLabelList() {
       this.loading = true
-      treeManagement.getTreeManagement(25500).then(response => {
+      this.options = []
+      treeManagement.getTreeManagement(25656).then(response => {
         console.log(response.data)
         this.options.push(response.data)
       })
@@ -155,13 +166,30 @@ export default {
         delete node.children;
       }
       return {
-        id: node.leafId,
+        id: node.leafName,
         label: node.leafName,
         children: node.subLeafs
       }
     },
     handleOpen() {
       this.getLabelList();
+      if(this.principleId === 0){
+        this.principle = {
+          principleId: 0,
+          principleName: '',
+          dynamicLabels: [],
+          principleDescription: '',
+          principleConditions: [""],
+          principleResults: [""]
+        }
+      }else {
+        principleManagement.getPrincipleById(this.principleId).then(result =>{
+          if(result.code === 200){
+            this.principle = result.data
+          }
+        })
+      }
+
     },
     // 取消按钮
     cancel() {
@@ -187,7 +215,8 @@ export default {
       this.$emit('restore', null);
     },
     addCondition() {
-      this.principle.principleConditions.push('')
+      console.log(1)
+      this.principle.principleConditions.push(" ")
     },
     removeCondition(item) {
       let index = this.principle.principleConditions.indexOf(item)
@@ -196,7 +225,7 @@ export default {
       }
     },
     addResult() {
-      this.principle.principleResults.push('')
+      this.principle.principleResults.push(" ")
     },
     removeResult(item) {
       let index = this.principle.principleResults.indexOf(item)

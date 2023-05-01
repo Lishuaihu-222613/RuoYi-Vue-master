@@ -30,10 +30,10 @@ public class ProcessElement {
     @Property(name = "备注")
     private List<String> elementRemark;
 
-    @Property(name = "要求")
+    @CompositeProperty(prefix = "要求")
     private Map<String,String> elementRequirements;
 
-    @Property(name = "其他属性")
+    @CompositeProperty(prefix = "其他属性")
     private Map<String,String> elementOtherProperties;
 
     @DynamicLabels

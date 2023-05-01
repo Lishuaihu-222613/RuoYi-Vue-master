@@ -18,7 +18,7 @@
       </el-table-column>
       <el-table-column label="约束元素" width="180">
         <template slot-scope="scope">
-          <treeselect v-model="scope.row.elements[0].elementId"
+          <treeselect v-model="scope.row.elementId"
                       :clearable="true"
                       :normalizer="elementNormalizer"
                       :options="elementOptions"
@@ -44,7 +44,7 @@
             size="mini"
             type="text"
             @click="handleAdd"
-          >修改
+          >新增
           </el-button>
         </template>
         <template slot-scope="scope">
@@ -117,27 +117,27 @@ export default {
       elementId: 0,
       productId: 0,
       constraints: [{
-        constraintId:0,
+        constraintId:undefined,
         constraintType: '',
-        elements:[],
+        elements:undefined,
         constraintName: '',
         constraintValue: ''
       }],
       constraintOptions: [
         {
-          value: '选项1',
-          label: '黄金糕'
+          value: '接触',
+          label: '接触'
         },
         {
-          value: '选项1',
-          label: '黄金糕'
+          value: '角度',
+          label: '角度'
         },
         {
-          value: '选项1',
-          label: '黄金糕'
+          value: '同轴',
+          label: '同轴'
         }, {
-          value: '选项1',
-          label: '黄金糕'
+          value: '偏移',
+          label: '偏移'
         }
       ],
       elementOptions: []
@@ -175,9 +175,9 @@ export default {
     },
     handleAdd() {
       let newConstraint = {
-        constraintId: 0,
+        constraintId: undefined,
         constraintType: '',
-        elements: [],
+        elements: undefined,
         constraintName: '',
         constraintValue: ''
       }

@@ -69,8 +69,13 @@ public class InspectionController extends BaseController {
             Sort sort = "ascending".equals(params.getSortType()) ? by(Sort.Direction.ASC, params.getSortableField()) : by(Sort.Direction.DESC, params.getSortableField());
             //获取pageable
             Pageable pageable = PageRequest.of(params.getPageNum()-1,params.getPageSize(),sort);
-            Example<InspectionMethod> example = Example.of(params.getOriginMethod());
-            Page<InspectionMethod>  methods = inspectionMethodService.getAllInspectionMethods(pageable);
+            ExampleMatcher matcher = ExampleMatcher.matching()
+                    .withMatcher("methodName", ExampleMatcher.GenericPropertyMatcher::contains)
+                    .withMatcher("methodDescription",ExampleMatcher.GenericPropertyMatcher::contains)
+                    .withMatcher("methodPrinciple",ExampleMatcher.GenericPropertyMatcher::contains)
+                    .withMatcher("futureExpansion",ExampleMatcher.GenericPropertyMatcher::contains);
+            Example<InspectionMethod> example = Example.of(params.getOriginMethod(),matcher);
+            Page<InspectionMethod>  methods = inspectionMethodService.getInspectionMethodsByParams(example,pageable);
             System.out.println(methods);
             return R.success(methods);
         } catch (Exception e) {
@@ -132,11 +137,11 @@ public class InspectionController extends BaseController {
     };
 
     @ResponseBody
-    @GetMapping("/deleteInspectionMethod/{methodId}")
-    public R<Principle> deleteInspectionMethod(@PathVariable Long methodId) {
+    @PostMapping("/deleteInspectionMethod")
+    public R<Principle> deleteInspectionMethod(@RequestBody Long[] methodIds) {
         try {
-            inspectionMethodService.deleteInspectionMethod(methodId);
-            return R.success("删除" + methodId + "的检测方法");
+            inspectionMethodService.deleteInspectionMethod(methodIds);
+            return R.success("删除" + methodIds + "的检测方法");
         } catch (Exception e) {
             e.printStackTrace();
             return R.error(e.getMessage());

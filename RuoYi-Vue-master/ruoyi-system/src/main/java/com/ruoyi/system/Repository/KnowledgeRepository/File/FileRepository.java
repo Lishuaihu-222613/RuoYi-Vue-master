@@ -19,9 +19,9 @@ public interface FileRepository extends Neo4jRepository<FileKnowledge,Long> {
     @Override
     Page<FileKnowledge> findAll(Pageable pageable);
 
-    @Query(value = "Match (n) where any(label in labels(n) WHERE label in ['FileKnowledge', $dynamicLabel])  return n" +
-            "ORDER BY n.Id ASC SKIP $skip LIMIT $limit",
-            countQuery = "(n) where any(label in labels(n) WHERE label in ['FileKnowledge', $dynamicLabel])  return count(n)"
+    @Query(value = " Match (n:FileKnowledge :`:#{literal(#dynamicLabel)}`) return n " +
+            ":#{orderBy(#pageable)} SKIP $skip LIMIT $limit",
+            countQuery = "Match (n:FileKnowledge :`:#{literal(#dynamicLabel)}`) return count(n)"
     )
     Page<FileKnowledge> findByFileClassification(@Param("dynamicLabel") String dynamicLabel, Pageable pageable);
 

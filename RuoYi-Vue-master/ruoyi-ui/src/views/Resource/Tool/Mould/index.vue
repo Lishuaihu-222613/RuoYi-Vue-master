@@ -205,7 +205,7 @@
           >
             <template slot-scope="scope">
               <el-tag v-for="(value, key) in scope.row.toolCapacity" :key="key" :index="key+''" type="success">
-                {{ key + ':' + value }}
+                {{ key + ':' + scope.row.toolCapacity[key+''] }}
               </el-tag>
             </template>
           </el-table-column>
@@ -256,7 +256,7 @@
 
     <!-- 添加或修改用户配置对话框 -->
     <el-dialog :title="title" :visible.sync="modifyResourceShow" width="600px" append-to-body>
-      <el-form ref="resource" :model="selectResource" :rules="rules" label-width="80px">
+      <el-form ref="resource" :model="selectResource"  label-width="80px">
         <el-row>
           <el-col :span="12">
             <el-form-item label="资源名称" prop="resourceName">
@@ -265,7 +265,8 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="资源类别" prop="resourceTypes">
-              <treeselect v-model="selectResource.resourceTypes" :options="labelTree" :multiple="true" :show-count="true" placeholder="请选择资源类别" />
+              <treeselect v-model="selectResource.resourceTypes" :options="labelTree" :multiple="true" :normalizer="normalizer" :show-count="true" placeholder="请选择资源类别" >
+              </treeselect>
             </el-form-item>
           </el-col>
         </el-row>
@@ -296,7 +297,7 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="工具价格" prop="toolPrice">
-              <el-input-number v-model="selectResource.toolPrice" placeholder="请输入工具价格"  />
+              <el-input-number v-model="selectResource.toolPrice" :precision="2" placeholder="请输入工具价格"  />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -340,16 +341,20 @@
         <el-row>
           <el-col :span="24">
             <el-form-item label="注意事项" prop="designAttentions">
-              <el-button type="primary" @click="addDesignAttentions" style="float: right">添加事项</el-button>
+              <el-row>
+                <el-col :span="6" :offset="18">
+                  <el-button type="primary" @click="addDesignAttentions" >添加事项</el-button>
+                </el-col>
+              </el-row>
               <el-row v-for="(item,index) in selectResource.designAttentions" :key="index">
                 <el-col :span="20">
                   <el-input v-model="selectResource.designAttentions[index]"></el-input>
                 </el-col>
                 <el-col :span="4">
                   <el-button
-                    circle icon="el-icon-delete" type="danger"
+                    type="text"
                     @click="removeDesignAttentions(selectResource.designAttentions[index])"
-                  ></el-button>
+                  >删除</el-button>
                 </el-col>
               </el-row>
             </el-form-item>
@@ -358,20 +363,31 @@
         <el-row>
           <el-col :span="24">
             <el-form-item label="工具能力">
-              <el-button @click="addToolCapacity" />
-              <el-row v-for="(value, key) in selectResource.toolCapacity"
-                      :key="key"
+              <el-row>
+                <el-col :span="8">
+                  <el-input v-model="newToolCapacityName" placeholder="名称"></el-input>
+                </el-col>
+                <el-col :span="2" class="line">--</el-col>
+                <el-col :span="8">
+                  <el-input v-model="newToolCapacityValue" placeholder="内容"></el-input>
+                </el-col>
+                <el-col :span="6">
+                  <el-button type="primary" @click="addToolCapacity">添加</el-button>
+                </el-col>
+              </el-row>
+              <el-row v-for="(value,name,index) in selectResource.toolCapacity"
+                      :key="name"
                       :gutter="20"
               >
                 <el-col :span="6">
-                  <el-input v-model="key" placeholder="名称" style="width:100%"></el-input>
+                  <el-input v-model="name" placeholder="名称" :disabled="true"></el-input>
                 </el-col>
                 <el-col :span="2" class="line">----</el-col>
                 <el-col :span="6">
-                  <el-input v-model="selectResource.toolCapacity[key]" placeholder="内容" style="width:100%"></el-input>
+                  <el-input v-model="selectResource.toolCapacity[name]" placeholder="内容" ></el-input>
                 </el-col>
                 <el-col :span="6">
-                  <el-button @click.prevent="removeToolCapacity(key)">删除</el-button>
+                  <el-button type="text" @click.prevent="removeToolCapacity(name)">删除</el-button>
                 </el-col>
               </el-row>
             </el-form-item>
@@ -379,16 +395,20 @@
         </el-row>
         <el-row>
           <el-form-item label="适用工艺">
-            <el-button type="primary" @click="addSuitableProcess" style="float: right">添加事项</el-button>
+            <el-row>
+              <el-col :span="6" :offset="18">
+                <el-button type="primary" @click="addSuitableProcess" >添加工艺</el-button>
+              </el-col>
+            </el-row>
             <el-row v-for="(item,index) in selectResource.suitableProcesses" :key="index">
               <el-col :span="20">
                 <el-input v-model="selectResource.suitableProcesses[index]"></el-input>
               </el-col>
               <el-col :span="4">
                 <el-button
-                  circle icon="el-icon-delete" type="danger"
-                  @click="removeAttention(selectResource.suitableProcesses[index])"
-                ></el-button>
+                  type="text"
+                  @click="removeSuitableProcess(selectResource.suitableProcesses[index])"
+                >删除</el-button>
               </el-col>
             </el-row>
           </el-form-item>
@@ -444,6 +464,7 @@ import { getToken } from '@/utils/auth'
 import * as resourceManagement from '@/api/system/resourceManagement'
 import * as treeManagement from '@/api/system/treeManagement'
 import Treeselect from '@riophae/vue-treeselect'
+import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 
 export default {
   name: 'index',
@@ -510,7 +531,7 @@ export default {
         { key: 9, label: `工具用途`, visible: true },
         { key: 10, label: `工具状态`, visible: true },
         { key: 11, label: `磨损状况`, visible: true },
-        { key: 12, label: `测量精度`, visible: true },
+        { key: 12, label: `注意事项`, visible: true },
         { key: 13, label: `工具能力`, visible: true },
         { key: 14, label: `适用工艺`, visible: true }
       ],
@@ -565,15 +586,17 @@ export default {
         toolSpecification:'',
         toolState:'',
         wearCondition:0.0,
-        toolCapacity:new Map(),
-        suitableProcesses:[],
-        designAttentions:[],
+        toolCapacity:{},
+        suitableProcesses:[""],
+        designAttentions:[""],
       },
       modifyState: false,
       labelTree: [],
       dialog: false,
       total: 0,
-      currentPage: 1
+      currentPage: 1,
+      newToolCapacityName:'',
+      newToolCapacityValue:''
     }
   },
 
@@ -622,9 +645,22 @@ export default {
     /** 查询知识下拉树结构 */
     getTreeselect() {
       treeManagement.getTreeManagement(25500).then(response => {
+        this.labelTree = [];
         console.log(response.data)
         this.labelTree.push(response.data)
       })
+    },
+    /** 转换知识树管理数据结构 */
+    normalizer(node) {
+      if (node.children && !node.children.length) {
+        delete node.children;
+      }
+      return {
+        id: node.leafName,
+        label: node.leafName,
+        value:node.leafValue,
+        children: node.subLeafs
+      }
     },
     // 筛选节点
     filterNode(value, data) {
@@ -633,8 +669,9 @@ export default {
     },
     // 节点单击事件
     handleNodeClick(data) {
-      this.queryParams.dynamicLabel = data.leafValue
+      this.queryParams.dynamicLabel = data.leafName
       this.loading = true
+      this.queryParams.sortableField = "n.label"
       resourceManagement.getAllMouldToolsByLabel(this.queryParams).then(result => {
           if (result.code === 200) {
             this.resources = result.data.content
@@ -649,6 +686,7 @@ export default {
     handleQuery() {
       this.queryParams.pageNum = 1
       this.loading = true
+      this.queryParams.sortableField = "n.label"
       resourceManagement.getMouldToolsByParams(this.queryParams).then(result => {
           if (result.code === 200) {
             this.resources = result.data.content
@@ -749,18 +787,27 @@ export default {
       this.$refs.upload.submit()
     },
     addToolCapacity(){
-      this.selectResource.equipmentCapacity.set("","")
+      this.$set(this.selectResource.toolCapacity,this.newToolCapacityName+"",this.newToolCapacityValue+"")
     },
     removeToolCapacity(key){
-      this.selectResource.equipmentCapacity.delete(key)
+      this.$delete(this.selectResource.toolCapacity,key+"")
     },
     addSuitableProcess(){
-      this.selectResource.attentions.push('')
+      this.selectResource.suitableProcesses.push("")
     },
-    removeAttention(item){
-      let index = this.selectResource.attentions.indexOf(item)
+    removeSuitableProcess(item){
+      let index = this.selectResource.suitableProcesses.indexOf(item)
       if (index !== -1) {
-        this.selectResource.attentions.splice(index, 1)
+        this.selectResource.suitableProcesses.splice(index, 1)
+      }
+    },
+    addDesignAttentions(){
+      this.selectResource.designAttentions.push("")
+    },
+    removeDesignAttentions(item){
+      let index = this.selectResource.designAttentions.indexOf(item)
+      if (index !== -1) {
+        this.selectResource.designAttentions.splice(index, 1)
       }
     },
     submitForm:function() {
@@ -773,7 +820,7 @@ export default {
               this.getList();
             });
           } else {
-            resourceManagement.createMouldTool(this.form).then(response => {
+            resourceManagement.createMouldTool(this.selectResource).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -801,9 +848,9 @@ export default {
         toolSpecification:'',
         toolState:'',
         wearCondition:0.0,
-        toolCapacity:new Map(),
-        suitableProcesses:[],
-        designAttentions:[],
+        toolCapacity:{},
+        suitableProcesses:[""],
+        designAttentions:[""],
       };
       this.resetForm("resource");
     }

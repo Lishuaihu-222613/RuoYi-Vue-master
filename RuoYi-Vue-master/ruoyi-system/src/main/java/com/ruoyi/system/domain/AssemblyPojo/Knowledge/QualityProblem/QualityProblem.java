@@ -90,6 +90,13 @@ public class QualityProblem {
     public QualityProblem() {
     }
 
+    public QualityProblem(Long problemId, String problemName, String problemDescription, Set<String> dynamicLabels) {
+        this.problemId = problemId;
+        this.problemName = problemName;
+        this.problemDescription = problemDescription;
+        this.dynamicLabels = dynamicLabels;
+    }
+
     public QualityProblem(Long problemId, String problemName, String problemDescription, Set<String> dynamicLabels, Set<Reason> reasons, Set<Solution> solutions, Set<Appearance> appearances) {
         this.problemId = problemId;
         this.problemName = problemName;

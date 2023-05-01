@@ -23,12 +23,17 @@ public class TreeServiceImpl implements TreeService {
 
     @Override
     public List<ClassificationTree> selectAllRoot() {
-        List<ClassificationTree> roots = new ArrayList<>();
-        for (ClassificationTree rootNode : treeRepository.findAllRoot()) {
-            ClassificationTree root = selectTreeById(rootNode.getLeafId());
-            roots.add(root);
+        return treeRepository.findAllRoot();
+    }
+
+    @Override
+    public List<ClassificationTree> getLeafOptions() {
+        List<ClassificationTree> trees = new ArrayList<>();
+        for (ClassificationTree tree : treeRepository.findAllRoot()) {
+            ClassificationTree leaf = treeRepository.findById(tree.getLeafId()).get();
+            trees.add(leaf);
         }
-        return roots;
+        return trees;
     }
 
     @Override

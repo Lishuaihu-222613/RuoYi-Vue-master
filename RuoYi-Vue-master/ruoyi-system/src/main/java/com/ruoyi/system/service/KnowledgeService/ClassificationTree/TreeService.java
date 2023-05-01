@@ -16,6 +16,8 @@ public interface TreeService {
 
     List<ClassificationTree> selectAllRoot();
 
+    List<ClassificationTree> getLeafOptions();
+
     List<ClassificationTree> selectSubLeafs(Long parentId);
 
     /**

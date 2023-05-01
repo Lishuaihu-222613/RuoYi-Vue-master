@@ -8,10 +8,7 @@ import com.ruoyi.system.domain.AssemblyPojo.Knowledge.MaterialKnowledge.Interfac
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.MaterialKnowledge.Interface.ProduceMethodInterface;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.MaterialKnowledge.vo.*;
 import com.ruoyi.system.service.KnowledgeService.Material.*;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -31,13 +28,13 @@ public class MaterialController extends BaseController {
 
     @ResponseBody
     @PostMapping("/getAllMaterialsByType")
-    public R<Page<MaterialInterface>> getMaterialsByType(@RequestBody PageForNeo4j page) {
+    public R<Page<Material>> getMaterialsByType(@RequestBody MaterialQueryVo params) {
         try {
             //判断排序类型及排序字段
-            Sort sort = "ascending".equals(page.getSortType()) ? by(Sort.Direction.ASC, page.getSortableField()) : by(Sort.Direction.DESC, page.getSortableField());
+            Sort sort = "ascending".equals(params.getSortType()) ? by(Sort.Direction.ASC, params.getSortableField()) : by(Sort.Direction.DESC, params.getSortableField());
             //获取pageable
-            Pageable pageable = PageRequest.of(page.getPageNum()-1,page.getPageSize());
-            Page<MaterialInterface> materials = materialService.getMaterialsByType(page.getDynamicLabel(),pageable);
+            Pageable pageable = PageRequest.of(params.getPageNum()-1,params.getPageSize());
+            Page<Material> materials = materialService.getMaterialsByType(params.getDynamicLabel(),pageable);
             System.out.println(materials);
             return R.success(materials);
         } catch (Exception e) {
@@ -47,13 +44,65 @@ public class MaterialController extends BaseController {
     };
 
     @ResponseBody
-    @GetMapping("/getAllMaterials/{page}")
-    public R<Page<MaterialInterface>> getAllMaterials(@PathVariable int page) {
+    @PostMapping("/getAllMaterials")
+    public R<Page<Material>> getAllMaterials(@RequestBody MaterialQueryVo params) {
         try {
-            PageRequest of = PageRequest.of(page, 5, Sort.by(Sort.Direction.ASC, "materialId"));
-            Page<MaterialInterface> materials = materialService.getAllMaterials(of);
+            //判断排序类型及排序字段
+            Sort sort = "ascending".equals(params.getSortType()) ? by(Sort.Direction.ASC, params.getSortableField()) : by(Sort.Direction.DESC, params.getSortableField());
+            //获取pageable
+            Pageable pageable = PageRequest.of(params.getPageNum()-1,params.getPageSize());
+            Page<Material> materials = materialService.getAllMaterials(pageable);
             System.out.println(materials);
             return R.success(materials);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    };
+
+    @ResponseBody
+    @PostMapping("/getMaterialsByParams")
+    public R<Page<Material>> getMaterialsByParams(@RequestBody MaterialQueryVo params) {
+        try {
+            //判断排序类型及排序字段
+            Sort sort = "ascending".equals(params.getSortType()) ? by(Sort.Direction.ASC, params.getSortableField()) : by(Sort.Direction.DESC, params.getSortableField());
+            //获取pageable
+            Pageable pageable = PageRequest.of(params.getPageNum()-1,params.getPageSize());
+            ExampleMatcher matcher = ExampleMatcher.matching()
+                    .withMatcher("materialName", ExampleMatcher.GenericPropertyMatcher::contains)
+                    .withMatcher("nickName",ExampleMatcher.GenericPropertyMatcher::contains)
+                    .withMatcher("casRegistryNumber",ExampleMatcher.GenericPropertyMatcher::contains)
+                    .withMatcher("materialDescription",ExampleMatcher.GenericPropertyMatcher::contains);
+            Example<Material> example = Example.of(params.getOriginMaterial(), matcher);
+            Page<Material> materials = materialService.getMaterialsByParams(example,pageable);
+            System.out.println(materials);
+            return R.success(materials);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    };
+
+    @ResponseBody
+    @GetMapping("/getAllMaterialOptions")
+    public R<List<Material>> getAllMaterialOptions() {
+        try {
+            List<Material> materialOptions = materialService.getAllMaterialOptions();
+            System.out.println(materialOptions);
+            return R.success(materialOptions);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    };
+
+    @ResponseBody
+    @GetMapping("/getMaterialOptionsByLabel/{dynamicLabel}")
+    public R<List<Material>> getMaterialOptionsByLabel(@PathVariable String dynamicLabel) {
+        try {
+            List<Material> materialOptions = materialService.getMaterialOptionsByLabel(dynamicLabel);
+            System.out.println(materialOptions);
+            return R.success(materialOptions);
         } catch (Exception e) {
             e.printStackTrace();
             return R.error(e.getMessage());

@@ -10,7 +10,7 @@ export function getAllPrinciples(data) {
 
 export function getAllPrinciplesByLabel(data) {
   return request({
-    url: '/Principle/getAllPrinciplesByLabel',
+    url: '/Principle/getPrinciplesByLabel',
     method: 'post',
     data: data
   })
@@ -18,7 +18,7 @@ export function getAllPrinciplesByLabel(data) {
 
 export function getPrinciplesByParams(data) {
   return request({
-    url: '/Principle/getPrinciplesByParams',
+    url: '/Principle/getAllPrinciplesByParams',
     method: 'post',
     data: data
   })

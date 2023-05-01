@@ -131,6 +131,7 @@ export default {
       materialManagement.getInspectProjectsByMaterialId(this.materialId).then(result => {
         if (result.code == 200) {
           this.inspectProjects = result.data
+          console.log(this.inspectProjects)
         }
       })
       this.initProjects()

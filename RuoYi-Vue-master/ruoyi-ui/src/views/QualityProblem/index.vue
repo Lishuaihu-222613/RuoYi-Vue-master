@@ -31,7 +31,7 @@
         >
           <el-form-item label="问题名称" prop="problemName">
             <el-input
-              v-model="queryParams.problemName"
+              v-model="queryParams.originProblem.problemName"
               clearable
               placeholder="请输入问题名称"
               style="width: 240px"
@@ -40,7 +40,7 @@
           </el-form-item>
           <el-form-item label="问题描述" prop="problemDescription">
             <el-input
-              v-model="queryParams.problemDescription"
+              v-model="queryParams.originProblem.problemDescription"
               clearable
               placeholder="请输入问题内容"
               style="width: 240px"
@@ -118,7 +118,7 @@
 
         <modifyProblem ref="modifyProblem"
                          :dialog="modifyProblemShow"
-                         :selectProblem="selectProblem"
+                         :selectProblemId="selectId"
                          :title="title"
                          @closeDialog="() =>{ this.modifyProblemShow = false }"
                          @restore="() =>{this.selectProblem = {}}"
@@ -143,9 +143,11 @@
                            label="外观表现" prop="appearances"
           >
             <template slot-scope="scope">
-              <el-tag v-for="(item,index) in scope.row.appearances" :key="index" :index="index+''" type="success">
-                {{ item.appearanceName + ':' + item.appearanceDescription }}
-              </el-tag>
+              <el-row v-for="(item,index) in scope.row.appearances" :key="index" :index="index+''">
+                <el-tag type="success">
+                  {{ item.appearanceName + ':' + item.appearanceDescription }}
+                </el-tag>
+              </el-row>
             </template>
           </el-table-column>
           <el-table-column v-if="columns[4].visible" key="reasons" :show-overflow-tooltip="true"
@@ -153,9 +155,11 @@
                            label="产生原因" prop="reasons"
           >
             <template slot-scope="scope">
-              <el-tag v-for="(item,index) in scope.row.reasons" :key="index" :index="index+''" type="success">
-                {{ item.reasonName + ':' + item.reasonDescription }}
-              </el-tag>
+              <el-row v-for="(item,index) in scope.row.reasons" :key="index" :index="index+''">
+                <el-tag  type="success">
+                  {{ scope.row.reasons[index].reasonName + ':' + scope.row.reasons[index].reasonDescription }}
+                </el-tag>
+              </el-row>
             </template>
           </el-table-column>
           <el-table-column v-if="columns[5].visible" key="solutions" :show-overflow-tooltip="true" align="center"
@@ -163,9 +167,11 @@
                            prop="solutions"
           >
             <template slot-scope="scope">
-              <el-tag v-for="(item,index) in scope.row.solutions" :key="index" :index="index+''" type="success">
-                {{ item.solutionName + ':' + item.solutionDescription }}
-              </el-tag>
+              <el-row v-for="(item,index) in scope.row.solutions" :key="index" :index="index+''">
+                <el-tag  type="success">
+                  {{ scope.row.solutions[index].solutionName + ':' + scope.row.solutions[index].solutionDescription }}
+                </el-tag>
+              </el-row>
             </template>
           </el-table-column>
           <el-table-column
@@ -412,7 +418,8 @@ export default {
     },
     // 节点单击事件
     handleNodeClick(data) {
-      this.queryParams.dynamicLabel = data.leafValue
+      this.queryParams.sortableField = "n.label"
+      this.queryParams.dynamicLabel = data.leafName
       this.loading = true
       problemManagement.getAllQualityProblemsByLabel(this.queryParams).then(result => {
           if (result.code === 200) {
@@ -428,6 +435,7 @@ export default {
     handleQuery() {
       this.queryParams.pageNum = 1;
       this.loading = true
+      this.queryParams.sortableField = 'n.id'
       problemManagement.getQualityProblemsByParams(this.queryParams).then(result => {
           if (result.code === 200) {
             this.problems = result.data.content
@@ -476,14 +484,15 @@ export default {
     },
     /** 新增按钮操作 */
     handleAdd() {
+      this.selectId = 0;
       this.modifyProblemShow = true;
-      this.title = "新增原则"
+      this.title = "创建问题"
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.modifyProblemShow = true;
-      this.title = "修改原则";
-      this.selectProblem = row;
+      this.title = "修改问题";
+      this.selectId = row.problemId || this.ids;
     },
     /** 删除按钮操作 */
     handleDelete(row) {

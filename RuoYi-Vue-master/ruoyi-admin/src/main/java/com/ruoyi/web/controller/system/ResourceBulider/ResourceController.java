@@ -232,7 +232,11 @@ public class ResourceController extends BaseController {
             Sort sort = "ascending".equals(params.getSortType()) ? by(Sort.Direction.ASC, params.getSortableField()) : by(Sort.Direction.DESC, params.getSortableField());
             //获取pageable
             Pageable pageable = PageRequest.of(params.getPageNum()-1,params.getPageSize(),sort);
-            Example<AuxiliaryResource> example = Example.of(params.getOriginAuxiliaryResource());
+            ExampleMatcher matcher = ExampleMatcher.matching()
+                    .withMatcher("resourceName", ExampleMatcher.GenericPropertyMatcher::contains)
+                    .withMatcher("resourceDescription",ExampleMatcher.GenericPropertyMatcher::contains)
+                    .withMatcher("site",ExampleMatcher.GenericPropertyMatcher::contains);
+            Example<AuxiliaryResource> example = Example.of(params.getOriginAuxiliaryResource(),matcher);
             Page<AuxiliaryResource> allByParams = resourceService.getAllByParams(example, pageable);
             System.out.println(allByParams);
             return R.success(allByParams);
@@ -250,7 +254,11 @@ public class ResourceController extends BaseController {
             Sort sort = "ascending".equals(params.getSortType()) ? by(Sort.Direction.ASC, params.getSortableField()) : by(Sort.Direction.DESC, params.getSortableField());
             //获取pageable
             Pageable pageable = PageRequest.of(params.getPageNum()-1,params.getPageSize(),sort);
-            Example<EquipmentResource> example = Example.of(params.getOriginEquipmentResource());
+            ExampleMatcher matcher = ExampleMatcher.matching()
+                    .withMatcher("resourceName", ExampleMatcher.GenericPropertyMatcher::contains)
+                    .withMatcher("resourceDescription",ExampleMatcher.GenericPropertyMatcher::contains)
+                    .withMatcher("site",ExampleMatcher.GenericPropertyMatcher::contains);
+            Example<EquipmentResource> example = Example.of(params.getOriginEquipmentResource(),matcher);
             Page<EquipmentResource> allByParams = resourceService.getAllByParams(example, pageable);
             System.out.println(allByParams);
             return R.success(allByParams);
@@ -268,7 +276,11 @@ public class ResourceController extends BaseController {
             Sort sort = "ascending".equals(params.getSortType()) ? by(Sort.Direction.ASC, params.getSortableField()) : by(Sort.Direction.DESC, params.getSortableField());
             //获取pageable
             Pageable pageable = PageRequest.of(params.getPageNum()-1,params.getPageSize(),sort);
-            Example<FixtureTool> example = Example.of(params.getOriginFixtureTool());
+            ExampleMatcher matcher = ExampleMatcher.matching()
+                    .withMatcher("resourceName", ExampleMatcher.GenericPropertyMatcher::contains)
+                    .withMatcher("resourceDescription",ExampleMatcher.GenericPropertyMatcher::contains)
+                    .withMatcher("site",ExampleMatcher.GenericPropertyMatcher::contains);
+            Example<FixtureTool> example = Example.of(params.getOriginFixtureTool(),matcher);
             Page<FixtureTool> allByParams = resourceService.getAllByParams(example, pageable);
             System.out.println(allByParams);
             return R.success(allByParams);
@@ -286,7 +298,11 @@ public class ResourceController extends BaseController {
             Sort sort = "ascending".equals(params.getSortType()) ? by(Sort.Direction.ASC, params.getSortableField()) : by(Sort.Direction.DESC, params.getSortableField());
             //获取pageable
             Pageable pageable = PageRequest.of(params.getPageNum()-1,params.getPageSize(),sort);
-            Example<MeasuringTool> example = Example.of(params.getOriginMeasuringTool());
+            ExampleMatcher matcher = ExampleMatcher.matching()
+                    .withMatcher("resourceName", ExampleMatcher.GenericPropertyMatcher::contains)
+                    .withMatcher("resourceDescription",ExampleMatcher.GenericPropertyMatcher::contains)
+                    .withMatcher("site",ExampleMatcher.GenericPropertyMatcher::contains);
+            Example<MeasuringTool> example = Example.of(params.getOriginMeasuringTool(),matcher);
             Page<MeasuringTool> allByParams = resourceService.getAllByParams(example, pageable);
             System.out.println(allByParams);
             return R.success(allByParams);
@@ -304,7 +320,11 @@ public class ResourceController extends BaseController {
             Sort sort = "ascending".equals(params.getSortType()) ? by(Sort.Direction.ASC, params.getSortableField()) : by(Sort.Direction.DESC, params.getSortableField());
             //获取pageable
             Pageable pageable = PageRequest.of(params.getPageNum()-1,params.getPageSize(),sort);
-            Example<SpreaderTool> example = Example.of(params.getOriginSpreaderTool());
+            ExampleMatcher matcher = ExampleMatcher.matching()
+                    .withMatcher("resourceName", ExampleMatcher.GenericPropertyMatcher::contains)
+                    .withMatcher("resourceDescription",ExampleMatcher.GenericPropertyMatcher::contains)
+                    .withMatcher("site",ExampleMatcher.GenericPropertyMatcher::contains);
+            Example<SpreaderTool> example = Example.of(params.getOriginSpreaderTool(),matcher);
             Page<SpreaderTool> allByParams = resourceService.getAllByParams(example, pageable);
             System.out.println(allByParams);
             return R.success(allByParams);
@@ -322,7 +342,11 @@ public class ResourceController extends BaseController {
             Sort sort = "ascending".equals(params.getSortType()) ? by(Sort.Direction.ASC, params.getSortableField()) : by(Sort.Direction.DESC, params.getSortableField());
             //获取pageable
             Pageable pageable = PageRequest.of(params.getPageNum()-1,params.getPageSize(),sort);
-            Example<SpecialTool> example = Example.of(params.getOriginSpecialTool());
+            ExampleMatcher matcher = ExampleMatcher.matching()
+                    .withMatcher("resourceName", ExampleMatcher.GenericPropertyMatcher::contains)
+                    .withMatcher("resourceDescription",ExampleMatcher.GenericPropertyMatcher::contains)
+                    .withMatcher("site",ExampleMatcher.GenericPropertyMatcher::contains);
+            Example<SpecialTool> example = Example.of(params.getOriginSpecialTool(),matcher);
             Page<SpecialTool> allByParams = resourceService.getAllByParams(example, pageable);
             System.out.println(allByParams);
             return R.success(allByParams);
@@ -340,7 +364,11 @@ public class ResourceController extends BaseController {
             Sort sort = "ascending".equals(params.getSortType()) ? by(Sort.Direction.ASC, params.getSortableField()) : by(Sort.Direction.DESC, params.getSortableField());
             //获取pageable
             Pageable pageable = PageRequest.of(params.getPageNum()-1,params.getPageSize(),sort);
-            Example<MouldTool> example = Example.of(params.getOriginMouldTool());
+            ExampleMatcher matcher = ExampleMatcher.matching()
+                    .withMatcher("resourceName", ExampleMatcher.GenericPropertyMatcher::contains)
+                    .withMatcher("resourceDescription",ExampleMatcher.GenericPropertyMatcher::contains)
+                    .withMatcher("site",ExampleMatcher.GenericPropertyMatcher::contains);
+            Example<MouldTool> example = Example.of(params.getOriginMouldTool(),matcher);
             Page<MouldTool> allByParams = resourceService.getAllByParams(example, pageable);
             System.out.println(allByParams);
             return R.success(allByParams);

@@ -5,48 +5,87 @@
     <el-tabs :tab-position="tabPosition">
       <el-tab-pane label="热敏感性">
         <el-form ref="heatStabilityForm" :model="heatStability">
-          <el-form-item :label-width="formLabelWidth" label="敏感性名称">
-            <el-input v-model="heatStability.stabilityName"></el-input>
-          </el-form-item>
-          <el-form-item :label-width="formLabelWidth" label="维也里简单法">
-            <el-input v-model="heatStability.simpleVieri"></el-input>
-          </el-form-item>
-          <el-form-item :label-width="formLabelWidth" label="维也里重复法">
-            <el-input v-model="heatStability.repetitionVieri"></el-input>
-          </el-form-item>
-          <el-form-item :label-width="formLabelWidth" label="自燃温度">
-            <el-input v-model="heatStability.autoignitionTemperature"></el-input>
-          </el-form-item>
-          <el-form-item :label-width="formLabelWidth" label="明火感度">
-            <el-input v-model="heatStability.openFireSensitivity"></el-input>
-          </el-form-item>
-          <el-form-item :label-width="formLabelWidth" label="电火花感度">
-            <el-input v-model="heatStability.sparkSensitivity"></el-input>
-          </el-form-item>
-          <el-form-item :label-width="formLabelWidth" label="闪点">
-            <el-input v-model="heatStability.flashPoint"></el-input>
-          </el-form-item>
-          <el-form-item :label-width="formLabelWidth" label="燃点">
-            <el-input v-model="heatStability.ignitionPoint"></el-input>
-          </el-form-item>
-          <el-form-item :label-width="formLabelWidth" label="爆炸极限">
-            <el-input v-model="heatStability.explosionLimit"></el-input>
-          </el-form-item>
-          <el-form-item :label-width="formLabelWidth" label="其他属性">
-            <el-button @click="addHeatStabilityOtherProperty"/>
-            <el-row v-for="(value, key) in heatStability.otherProperty" :key="key" :index="key+''">
-              <el-col>
-                <el-input v-model="key"></el-input>
-              </el-col>
-              <el-col :span="2" class="line">----</el-col>
-              <el-col>
-                <el-input v-model="value"></el-input>
-              </el-col>
-              <el-col>
-                <el-button @click="deleteHeatStabilityOtherProperty(key)"/>
-              </el-col>
-            </el-row>
-          </el-form-item>
+          <el-row>
+            <el-col :span="12">
+              <el-form-item :label-width="formLabelWidth" label="敏感性名称">
+                <el-input v-model="heatStability.stabilityName"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item :label-width="formLabelWidth" label="燃点">
+                <el-input v-model="heatStability.ignitionPoint"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="12">
+              <el-form-item :label-width="formLabelWidth" label="维也里简单法">
+                <el-input v-model="heatStability.simpleVieri"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item :label-width="formLabelWidth" label="维也里重复法">
+                <el-input v-model="heatStability.repetitionVieri"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="12">
+              <el-form-item :label-width="formLabelWidth" label="自燃温度">
+                <el-input v-model="heatStability.autoignitionTemperature"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item :label-width="formLabelWidth" label="明火感度">
+                <el-input v-model="heatStability.openFireSensitivity"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="12">
+              <el-form-item :label-width="formLabelWidth" label="电火花感度">
+                <el-input v-model="heatStability.sparkSensitivity"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item :label-width="formLabelWidth" label="闪点">
+                <el-input v-model="heatStability.flashPoint"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-form-item :label-width="formLabelWidth" label="爆炸极限">
+              <el-input v-model="heatStability.explosionLimit"></el-input>
+            </el-form-item>
+          </el-row>
+          <el-row>
+            <el-form-item :label-width="formLabelWidth" label="其他属性">
+              <el-row>
+                <el-col :span="8">
+                  <el-input v-model="newHeatStabilityOtherPropertyName" placeholder="名称"></el-input>
+                </el-col>
+                <el-col :span="2" class="line"></el-col>
+                <el-col :span="8">
+                  <el-input v-model="newHeatStabilityOtherPropertyValue" placeholder="内容"></el-input>
+                </el-col>
+                <el-col :span="6">
+                  <el-button type="primary" @click="addHeatStabilityOtherProperty">添加</el-button>
+                </el-col>
+              </el-row>
+              <el-row v-for="(value,name,index) in heatStability.otherProperty" :key="name" >
+                <el-col :span="8">
+                  <el-input v-model="name"></el-input>
+                </el-col>
+                <el-col :span="2" class="line">----</el-col>
+                <el-col :span="8">
+                  <el-input v-model="heatStability.otherProperty[name]"></el-input>
+                </el-col>
+                <el-col :span="6">
+                  <el-button @click="deleteHeatStabilityOtherProperty(name)">删除</el-button>
+                </el-col>
+              </el-row>
+            </el-form-item>
+          </el-row>
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button type="primary" @click="onSubmitHeatStability">确 定</el-button>
@@ -55,36 +94,65 @@
       </el-tab-pane>
       <el-tab-pane label="机械敏感性">
         <el-form ref="mechanicalStabilityForm" :model="mechanicalStability">
-          <el-form-item :label-width="formLabelWidth" label="敏感性名称">
-            <el-input v-model="mechanicalStability.stabilityName"></el-input>
-          </el-form-item>
-          <el-form-item :label-width="formLabelWidth" label="冲击感度">
-            <el-input-number v-model="mechanicalStability.impactSensitivity" precision="2"></el-input-number>
-          </el-form-item>
-          <el-form-item :label-width="formLabelWidth" label="摩擦感度">
-            <el-input-number v-model="mechanicalStability.frictionSensitivity" precision="2"></el-input-number>
-          </el-form-item>
-          <el-form-item :label-width="formLabelWidth" label="震动感度">
-            <el-input-number v-model="mechanicalStability.vibrationSensitivity" precision="2"></el-input-number>
-          </el-form-item>
-          <el-form-item :label-width="formLabelWidth" label="枪击感度">
-            <el-input-number v-model="mechanicalStability.vibrationSensitivity" precision="2"></el-input-number>
-          </el-form-item>
-          <el-form-item :label-width="formLabelWidth" label="其他属性">
-            <el-button @click="addMechanicalStabilityOtherProperty"/>
-            <el-row v-for="(value, key) in mechanicalStability.otherProperty" :key="key" :index="key+''">
-              <el-col>
-                <el-input v-model="key"></el-input>
-              </el-col>
-              <el-col :span="2" class="line">----</el-col>
-              <el-col>
-                <el-input v-model="value"></el-input>
-              </el-col>
-              <el-col>
-                <el-button @click="deleteMechanicalStabilityOtherProperty(key)"/>
-              </el-col>
-            </el-row>
-          </el-form-item>
+          <el-row>
+            <el-col :span="12">
+              <el-form-item :label-width="formLabelWidth" label="敏感性名称">
+                <el-input v-model="mechanicalStability.stabilityName"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item :label-width="formLabelWidth" label="冲击感度">
+                <el-input-number v-model="mechanicalStability.impactSensitivity" :precision="2"></el-input-number>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="12">
+              <el-form-item :label-width="formLabelWidth" label="摩擦感度">
+                <el-input-number v-model="mechanicalStability.frictionSensitivity" :precision="2"></el-input-number>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item :label-width="formLabelWidth" label="震动感度">
+                <el-input-number v-model="mechanicalStability.vibrationSensitivity" :precision="2"></el-input-number>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="24">
+              <el-form-item :label-width="formLabelWidth" label="枪击感度">
+                <el-input-number v-model="mechanicalStability.vibrationSensitivity" :precision="2"></el-input-number>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-form-item :label-width="formLabelWidth" label="其他属性">
+              <el-row>
+                <el-col :span="8">
+                  <el-input v-model="newMechanicalStabilityOtherPropertyName" placeholder="名称"></el-input>
+                </el-col>
+                <el-col :span="2" class="line"></el-col>
+                <el-col :span="8">
+                  <el-input v-model="newMechanicalStabilityOtherPropertyValue" placeholder="内容"></el-input>
+                </el-col>
+                <el-col :span="6">
+                  <el-button type="primary" @click="addMechanicalStabilityOtherProperty">添加</el-button>
+                </el-col>
+              </el-row>
+              <el-row v-for="(value,name,index) in mechanicalStability.otherProperty" :key="name">
+                <el-col :span="8">
+                  <el-input v-model="name"></el-input>
+                </el-col>
+                <el-col :span="2" class="line">----</el-col>
+                <el-col :span="8">
+                  <el-input v-model="mechanicalStability.otherProperty[name]"></el-input>
+                </el-col>
+                <el-col :span="6">
+                  <el-button @click="deleteMechanicalStabilityOtherProperty(name)">删除</el-button>
+                </el-col>
+              </el-row>
+            </el-form-item>
+          </el-row>
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button type="primary" @click="onSubmitMechanicalStability">确 定</el-button>
@@ -93,27 +161,46 @@
       </el-tab-pane>
       <el-tab-pane label="辐射敏感度">
         <el-form ref="radioStabilityForm" :model="radioStability">
-          <el-form-item :label-width="formLabelWidth" label="敏感性名称">
-            <el-input v-model="radioStability.stabilityName"></el-input>
-          </el-form-item>
-          <el-form-item :label-width="formLabelWidth" label="辐射感度">
-            <el-input-number v-model="radioStability.radiationSensitivity" precision="2"></el-input-number>
-          </el-form-item>
-          <el-form-item :label-width="formLabelWidth" label="其他属性">
-            <el-button @click="addRadioStabilityOtherProperty"/>
-            <el-row v-for="(value, key) in radioStability.otherProperty" :key="key" :index="key+''">
-              <el-col>
-                <el-input v-model="key"></el-input>
-              </el-col>
-              <el-col :span="2" class="line">----</el-col>
-              <el-col>
-                <el-input v-model="value"></el-input>
-              </el-col>
-              <el-col>
-                <el-button @click="deleteRadioStabilityOtherProperty(key)"/>
-              </el-col>
-            </el-row>
-          </el-form-item>
+          <el-row>
+            <el-col :span="12">
+              <el-form-item :label-width="formLabelWidth" label="敏感性名称">
+                <el-input v-model="radioStability.stabilityName"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item :label-width="formLabelWidth" label="辐射感度">
+                <el-input-number v-model="radioStability.radiationSensitivity" precision="2"></el-input-number>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-form-item :label-width="formLabelWidth" label="其他属性">
+              <el-row>
+                <el-col :span="8">
+                  <el-input v-model="newRadioStabilityOtherPropertyName" placeholder="名称"></el-input>
+                </el-col>
+                <el-col :span="2" class="line"></el-col>
+                <el-col :span="8">
+                  <el-input v-model="newRadioStabilityOtherPropertyValue" placeholder="内容"></el-input>
+                </el-col>
+                <el-col :span="6">
+                  <el-button type="primary" @click="addRadioStabilityOtherProperty">添加</el-button>
+                </el-col>
+              </el-row>
+              <el-row v-for="(value,name,index) in radioStability.otherProperty" :key="name" >
+                <el-col :span="8">
+                  <el-input v-model="name"></el-input>
+                </el-col>
+                <el-col :span="2" class="line">----</el-col>
+                <el-col :span="8">
+                  <el-input v-model="radioStability.otherProperty[name]"></el-input>
+                </el-col>
+                <el-col :span="6">
+                  <el-button @click="deleteRadioStabilityOtherProperty(name)">删除</el-button>
+                </el-col>
+              </el-row>
+            </el-form-item>
+          </el-row>
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button type="primary" @click="onSubmitRadioStability">确 定</el-button>
@@ -122,30 +209,51 @@
       </el-tab-pane>
       <el-tab-pane label="爆炸敏感性">
         <el-form ref="explosionStabilityForm" :model="explosionStability">
-          <el-form-item :label-width="formLabelWidth" label="敏感性名称">
-            <el-input v-model="explosionStability.stabilityName"></el-input>
-          </el-form-item>
-          <el-form-item :label-width="formLabelWidth" label="冲击试验">
-            <el-input v-model="explosionStability.impactTest"></el-input>
-          </el-form-item>
-          <el-form-item :label-width="formLabelWidth" label="炸药分级">
-            <el-input v-model="explosionStability.ExplosiveClassification"></el-input>
-          </el-form-item>
-          <el-form-item :label-width="formLabelWidth" label="其他属性">
-            <el-button @click="addExplosionStabilityOtherProperty"/>
-            <el-row v-for="(value, key) in explosionStability.otherProperty" :key="key" :index="key+''">
-              <el-col>
-                <el-input v-model="key"></el-input>
-              </el-col>
-              <el-col :span="2" class="line">----</el-col>
-              <el-col>
-                <el-input v-model="value"></el-input>
-              </el-col>
-              <el-col>
-                <el-button @click="deleteExplosionStabilityOtherProperty(key)"/>
-              </el-col>
-            </el-row>
-          </el-form-item>
+          <el-row>
+            <el-form-item :label-width="formLabelWidth" label="敏感性名称">
+              <el-input v-model="explosionStability.stabilityName"></el-input>
+            </el-form-item>
+          </el-row>
+          <el-row>
+            <el-col :span="12">
+              <el-form-item :label-width="formLabelWidth" label="冲击试验">
+                <el-input v-model="explosionStability.impactTest"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item :label-width="formLabelWidth" label="炸药分级">
+                <el-input v-model="explosionStability.ExplosiveClassification"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-form-item :label-width="formLabelWidth" label="其他属性">
+              <el-row>
+                <el-col :span="8">
+                  <el-input v-model="newExplosionStabilityOtherPropertyName" placeholder="名称"></el-input>
+                </el-col>
+                <el-col :span="2" class="line"></el-col>
+                <el-col :span="8">
+                  <el-input v-model="newExplosionStabilityOtherPropertyValue" placeholder="内容"></el-input>
+                </el-col>
+                <el-col :span="6">
+                  <el-button type="primary" @click="addExplosionStabilityOtherProperty">添加</el-button>
+                </el-col>
+              </el-row>
+              <el-row v-for="(value,name,index) in explosionStability.otherProperty" :key="name" >
+                <el-col :span="8">
+                  <el-input v-model="name"></el-input>
+                </el-col>
+                <el-col :span="2" class="line">----</el-col>
+                <el-col :span="8">
+                  <el-input v-model="explosionStability.otherProperty[name]"></el-input>
+                </el-col>
+                <el-col :span="6">
+                  <el-button @click="deleteExplosionStabilityOtherProperty(name)">删除</el-button>
+                </el-col>
+              </el-row>
+            </el-form-item>
+          </el-row>
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button type="primary" @click="onSubmitExplosionStability">确 定</el-button>
@@ -164,9 +272,9 @@ import * as prescriptionManagement from '@/api/system/prescriptionManagement'
 export default {
   name: 'prescriptionStability',
   props: {
-    selectPrescription: {
-      type: Object,
-      default: {}
+    selectPrescriptionId: {
+      type: Number,
+      default: 0
     },
     dialog: {
       type: Boolean,
@@ -181,7 +289,7 @@ export default {
     selectPrescription: {
       handler(newVal, oldVal) {
         if (newVal !== null || newVal !== 0) {
-          this.Prescription = newVal
+          this.prescriptionId = newVal
         }
       }
     },
@@ -211,8 +319,8 @@ export default {
         prescriptionDescription: '',
         density: '',
         dangerLevel: '',
-        curingTime: new Map(),
-        otherProperty: new Map()
+        curingTime: {},
+        otherProperty: {}
       },
       heatStability: {
         stabilityId: 0,
@@ -225,7 +333,7 @@ export default {
         flashPoint: '',
         ignitionPoint: '',
         explosionLimit: '',
-        otherProperty: new Map()
+        otherProperty: {}
       },
       mechanicalStability: {
         stabilityId: 0,
@@ -234,26 +342,34 @@ export default {
         frictionSensitivity: 0.0,
         vibrationSensitivity: 0.0,
         gunshotSensitivity: 0.0,
-        otherProperty: new Map()
+        otherProperty: {}
       },
       radioStability: {
         stabilityId: 0,
         stabilityName: '',
         radiationSensitivity: 0.0,
-        otherProperty: new Map()
+        otherProperty: {}
       },
       explosionStability: {
         stabilityId: 0,
         stabilityName: '',
         impactTest: '',
         ExplosiveClassification: '',
-        otherProperty: new Map()
+        otherProperty: {}
       },
       dialogFormVisible: false,
-      formLabelWidth: '120px',
+      formLabelWidth: '100px',
       inputVisible: false,
       inputValue: '',
       prescriptionId:0,
+      newHeatStabilityOtherPropertyName:'',
+      newHeatStabilityOtherPropertyValue:'',
+      newMechanicalStabilityOtherPropertyName:'',
+      newMechanicalStabilityOtherPropertyValue:'',
+      newRadioStabilityOtherPropertyName:'',
+      newRadioStabilityOtherPropertyValue:'',
+      newExplosionStabilityOtherPropertyName:'',
+      newExplosionStabilityOtherPropertyValue:'',
     }
   },
   methods:{
@@ -264,11 +380,11 @@ export default {
       prescriptionManagement.getMechanicalStabilityByPId(this.prescriptionId).then(result =>{
         this.mechanicalStability = result.data
       });
-      prescriptionManagement.getHeatStabilityByPId(this.prescriptionId).then(result =>{
-        this.radioStability = result.data
-      });
       prescriptionManagement.getRadioStabilityByPId(this.prescriptionId).then(result =>{
         this.radioStability = result.data
+      });
+      prescriptionManagement.getExplosionStabilityByPId(this.prescriptionId).then(result =>{
+        this.explosionStability = result.data
       });
     },
     handleClose(){
@@ -278,10 +394,10 @@ export default {
       this.$emit('restore', null);
     },
     addHeatStabilityOtherProperty(){
-      this.heatStability.otherProperty.set("","")
+      this.$set(this.heatStability.otherProperty,this.newHeatStabilityOtherPropertyName,this.newHeatStabilityOtherPropertyValue)
     },
     deleteHeatStabilityOtherProperty(key){
-      this.heatStability.otherProperty.delete(key)
+      this.$delete(this.heatStability.otherProperty,key)
     },
     onSubmitHeatStability(){
       prescriptionManagement.updateHeatStability(this.heatStability).then(result =>{
@@ -290,11 +406,11 @@ export default {
         }
       })
     },
-    addMechanicalStabilityOtherProperty(){
-      this.mechanicalStability.otherProperty.set("","")
+    addMechanicalStabilityOtherProperty(key){
+      this.$set(this.mechanicalStability.otherProperty,this.newMechanicalStabilityOtherPropertyName,this.newMechanicalStabilityOtherPropertyValue)
     },
     deleteMechanicalStabilityOtherProperty(){
-      this.mechanicalStability.otherProperty.delete(key)
+      this.$delete(this.mechanicalStability.otherProperty,key)
     },
     onSubmitMechanicalStability(){
       prescriptionManagement.updateMechanicalStability(this.mechanicalStability).then(result =>{
@@ -304,10 +420,10 @@ export default {
       })
     },
     addRadioStabilityOtherProperty(){
-      this.radioStability.otherProperty.set("","")
+      this.$set(this.radioStability.otherProperty,this.newRadioStabilityOtherPropertyName,this.newRadioStabilityOtherPropertyValue)
     },
     deleteRadioStabilityOtherProperty(key){
-      this.radioStability.otherProperty.delete(key)
+      this.$delete(this.radioStability.otherProperty,key)
     },
     onSubmitRadioStability(){
       prescriptionManagement.updateRadioStability(this.radioStability).then(result =>{
@@ -317,10 +433,10 @@ export default {
       })
     },
     addExplosionStabilityOtherProperty(){
-      this.explosionStability.otherProperty.set("","")
+      this.$set(this.explosionStability.otherProperty,this.newExplosionStabilityOtherPropertyName,this.newExplosionStabilityOtherPropertyValue)
     },
     deleteExplosionStabilityOtherProperty(key){
-      this.explosionStability.otherProperty.delete(key)
+      this.$delete(this.explosionStability.otherProperty,key)
     },
     onSubmitExplosionStability(){
       prescriptionManagement.updateExplosionStability(this.explosionStability).then(result =>{
@@ -345,7 +461,7 @@ export default {
         flashPoint: '',
         ignitionPoint: '',
         explosionLimit: '',
-        otherProperty: new Map()
+        otherProperty: {}
       };
       this.mechanicalStability = {
         stabilityId: 0,
@@ -354,21 +470,25 @@ export default {
         frictionSensitivity: 0.0,
         vibrationSensitivity: 0.0,
         gunshotSensitivity: 0.0,
-        otherProperty: new Map()
+        otherProperty: {}
       };
       this.radioStability = {
         stabilityId: 0,
         stabilityName: '',
         radiationSensitivity: 0.0,
-        otherProperty: new Map()
+        otherProperty: {}
       };
       this.explosionStability = {
         stabilityId: 0,
         stabilityName: '',
         impactTest: '',
         ExplosiveClassification: '',
-        otherProperty: new Map()
+        otherProperty: {}
       };
+      this.resetForm('heatStabilityForm');
+      this.resetForm('mechanicalStabilityForm');
+      this.resetForm('radioStabilityForm');
+      this.resetForm('explosionStabilityForm');
     }
 
   },

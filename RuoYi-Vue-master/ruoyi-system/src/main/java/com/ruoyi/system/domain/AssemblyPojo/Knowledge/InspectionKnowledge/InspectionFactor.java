@@ -23,9 +23,6 @@ public class InspectionFactor {
     @Property(name = "因素描述")
     private String factorDescription;
 
-    @Property(name = "控制因素")
-    private List<String> controlFactors;
-
     public Long getFactorId() {
         return factorId;
     }
@@ -50,22 +47,13 @@ public class InspectionFactor {
         this.factorDescription = factorDescription;
     }
 
-    public List<String> getControlFactors() {
-        return controlFactors;
-    }
-
-    public void setControlFactors(List<String> controlFactors) {
-        this.controlFactors = controlFactors;
-    }
-
     public InspectionFactor() {
     }
 
-    public InspectionFactor(Long factorId, String factorName, String factorDescription, List<String> controlFactors) {
+    public InspectionFactor(Long factorId, String factorName, String factorDescription) {
         this.factorId = factorId;
         this.factorName = factorName;
         this.factorDescription = factorDescription;
-        this.controlFactors = controlFactors;
     }
 
     @Override
@@ -73,12 +61,12 @@ public class InspectionFactor {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         InspectionFactor that = (InspectionFactor) o;
-        return Objects.equals(factorId, that.factorId) && Objects.equals(factorName, that.factorName) && Objects.equals(factorDescription, that.factorDescription) && Objects.equals(controlFactors, that.controlFactors);
+        return Objects.equals(factorId, that.factorId) && Objects.equals(factorName, that.factorName) && Objects.equals(factorDescription, that.factorDescription);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(factorId, factorName, factorDescription, controlFactors);
+        return Objects.hash(factorId, factorName, factorDescription);
     }
 
     @Override
@@ -87,7 +75,6 @@ public class InspectionFactor {
                 "factorId=" + factorId +
                 ", factorName='" + factorName + '\'' +
                 ", factorDescription='" + factorDescription + '\'' +
-                ", controlFactors=" + controlFactors +
                 '}';
     }
 }

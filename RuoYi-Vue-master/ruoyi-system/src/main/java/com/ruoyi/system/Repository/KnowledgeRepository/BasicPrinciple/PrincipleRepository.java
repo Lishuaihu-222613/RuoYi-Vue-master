@@ -22,9 +22,9 @@ public interface PrincipleRepository extends Neo4jRepository<Principle,Long> {
     @Override
     Optional<Principle> findById(Long principleId);
 
-    @Query(value = "Match (n) where any(label in labels(n) WHERE label in ['Principle', $dynamicLabel])  return n" +
+    @Query(value = "Match (n:Principle :`:#{literal(#dynamicLabel)}`) return n " +
             ":#{orderBy(#pageable)} SKIP $skip LIMIT $limit",
-            countQuery = "Match (n) where any(label in labels(n) WHERE label in ['Principle', $dynamicLabel]) return count(n)"
+            countQuery = "Match (n:Principle :`:#{literal(#dynamicLabel)}`) return count(n)"
     )
     Page<Principle> findPrincipleByType(@Param("dynamicLabel") String dynamicLabel,Pageable pageable);
 

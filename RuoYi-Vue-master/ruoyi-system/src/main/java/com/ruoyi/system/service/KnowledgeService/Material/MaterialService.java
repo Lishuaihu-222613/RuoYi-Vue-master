@@ -5,6 +5,7 @@ import com.ruoyi.system.domain.AssemblyPojo.Knowledge.MaterialKnowledge.Interfac
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.MaterialKnowledge.Interface.MaterialInterface;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.MaterialKnowledge.Interface.ProduceMethodInterface;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.MaterialKnowledge.vo.*;
+import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -18,14 +19,20 @@ public interface MaterialService {
      * 获得所有材料
      * @return
      */
-    Page<MaterialInterface> getAllMaterials(Pageable pageable);
+    Page<Material> getAllMaterials(Pageable pageable);
+
+    Page<Material> getMaterialsByParams(Example<Material> example, Pageable pageable);
+
+    List<Material> getAllMaterialOptions();
+
+    List<Material> getMaterialOptionsByLabel(String dynamicLabel);
 
     /**
      * 根据类型获得材料
      * @param dynamicLabel
      * @return
      */
-    Page<MaterialInterface> getMaterialsByType(String dynamicLabel, Pageable pageable);
+    Page<Material> getMaterialsByType(String dynamicLabel, Pageable pageable);
 
     /**
      * 根据Id获得某材料完整信息

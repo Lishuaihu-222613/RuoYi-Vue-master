@@ -31,7 +31,7 @@
         >
           <el-form-item label="方法名称" prop="methodName">
             <el-input
-              v-model="queryParams.methodName"
+              v-model="queryParams.originMethod.methodName"
               clearable
               placeholder="请输入方法名称"
               style="width: 240px"
@@ -40,25 +40,25 @@
           </el-form-item>
           <el-form-item label="方法描述" prop="methodDescription">
             <el-input
-              v-model="queryParams.methodDescription"
+              v-model="queryParams.originMethod.methodDescription"
               clearable
               placeholder="请输入方法描述"
               style="width: 240px"
               @keyup.enter.native="handleQuery"
             />
           </el-form-item>
-          <el-form-item label="方法原则" prop="methodDescription">
+          <el-form-item label="方法原则" prop="methodPrinciple">
             <el-input
-              v-model="queryParams.methodDescription"
+              v-model="queryParams.originMethod.methodPrinciple"
               clearable
               placeholder="请输入方法原则"
               style="width: 240px"
               @keyup.enter.native="handleQuery"
             />
           </el-form-item>
-          <el-form-item label="未来效果" prop="methodDescription">
+          <el-form-item label="未来效果" prop="futureExpansion">
             <el-input
-              v-model="queryParams.methodDescription"
+              v-model="queryParams.originMethod.futureExpansion"
               clearable
               placeholder="请输入未来效果"
               style="width: 240px"
@@ -136,10 +136,10 @@
 
         <modifyMethod ref="modifyMethod"
                        :dialog="modifyMethodShow"
-                       :selectMethod="selectMethod"
+                       :selectMethodId="selectMethodId"
                        :title="title"
                        @closeDialog="() =>{ this.modifyMethodShow = false }"
-                       @restore="() =>{this.selectMethod = {}}"
+                       @restore="() =>{this.selectMethodId = 0}"
         >
         </modifyMethod>
 
@@ -315,15 +315,10 @@ export default {
         sortType: 'ascending',
         dynamicLabel: "",
         originMethod:{
-          methodId:0,
-          methodName:'',
-          dynamicLabels:[],
+          methodName:"",
           methodDescription:"",
-          methodPrinciple:'',
-          futureExpansion:"",
-          methodConditions:[],
-          methodFactors:[],
-          methodModes:[],
+          methodPrinciple:"",
+          futureExpansion:""
         }
       },
       // 列信息
@@ -376,6 +371,7 @@ export default {
         label: 'leafName'
       },
       selectMethod: {},
+      selectMethodId:0,
       modifyState: false,
       methodTree: [],
       dialog: false,
@@ -445,8 +441,9 @@ export default {
     },
     // 节点单击事件
     handleNodeClick(data) {
-      this.queryParams.dynamicLabel = data.leafValue
+      this.queryParams.dynamicLabel = data.leafName
       this.loading = true
+      this.queryParams.sortableField = "n.label"
       methodManagement.getAllInspectMethodsByLabel(this.queryParams).then(result => {
           if (result.code === 200) {
             this.methods = result.data.content
@@ -500,7 +497,6 @@ export default {
       this.modifyMethodShow = true
       this.modifyState = true
     },
-
     deleteMethod() {
       methodManagement.deleteInspectMethod(this.selectId).then(result => {
         if (result.code === 200) {
@@ -517,7 +513,7 @@ export default {
     handleUpdate(row) {
       this.modifyMethodShow = true;
       this.title = "修改原则";
-      this.selectMethod = row;
+      this.selectMethodId = row.methodId;
     },
     /** 删除按钮操作 */
     handleDelete(row) {

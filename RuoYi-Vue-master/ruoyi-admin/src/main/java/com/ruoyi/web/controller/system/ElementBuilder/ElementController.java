@@ -67,11 +67,21 @@ public class ElementController extends BaseController {
     };
 
     @ResponseBody
-    @PostMapping("/getProductsByParams")
-    public R<List<AssemblyElement>> getProductsByParams(@RequestBody ElementQueryVo params){
+    @PostMapping("/getElementsByParams")
+    public R<Page<AssemblyElement>> getElementsByParams(@RequestBody ElementQueryVo params){
         try {
-            Example<AssemblyElement> example = Example.of(params.getOriginElement());
-            List<AssemblyElement> productsByParams = elementService.getProductsByParams(example);
+            //判断排序类型及排序字段
+            Sort sort = "ascending".equals(params.getSortType()) ? by(Sort.Direction.ASC, params.getSortableField()) : by(Sort.Direction.DESC, params.getSortableField());
+            //获取pageable
+            Pageable pageable = PageRequest.of(params.getPageNum()-1,params.getPageSize(),sort);
+            ExampleMatcher matcher = ExampleMatcher.matching()
+                    .withMatcher("elementName", ExampleMatcher.GenericPropertyMatcher::contains)
+                    .withMatcher("elementDescription",ExampleMatcher.GenericPropertyMatcher::contains);
+            AssemblyElement element = new AssemblyElement();
+            element.setElementName(params.getOriginElement().getElementName());
+            element.setElementDescription(params.getOriginElement().getElementDescription());
+            Example<AssemblyElement> example = Example.of(element,matcher);
+            Page<AssemblyElement> productsByParams = elementService.getElementsByParams(example,pageable);
             System.out.println(productsByParams);
             return R.success(productsByParams);
         } catch (Exception e){
@@ -81,10 +91,15 @@ public class ElementController extends BaseController {
     };
 
     @ResponseBody
-    @PostMapping("/createElementForParent")
-    public R<AssemblyElement> createElementForParent(@RequestBody ElementForParent EP){
+    @PostMapping("/createElement")
+    public R<AssemblyElement> createElement(@RequestBody ElementForParent EP){
         try {
-            AssemblyElement newElement = elementService.createElementForParent(EP);
+            AssemblyElement newElement = new AssemblyElement();
+            if(EP.getParentId() == 0){
+                newElement = elementService.createElement(EP.getOriginElement());
+            } else {
+                newElement = elementService.createElementForParent(EP);
+            }
             System.out.println(newElement);
             return R.success(newElement);
         } catch (Exception e){
@@ -97,9 +112,14 @@ public class ElementController extends BaseController {
     @PostMapping("/updateElement")
     public R<AssemblyElement> updateElement(@RequestBody ElementForParent EP){
         try {
-            AssemblyElement element = elementService.updateElementForParent(EP);
-            System.out.println(element);
-            return R.success(element);
+            AssemblyElement newElement = new AssemblyElement();
+            if(EP.getParentId() == 0){
+                newElement = elementService.updateElement(EP.getOriginElement());
+            } else {
+                newElement = elementService.updateElementForParent(EP);
+            }
+            System.out.println(newElement);
+            return R.success(newElement);
         } catch (Exception e){
             e.printStackTrace();
             return R.error(e.getMessage());
@@ -151,6 +171,18 @@ public class ElementController extends BaseController {
         try {
             elementService.deleteConstraint(constraintId);
             return R.success("删除成功");
+        } catch (Exception e){
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    };
+
+    @ResponseBody
+    @GetMapping("/getProductById/{elementId}")
+    public R<AssemblyElement> getWholeProductById(@PathVariable Long elementId){
+        try {
+            AssemblyElement element = elementService.getElementById(elementId);
+            return R.success(element);
         } catch (Exception e){
             e.printStackTrace();
             return R.error(e.getMessage());

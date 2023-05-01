@@ -5,12 +5,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
+import org.springframework.data.repository.query.Param;
 
 public interface FixtureToolRepository extends Neo4jRepository<FixtureTool,Long> {
 
-    @Query(value = " Match (n) where any(label in labels(n) WHERE label in ['FixtureTool', $dynamicLabel]) return n" +
+    @Query(value = " Match (n:FixtureTool :`:#{literal(#dynamicLabel)}`) return n " +
             ":#{orderBy(#pageable)} SKIP $skip LIMIT $limit",
-            countQuery = "Match (n) where any(label in labels(n) WHERE label in ['FixtureTool', $dynamicLabel]) return count(n)"
+            countQuery = "Match (n:FixtureTool :`:#{literal(#dynamicLabel)}`) return count(n)"
     )
-    Page<FixtureTool> findResourcesByResourceType(String dynamicLabel, Pageable pageable);
+    Page<FixtureTool> findResourcesByResourceType(@Param("dynamicLabel")String dynamicLabel, Pageable pageable);
 }

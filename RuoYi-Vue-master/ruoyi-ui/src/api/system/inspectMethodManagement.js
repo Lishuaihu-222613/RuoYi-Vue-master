@@ -47,9 +47,18 @@ export function updateInspectMethod(data) {
   })
 }
 
-export function deleteInspectMethod(methodId) {
+export function deleteInspectMethod(data) {
   return request({
-    url: '/method/deleteInspectMethod/' + methodId,
-    method: 'get'
+    url: '/method/deleteInspectMethod',
+    method: 'post',
+    data:data
+  })
+}
+
+export function changeRelations(data) {
+  return request({
+    url: '/method/changeRelations',
+    method: 'post',
+    data: data
   })
 }

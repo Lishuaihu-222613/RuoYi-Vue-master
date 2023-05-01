@@ -82,7 +82,7 @@ public class FixtureTool extends ToolingResource{
     public FixtureTool() {
     }
 
-    public FixtureTool(Long resourceId, String resourceName, String resourceDescription, Set<String> resourceTypes, String site, double toolPrice, String manufacturer, String toolSize, String materialType, String toolUsage, String toolSpecification, String toolState, double wearCondition, Map<String, Object> toolCapacity, List<String> suitableProcesses, String clampElement, String clampStyle, String positionElement, String positionStyle, String suitablePartSize, String suitablePartShape) {
+    public FixtureTool(Long resourceId, String resourceName, String resourceDescription, Set<String> resourceTypes, String site, double toolPrice, String manufacturer, String toolSize, String materialType, String toolUsage, String toolSpecification, String toolState, double wearCondition, Map<String, String> toolCapacity, List<String> suitableProcesses, String clampElement, String clampStyle, String positionElement, String positionStyle, String suitablePartSize, String suitablePartShape) {
         super(resourceId, resourceName, resourceDescription, resourceTypes, site, toolPrice, manufacturer, toolSize, materialType, toolUsage, toolSpecification, toolState, wearCondition, toolCapacity, suitableProcesses);
         this.clampElement = clampElement;
         this.clampStyle = clampStyle;

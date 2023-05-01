@@ -34,8 +34,29 @@ public class QualityProblemServiceImpl implements QualityProblemService {
 
     @Override
     public QualityProblem createQualityProblem(QualityProblem problem) {
-        QualityProblem qualityProblem = qualityProblemRepository.save(problem);
-        return qualityProblem;
+        QualityProblem qualityProblem = new QualityProblem(problem.getProblemId(),
+                problem.getProblemName(), problem.getProblemDescription(),
+                problem.getDynamicLabels());
+        QualityProblem singleProblem = qualityProblemRepository.save(qualityProblem);
+        HashSet<Appearance> appearances = new HashSet<>();
+        HashSet<Reason> reasons = new HashSet<>();
+        HashSet<Solution> solutions = new HashSet<>();
+        for (Appearance appearance : problem.getAppearances()) {
+            Appearance newAppearance = appearanceRepository.save(appearance);
+            appearances.add(newAppearance);
+        };
+        for (Reason reason : problem.getReasons()) {
+            Reason newReason = reasonRepository.save(reason);
+            reasons.add(newReason);
+        };
+        for (Solution solution : problem.getSolutions()) {
+            Solution newSolution = solutionRepository.save(solution);
+            solutions.add(newSolution);
+        }
+        singleProblem.setAppearances(appearances);
+        singleProblem.setReasons(reasons);
+        singleProblem.setSolutions(solutions);
+        return qualityProblemRepository.save(singleProblem);
     }
 
     @Override
@@ -46,24 +67,15 @@ public class QualityProblemServiceImpl implements QualityProblemService {
             oldProblem.setProblemName(problem.getProblemName());
             oldProblem.setProblemDescription(problem.getProblemDescription());
             oldProblem.setDynamicLabels(problem.getDynamicLabels());
-            for (Appearance appearance : oldProblem.getAppearances()) {
-                if(!problem.getAppearances().contains(appearance)){
-                    appearanceRepository.deleteById(appearance.getAppearanceId());
-                }
-            }
-            oldProblem.getAppearances().retainAll(problem.getAppearances());
-            for (Reason reason : oldProblem.getReasons()) {
-                if(!problem.getReasons().contains(reason)){
-                    reasonRepository.deleteById(reason.getReasonId());
-                }
-            }
-            oldProblem.getReasons().retainAll(problem.getReasons());
-            for (Solution solution : oldProblem.getSolutions()) {
-                if(!problem.getSolutions().contains(solution)){
-                    solutionRepository.deleteById(solution.getSolutionId());
-                }
-            }
-            oldProblem.getSolutions().retainAll(problem.getSolutions());
+            appearanceRepository.deleteAll(oldProblem.getAppearances());
+            List<Appearance> appearances = appearanceRepository.saveAll(problem.getAppearances());
+            reasonRepository.deleteAll(oldProblem.getReasons());
+            List<Reason> reasons = reasonRepository.saveAll(problem.getReasons());
+            solutionRepository.deleteAll(oldProblem.getSolutions());
+            List<Solution> solutions = solutionRepository.saveAll(problem.getSolutions());
+            oldProblem.setAppearances(new HashSet<>(appearances));
+            oldProblem.setReasons(new HashSet<>(reasons));
+            oldProblem.setSolutions(new HashSet<>(solutions));
             QualityProblem newProblem = qualityProblemRepository.save(oldProblem);
             return newProblem;
         }
@@ -81,7 +93,7 @@ public class QualityProblemServiceImpl implements QualityProblemService {
     }
 
     @Override
-    public Page<QualityProblem> getQualityProblemsByParams(Example example, Pageable pageable) {
+    public Page<QualityProblem> getQualityProblemsByParams(Example<QualityProblem> example, Pageable pageable) {
         return qualityProblemRepository.findAll(example,pageable);
     }
 

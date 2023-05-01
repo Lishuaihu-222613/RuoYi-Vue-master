@@ -9,65 +9,110 @@
             <el-input v-model="combustionProperty.propertyName"></el-input>
           </el-form-item>
           <el-form-item :label-width="formLabelWidth" label="燃速">
-            <el-button @click="addBurningRate" />
-            <el-row v-for="(value, key) in combustionProperty.burningRate" :key="key" :index="key+''">
-              <el-col>
-                <el-input v-model="key"></el-input>
+            <el-row>
+              <el-col :span="8">
+                <el-input v-model="newBurningRateName" placeholder="名称"></el-input>
+              </el-col>
+              <el-col :span="2" class="line"></el-col>
+              <el-col :span="8">
+                <el-input v-model="newBurningRateValue" placeholder="内容"></el-input>
+              </el-col>
+              <el-col :span="6">
+                <el-button type="primary" @click="addBurningRate">添加</el-button>
+              </el-col>
+            </el-row>
+            <el-row v-for="(value,name,index) in combustionProperty.burningRate"
+                    :key="name" >
+              <el-col :span="8">
+                <el-input v-model="name"></el-input>
               </el-col>
               <el-col :span="2" class="line">----</el-col>
-              <el-col>
-                <el-input v-model="value"></el-input>
+              <el-col :span="8">
+                <el-input v-model="combustionProperty.burningRate[name]"></el-input>
               </el-col>
-              <el-col>
-                <el-button @click="deleteBurningRate(key)"/>
+              <el-col :span="6">
+                <el-button @click="deleteBurningRate(name)">删除</el-button>
               </el-col>
             </el-row>
           </el-form-item>
           <el-form-item :label-width="formLabelWidth" label="燃速压力指数">
-            <el-input v-model="combustionProperty.BRPressureIndex"></el-input>
+            <el-input-number v-model="combustionProperty.BRPressureIndex" :precision="2"></el-input-number>
           </el-form-item>
           <el-form-item :label-width="formLabelWidth" label="燃速温度指数">
-            <el-button @click="addBRTemperatureSensitivity" />
-            <el-row v-for="(value, key) in combustionProperty.BRTemperatureSensitivity" :key="key" :index="key+''">
-              <el-col>
-                <el-input v-model="key"></el-input>
+            <el-row>
+              <el-col :span="8">
+                <el-input v-model="newBRTemperatureSensitivityName" placeholder="名称"></el-input>
+              </el-col>
+              <el-col :span="2" class="line"></el-col>
+              <el-col :span="8">
+                <el-input v-model="newBRTemperatureSensitivityValue" placeholder="内容"></el-input>
+              </el-col>
+              <el-col :span="6">
+                <el-button type="primary" @click="addBRTemperatureSensitivity">添加</el-button>
+              </el-col>
+            </el-row>
+            <el-row v-for="(value,name,index) in combustionProperty.BRTemperatureSensitivity" :key="name" >
+              <el-col :span="8">
+                <el-input v-model="name"></el-input>
               </el-col>
               <el-col :span="2" class="line">----</el-col>
-              <el-col>
-                <el-input v-model="value"></el-input>
+              <el-col :span="8">
+                <el-input v-model="combustionProperty.BRTemperatureSensitivity[name]"></el-input>
               </el-col>
-              <el-col>
-                <el-button @click="deleteBRTemperatureSensitivity(key)"/>
+              <el-col :span="6">
+                <el-button @click="deleteBRTemperatureSensitivity(name)">删除</el-button>
               </el-col>
             </el-row>
           </el-form-item>
           <el-form-item :label-width="formLabelWidth" label="压力温度指数">
-            <el-button @click="addPressureTemperatureSensitivity" />
-            <el-row v-for="(value, key) in combustionProperty.pressureTemperatureSensitivity" :key="key" :index="key+''">
-              <el-col>
-                <el-input v-model="key"></el-input>
+            <el-row>
+              <el-col :span="8">
+                <el-input v-model="newPressureTemperatureSensitivityName" placeholder="名称"></el-input>
+              </el-col>
+              <el-col :span="2" class="line"></el-col>
+              <el-col :span="8">
+                <el-input v-model="newPressureTemperatureSensitivityValue" placeholder="内容"></el-input>
+              </el-col>
+              <el-col :span="6">
+                <el-button type="primary" @click="addPressureTemperatureSensitivity">添加</el-button>
+              </el-col>
+            </el-row>
+            <el-row v-for="(value,name,index) in combustionProperty.pressureTemperatureSensitivity" :key="key" >
+              <el-col :span="8">
+                <el-input v-model="name"></el-input>
               </el-col>
               <el-col :span="2" class="line">----</el-col>
-              <el-col>
-                <el-input v-model="value"></el-input>
+              <el-col :span="8">
+                <el-input v-model="combustionProperty.pressureTemperatureSensitivity[name]"></el-input>
               </el-col>
-              <el-col>
-                <el-button @click="deletePressureTemperatureSensitivity(key)"/>
+              <el-col :span="6">
+                <el-button @click="deletePressureTemperatureSensitivity(name)">删除</el-button>
               </el-col>
             </el-row>
           </el-form-item>
           <el-form-item :label-width="formLabelWidth" label="其他属性">
-            <el-button @click="addCombustionPropertyOtherProperty" />
-            <el-row v-for="(value, key) in combustionProperty.otherProperty" :key="key" :index="key+''">
+            <el-row>
+              <el-col :span="8">
+                <el-input v-model="newCombustionPropertyOtherPropertyName" placeholder="名称"></el-input>
+              </el-col>
+              <el-col :span="2" class="line"></el-col>
+              <el-col :span="8">
+                <el-input v-model="newCombustionPropertyOtherPropertyValue" placeholder="内容"></el-input>
+              </el-col>
+              <el-col :span="6">
+                <el-button type="primary" @click="addCombustionPropertyOtherProperty">添加</el-button>
+              </el-col>
+            </el-row>
+            <el-row v-for="(value,name,index) in combustionProperty.otherProperty" :key="name" >
               <el-col>
-                <el-input v-model="key"></el-input>
+                <el-input v-model="name"></el-input>
               </el-col>
               <el-col :span="2" class="line">----</el-col>
               <el-col>
-                <el-input v-model="value"></el-input>
+                <el-input v-model="combustionProperty.otherProperty[name]"></el-input>
               </el-col>
               <el-col>
-                <el-button @click="deleteCombustionPropertyOtherProperty(key)"/>
+                <el-button @click="deleteCombustionPropertyOtherProperty(name)">删除</el-button>
               </el-col>
             </el-row>
           </el-form-item>
@@ -79,63 +124,117 @@
       </el-tab-pane>
       <el-tab-pane label="能量性能">
         <el-form :model="energyProperty" ref="energyPropertyForm">
-          <el-form-item :label-width="formLabelWidth" label="性能名称">
-            <el-input v-model="energyProperty.propertyName"></el-input>
-          </el-form-item>
-          <el-form-item :label-width="formLabelWidth" label="爆热">
-            <el-input v-model="energyProperty.explosiveHeat"></el-input>
-          </el-form-item>
-          <el-form-item :label-width="formLabelWidth" label="爆温">
-            <el-input v-model="energyProperty.explosiveTemperature"></el-input>
-          </el-form-item>
-          <el-form-item :label-width="formLabelWidth" label="比容">
-            <el-input v-model="energyProperty.specificCapacity"></el-input>
-          </el-form-item>
-          <el-form-item :label-width="formLabelWidth" label="比冲">
-            <el-button @click="addSpecificImpulse" />
-            <el-row v-for="(value, key) in energyProperty.specificImpulse" :key="key" :index="key+''">
-              <el-col>
-                <el-input v-model="key"></el-input>
-              </el-col>
-              <el-col :span="2" class="line">----</el-col>
-              <el-col>
-                <el-input v-model="value"></el-input>
-              </el-col>
-              <el-col>
-                <el-button @click="deleteSpecificImpulse(key)"/>
-              </el-col>
-            </el-row>
-          </el-form-item>
-          <el-form-item :label-width="formLabelWidth" label="特征速度">
-            <el-input v-model="energyProperty.characteristicVelocity"></el-input>
-          </el-form-item>
-          <el-form-item :label-width="formLabelWidth" label="燃烧温度">
-            <el-input v-model="energyProperty.combustionTemperature"></el-input>
-          </el-form-item>
-          <el-form-item :label-width="formLabelWidth" label="燃烧产物平均分子质量">
-            <el-input-number v-model="energyProperty.combustionAverageMolecularMass" precision="2"></el-input-number>
-          </el-form-item>
-          <el-form-item :label-width="formLabelWidth" label="计算密度">
-            <el-input v-model="energyProperty.calculatedDensity"></el-input>
-          </el-form-item>
-          <el-form-item :label-width="formLabelWidth" label="火药力">
-            <el-input v-model="energyProperty.gunpowderPower"></el-input>
-          </el-form-item>
-          <el-form-item :label-width="formLabelWidth" label="其他属性">
-            <el-button @click="addEnergyPropertyOtherProperty" />
-            <el-row v-for="(value, key) in energyProperty.otherProperty" :key="key" :index="key+''">
-              <el-col>
-                <el-input v-model="key"></el-input>
-              </el-col>
-              <el-col :span="2" class="line">----</el-col>
-              <el-col>
-                <el-input v-model="value"></el-input>
-              </el-col>
-              <el-col>
-                <el-button @click="deleteEnergyPropertyOtherProperty(key)"/>
-              </el-col>
-            </el-row>
-          </el-form-item>
+          <el-row>
+            <el-col :span="12">
+              <el-form-item :label-width="formLabelWidth" label="性能名称">
+                <el-input v-model="energyProperty.propertyName"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item :label-width="formLabelWidth" label="比容">
+                <el-input v-model="energyProperty.specificCapacity"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="12">
+              <el-form-item :label-width="formLabelWidth" label="爆热">
+                <el-input v-model="energyProperty.explosiveHeat"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item :label-width="formLabelWidth" label="爆温">
+                <el-input v-model="energyProperty.explosiveTemperature"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-form-item :label-width="formLabelWidth" label="比冲">
+              <el-row>
+                <el-col :span="8">
+                  <el-input v-model="newSpecificImpulseName" placeholder="名称"></el-input>
+                </el-col>
+                <el-col :span="2" class="line"></el-col>
+                <el-col :span="8">
+                  <el-input v-model="newSpecificImpulseValue" placeholder="内容"></el-input>
+                </el-col>
+                <el-col :span="6">
+                  <el-button type="primary" @click="addSpecificImpulse">添加</el-button>
+                </el-col>
+              </el-row>
+              <el-row v-for="(value,name,index) in energyProperty.specificImpulse" :key="name" >
+                <el-col :span="8">
+                  <el-input v-model="name"></el-input>
+                </el-col>
+                <el-col :span="2" class="line">----</el-col>
+                <el-col :span="8">
+                  <el-input v-model="energyProperty.specificImpulse[name]"></el-input>
+                </el-col>
+                <el-col :span="6">
+                  <el-button @click="deleteSpecificImpulse(name)">删除</el-button>
+                </el-col>
+              </el-row>
+            </el-form-item>
+          </el-row>
+          <el-row>
+            <el-col :span="12">
+              <el-form-item :label-width="formLabelWidth" label="特征速度">
+                <el-input v-model="energyProperty.characteristicVelocity"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item :label-width="formLabelWidth" label="燃烧温度">
+                <el-input v-model="energyProperty.combustionTemperature"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="12">
+              <el-form-item :label-width="formLabelWidth" label="燃烧产物平均分子质量">
+                <el-input-number v-model="energyProperty.combustionAverageMolecularMass" :precision="2"></el-input-number>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item :label-width="formLabelWidth" label="计算密度">
+                <el-input v-model="energyProperty.calculatedDensity"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col>
+              <el-form-item :label-width="formLabelWidth" label="火药力">
+                <el-input v-model="energyProperty.gunpowderPower"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-form-item :label-width="formLabelWidth" label="其他属性">
+              <el-row>
+                <el-col :span="8">
+                  <el-input v-model="newEnergyPropertyOtherPropertyName" placeholder="名称"></el-input>
+                </el-col>
+                <el-col :span="2" class="line"></el-col>
+                <el-col :span="8">
+                  <el-input v-model="newEnergyPropertyOtherPropertyValue" placeholder="内容"></el-input>
+                </el-col>
+                <el-col :span="6">
+                  <el-button type="primary" @click="addEnergyPropertyOtherProperty">添加</el-button>
+                </el-col>
+              </el-row>
+              <el-row v-for="(value,name,index) in energyProperty.otherProperty" :key="name" >
+                <el-col :span="8">
+                  <el-input v-model="name"></el-input>
+                </el-col>
+                <el-col :span="2" class="line">----</el-col>
+                <el-col :span="8">
+                  <el-input v-model="energyProperty.otherProperty[name]"></el-input>
+                </el-col>
+                <el-col :span="6">
+                  <el-button @click.prevent="deleteEnergyPropertyOtherProperty(name)">删除</el-button>
+                </el-col>
+              </el-row>
+            </el-form-item>
+          </el-row>
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button type="primary" @click="onSubmitEnergyProperty">确 定</el-button>
@@ -144,93 +243,170 @@
       </el-tab-pane>
       <el-tab-pane label="力学性能">
         <el-form :model="forceProperty" ref="forcePropertyForm">
-          <el-form-item :label-width="formLabelWidth" label="性能名称">
-            <el-input v-model="forceProperty.propertyName"></el-input>
-          </el-form-item>
-          <el-form-item :label-width="formLabelWidth" label="应力">
-            <el-input v-model="forceProperty.stress"></el-input>
-          </el-form-item>
-          <el-form-item :label-width="formLabelWidth" label="应变">
-            <el-input v-model="forceProperty.strain"></el-input>
-          </el-form-item>
-          <el-form-item :label-width="formLabelWidth" label="弹性模量">
-            <el-input v-model="forceProperty.elasticModulus"></el-input>
-          </el-form-item>
-          <el-form-item :label-width="formLabelWidth" label="料浆黏度">
-            <el-button @click="addViscosity" />
-            <el-row v-for="(value, key) in forceProperty.Viscosity" :key="key" :index="key+''">
-              <el-col>
-                <el-input v-model="key"></el-input>
-              </el-col>
-              <el-col :span="2" class="line">----</el-col>
-              <el-col>
-                <el-input v-model="value"></el-input>
-              </el-col>
-              <el-col>
-                <el-button @click="deleteViscosity(key)"/>
-              </el-col>
-            </el-row>
-          </el-form-item>
-          <el-form-item :label-width="formLabelWidth" label="抗拉强度">
-            <el-button @click="addTensileStrength" />
-            <el-row v-for="(value, key) in forceProperty.tensileStrength" :key="key" :index="key+''">
-              <el-col>
-                <el-input v-model="key"></el-input>
-              </el-col>
-              <el-col :span="2" class="line">----</el-col>
-              <el-col>
-                <el-input v-model="value"></el-input>
-              </el-col>
-              <el-col>
-                <el-button @click="deleteTensileStrength(key)"/>
-              </el-col>
-            </el-row>
-          </el-form-item>
-          <el-form-item :label-width="formLabelWidth" label="抗压强度">
-            <el-button @click="addCompressiveStrength" />
-            <el-row v-for="(value, key) in forceProperty.compressiveStrength" :key="key" :index="key+''">
-              <el-col>
-                <el-input v-model="key"></el-input>
-              </el-col>
-              <el-col :span="2" class="line">----</el-col>
-              <el-col>
-                <el-input v-model="value"></el-input>
-              </el-col>
-              <el-col>
-                <el-button @click="deleteCompressiveStrength(key)"/>
-              </el-col>
-            </el-row>
-          </el-form-item>
-          <el-form-item :label-width="formLabelWidth" label="延伸率">
-            <el-button @click="addElongation" />
-            <el-row v-for="(value, key) in forceProperty.elongation" :key="key" :index="key+''">
-              <el-col>
-                <el-input v-model="key"></el-input>
-              </el-col>
-              <el-col :span="2" class="line">----</el-col>
-              <el-col>
-                <el-input v-model="value"></el-input>
-              </el-col>
-              <el-col>
-                <el-button @click="deleteElongation(key)"/>
-              </el-col>
-            </el-row>
-          </el-form-item>
-          <el-form-item :label-width="formLabelWidth" label="其他属性">
-            <el-button @click="addForcePropertyOtherProperty" />
-            <el-row v-for="(value, key) in forceProperty.otherProperty" :key="key" :index="key+''">
-              <el-col>
-                <el-input v-model="key"></el-input>
-              </el-col>
-              <el-col :span="2" class="line">----</el-col>
-              <el-col>
-                <el-input v-model="value"></el-input>
-              </el-col>
-              <el-col>
-                <el-button @click="deleteForcePropertyOtherProperty(key)"/>
-              </el-col>
-            </el-row>
-          </el-form-item>
+          <el-row>
+            <el-col :span="12">
+              <el-form-item :label-width="formLabelWidth" label="性能名称">
+                <el-input v-model="forceProperty.propertyName"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item :label-width="formLabelWidth" label="应力">
+                <el-input v-model="forceProperty.stress"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="12">
+              <el-form-item :label-width="formLabelWidth" label="应变">
+                <el-input v-model="forceProperty.strain"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item :label-width="formLabelWidth" label="弹性模量">
+                <el-input v-model="forceProperty.elasticModulus"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-form-item :label-width="formLabelWidth" label="料浆黏度">
+              <el-row>
+                <el-col :span="8">
+                  <el-input v-model="newViscosityName" placeholder="名称"></el-input>
+                </el-col>
+                <el-col :span="2" class="line"></el-col>
+                <el-col :span="8">
+                  <el-input v-model="newViscosityValue" placeholder="内容"></el-input>
+                </el-col>
+                <el-col :span="6">
+                  <el-button type="primary" @click="addViscosity">添加</el-button>
+                </el-col>
+              </el-row>
+              <el-row v-for="(value,name,index) in forceProperty.Viscosity" :key="name" >
+                <el-col :span="8">
+                  <el-input v-model="name"></el-input>
+                </el-col>
+                <el-col :span="2" class="line">----</el-col>
+                <el-col :span="8">
+                  <el-input v-model="forceProperty.Viscosity[name]"></el-input>
+                </el-col>
+                <el-col :span="6">
+                  <el-button @click="deleteViscosity(name)">删除</el-button>
+                </el-col>
+              </el-row>
+            </el-form-item>
+          </el-row>
+          <el-row>
+            <el-form-item :label-width="formLabelWidth" label="抗拉强度">
+              <el-row>
+                <el-col :span="8">
+                  <el-input v-model="newTensileStrengthName" placeholder="名称"></el-input>
+                </el-col>
+                <el-col :span="2" class="line"></el-col>
+                <el-col :span="8">
+                  <el-input v-model="newTensileStrengthValue" placeholder="内容"></el-input>
+                </el-col>
+                <el-col :span="6">
+                  <el-button type="primary" @click="addTensileStrength">添加</el-button>
+                </el-col>
+              </el-row>
+              <el-row v-for="(value,name,index) in forceProperty.tensileStrength" :key="name">
+                <el-col :span="8">
+                  <el-input v-model="name"></el-input>
+                </el-col>
+                <el-col :span="2" class="line">----</el-col>
+                <el-col :span="8">
+                  <el-input v-model="forceProperty.tensileStrength[name]"></el-input>
+                </el-col>
+                <el-col :span="6">
+                  <el-button @click="deleteTensileStrength(name)">删除</el-button>
+                </el-col>
+              </el-row>
+            </el-form-item>
+          </el-row>
+          <el-row>
+            <el-form-item :label-width="formLabelWidth" label="抗压强度">
+              <el-row>
+                <el-col :span="8">
+                  <el-input v-model="newCompressiveStrengthName" placeholder="名称"></el-input>
+                </el-col>
+                <el-col :span="2" class="line"></el-col>
+                <el-col :span="8">
+                  <el-input v-model="newCompressiveStrengthValue" placeholder="内容"></el-input>
+                </el-col>
+                <el-col :span="6">
+                  <el-button type="primary" @click="addCompressiveStrength">添加</el-button>
+                </el-col>
+              </el-row>
+              <el-row v-for="(value,name,index) in forceProperty.compressiveStrength" :key="name">
+                <el-col>
+                  <el-input v-model="name"></el-input>
+                </el-col>
+                <el-col :span="2" class="line">----</el-col>
+                <el-col>
+                  <el-input v-model="forceProperty.compressiveStrength[name]"></el-input>
+                </el-col>
+                <el-col>
+                  <el-button @click="deleteCompressiveStrength(name)">删除</el-button>
+                </el-col>
+              </el-row>
+            </el-form-item>
+          </el-row>
+          <el-row>
+            <el-form-item :label-width="formLabelWidth" label="延伸率">
+              <el-row>
+                <el-col :span="8">
+                  <el-input v-model="newElongationName" placeholder="名称"></el-input>
+                </el-col>
+                <el-col :span="2" class="line"></el-col>
+                <el-col :span="8">
+                  <el-input v-model="newElongationValue" placeholder="内容"></el-input>
+                </el-col>
+                <el-col :span="6">
+                  <el-button type="primary" @click="addElongation">添加</el-button>
+                </el-col>
+              </el-row>
+              <el-row v-for="(value,name,index) in forceProperty.elongation" :key="name" >
+                <el-col>
+                  <el-input v-model="name"></el-input>
+                </el-col>
+                <el-col :span="2" class="line">----</el-col>
+                <el-col>
+                  <el-input v-model="forceProperty.elongation[name]"></el-input>
+                </el-col>
+                <el-col>
+                  <el-button @click="deleteElongation(name)">删除</el-button>
+                </el-col>
+              </el-row>
+            </el-form-item>
+          </el-row>
+          <el-row>
+            <el-form-item :label-width="formLabelWidth" label="其他属性">
+              <el-row>
+                <el-col :span="8">
+                  <el-input v-model="newForcePropertyOtherPropertyName" placeholder="名称"></el-input>
+                </el-col>
+                <el-col :span="2" class="line"></el-col>
+                <el-col :span="8">
+                  <el-input v-model="newForcePropertyOtherPropertyValue" placeholder="内容"></el-input>
+                </el-col>
+                <el-col :span="6">
+                  <el-button type="primary" @click="addForcePropertyOtherProperty">添加</el-button>
+                </el-col>
+              </el-row>
+              <el-row v-for="(value,name,index) in forceProperty.otherProperty" :key="name">
+                <el-col>
+                  <el-input v-model="name"></el-input>
+                </el-col>
+                <el-col :span="2" class="line">----</el-col>
+                <el-col>
+                  <el-input v-model="forceProperty.otherProperty[name]"></el-input>
+                </el-col>
+                <el-col>
+                  <el-button @click="deleteForcePropertyOtherProperty(name)">删除</el-button>
+                </el-col>
+              </el-row>
+            </el-form-item>
+          </el-row>
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button type="primary" @click="onSubmitForceProperty">确 定</el-button>
@@ -239,36 +415,63 @@
       </el-tab-pane>
       <el-tab-pane label="氧燃比">
         <el-form :model="oxidantRatio" ref="oxidantRatioForm">
-          <el-form-item :label-width="formLabelWidth" label="性能名称">
-            <el-input v-model="oxidantRatio.propertyName"></el-input>
-          </el-form-item>
-          <el-form-item :label-width="formLabelWidth" label="氧燃比">
-            <el-input-number v-model="oxidantRatio.oxygenFuelRatio" precision="2"></el-input-number>
-          </el-form-item>
-          <el-form-item :label-width="formLabelWidth" label="氧系数">
-            <el-input v-model="oxidantRatio.oxygenCoefficient"></el-input>
-          </el-form-item>
-          <el-form-item :label-width="formLabelWidth" label="氧平衡">
-            <el-input v-model="oxidantRatio.oxygenBalance"></el-input>
-          </el-form-item>
-          <el-form-item :label-width="formLabelWidth" label="氧含量">
-            <el-input v-model="oxidantRatio.oxygenContent"></el-input>
-          </el-form-item>
-          <el-form-item :label-width="formLabelWidth" label="其他属性">
-            <el-button @click="addOxidantRatioOtherProperty" />
-            <el-row v-for="(value, key) in oxidantRatio.otherProperty" :key="key" :index="key+''">
-              <el-col>
-                <el-input v-model="key"></el-input>
-              </el-col>
-              <el-col :span="2" class="line">----</el-col>
-              <el-col>
-                <el-input v-model="value"></el-input>
-              </el-col>
-              <el-col>
-                <el-button @click="deleteOxidantRatio0therProperty(key)"/>
-              </el-col>
-            </el-row>
-          </el-form-item>
+          <el-row>
+            <el-col :span="12">
+              <el-form-item :label-width="formLabelWidth" label="性能名称">
+                <el-input v-model="oxidantRatio.propertyName"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item :label-width="formLabelWidth" label="氧燃比">
+                <el-input-number v-model="oxidantRatio.oxygenFuelRatio" precision="2"></el-input-number>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="12">
+              <el-form-item :label-width="formLabelWidth" label="氧系数">
+                <el-input v-model="oxidantRatio.oxygenCoefficient"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item :label-width="formLabelWidth" label="氧平衡">
+                <el-input v-model="oxidantRatio.oxygenBalance"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-form-item :label-width="formLabelWidth" label="氧含量">
+              <el-input v-model="oxidantRatio.oxygenContent"></el-input>
+            </el-form-item>
+          </el-row>
+          <el-row>
+            <el-form-item :label-width="formLabelWidth" label="其他属性">
+              <el-row>
+                <el-col :span="8">
+                  <el-input v-model="newOxidantRatioOtherPropertyName" placeholder="名称"></el-input>
+                </el-col>
+                <el-col :span="2" class="line"></el-col>
+                <el-col :span="8">
+                  <el-input v-model="newOxidantRatioOtherPropertyValue" placeholder="内容"></el-input>
+                </el-col>
+                <el-col :span="6">
+                  <el-button type="primary" @click="addOxidantRatioOtherProperty">添加</el-button>
+                </el-col>
+              </el-row>
+              <el-row v-for="(value,name,index) in oxidantRatio.otherProperty" :key="name" >
+                <el-col>
+                  <el-input v-model="name"></el-input>
+                </el-col>
+                <el-col :span="2" class="line">----</el-col>
+                <el-col>
+                  <el-input v-model="oxidantRatio.otherProperty[name]"></el-input>
+                </el-col>
+                <el-col>
+                  <el-button @click="deleteOxidantRatio0therProperty(name)">删除</el-button>
+                </el-col>
+              </el-row>
+            </el-form-item>
+          </el-row>
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button type="primary" @click="onSubmitOxidantRatio">确 定</el-button>
@@ -277,45 +480,82 @@
       </el-tab-pane>
       <el-tab-pane label="贮存性能">
         <el-form :model="storageProperty" ref="storagePropertyForm">
-          <el-form-item :label-width="formLabelWidth" label="性能名称">
-            <el-input v-model="storageProperty.propertyName"></el-input>
-          </el-form-item>
-          <el-form-item :label-width="formLabelWidth" label="预估贮存期">
-            <el-input v-model="storageProperty.estimatedStoragePeriod"></el-input>
-          </el-form-item>
-          <el-form-item :label-width="formLabelWidth" label="外观变化">
-            <el-input v-model="storageProperty.appearanceChange"></el-input>
-          </el-form-item>
-          <el-form-item :label-width="formLabelWidth" label="物理性能变化">
-            <el-input v-model="storageProperty.physicalPropertyChange"></el-input>
-          </el-form-item>
-          <el-form-item :label-width="formLabelWidth" label="化学性能变化">
-            <el-input v-model="storageProperty.chemicalPropertyChange"></el-input>
-          </el-form-item>
-          <el-form-item :label-width="formLabelWidth" label="力学性能变化">
-            <el-input v-model="storageProperty.forcePropertyChange"></el-input>
-          </el-form-item>
-          <el-form-item :label-width="formLabelWidth" label="燃烧性能变化">
-            <el-input v-model="storageProperty.combustionPropertyChange" precision="2"></el-input>
-          </el-form-item>
-          <el-form-item :label-width="formLabelWidth" label="药柱-衬层（绝热层）界面粘结强度变化">
-            <el-input v-model="storageProperty.interfacialBondStrengthChange"></el-input>
-          </el-form-item>
-          <el-form-item :label-width="formLabelWidth" label="其他属性">
-            <el-button @click="addStoragePropertyOtherProperty" />
-            <el-row v-for="(value, key) in storageProperty.otherProperty" :key="key" :index="key+''">
-              <el-col>
-                <el-input v-model="key"></el-input>
-              </el-col>
-              <el-col :span="2" class="line">----</el-col>
-              <el-col>
-                <el-input v-model="value"></el-input>
-              </el-col>
-              <el-col>
-                <el-button @click="deleteStoragePropertyOtherProperty(key)"/>
-              </el-col>
-            </el-row>
-          </el-form-item>
+          <el-row>
+            <el-col :span="12">
+              <el-form-item :label-width="formLabelWidth" label="性能名称">
+                <el-input v-model="storageProperty.propertyName"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item :label-width="formLabelWidth" label="预估贮存期">
+                <el-input v-model="storageProperty.estimatedStoragePeriod"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="12">
+              <el-form-item :label-width="formLabelWidth" label="外观变化">
+                <el-input v-model="storageProperty.appearanceChange"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item :label-width="formLabelWidth" label="物理性能变化">
+                <el-input v-model="storageProperty.physicalPropertyChange"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="12">
+              <el-form-item :label-width="formLabelWidth" label="化学性能变化">
+                <el-input v-model="storageProperty.chemicalPropertyChange"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item :label-width="formLabelWidth" label="力学性能变化">
+                <el-input v-model="storageProperty.forcePropertyChange"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="12">
+              <el-form-item :label-width="formLabelWidth" label="燃烧性能变化">
+                <el-input v-model="storageProperty.combustionPropertyChange" precision="2"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item :label-width="formLabelWidth" label="药柱-衬层（绝热层）界面粘结强度变化">
+                <el-input v-model="storageProperty.interfacialBondStrengthChange"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-form-item :label-width="formLabelWidth" label="其他属性">
+              <el-row>
+                <el-col :span="8">
+                  <el-input v-model="newStoragePropertyOtherPropertyName" placeholder="名称"></el-input>
+                </el-col>
+                <el-col :span="2" class="line"></el-col>
+                <el-col :span="8">
+                  <el-input v-model="newStoragePropertyOtherPropertyValue" placeholder="内容"></el-input>
+                </el-col>
+                <el-col :span="6">
+                  <el-button type="primary" @click="addStoragePropertyOtherProperty">添加</el-button>
+                </el-col>
+              </el-row>
+              <el-row v-for="(value,name,index) in storageProperty.otherProperty" :key="name">
+                <el-col>
+                  <el-input v-model="name"></el-input>
+                </el-col>
+                <el-col :span="2" class="line">----</el-col>
+                <el-col>
+                  <el-input v-model="storageProperty.otherProperty[name]"></el-input>
+                </el-col>
+                <el-col>
+                  <el-button @click="deleteStoragePropertyOtherProperty(name)">删除</el-button>
+                </el-col>
+              </el-row>
+            </el-form-item>
+          </el-row>
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button type="primary" @click="onSubmitStorageProperty">确 定</el-button>
@@ -380,10 +620,10 @@ export default {
         propertyId:0,
         propertyName:'',
         BRPressureIndex:0.0,
-        burningRate:new Map(),
-        BRTemperatureSensitivity:new Map(),
-        pressureTemperatureSensitivity:new Map(),
-        otherProperty:new Map()
+        burningRate:{},
+        BRTemperatureSensitivity:{},
+        pressureTemperatureSensitivity:{},
+        otherProperty:{}
       },
       energyProperty:{
         propertyId:0,
@@ -391,13 +631,13 @@ export default {
         explosiveHeat:'',
         explosiveTemperature:'',
         specificCapacity:'',
-        specificImpulse:new Map(),
+        specificImpulse:{},
         characteristicVelocity:'',
         combustionTemperature:'',
         combustionAverageMolecularMass:0.0,
         calculatedDensity:'',
         gunpowderPower:'',
-        otherProperty:new Map()
+        otherProperty:{}
       },
       forceProperty:{
         propertyId:0,
@@ -405,11 +645,11 @@ export default {
         stress:'',
         strain:'',
         elasticModulus:'',
-        Viscosity:new Map(),
-        tensileStrength:new Map(),
-        compressiveStrength:new Map(),
-        elongation:new Map(),
-        otherProperty:new Map(),
+        Viscosity:{},
+        tensileStrength:{},
+        compressiveStrength:{},
+        elongation:{},
+        otherProperty:{},
       },
       storageProperty:{
         propertyId:0,
@@ -421,7 +661,7 @@ export default {
         forcePropertyChange:'',
         combustionPropertyChange:'',
         interfacialBondStrengthChange:'',
-        otherProperty:new Map(),
+        otherProperty:{},
       },
       oxidantRatio:{
         propertyId:0,
@@ -430,12 +670,38 @@ export default {
         oxygenCoefficient:'',
         oxygenBalance:'',
         oxygenContent:'',
-        otherProperty:new Map(),
+        otherProperty:{},
       },
       dialogFormVisible: false,
-      formLabelWidth: '120px',
+      formLabelWidth: '100px',
       inputVisible: false,
       inputValue: '',
+      newBurningRateName:'',
+      newBurningRateValue:'',
+      newBRTemperatureSensitivityName:'',
+      newBRTemperatureSensitivityValue:'',
+      newPressureTemperatureSensitivityName:'',
+      newPressureTemperatureSensitivityValue:'',
+      newCombustionPropertyOtherPropertyName:'',
+      newCombustionPropertyOtherPropertyValue:'',
+      newSpecificImpulseName:'',
+      newSpecificImpulseValue:'',
+      newEnergyPropertyOtherPropertyName:'',
+      newEnergyPropertyOtherPropertyValue:'',
+      newViscosityName:'',
+      newViscosityValue:'',
+      newTensileStrengthName:'',
+      newTensileStrengthValue:'',
+      newCompressiveStrengthName:'',
+      newCompressiveStrengthValue:'',
+      newElongationName:'',
+      newElongationValue:'',
+      newForcePropertyOtherPropertyName:'',
+      newForcePropertyOtherPropertyValue:'',
+      newOxidantRatioOtherPropertyName:'',
+      newOxidantRatioOtherPropertyValue:'',
+      newStoragePropertyOtherPropertyName:'',
+      newStoragePropertyOtherPropertyValue:''
     }
   },
   methods: {
@@ -467,10 +733,10 @@ export default {
         propertyId:0,
         propertyName:'',
         BRPressureIndex:0.0,
-        burningRate:new Map(),
-        BRTemperatureSensitivity:new Map(),
-        pressureTemperatureSensitivity:new Map(),
-        otherProperty:new Map()
+        burningRate:{},
+        BRTemperatureSensitivity:{},
+        pressureTemperatureSensitivity:{},
+        otherProperty:{}
       };
       this.energyProperty = {
         propertyId:0,
@@ -478,13 +744,13 @@ export default {
         explosiveHeat:'',
         explosiveTemperature:'',
         specificCapacity:'',
-        specificImpulse:new Map(),
+        specificImpulse:{},
         characteristicVelocity:'',
         combustionTemperature:'',
         combustionAverageMolecularMass:0.0,
         calculatedDensity:'',
         gunpowderPower:'',
-        otherProperty:new Map()
+        otherProperty:{}
       };
       this.forceProperty = {
         propertyId:0,
@@ -492,11 +758,11 @@ export default {
         stress:'',
         strain:'',
         elasticModulus:'',
-        Viscosity:new Map(),
-        tensileStrength:new Map(),
-        compressiveStrength:new Map(),
-        elongation:new Map(),
-        otherProperty:new Map(),
+        Viscosity:{},
+        tensileStrength:{},
+        compressiveStrength:{},
+        elongation:{},
+        otherProperty:{},
       };
       this.storageProperty = {
         propertyId:0,
@@ -508,7 +774,7 @@ export default {
         forcePropertyChange:'',
         combustionPropertyChange:'',
         interfacialBondStrengthChange:'',
-        otherProperty:new Map(),
+        otherProperty:{},
       };
       this.oxidantRatio = {
         propertyId:0,
@@ -517,9 +783,13 @@ export default {
         oxygenCoefficient:'',
         oxygenBalance:'',
         oxygenContent:'',
-        otherProperty:new Map(),
+        otherProperty:{},
       };
-      this.resetForm('form')
+      this.resetForm('combustionPropertyForm');
+      this.resetForm('energyPropertyForm');
+      this.resetForm('forcePropertyForm');
+      this.resetForm('oxidantRatioForm');
+      this.resetForm('storagePropertyForm');
     },
     handleClose() {
       this.dialogFormVisible = false;
@@ -529,28 +799,28 @@ export default {
     },
 
     addBurningRate(){
-      this.combustionProperty.burningRate.set("","")
+      this.$set(this.combustionProperty.burningRate,this.newBurningRateName,this.newBurningRateValue)
     },
     deleteBurningRate(key){
-      this.combustionProperty.burningRate.delete(key)
+      this.$delete(this.combustionProperty.burningRate,key)
     },
     addBRTemperatureSensitivity(){
-      this.combustionProperty.BRTemperatureSensitivity.set("","")
+      this.$set(this.combustionProperty.BRTemperatureSensitivity,this.newBRTemperatureSensitivityName,this.newBRTemperatureSensitivityValue)
     },
     deleteBRTemperatureSensitivity(key){
-      this.combustionProperty.BRTemperatureSensitivity.delete(key)
+      this.$delete(this.combustionProperty.BRTemperatureSensitivity,key)
     },
     addPressureTemperatureSensitivity(){
-      this.combustionProperty.pressureTemperatureSensitivity.set("","")
+      this.$set(this.combustionProperty.pressureTemperatureSensitivity,this.newPressureTemperatureSensitivityName,this.newPressureTemperatureSensitivityValue)
     },
     deletePressureTemperatureSensitivity(key){
-      this.combustionProperty.pressureTemperatureSensitivity.delete(key)
+      this.$delete(this.combustionProperty.pressureTemperatureSensitivity,key)
     },
     addCombustionPropertyOtherProperty(){
-      this.combustionProperty.otherProperty.set("","")
+      this.$set(this.combustionProperty.otherProperty,this.newCombustionPropertyOtherPropertyName,this.newCombustionPropertyOtherPropertyValue)
     },
-    deleteCombustionPropertyOtherProperty(){
-      this.combustionProperty.otherProperty.delete(key)
+    deleteCombustionPropertyOtherProperty(key){
+      this.$delete(this.combustionProperty.otherProperty,key)
     },
     onSubmitCombustionProperty(){
       prescriptionManagement.updateCombustionProperty(this.combustionProperty).then(result =>{
@@ -560,16 +830,16 @@ export default {
       })
     },
     addSpecificImpulse(){
-      this.energyProperty.specificImpulse.set("","")
+      this.$set(this.energyProperty.specificImpulse,this.newSpecificImpulseName,this.newSpecificImpulseValue)
     },
     deleteSpecificImpulse(key){
-      this.energyProperty.specificImpulse.delete(key)
+      this.$delete(this.energyProperty.specificImpulse,key)
     },
     addEnergyPropertyOtherProperty(){
-      this.energyProperty.otherProperty.set("","")
+      this.$set(this.energyProperty.otherProperty,this.newEnergyPropertyOtherPropertyName,this.newEnergyPropertyOtherPropertyValue)
     },
     deleteEnergyPropertyOtherProperty(key){
-      this.energyProperty.otherProperty.delete(key)
+      this.$delete(this.energyProperty.otherProperty,key)
     },
     onSubmitEnergyProperty(){
       prescriptionManagement.updateEnergyProperty(this.energyProperty).then(result =>{
@@ -580,34 +850,34 @@ export default {
     },
 
     addViscosity(){
-      this.forceProperty.Viscosity.set("","")
+      this.$set(this.forceProperty.Viscosity,this.newViscosityName,this.newViscosityValue)
     },
     deleteViscosity(key){
-      this.forceProperty.Viscosity.delete(key)
+      this.$delete(this.forceProperty.Viscosity,key)
     },
     addTensileStrength(){
-      this.forceProperty.tensileStrength.set("","")
+      this.$set(this.forceProperty.tensileStrength,this.newTensileStrengthName,this.newTensileStrengthValue)
     },
     deleteTensileStrength(key){
-      this.forceProperty.tensileStrength.delete(key)
+      this.$delete(this.forceProperty.tensileStrength,key)
     },
     addCompressiveStrength(){
-      this.forceProperty.compressiveStrength.set("","")
+      this.$set(this.forceProperty.compressiveStrength,this.newCompressiveStrengthName,this.newCompressiveStrengthValue)
     },
     deleteCompressiveStrength(key){
-      this.forceProperty.compressiveStrength.delete(key)
+      this.$delete(this.forceProperty.compressiveStrength,key)
     },
     addElongation(){
-      this.forceProperty.elongation.set("","")
+      this.$set(this.forceProperty.elongation,this.newElongationName,this.newElongationValue)
     },
     deleteElongation(key){
-      this.forceProperty.elongation.delete(key)
+      this.$delete(this.forceProperty.elongation,key)
     },
     addForcePropertyOtherProperty(){
-      this.forceProperty.otherProperty.set("","")
+      this.$set(this.forceProperty.otherProperty,this.newForcePropertyOtherPropertyName,this.newEnergyPropertyOtherPropertyValue)
     },
     deleteForcePropertyOtherProperty(key){
-      this.forceProperty.otherProperty.delete(key)
+      this.$delete(this.forceProperty.otherProperty,key)
     },
     onSubmitForceProperty(){
       prescriptionManagement.updateForceProperty(this.forceProperty).then(result =>{
@@ -618,10 +888,10 @@ export default {
     },
 
     addOxidantRatioOtherProperty(){
-      this.oxidantRatio.otherProperty.set("","")
+      this.$set(this.oxidantRatio.otherProperty,this.newOxidantRatioOtherPropertyName,this.newOxidantRatioOtherPropertyValue)
     },
     deleteOxidantRatio0therProperty(key){
-      this.oxidantRatio.otherProperty.delete(key)
+      this.$delete(this.oxidantRatio.otherProperty,key)
     },
     onSubmitOxidantRatio(){
       prescriptionManagement.updateOxidantRatio(this.oxidantRatio).then(result =>{
@@ -630,12 +900,11 @@ export default {
         }
       })
     },
-
     addStoragePropertyOtherProperty(){
-      this.storageProperty.otherProperty.set("","")
+      this.$set(this.storageProperty.otherProperty,this.newStoragePropertyOtherPropertyName,this.newStoragePropertyOtherPropertyValue)
     },
     deleteStoragePropertyOtherProperty(key){
-      this.storageProperty.otherProperty.delete(key)
+      this.$delete(this.storageProperty.otherProperty,key)
     },
     onSubmitStorageProperty(){
       prescriptionManagement.updateStorageProperty(this.storageProperty).then(result =>{

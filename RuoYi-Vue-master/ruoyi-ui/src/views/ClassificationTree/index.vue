@@ -62,10 +62,10 @@
     <el-table
       v-loading="loading"
       :data="leafList"
+      :indent="indent"
       :load="load"
       :tree-props="{children: 'subLeafs', hasChildren: 'hasSubLeafs'}"
       height="1000"
-      :indent="indent"
       lazy
       row-key="leafId"
       @selection-change="handleSelectionChange"
@@ -225,7 +225,7 @@ export default {
       },
       parentId: undefined,
       RootNode: true,
-      indent:4,
+      indent: 4,
       // 表单参数
       leaf: {
         leafId: undefined,
@@ -292,23 +292,23 @@ export default {
     },
     /** 查询知识树管理下拉树结构 */
     getTreeselect() {
-      treeManagement.getAllRootNode().then(response => {
+      treeManagement.getLeafOptions().then(response => {
         this.leafOptions = []
-        console.log(response.data)
-        this.leafOptions = (response.data)
+        this.leafOptions = response.data
       })
     },
-    load(tree, treeNode, resolve) {
+    load(row, treeNode, resolve) {
       setTimeout(() => {
-        let parentId = treeNode.leafId
-        treeManagement.getSubLeafsByParentId(parentId).then(result => {
+        let id = row.leafId
+        console.log(treeNode)
+        treeManagement.getSubLeafsByParentId(id).then(result => {
           if (result.code === 200) {
             resolve(result.data)
           }
         })
       }, 1000)
     },
-    handleSelectionChange(selection){
+    handleSelectionChange(selection) {
       this.ids = selection.map(item => item.resourceId)
       this.single = selection.length !== 1
       this.multiple = !selection.length
@@ -320,7 +320,7 @@ export default {
     },
     // 表单重置
     reset() {
-      this.form = {}
+      this.leaf = {}
       this.resetForm('form')
     },
     /** 搜索按钮操作 */
@@ -332,13 +332,9 @@ export default {
       this.resetForm('queryForm')
       this.handleQuery()
     },
-    handleOpen() {
-      if (this.leaf.dynamicLabels.includes('根节点')) {
-        this.RootNode = true
-      } else {
-        this.RootNode = false
-      }
-      treeManagement.getParentLeaf(this.leaf.leafId).then(result => {
+    handleOpen(row) {
+      this.RootNode = row.dynamicLabels.includes('根节点');
+      treeManagement.getParentLeaf(row.leafId).then(result => {
         this.parentId = result.data.leafId
       })
     },
@@ -357,17 +353,17 @@ export default {
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
-      this.reset()
       this.getTreeselect()
-      if (row != null) {
-        this.handleOpen()
+      if (row !== null) {
+        this.handleOpen(row)
+        console.log(row)
         // this.form.parentId = row.leafId;
+        treeManagement.getTreeManagement(row.leafId).then(response => {
+          this.leaf = response.data
+          this.open = true
+          this.title = '修改知识树管理'
+        })
       }
-      treeManagement.getTreeManagement(row.leafId).then(response => {
-        this.leaf = response.data
-        this.open = true
-        this.title = '修改知识树管理'
-      })
     },
     addAttribute() {
       this.leaf.leafAttributes.push('')
@@ -394,16 +390,22 @@ export default {
           if (this.leaf.leafId !== undefined) {
             if (this.RootNode === true) {
               this.leaf.dynamicLabels.push('根节点')
+              treeManagement.addTreeManagement(this.leaf).then(response =>{
+                this.$modal.msgSuccess('修改成功')
+                this.open = false
+                this.getList()
+              })
+            } else{
+              let node = {
+                parentId: this.parentId,
+                subLeaf: this.leaf
+              }
+              treeManagement.updateTreeManagement(node).then(response => {
+                this.$modal.msgSuccess('修改成功')
+                this.open = false
+                this.getList()
+              })
             }
-            let node = {
-              parentId: this.parentId,
-              subLeaf: this.leaf
-            }
-            treeManagement.updateTreeManagement(node).then(response => {
-              this.$modal.msgSuccess('修改成功')
-              this.open = false
-              this.getList()
-            })
           } else {
             if (this.RootNode === true) {
               this.leaf.dynamicLabels.push('根节点')

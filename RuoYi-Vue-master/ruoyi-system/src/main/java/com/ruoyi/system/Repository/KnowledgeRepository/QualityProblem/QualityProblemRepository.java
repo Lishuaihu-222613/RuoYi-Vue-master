@@ -40,4 +40,7 @@ public interface QualityProblemRepository extends Neo4jRepository<QualityProblem
             countQuery = "MATCH (n:QualityProblem :`:#{literal(#dynamicLabel)}`) return count(n)"
     )
     Page<QualityProblem> findProblemsByLabel(@Param("dynamicLabel") String dynamicLabel , Pageable pageable);
+
+    @Query(value = "MATCH (n:QualityProblem :`:#{literal(#dynamicLabel)}`) return n " )
+    List<QualityProblem> findProblemsByLabel(@Param("dynamicLabel") String dynamicLabel);
 }

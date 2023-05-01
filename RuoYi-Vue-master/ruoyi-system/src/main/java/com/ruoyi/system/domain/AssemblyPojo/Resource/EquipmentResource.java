@@ -2,6 +2,7 @@ package com.ruoyi.system.domain.AssemblyPojo.Resource;
 
 import com.ruoyi.system.domain.AssemblyPojo.Process.SpecialSequence.Sequence;
 import com.ruoyi.system.domain.AssemblyPojo.Process.Step;
+import org.springframework.data.neo4j.core.schema.CompositeProperty;
 import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.schema.Property;
 
@@ -10,7 +11,7 @@ import java.util.*;
 @Node({"设备资源","EquipmentResource"})
 public class EquipmentResource extends AssemblyResource{
 
-    @Property(name = "设备能力")
+    @CompositeProperty(prefix = "设备能力")
     private Map<String,String> equipmentCapacity;
 
     @Property(name = "设备功率")

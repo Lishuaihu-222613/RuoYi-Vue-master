@@ -2,6 +2,7 @@ package com.ruoyi.system.domain.AssemblyPojo.Resource;
 
 import com.ruoyi.system.domain.AssemblyPojo.Process.SpecialSequence.Sequence;
 import com.ruoyi.system.domain.AssemblyPojo.Process.Step;
+import org.springframework.data.neo4j.core.schema.CompositeProperty;
 import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.schema.Property;
 
@@ -12,7 +13,7 @@ import java.util.Set;
 @Node({"专用资源","SpecialTool"})
 public class SpecialTool extends AssemblyResource{
 
-    @Property(name = "能力属性描述")
+    @CompositeProperty(prefix = "能力属性描述")
     private Map<String,String> capacityDescriptions;
 
     public Map<String, String> getCapacityDescriptions() {

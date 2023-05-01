@@ -148,13 +148,13 @@
                            label="存在地址" prop="site"
           />
 
-          <el-table-column v-if="columns[4].visible" key="equipmentCapacity" :show-overflow-tooltip="true"
+          <el-table-column v-if="columns[4].visible" key="capacityDescriptions" :show-overflow-tooltip="true"
                            align="center"
-                           label="能力属性" prop="equipmentCapacity"
+                           label="能力属性" prop="capacityDescriptions"
           >
             <template slot-scope="scope">
-              <el-tag v-for="(value, key) in scope.row.equipmentCapacity" :key="key" :index="key+''" type="success">
-                {{ key + ':' + value }}
+              <el-tag v-for="(value, key) in scope.row.capacityDescriptions" :key="key" :index="key+''" type="success">
+                {{ key + ':' + scope.row.toolCapacity[key+''] }}
               </el-tag>
             </template>
           </el-table-column>
@@ -205,6 +205,7 @@
           <el-col :span="12">
             <el-form-item label="资源类别" prop="deptId">
               <treeselect v-model="selectResource.resourceTypes" :multiple="true" :options="labelTree"
+                          :normalizer="normalizer"
                           :show-count="true" placeholder="请选择资源类别"
               />
             </el-form-item>
@@ -224,21 +225,32 @@
         </el-row>
         <el-row>
           <el-col :span="24">
-            <el-form-item label="设备能力">
-              <el-button @click="addCapacityDescriptions"/>
-              <el-row v-for="(value, key) in selectResource.capacityDescriptions"
-                      :key="key"
+            <el-form-item label="资源能力">
+              <el-row>
+                <el-col :span="8">
+                  <el-input v-model="newCapacityName" placeholder="名称"></el-input>
+                </el-col>
+                <el-col :span="2" class="line">--</el-col>
+                <el-col :span="8">
+                  <el-input v-model="newCapacityValue" placeholder="内容"></el-input>
+                </el-col>
+                <el-col :span="6">
+                  <el-button type="primary" @click="addCapacityDescriptions">添加</el-button>
+                </el-col>
+              </el-row>
+              <el-row v-for="(value,name,index) in selectResource.capacityDescriptions"
+                      :key="name"
                       :gutter="20"
               >
                 <el-col :span="6">
-                  <el-input v-model="key" placeholder="名称" style="width:100%"></el-input>
+                  <el-input v-model="name" placeholder="名称" :disabled="true"></el-input>
                 </el-col>
                 <el-col :span="2" class="line">----</el-col>
                 <el-col :span="6">
-                  <el-input v-model="selectResource.capacityDescriptions[key]" placeholder="内容" style="width:100%"></el-input>
+                  <el-input v-model="selectResource.capacityDescriptions[name]" placeholder="内容" ></el-input>
                 </el-col>
                 <el-col :span="6">
-                  <el-button @click.prevent="removeCapacityDescriptions(key)">删除</el-button>
+                  <el-button type="text" @click.prevent="removeCapacityDescriptions(name)">删除</el-button>
                 </el-col>
               </el-row>
             </el-form-item>
@@ -398,13 +410,15 @@ export default {
         resourceTypes: [],
         resourceDescription: '',
         site: '',
-        capacityDescriptions: new Map(),
+        capacityDescriptions: {},
       },
       modifyState: false,
       labelTree: [],
       dialog: false,
       total: 0,
-      currentPage: 1
+      currentPage: 1,
+      newCapacityName:'',
+      newCapacityValue:''
     }
   },
 
@@ -456,6 +470,17 @@ export default {
         this.labelTree.push(response.data)
       })
     },
+    normalizer(node) {
+      if (node.children && !node.children.length) {
+        delete node.children;
+      }
+      return {
+        id: node.leafName,
+        label: node.leafName,
+        value:node.leafValue,
+        children: node.subLeafs
+      }
+    },
     // 筛选节点
     filterNode(value, data) {
       if (!value) return true
@@ -465,6 +490,7 @@ export default {
     handleNodeClick(data) {
       this.queryParams.dynamicLabel = data.leafValue
       this.loading = true
+      this.queryParams.sortableField = "n.label"
       resourceManagement.getAllSpecificResourcesByLabel(this.queryParams).then(result => {
           if (result.code === 200) {
             this.resources = result.data.content
@@ -479,6 +505,7 @@ export default {
     handleQuery() {
       this.queryParams.pageNum = 1
       this.loading = true
+      this.queryParams.sortableField = "n.label"
       resourceManagement.getSpecificResourcesByParams(this.queryParams).then(result => {
           if (result.code === 200) {
             this.resources = result.data.content
@@ -579,22 +606,22 @@ export default {
       this.$refs.upload.submit()
     },
     addCapacityDescriptions() {
-      this.selectResource.capacityDescriptions.set('', '')
+      this.$set(this.selectResource.capacityDescriptions,this.newCapacityName+"",this.newCapacityValue+"")
     },
     removeCapacityDescriptions(key) {
-      this.selectResource.capacityDescriptions.delete(key)
+      this.$delete(this.selectResource.capacityDescriptions,key+"")
     },
     submitForm: function() {
       this.$refs['resource'].validate(valid => {
         if (valid) {
           if (this.selectResource.resourceId !== undefined) {
-            resourceManagement.updateSpecific(this.selectResource).then(response => {
+            resourceManagement.updateSpecificResource(this.selectResource).then(response => {
               this.$modal.msgSuccess('修改成功')
               this.open = false
               this.getList()
             })
           } else {
-            resourceManagement.createSpecific(this.form).then(response => {
+            resourceManagement.createSpecificResource(this.form).then(response => {
               this.$modal.msgSuccess('新增成功')
               this.open = false
               this.getList()
@@ -614,17 +641,7 @@ export default {
         resourceTypes: [],
         resourceDescription: '',
         site: '',
-        principle: '',
-        equipmentPower: '',
-        equipmentPrice: '',
-        productionDate: '',
-        manufacturer: '',
-        equipmentSize: '',
-        equipmentState: '',
-        depreciationRate: 0.0,
-        loadRate: 0.0,
-        equipmentCapacity: new Map(),
-        attentions: []
+        capacityDescriptions: {},
       }
       this.resetForm('resource')
     }

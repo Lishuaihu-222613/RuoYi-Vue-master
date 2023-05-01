@@ -59,6 +59,37 @@ public class TreeController  extends BaseController {
         }
     }
 
+    @ResponseBody
+    @GetMapping("/getLeafOptions")
+    public R<List<ClassificationTree>> getLeafOptions()
+    {
+        try {
+            List<ClassificationTree> list = treeService.getLeafOptions();
+            System.out.println(list);
+            return R.success(list);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    }
+
+    /**
+     * 查询知识树管理列表
+     */
+    @ResponseBody
+    @GetMapping("/getSubLeafs/{parentId}")
+    public R<List<ClassificationTree>> getSubLeafsByParent(@PathVariable Long parentId)
+    {
+        try {
+            List<ClassificationTree> list = treeService.selectSubLeafs(parentId);
+            System.out.println(list);
+            return R.success(list);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    }
+
     /**
      * 获取知识树管理详细信息
      */
@@ -81,7 +112,7 @@ public class TreeController  extends BaseController {
     public R<Long> getParentLeaf(@PathVariable("id") Long id)
     {
         try {
-            ClassificationTree leaf = treeService.selectTreeById(id);
+            ClassificationTree leaf = treeService.getParentLeaf(id);
             System.out.println(leaf);
             return R.success(leaf);
         } catch (Exception e) {

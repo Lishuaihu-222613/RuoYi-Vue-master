@@ -82,27 +82,27 @@ public class ResourceServiceImpl implements ResourceService {
 
     @Override
     public Page<FixtureTool> getFixtureToolsByType(String label, Pageable pageable) {
-        return null;
+        return fixtureToolRepository.findResourcesByResourceType(label,pageable);
     }
 
     @Override
     public Page<MeasuringTool> getMeasuringToolsByType(String label, Pageable pageable) {
-        return null;
+        return measuringToolRepository.findResourcesByResourceType(label,pageable);
     }
 
     @Override
     public Page<MouldTool> getMouldToolsByType(String label, Pageable pageable) {
-        return null;
+        return mouldToolRepository.findResourcesByResourceType(label,pageable);
     }
 
     @Override
     public Page<SpecialTool> getSpecialToolsByType(String label, Pageable pageable) {
-        return null;
+        return specialRepository.findResourcesByResourceType(label,pageable);
     }
 
     @Override
     public Page<SpreaderTool> getSpreaderToolsByType(String label, Pageable pageable) {
-        return null;
+        return spreaderToolRepository.findResourcesByResourceType(label,pageable);
     }
 
     @Override
@@ -177,37 +177,37 @@ public class ResourceServiceImpl implements ResourceService {
 
     @Override
     public Page<AuxiliaryResource> getAuxiliaryResources(Pageable pageable) {
-        return null;
+        return auxiliaryRepository.findAll(pageable);
     }
 
     @Override
     public Page<EquipmentResource> getEquipmentResources(Pageable pageable) {
-        return null;
+        return equipmentRepository.findAll(pageable);
     }
 
     @Override
     public Page<FixtureTool> getFixtureTools(Pageable pageable) {
-        return null;
+        return fixtureToolRepository.findAll(pageable);
     }
 
     @Override
     public Page<MeasuringTool> getMeasuringTools(Pageable pageable) {
-        return null;
+        return measuringToolRepository.findAll(pageable);
     }
 
     @Override
     public Page<MouldTool> getMouldTools(Pageable pageable) {
-        return null;
+        return mouldToolRepository.findAll(pageable);
     }
 
     @Override
     public Page<SpecialTool> getSpecialTools(Pageable pageable) {
-        return null;
+        return specialRepository.findAll(pageable);
     }
 
     @Override
     public Page<SpreaderTool> getSpreaderTools(Pageable pageable) {
-        return null;
+        return spreaderToolRepository.findAll(pageable);
     }
 
     @Override

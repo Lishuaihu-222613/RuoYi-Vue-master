@@ -31,7 +31,7 @@
         >
           <el-form-item label="配方名称" prop="prescriptionName">
             <el-input
-              v-model="queryParams.prescriptionName"
+              v-model="queryParams.originPrescription.prescriptionName"
               clearable
               placeholder="请输入配方名称"
               style="width: 240px"
@@ -40,7 +40,7 @@
           </el-form-item>
           <el-form-item label="配方描述" prop="prescriptionDescription">
             <el-input
-              v-model="queryParams.prescriptionDescription"
+              v-model="queryParams.originPrescription.prescriptionDescription"
               clearable
               placeholder="请输入配方内容"
               style="width: 240px"
@@ -49,16 +49,16 @@
           </el-form-item>
           <el-form-item label="配方密度" prop="density">
             <el-input
-              v-model="queryParams.density"
+              v-model="queryParams.originPrescription.density"
               clearable
               placeholder="请输入配方密度"
               style="width: 240px"
               @keyup.enter.native="handleQuery"
             />
           </el-form-item>
-          <el-form-item label="危险等级" prop="density">
+          <el-form-item label="危险等级" prop="dangerLevel">
             <el-input
-              v-model="queryParams.dangerLevel"
+              v-model="queryParams.originPrescription.dangerLevel"
               clearable
               placeholder="请输入危险等级"
               style="width: 240px"
@@ -138,18 +138,18 @@
         >
         </vue-context-menu>
 
-        <modifyPrescription ref="modifyPrescription"
+        <ModifyPrescription ref="modifyPrescription"
                             :dialog="modifyPrescriptionShow"
-                            :selectPrescription="selectPrescription"
+                            :selectPrescriptionId="selectPrescriptionId"
                             :title="title"
                             @closeDialog="() =>{ this.modifyPrescriptionShow = false }"
                             @restore="() =>{this.selectPrescription = {}}"
         >
-        </modifyPrescription>
+        </ModifyPrescription>
 
         <PrescriptionProperty ref="prescriptionProperty"
                             :dialog="prescriptionPropertyShow"
-                            :selectPrescription="selectPrescription"
+                            :selectPrescriptionId="selectPrescriptionId"
                             :title="title"
                             @closeDialog="() =>{ this.prescriptionPropertyShow = false }"
                             @restore="() =>{this.selectPrescription = {}}"
@@ -158,7 +158,7 @@
 
         <PrescriptionStability ref="prescriptionStability"
                             :dialog="prescriptionStabilityShow"
-                            :selectPrescription="selectPrescription"
+                            :selectPrescriptionId="selectPrescriptionId"
                             :title="title"
                             @closeDialog="() =>{ this.prescriptionStabilityShow = false }"
                             @restore="() =>{this.selectPrescription = {}}"
@@ -167,7 +167,7 @@
 
         <PrescriptionElements ref="prescriptionElements"
                             :dialog="prescriptionElementsShow"
-                            :selectPrescriptionId="selectPrescription.prescriptionId"
+                            :selectPrescriptionId="selectPrescriptionId"
                             :title="title"
                             @closeDialog="() =>{ this.prescriptionElementsShow = false }"
                             @restore="() =>{this.selectPrescription = {}}"
@@ -397,12 +397,12 @@ export default {
         { key: 9, label: `配方组分`, visible: true },
       ],
       title: '',
-      modifyPrescriptionShow: false,
+      modifyPrescriptionShow:false,
       prescriptionPropertyShow:false,
       prescriptionStabilityShow:false,
       prescriptionElementsShow:false,
       showSearch: true,
-      selectId: 0,
+      selectPrescriptionId: 0,
       tableHeight: 0,
       selectLabel: '',
       contextMenuData: {
@@ -513,6 +513,7 @@ export default {
     handleNodeClick(data) {
       this.queryParams.dynamicLabel = data.leafValue
       this.loading = true
+      this.queryParams.sortableField = "n.label"
       prescriptionManagement.getAllPrescriptionsByLabel(this.queryParams).then(result => {
           if (result.code === 200) {
             this.prescriptions = result.data.content
@@ -526,7 +527,7 @@ export default {
     /** 搜索按钮操作 */
     handleQuery() {
       this.queryParams.pageNum = 1;
-      this.loading = true
+      this.loading = true;
       prescriptionManagement.getPrescriptionsByParams(this.queryParams).then(result => {
           if (result.code === 200) {
             this.prescriptions = result.data.content
@@ -570,7 +571,7 @@ export default {
       this.prescriptionElementsShow = true
     },
     deletePrescription() {
-      prescriptionManagement.deleteQualityPrescription(this.selectId).then(result => {
+      prescriptionManagement.deletePrescription(this.selectPrescriptionId).then(result => {
         if (result.code === 200) {
           this.$modal.msgSuccess('删除配方成功！')
         }
@@ -578,35 +579,36 @@ export default {
     },
     /** 新增按钮操作 */
     handleAdd() {
-      this.modifyPrescriptionShow = true;
+      this.modifyPrescriptionShow = true
+      console.log(this.modifyPrescriptionShow)
       this.title = "新增配方"
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.modifyPrescriptionShow = true;
       this.title = "修改配方";
-      this.selectPrescription = row;
+      this.selectPrescriptionId = row.prescriptionId;
     },
     handleProperty(row) {
       this.prescriptionPropertyShow = true;
       this.title = "查看性质";
-      this.selectPrescription = row;
+      this.selectPrescriptionId = row.prescriptionId;
     },
     handleStability(row) {
       this.prescriptionStabilityShow = true;
       this.title = "查看稳定性";
-      this.selectPrescription = row;
+      this.selectPrescriptionId = row.prescriptionId;
     },
     handleElements(row) {
       this.prescriptionElementsShow = true;
       this.title = "查看组分";
-      this.selectPrescription = row;
+      this.selectPrescriptionId = row.prescriptionId;
     },
     /** 删除按钮操作 */
     handleDelete(row) {
       const prescriptionIds = row.prescriptionId || this.ids
       this.$modal.confirm('是否确认删除配方编号为"' + prescriptionIds + '"的数据项？').then(function() {
-        return prescriptionManagement.deleteQualityPrescription(prescriptionIds)
+        return prescriptionManagement.deletePrescription(prescriptionIds)
       }).then(() => {
         this.getList()
         this.$modal.msgSuccess('删除成功')

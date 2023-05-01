@@ -42,13 +42,18 @@ public class ElementServiceImpl implements ElementService {
     }
 
     @Override
-    public List<AssemblyElement> getProductsByParams(Example<AssemblyElement> example) {
-        return structureElementRepository.findAll(example);
+    public Page<AssemblyElement> getElementsByParams(Example<AssemblyElement> example,Pageable pageable) {
+        return structureElementRepository.findAll(example,pageable);
     }
 
     @Override
     public void deleteElements(Long[] elements) {
         structureElementRepository.deleteAllById(Arrays.asList(elements));
+    }
+
+    @Override
+    public AssemblyElement getElementById(Long elementId) {
+        return structureElementRepository.findById(elementId).get();
     }
 
     @Override
@@ -64,6 +69,11 @@ public class ElementServiceImpl implements ElementService {
             return childElement;
         }
         return null;
+    }
+
+    @Override
+    public AssemblyElement createElement(AssemblyElement assemblyElement) {
+        return structureElementRepository.save(assemblyElement);
     }
 
     @Override
@@ -86,6 +96,24 @@ public class ElementServiceImpl implements ElementService {
                 structureElementRepository.createParentRelation(assemblyElement.getElementId(),element1.getElementId());
                 return structureElementRepository.save(element1);
             }
+        }
+        return null;
+    }
+
+    @Override
+    public AssemblyElement updateElement(AssemblyElement assemblyElement) {
+        Optional<AssemblyElement> element = structureElementRepository.findById(assemblyElement.getElementId());
+        if(element.isPresent()){
+            AssemblyElement oldElement = element.get();
+            oldElement.setElementName(assemblyElement.getElementName());
+            oldElement.setElementDescription(assemblyElement.getElementDescription());
+            oldElement.setElementQuantity(assemblyElement.getElementQuantity());
+            oldElement.setElementSource(assemblyElement.getElementSource());
+            oldElement.setElementWetArea(assemblyElement.getElementWetArea());
+            oldElement.setElementVolume(assemblyElement.getElementVolume());
+            oldElement.setElementMass(assemblyElement.getElementMass());
+            oldElement.setElementBoundingBox(assemblyElement.getElementBoundingBox());
+            return structureElementRepository.save(oldElement);
         }
         return null;
     }

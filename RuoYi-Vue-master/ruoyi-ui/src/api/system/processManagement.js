@@ -1,18 +1,82 @@
 import request from '@/utils/request'
 
-export function getAllProcess(){
+export function getElementById(elementId){
   return request({
-    url: '/process/getAllProcess/',
+    url: '/process/getElementById/'+elementId,
     method: 'get'
   })
-};
+}
 
-export function getProcessById(processId){
+export function createElement(data){
   return request({
-    url: '/process/getProcessById/'+processId,
+    url: '/process/createElement',
+    method: 'post',
+    data:data
+  })
+}
+
+export function createElementForParent(data){
+  return request({
+    url: '/process/createElementForParent',
+    method: 'post',
+    data:data
+  })
+}
+
+export function updateElement(data){
+  return request({
+    url: '/process/updateElement',
+    method: 'post',
+    data:data
+  })
+}
+
+export function getAllProcess(data){
+  return request({
+    url: '/process/getAllProcess',
+    method: 'post',
+    data:data
+  })
+}
+
+export function getAllProcessByLabel(data){
+  return request({
+    url: '/process/getAllProcessByLabel',
+    method: 'post',
+    data:data
+  })
+}
+
+export function getAllElementsByParams(data){
+  return request({
+    url: '/process/getAllElementsByParams',
+    method: 'post',
+    data:data
+  })
+}
+
+export function deleteElements(data){
+  return request({
+    url: '/process/deleteElements',
+    method: 'post',
+    data:data
+  })
+}
+
+export function getProcessOptionsByLabel(label){
+  return request({
+    url: '/process/getAllProcess/'+label,
     method: 'get'
   })
-};
+}
+
+export function getProcessById(data){
+  return request({
+    url: '/process/getProcessById',
+    method: 'post',
+    data:data
+  })
+}
 
 export function createProcess(data){
   return request({

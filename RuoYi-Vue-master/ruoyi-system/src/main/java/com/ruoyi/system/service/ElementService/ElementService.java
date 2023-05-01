@@ -24,13 +24,19 @@ public interface ElementService {
 
     Page<AssemblyElement> getAllAssemblyProductsByLabel(String dynamicLabel, Pageable pageable);
 
-    List<AssemblyElement> getProductsByParams(Example<AssemblyElement> example);
+    Page<AssemblyElement> getElementsByParams(Example<AssemblyElement> example,Pageable pageable);
 
     void deleteElements(Long[] elements);
 
+    AssemblyElement getElementById(Long elementId);
+
     AssemblyElement createElementForParent(ElementForParent EP);
 
+    AssemblyElement createElement(AssemblyElement assemblyElement);
+
     AssemblyElement updateElementForParent(ElementForParent EP);
+
+    AssemblyElement updateElement(AssemblyElement assemblyElement);
 
     List<AssemblyConstraint> getConstraintsByElementId(Long elementId);
 

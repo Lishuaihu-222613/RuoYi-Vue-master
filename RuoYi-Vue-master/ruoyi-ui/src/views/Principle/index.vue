@@ -6,7 +6,7 @@
           <el-input
             v-model="filterText"
             clearable
-            placeholder="请输入工艺名称"
+            placeholder="请输入分类名称"
             prefix-icon="el-icon-search"
             size="small"
             style=" margin-bottom: 20px"
@@ -31,7 +31,7 @@
         >
           <el-form-item label="原则名称" prop="principleName">
             <el-input
-              v-model="queryParams.principleName"
+              v-model="queryParams.originPrinciple.principleName"
               clearable
               placeholder="请输入原则名称"
               style="width: 240px"
@@ -40,7 +40,7 @@
           </el-form-item>
           <el-form-item label="原则内容" prop="principleDescription">
             <el-input
-              v-model="queryParams.principleDescription"
+              v-model="queryParams.originPrinciple.principleDescription"
               clearable
               placeholder="请输入原则内容"
               style="width: 240px"
@@ -88,7 +88,7 @@
           </el-col>
           <el-col :span="1.5">
             <el-button
-              icon="el-icon-upload2"
+              icon="el-icon-upload"
               plain
               size="mini"
               type="info"
@@ -118,7 +118,7 @@
 
         <modifyPrinciple ref="modifyPrinciple"
                          :dialog="modifyPrincipleShow"
-                         :selectPrinciple="selectPrinciple"
+                         :selectPrincipleId="selectPrincipleId"
                          :title="title"
                          @closeDialog="() =>{ this.modifyPrincipleShow = false }"
                          @restore="() =>{this.selectPrinciple = {}}"
@@ -129,18 +129,18 @@
                   @row-contextmenu="showContextMenu"
         >
           <el-table-column align="center" type="selection" width="50"/>
-          <el-table-column v-if="columns[0].visible" key="principleId" align="center" label="原则编号" prop="methodId"/>
+          <el-table-column v-if="columns[0].visible" key="principleId" align="center" label="原则编号" prop="principleId"/>
           <el-table-column v-if="columns[1].visible" key="principleName" :show-overflow-tooltip="true" align="center"
                            label="原则名称"
-                           prop="methodName"
+                           prop="principleName"
           />
           <el-table-column v-if="columns[2].visible" key="principleDescription" :show-overflow-tooltip="true"
                            align="center"
-                           label="原则内容" prop="methodDescription"
+                           label="原则内容" prop="principleDescription"
           />
           <el-table-column v-if="columns[3].visible" key="principleConditions" :show-overflow-tooltip="true"
                            align="center"
-                           label="应用条件" prop="methodPrinciple"
+                           label="应用条件" prop="principleConditions"
           >
             <template slot-scope="scope">
                 <span v-for="(item,index) in scope.row.principleConditions">
@@ -150,7 +150,7 @@
           </el-table-column>
           <el-table-column v-if="columns[4].visible" key="principleResults" :show-overflow-tooltip="true" align="center"
                            label="应用效果"
-                           prop="futureExpansion"
+                           prop="principleResults"
           >
             <template slot-scope="scope">
                 <span v-for="(item,index) in scope.row.principleResults">
@@ -245,7 +245,7 @@ export default {
     ModifyPrinciple
   },
 
-  data() {
+  data()  {
     return {
       // 遮罩层
       loading: true,
@@ -279,7 +279,7 @@ export default {
         pageSize: 9,
         sortableField: 'principleId',
         sortType: 'ascending',
-        dynamicLabel: "",
+        dynamicLabel: '',
         originPrinciple:{
           principleId:0,
           principleName:'',
@@ -335,6 +335,7 @@ export default {
         label: 'leafName'
       },
       selectPrinciple: {},
+      selectPrincipleId:0,
       modifyState: false,
       principleTree: [],
       dialog: false,
@@ -392,7 +393,7 @@ export default {
     },
     /** 查询知识下拉树结构 */
     getTreeselect() {
-      treeManagement.getTreeManagement(25500).then(response => {
+      treeManagement.getTreeManagement(25656).then(response => {
         console.log(response.data)
         this.principleTree.push(response.data)
       })
@@ -404,6 +405,7 @@ export default {
     },
     // 节点单击事件
     handleNodeClick(data) {
+      this.queryParams.sortableField = "n.label"
       this.queryParams.dynamicLabel = data.leafValue
       this.loading = true
       principleManagement.getAllPrinciplesByLabel(this.queryParams).then(result => {
@@ -420,6 +422,7 @@ export default {
     handleQuery() {
       this.queryParams.pageNum = 1;
       this.loading = true
+      this.queryParams.sortableField = 'n.id'
       principleManagement.getPrinciplesByParams(this.queryParams).then(result => {
           if (result.code === 200) {
             this.principles = result.data.content
@@ -437,7 +440,7 @@ export default {
     // 多选框选中数据
     handleSelectionChange(selection) {
       this.ids = selection.map(item => item.principleId)
-      this.single = selection.length != 1
+      this.single = selection.length !== 1
       this.multiple = !selection.length
     },
     showContextMenu(row, column, event) {
@@ -468,14 +471,15 @@ export default {
     },
     /** 新增按钮操作 */
     handleAdd() {
+      this.selectPrincipleId = 0;
       this.modifyPrincipleShow = true;
-      this.title = "新增原则"
+      this.title = "创建原则"
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.modifyPrincipleShow = true;
       this.title = "修改原则";
-      this.selectPrinciple = row;
+      this.selectPrincipleId = row.principleId || this.ids;
     },
     /** 删除按钮操作 */
     handleDelete(row) {

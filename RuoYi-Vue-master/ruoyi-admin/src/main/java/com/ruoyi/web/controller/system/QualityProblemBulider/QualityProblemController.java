@@ -95,7 +95,13 @@ public class QualityProblemController extends BaseController {
             Sort sort = "ascending".equals(params.getSortType()) ? by(Sort.Direction.ASC, params.getSortableField()) : by(Sort.Direction.DESC, params.getSortableField());
             //获取pageable
             Pageable pageable = PageRequest.of(params.getPageNum()-1,params.getPageSize(),sort);
-            Example<QualityProblem> example = Example.of(params.getOriginProblem());
+            ExampleMatcher matcher = ExampleMatcher.matching()
+                    .withMatcher("problemName", ExampleMatcher.GenericPropertyMatcher::contains)
+                    .withMatcher("problemDescription",ExampleMatcher.GenericPropertyMatcher::contains);
+            QualityProblem qualityProblem = new QualityProblem();
+            qualityProblem.setProblemName(params.getOriginProblem().getProblemName());
+            qualityProblem.setProblemDescription(params.getOriginProblem().getProblemDescription());
+            Example<QualityProblem> example = Example.of(qualityProblem,matcher);
             Page<QualityProblem> problems = qualityProblemService.getQualityProblemsByParams(example,pageable);
             System.out.println(problems);
             return R.success(problems);

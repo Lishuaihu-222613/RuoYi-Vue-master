@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class MaterialAndValue {
 
-    private double value;
+    private double percentage;
 
     private Long materialId;
 }

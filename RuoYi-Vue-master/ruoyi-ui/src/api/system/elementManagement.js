@@ -1,8 +1,22 @@
 import request from '@/utils/request'
 
+export function getElementById(elementId) {
+  return request({
+    url: '/element/getElementById/'+elementId,
+    method: 'get'
+  })
+}
+
 export function getAllProducts() {
   return request({
     url: '/element/getAllProducts',
+    method: 'get'
+  })
+}
+
+export function getProductOptionsByLabel(label) {
+  return request({
+    url: '/element/getAllProducts/'+label,
     method: 'get'
   })
 }
@@ -18,14 +32,14 @@ export function getProductListByLabel(data) {
 
 export function getProductById(elementId) {
   return request({
-    url: '/element/getProductById'+elementId,
+    url: '/element/getProductById/'+elementId,
     method: 'get'
   })
 }
 
-export function getAllProductsByParams(data) {
+export function getAllElementsByParams(data) {
   return request({
-    url: '/element/getAllProductsByParams',
+    url: '/element/getAllElementsByParams',
     method: 'post',
     data: data
   })
@@ -65,7 +79,7 @@ export function deleteElements(data) {
 
 export function getParentElement(elementId) {
   return request({
-    url: '/element/getParentElement'+elementId,
+    url: '/element/getParentElement/'+elementId,
     method: 'get',
   })
 }
@@ -88,6 +102,14 @@ export function createConstraint(data) {
 export function updateConstraint(data) {
   return request({
     url: '/element/updateConstraint',
+    method: 'post',
+    data: data
+  })
+}
+
+export function modifyFiles(data) {
+  return request({
+    url: '/element/modifyFiles',
     method: 'post',
     data: data
   })

@@ -125,15 +125,6 @@
         >
         </vue-context-menu>
 
-        <modifyEquipment ref="modifyEquipment"
-                         :dialog="modifyResourceShow"
-                         :selectResource="selectResource"
-                         :title="title"
-                         @closeDialog="() =>{ this.modifyResourceShow = false }"
-                         @restore="() =>{this.selectResource = {}}"
-        >
-        </modifyEquipment>
-
         <el-table v-loading="loading" :data="resources" @selection-change="handleSelectionChange"
                   @row-contextmenu="showContextMenu"
         >
@@ -212,17 +203,17 @@
           >
             <template slot-scope="scope">
               <el-tag v-for="(value, key) in scope.row.equipmentCapacity" :key="key" :index="key+''" type="success">
-                {{ key + ':' + value }}
+                {{ key + ':' + scope.row.equipmentCapacity[key+''] }}
               </el-tag>
             </template>
           </el-table-column>
-          <el-table-column v-if="columns[14].visible" key="Attentions" :show-overflow-tooltip="true"
+          <el-table-column v-if="columns[14].visible" key="attentions" :show-overflow-tooltip="true"
                            align="center"
                            label="注意事项" prop="attentions"
           >
             <template slot-scope="scope">
               <el-tag v-for="(item,index) in scope.row.attentions" :key="index" :index="index+''" type="success">
-                {{ scope.row.Attentions[index] }}
+                {{ scope.row.attentions[index] }}
               </el-tag>
             </template>
           </el-table-column>
@@ -272,7 +263,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="资源类别" prop="deptId">
-              <treeselect v-model="selectResource.resourceTypes" :options="labelTree" :multiple="true" :show-count="true" placeholder="请选择资源类别" />
+              <treeselect v-model="selectResource.resourceTypes" :options="labelTree" :normalizer="normalizer" :multiple="true" :show-count="true" placeholder="请选择资源类别" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -358,20 +349,31 @@
         <el-row>
           <el-col :span="24">
             <el-form-item label="设备能力">
-              <el-button @click="addEquipmentCapacity" />
-              <el-row v-for="(value, key) in selectResource.equipmentCapacity"
-                      :key="key"
+              <el-row>
+                <el-col :span="8">
+                  <el-input v-model="newCapacityName" placeholder="名称"></el-input>
+                </el-col>
+                <el-col :span="2" class="line">--</el-col>
+                <el-col :span="8">
+                  <el-input v-model="newCapacityValue" placeholder="内容"></el-input>
+                </el-col>
+                <el-col :span="6">
+                  <el-button type="primary" @click="addEquipmentCapacity">添加</el-button>
+                </el-col>
+              </el-row>
+              <el-row v-for="(value,name,index) in selectResource.equipmentCapacity"
+                      :key="name"
                       :gutter="20"
               >
                 <el-col :span="6">
-                  <el-input v-model="key" placeholder="名称" style="width:100%"></el-input>
+                  <el-input v-model="name" placeholder="名称" :disabled="true"></el-input>
                 </el-col>
                 <el-col :span="2" class="line">----</el-col>
                 <el-col :span="6">
-                  <el-input v-model="selectResource.equipmentCapacity[key]" placeholder="内容" style="width:100%"></el-input>
+                  <el-input v-model="selectResource.equipmentCapacity[name]" placeholder="内容" ></el-input>
                 </el-col>
                 <el-col :span="6">
-                  <el-button @click.prevent="removeEquipmentCapacity(key)">删除</el-button>
+                  <el-button type="text" @click.prevent="removeEquipmentCapacity(name)">删除</el-button>
                 </el-col>
               </el-row>
             </el-form-item>
@@ -379,7 +381,7 @@
         </el-row>
         <el-row>
           <el-form-item label="注意事项">
-            <el-button type="primary" @click="addAttenetion" style="float: right">添加事项</el-button>
+            <el-button type="primary" @click="addAttention" style="float: right">添加事项</el-button>
             <el-row v-for="(item,index) in selectResource.attentions" :key="index">
               <el-col :span="20">
                 <el-input v-model="selectResource.attentions[index]"></el-input>
@@ -573,7 +575,9 @@ export default {
       labelTree: [],
       dialog: false,
       total: 0,
-      currentPage: 1
+      currentPage: 1,
+      newCapacityName:'',
+      newCapacityValue:''
     }
   },
 
@@ -631,10 +635,23 @@ export default {
       if (!value) return true
       return data.label.indexOf(value) !== -1
     },
+    /** 转换知识树管理数据结构 */
+    normalizer(node) {
+      if (node.children && !node.children.length) {
+        delete node.children;
+      }
+      return {
+        id: node.leafName,
+        label: node.leafName,
+        value:node.leafValue,
+        children: node.subLeafs
+      }
+    },
     // 节点单击事件
     handleNodeClick(data) {
-      this.queryParams.dynamicLabel = data.leafValue
+      this.queryParams.dynamicLabel = data.leafName
       this.loading = true
+      this.queryParams.sortableField = "n.label"
       resourceManagement.getAllEquipmentResourcesByLabel(this.queryParams).then(result => {
           if (result.code === 200) {
             this.resources = result.data.content
@@ -649,6 +666,7 @@ export default {
     handleQuery() {
       this.queryParams.pageNum = 1
       this.loading = true
+      this.queryParams.sortableField = "n.label"
       resourceManagement.getEquipmentResourcesByParams(this.queryParams).then(result => {
           if (result.code === 200) {
             this.resources = result.data.content
@@ -749,12 +767,12 @@ export default {
       this.$refs.upload.submit()
     },
     addEquipmentCapacity(){
-      this.selectResource.equipmentCapacity.set("","")
+      this.$set(this.selectResource.equipmentCapacity,this.newCapacityName+"",this.newCapacityValue+"")
     },
     removeEquipmentCapacity(key){
-      this.selectResource.equipmentCapacity.delete(key)
+      this.$delete(this.selectResource.equipmentCapacity,key+"")
     },
-    addAttenetion(){
+    addAttention(){
       this.selectResource.attentions.push('')
     },
     removeAttention(item){
@@ -766,14 +784,14 @@ export default {
     submitForm:function() {
       this.$refs["resource"].validate(valid => {
         if (valid) {
-          if (this.selectResource.resourceId != undefined) {
-            resourceManagement.updateEquipment(this.selectResource).then(response => {
+          if (this.selectResource.resourceId !== undefined) {
+            resourceManagement.updateEquipmentResource(this.selectResource).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            resourceManagement.createEquipment(this.form).then(response => {
+            resourceManagement.createEquipmentResource(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -802,8 +820,8 @@ export default {
         equipmentState:'',
         depreciationRate:0.0,
         loadRate:0.0,
-        equipmentCapacity:new Map(),
-        attentions:[],
+        equipmentCapacity:{},
+        attentions:[""],
       };
       this.resetForm("resource");
     }

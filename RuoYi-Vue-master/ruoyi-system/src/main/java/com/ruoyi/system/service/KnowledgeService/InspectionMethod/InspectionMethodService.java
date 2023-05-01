@@ -8,6 +8,7 @@ import com.ruoyi.system.domain.AssemblyPojo.Knowledge.InspectionKnowledge.Inspec
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.InspectionKnowledge.vo.ConditionForMethod;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.InspectionKnowledge.vo.FactorForMethod;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.InspectionKnowledge.vo.ModeForMethod;
+import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -24,10 +25,12 @@ public interface InspectionMethodService {
     Page<InspectionMethod> getAllInspectionMethods(Pageable pageable);
     
     Page<InspectionMethod> getInspectionMethodsByType(String type, Pageable pageable);
-    
+
+    Page<InspectionMethod> getInspectionMethodsByParams(Example<InspectionMethod> example, Pageable pageable);
+
     List<InspectionMethod> getInspectionMethodsByName(String methodName);
     
-    void deleteInspectionMethod(Long methodId);
+    void deleteInspectionMethod(Long[] methodId);
     
     InspectionCondition createInspectionCondition(ConditionForMethod CM);
     

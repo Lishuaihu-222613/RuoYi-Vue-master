@@ -14,9 +14,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.regex.PatternSyntaxException;
 
-public interface MaterialRepository extends Neo4jRepository<Material,Long> {
+public interface MaterialRepository extends Neo4jRepository<Material, Long> {
 
     Optional<Material> findById(Long materialId);
+
+    @Query("MATCH (n:Material) return n")
+    List<Material> findAllMaterialOptions();
+
+    @Query(value = "MATCH (n:Material :`:#{literal(#dynamicLabel)}`) return n ")
+    List<Material> findMaterialOptionsByLabel(@Param("dynamicLabel") String dynamicLabel);
 
     @Query("MATCH (n:Material) where id(n) = $materialId return n")
     Optional<MaterialInterface> findMaterialInterfaceById(@Param("materialId") Long materialId);
@@ -33,7 +39,7 @@ public interface MaterialRepository extends Neo4jRepository<Material,Long> {
             ":#{orderBy(#pageable)} SKIP $skip LIMIT $limit",
             countQuery = "MATCH (n:Material) where n.name contains $materialName return count(n) "
     )
-    Page<Material> findByMaterialName(@Param("materialName") String materialName ,Pageable pageable);
+    Page<Material> findByMaterialName(@Param("materialName") String materialName, Pageable pageable);
 
     @Override
     <S extends Material> List<S> findAll(Example<S> example);
@@ -42,13 +48,13 @@ public interface MaterialRepository extends Neo4jRepository<Material,Long> {
             ":#{orderBy(#pageable)} SKIP $skip LIMIT $limit",
             countQuery = "MATCH (n:Material) return count(n)"
     )
-    Page<MaterialInterface> findSingleMaterials(Pageable pageable);
+    Page<Material> findSingleMaterials(Pageable pageable);
 
     @Query(value = "MATCH (n:Material :`:#{literal(#dynamicLabel)}`) return n " +
             ":#{orderBy(#pageable)} SKIP $skip LIMIT $limit",
             countQuery = "MATCH (n:Material :`:#{literal(#dynamicLabel)}`) return count(n)"
     )
-    Page<MaterialInterface> findMaterialsByLabel(@Param("dynamicLabel") String dynamicLabel , Pageable pageable);
+    Page<Material> findMaterialsByLabel(@Param("dynamicLabel") String dynamicLabel, Pageable pageable);
 
     @Override
     <S extends Material> Page<S> findAll(Example<S> example, Pageable pageable);

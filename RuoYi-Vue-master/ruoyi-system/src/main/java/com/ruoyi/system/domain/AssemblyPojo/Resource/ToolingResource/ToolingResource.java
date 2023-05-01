@@ -3,6 +3,7 @@ package com.ruoyi.system.domain.AssemblyPojo.Resource.ToolingResource;
 import com.ruoyi.system.domain.AssemblyPojo.Process.SpecialSequence.Sequence;
 import com.ruoyi.system.domain.AssemblyPojo.Process.Step;
 import com.ruoyi.system.domain.AssemblyPojo.Resource.AssemblyResource;
+import org.springframework.data.neo4j.core.schema.CompositeProperty;
 import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.schema.Property;
 
@@ -38,8 +39,8 @@ public abstract class ToolingResource extends AssemblyResource {
     @Property(name = "磨损状况")
     private double wearCondition;
 
-    @Property(name = "能力指数")
-    private Map<String, Object> toolCapacity;
+    @CompositeProperty(prefix = "其他能力")
+    private Map<String, String> toolCapacity;
 
     @Property(name = "适用工艺")
     private List<String> suitableProcesses;
@@ -109,11 +110,11 @@ public abstract class ToolingResource extends AssemblyResource {
         this.wearCondition = wearCondition;
     }
 
-    public Map<String, Object> getToolCapacity() {
+    public Map<String, String> getToolCapacity() {
         return toolCapacity;
     }
 
-    public void setToolCapacity(Map<String, Object> toolCapacity) {
+    public void setToolCapacity(Map<String, String> toolCapacity) {
         this.toolCapacity = toolCapacity;
     }
 
@@ -128,7 +129,7 @@ public abstract class ToolingResource extends AssemblyResource {
     public ToolingResource() {
     }
 
-    public ToolingResource(Long resourceId, String resourceName, String resourceDescription, Set<String> resourceTypes, String site, double toolPrice, String manufacturer, String toolSize, String materialType, String toolUsage, String toolSpecification, String toolState, double wearCondition, Map<String, Object> toolCapacity, List<String> suitableProcesses) {
+    public ToolingResource(Long resourceId, String resourceName, String resourceDescription, Set<String> resourceTypes, String site, double toolPrice, String manufacturer, String toolSize, String materialType, String toolUsage, String toolSpecification, String toolState, double wearCondition, Map<String, String> toolCapacity, List<String> suitableProcesses) {
         super(resourceId, resourceName, resourceDescription, resourceTypes, site);
         this.toolPrice = toolPrice;
         this.manufacturer = manufacturer;

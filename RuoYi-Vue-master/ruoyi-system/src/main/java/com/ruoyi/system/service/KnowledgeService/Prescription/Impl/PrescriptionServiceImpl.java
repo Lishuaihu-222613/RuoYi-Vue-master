@@ -1,5 +1,6 @@
 package com.ruoyi.system.service.KnowledgeService.Prescription.Impl;
 
+import com.ruoyi.system.Repository.KnowledgeRepository.MaterialKnowledge.MaterialRepository;
 import com.ruoyi.system.Repository.KnowledgeRepository.Prescription.*;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.Interface.PrescriptionInterface;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.Interface.hasMaterialElementInterface;
@@ -56,9 +57,30 @@ public class PrescriptionServiceImpl implements PrescriptionService {
     @Resource
     private hasMaterialElementRepository materialElementRepository;
 
+    @Resource
+    private MaterialRepository materialRepository;
     @Override
     public Prescription createPrescription(Prescription prescription) {
-        return prescriptionRepository.save(prescription);
+        Prescription singlePrescription = prescriptionRepository.save(prescription);
+        EnergyProperty energyProperty = energyPropertyRepository.save(new EnergyProperty());
+        ForceProperty forceProperty = forcePropertyRepository.save(new ForceProperty());
+        CombustionProperty combustionProperty = combustionPropertyRepository.save(new CombustionProperty());
+        StorageProperty storageProperty = storagePropertyRepository.save(new StorageProperty());
+        OxidantRatio oxidantRatio = oxidantRatioRepository.save(new OxidantRatio());
+        HeatStability heatStability = heatStabilityRepository.save(new HeatStability());
+        MechanicalStability mechanicalStability = mechanicalStabilityRepository.save(new MechanicalStability());
+        RadioStability radioStability = radioStabilityRepository.save(new RadioStability());
+        ExplosionStability explosionStability = explosionStabilityRepository.save(new ExplosionStability());
+        singlePrescription.setEnergyProperty(energyProperty);
+        singlePrescription.setForceProperty(forceProperty);
+        singlePrescription.setCombustionProperty(combustionProperty);
+        singlePrescription.setStorageProperty(storageProperty);
+        singlePrescription.setOxidantRatio(oxidantRatio);
+        singlePrescription.setHeatStability(heatStability);
+        singlePrescription.setMechanicalStability(mechanicalStability);
+        singlePrescription.setRadioStability(radioStability);
+        singlePrescription.setExplosionStability(explosionStability);
+        return prescriptionRepository.save(singlePrescription);
     }
 
     @Override
@@ -95,7 +117,7 @@ public class PrescriptionServiceImpl implements PrescriptionService {
     }
 
     @Override
-    public Page<PrescriptionInterface> getPrescriptionsByLabel(String dynamicLabel, Pageable pageable) {
+    public Page<Prescription> getPrescriptionsByLabel(String dynamicLabel, Pageable pageable) {
         return prescriptionRepository.findPrescriptionByType(dynamicLabel,pageable) ;
     }
 
@@ -457,24 +479,26 @@ public class PrescriptionServiceImpl implements PrescriptionService {
     }
 
     @Override
-    public List<hasMaterialElementInterface> getAllMaterialElementsByProscriptionId(Long proscriptionId) {
+    public List<hasMaterialElement> getAllMaterialElementsByProscriptionId(Long proscriptionId) {
         Optional<Prescription> optionalPrescription = prescriptionRepository.findById(proscriptionId);
         if(optionalPrescription.isPresent()) {
-            return materialElementRepository.findMaterialElementByPrescriptionId(proscriptionId);
+            Prescription prescription = prescriptionRepository.getMaterialElementsById(proscriptionId);
+            Set<hasMaterialElement> materialElements = prescription.getMaterialElements();
+            return new ArrayList<>(materialElements);
         }
         return null;
     }
 
     @Override
-    public List<hasMaterialElementInterface> modifyAllMaterialElementsByProscriptionId(Long proscriptionId,List<MaterialAndValue> materialElements) {
+    public List<hasMaterialElement> modifyAllMaterialElementsByProscriptionId(Long proscriptionId,List<MaterialAndValue> materialElements) {
         Optional<Prescription> optionalPrescription = prescriptionRepository.findById(proscriptionId);
         if(optionalPrescription.isPresent()){
             Prescription prescription = optionalPrescription.get();
             prescriptionRepository.deleteRelationForMaterial(proscriptionId);
             for (MaterialAndValue materialElement : materialElements) {
-                prescriptionRepository.createRelationForMaterial(proscriptionId,materialElement.getMaterialId(),materialElement.getValue());
+                prescriptionRepository.createRelationForMaterial(proscriptionId,materialElement.getMaterialId(),materialElement.getPercentage());
             }
-            return materialElementRepository.findMaterialElementByPrescriptionId(proscriptionId);
+            return materialElementRepository.findElementByPrescriptionId(proscriptionId);
         }
         return null;
     }

@@ -15,7 +15,7 @@
         <div class="head-container">
           <el-tree
             ref="tree"
-            :data="labelTree"
+            :data="ruleTree"
             node-key="leafId"
             :expand-on-click-node="false"
             :filter-node-method="filterNode"
@@ -29,36 +29,36 @@
         <el-form v-show="showSearch" ref="queryForm" :inline="true" :model="queryParams" label-width="68px"
                  size="small"
         >
-          <el-form-item label="文件名称" prop="fileName">
+          <el-form-item label="规则名称" prop="ruleName">
             <el-input
-              v-model="queryParams.originFile.fileName"
+              v-model="queryParams.originRule.ruleName"
               clearable
-              placeholder="请输入文件名称"
+              placeholder="请输入规则名称"
               style="width: 240px"
               @keyup.enter.native="handleQuery"
             />
           </el-form-item>
-          <el-form-item label="文件描述" prop="fileDescription">
+          <el-form-item label="规则描述" prop="ruleDescription">
             <el-input
-              v-model="queryParams.originFile.fileDescription"
+              v-model="queryParams.originRule.ruleDescription"
               clearable
-              placeholder="请输入文件描述"
+              placeholder="请输入规则描述"
               style="width: 240px"
               @keyup.enter.native="handleQuery"
             />
           </el-form-item>
-          <el-form-item label="文件类型" prop="fileType">
+          <el-form-item label="规则来源" prop="ruleSource">
             <el-input
-              v-model="queryParams.originFile.fileType"
+              v-model="queryParams.originRule.ruleSource"
               clearable
-              placeholder="请输入文件类型"
+              placeholder="请输入规则来源"
               style="width: 240px"
               @keyup.enter.native="handleQuery"
             />
           </el-form-item>
-          <el-form-item label="经理人" prop="manager">
+          <el-form-item label="经理人" prop="ruleSource">
             <el-input
-              v-model="queryParams.originFile.manager"
+              v-model="queryParams.originRule.manager"
               clearable
               placeholder="请输入经理人"
               style="width: 240px"
@@ -127,38 +127,54 @@
           <right-toolbar :columns="columns" :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
         </el-row>
 
-
-<!--        <FilePreview :url="this.fileUrl" :visible="this.dialogVisible"/>-->
-
-        <el-table v-loading="loading" :data="files" @selection-change="handleSelectionChange">
+        <el-table v-loading="loading" :data="rules" @selection-change="handleSelectionChange">
           <el-table-column align="center" type="selection" width="50"/>
-          <el-table-column v-if="columns[0].visible" key="fileId" align="center" label="文件编号" prop="fileId"/>
-          <el-table-column v-if="columns[1].visible" key="fileName" :show-overflow-tooltip="true" align="center"
-                           label="文件名称"
-                           prop="fileName"
+          <el-table-column v-if="columns[0].visible" key="ruleId" align="center" label="规则编号" prop="ruleId"/>
+          <el-table-column v-if="columns[1].visible" key="ruleName" :show-overflow-tooltip="true" align="center"
+                           label="规则名称"
+                           prop="ruleName"
           />
-          <el-table-column v-if="columns[2].visible" key="fileType" :show-overflow-tooltip="true"
+          <el-table-column v-if="columns[2].visible" key="ruleDescription" :show-overflow-tooltip="true"
                            align="center"
-                           label="文件类型" prop="fileType"
+                           label="规则内容" prop="ruleDescription"
           />
-          <el-table-column v-if="columns[3].visible" key="fileSize" :show-overflow-tooltip="true"
+          <el-table-column v-if="columns[3].visible" key="ruleSource" :show-overflow-tooltip="true"
                            align="center"
-                           label="文件大小" prop="fileSize"
-          >
-          </el-table-column>
-          <el-table-column v-if="columns[4].visible" key="fileDescription" :show-overflow-tooltip="true"
+                           label="规则来源" prop="ruleSource"
+          />
+          <el-table-column v-if="columns[4].visible" key="modifyTime" :show-overflow-tooltip="true"
                            align="center"
-                           label="文件描述" prop="fileDescription"
-          />
-          <el-table-column v-if="columns[5].visible" key="manager" :show-overflow-tooltip="true" align="center"
-                           label="经理人"
-                           prop="manager"
-          />
-          <el-table-column v-if="columns[6].visible" key="modifyTime" :show-overflow-tooltip="true" align="center"
-                           label="修改时间"
-                           prop="modifyTime"
+                           label="修改时间" prop="modifyTime"
           >
             <span>{{ parseTime(scope.row.modifyTime) }}</span>
+          </el-table-column>
+          <el-table-column v-if="columns[5].visible" key="manager" :show-overflow-tooltip="true"
+                           align="center"
+                           label="经理人" prop="manager"
+          />
+          <el-table-column v-if="columns[6].visible" key="ruleConditions" :show-overflow-tooltip="true"
+                           align="center"
+                           label="规则条件" prop="ruleConditions"
+          >
+            <template slot-scope="scope">
+              <el-row v-for="(item,index) in scope.row.ruleConditions" :key="index" :index="index+''">
+                <el-tag type="success">
+                  {{ item.conditionCluster + ':' + item.conditionContent }}
+                </el-tag>
+              </el-row>
+            </template>
+          </el-table-column>
+          <el-table-column v-if="columns[7].visible" key="ruleResults" :show-overflow-tooltip="true"
+                           align="center"
+                           label="规则结果" prop="ruleResults"
+          >
+            <template slot-scope="scope">
+              <el-row v-for="(item,index) in scope.row.ruleResults" :key="index" :index="index+''">
+                <el-tag  type="success">
+                  {{ item.resultCluster + ':' + item.resultContent }}
+                </el-tag>
+              </el-row>
+            </template>
           </el-table-column>
           <el-table-column
             align="center"
@@ -166,7 +182,7 @@
             label="操作"
             width="160"
           >
-            <template v-if="scope.row.fileId !== 1" slot-scope="scope">
+            <template v-if="scope.row.ruleId !== 1" slot-scope="scope">
               <el-button
                 icon="el-icon-edit"
                 size="mini"
@@ -180,13 +196,6 @@
                 type="text"
                 @click="handleDelete(scope.row)"
               >删除
-              </el-button>
-              <el-button
-                size="mini"
-                type="text"
-                icon="el-icon-edit"
-                @click="handleDownload(scope.row)"
-              >下载
               </el-button>
             </template>
           </el-table-column>
@@ -202,64 +211,103 @@
       </el-col>
     </el-row>
 
-    <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body>
-      <el-form ref="form" :model="file" :rules="rules" label-width="80px">
+    <el-dialog :title="title" :visible.sync="modifyRuleShow" append-to-body width="600px">
+      <el-form ref="ruleForm" :model="selectRule" label-width="80px">
         <el-row>
           <el-col :span="12">
-            <el-form-item label="文件名称" prop="fileName">
-              <el-input v-model="file.fileName" placeholder="请输入文件名称"/>
+            <el-form-item label="规则名称" prop="ruleName">
+              <el-input v-model="selectRule.ruleName" maxlength="30" placeholder="请输入规则名称"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="文件类型" prop="fileType">
-              <el-input v-model="file.fileType" placeholder="请输入文件类型"/>
+            <el-form-item label="规则类别" prop="ruleTypes">
+              <treeselect v-model="selectRule.dynamicLabels" :multiple="true" :options="ruleTree"
+                          :normalizer="normalizer"
+                          :show-count="true" placeholder="请选择规则类别"
+              />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="文件大小" prop="fileSize">
-              <el-input v-model="file.fileSize" placeholder="请输入文件大小" />
+            <el-form-item label="规则来源" prop="ruleSource">
+              <el-input v-model="selectRule.ruleSource" placeholder="请输入规则来源"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="分类标签" prop="fileClassification">
-              <treeselect v-model="file.fileClassification" :options="labelTree" :show-count="true" placeholder="请选择分类标签" :normalizer="normalizer" :multiple="true"/>
+            <el-form-item label="规则描述" prop="ruleDescription">
+              <el-input v-model="selectRule.ruleDescription" placeholder="请输入规则描述" type="textarea"/>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
             <el-form-item label="经理人" prop="manager">
-              <el-input v-model="file.manager" placeholder="请输入经理人"/>
+              <el-input v-model="selectRule.manager" placeholder="请输入经理人"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="修改时间" prop="modifyTime">
-                <el-date-picker type="date" placeholder="选择日期" v-model="file.modifyTime"/>
+            <el-form-item label="修改日期" prop="modifyTime">
+              <el-date-picker
+                v-model="selectRule.modifyTime"
+                type="date"
+                placeholder="选择日期"
+                format="yyyy 年 MM 月 dd 日"
+                value-format="yyyy-MM-dd">
+              </el-date-picker>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
-          <el-form-item label="文件上传" prop="fileUrl">
-            <el-upload
-              ref="upload"
-              :limit="1"
-              accept=".jpg, .png, .pdf, .docx, .doc"
-              :action="upload.url"
-              :headers="upload.headers"
-              :file-list="upload.fileList"
-              :on-progress="handleFileUploadProgress"
-              :on-success="handleFileSuccess"
-              :auto-upload="false"
-            >
-              <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
-              <el-button style="margin-left: 10px;" size="small" type="success" :loading="upload.isUploading"
-                         @click="submitFileForm"
-              >上传到服务器
-              </el-button>
-              <div slot="tip" class="el-upload__tip">只能上传jpg/png/pdf/docx/doc文件，且不超过500kb</div>
-            </el-upload>
+          <el-form-item label="规则条件">
+            <el-row>
+              <el-col :offset="18" :span="6">
+                <el-button type="primary" @click="addCondition" >添加条件</el-button>
+              </el-col>
+            </el-row>
+            <el-row v-for="(item,index) in selectRule.ruleConditions" :key="index">
+              <el-col :span="2">
+                <el-tag type="primary">
+                  条件{{ index }}
+                </el-tag>
+              </el-col>
+              <el-col :span="6">
+                <el-input v-model="item.conditionCluster" placeholder="条件类别"></el-input>
+              </el-col>
+              <el-col :span="2" class="line">----</el-col>
+              <el-col :span="6">
+                <el-input v-model="item.conditionContent" placeholder="条件内容" ></el-input>
+              </el-col>
+              <el-col :span="6">
+                <el-button @click.prevent="removeCondition(item)">删除</el-button>
+              </el-col>
+            </el-row>
+          </el-form-item>
+        </el-row>
+        <el-row>
+          <el-form-item label="规则结果">
+            <el-row>
+              <el-col :offset="18" :span="6">
+                <el-button type="primary" @click="addResult" >添加结果</el-button>
+              </el-col>
+            </el-row>
+            <el-row v-for="(item,index) in selectRule.ruleResults" :key="index">
+              <el-col :span="2">
+                <el-tag type="primary">
+                  结果{{ index }}
+                </el-tag>
+              </el-col>
+              <el-col :span="6">
+                <el-input v-model="item.resultCluster" placeholder="结果类别"></el-input>
+              </el-col>
+              <el-col :span="2" class="line">----</el-col>
+              <el-col :span="6">
+                <el-input v-model="item.resultContent" placeholder="结果内容" ></el-input>
+              </el-col>
+              <el-col :span="6">
+                <el-button @click.prevent="removeResult(item)">删除</el-button>
+              </el-col>
+            </el-row>
           </el-form-item>
         </el-row>
       </el-form>
@@ -269,7 +317,7 @@
       </div>
     </el-dialog>
 
-    <!-- 方法导入对话框 -->
+    <!-- 规则导入对话框 -->
     <el-dialog :title="upload.title" :visible.sync="upload.open" append-to-body width="400px">
       <el-upload
         ref="upload"
@@ -307,11 +355,12 @@
 </template>
 
 <script>
-import * as fileManagement from '@/api/system/fileManagement'
+
 import * as treeManagement from '@/api/system/treeManagement'
 import Treeselect from '@riophae/vue-treeselect'
 import { getToken } from "@/utils/auth";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
+import * as ruleManagement from '@/api/system/decisionRule'
 
 export default {
   name: 'index',
@@ -343,58 +392,57 @@ export default {
         // 设置上传的请求头部
         headers: { Authorization: 'Bearer ' + getToken() },
         // 上传的地址
-        url: process.env.VUE_APP_BASE_API + '/common/upload',
-        // 上传的文件列表
-        fileList: []
+        url: process.env.VUE_APP_BASE_API + '/rule/importData'
       },
       queryParams: {
         pageNum: 1,
         pageSize: 9,
-        sortableField: 'fileId',
+        sortableField: 'ruleId',
         sortType: 'ascending',
         dynamicLabel: "",
-        originFile:{
-          fileName:'',
-          fileType:'',
-          fileDescription:"",
-          manager:'',
+        originRule:{
+          ruleName:'',
+          ruleDescription:"",
+          ruleSource:"",
+          manager:"",
         }
       },
       // 列信息
       columns: [
-        { key: 0, label: `文件编号`, visible: true },
-        { key: 1, label: `文件名称`, visible: true },
-        { key: 2, label: `文件类型`, visible: true },
-        { key: 3, label: `文件大小`, visible: true },
-        { key: 4, label: `文件描述`, visible: true },
+        { key: 0, label: `规则编号`, visible: true },
+        { key: 1, label: `规则名称`, visible: true },
+        { key: 2, label: `规则内容`, visible: true },
+        { key: 3, label: `规则来源`, visible: true },
+        { key: 4, label: `修改时间`, visible: true },
         { key: 5, label: `经理人`, visible: true },
-        { key: 6, label: `修改时间`, visible: true },
+        { key: 5, label: `规则条件`, visible: true },
+        { key: 5, label: `规则结果`, visible: true },
       ],
       title: '',
-      modifyfileShow: false,
+      modifyRuleShow: false,
       showSearch: true,
       selectId: 0,
       tableHeight: 0,
       selectLabel: '',
       filterText: '',
-      files: [],
+      rules: [],
       defaultProps: {
         children: 'subLeafs',
         label: 'leafName'
       },
-      file:{
-        fileId:0,
-        fileName:'',
-        fileType:'',
-        fileSize:'',
-        fileDescription:'',
-        fileClassification:[],
-        fileUrl:'',
+      selectRule: {
+        ruleId:undefined,
+        ruleName:'',
+        dynamicLabels:[],
+        ruleSource:'',
+        ruleDescription:'' ,
         manager:'',
         modifyTime:'',
+        ruleConditions:[""],
+        ruleResults:[""]
       },
       modifyState: false,
-      labelTree: [],
+      ruleTree: [],
       dialog: false,
       total: 0,
       currentPage: 1,
@@ -414,32 +462,32 @@ export default {
 
   methods: {
 
-    /** 查询问题列表 */
+    /** 查询规则列表 */
     getList() {
       this.loading = true
       if(this.queryParams.dynamicLabel === ''){
-        fileManagement.getAllFiles(this.queryParams).then(result => {
+        ruleManagement.getAllDecisionRules(this.queryParams).then(result => {
             if (result.code === 200) {
               console.log(result.data)
-              this.files = result.data.content
+              this.rules = result.data.content
               this.total = result.data.totalElements
               this.loading = false
             }
           }
         )
       } else if (this.queryParams.dynamicLabel !== ''){
-        fileManagement.getAllFilesByLabel(this.queryParams).then(result => {
+        ruleManagement.getAllDecisionRulesByLabel(this.queryParams).then(result => {
             if (result.code === 200) {
-              this.files = result.data.content
+              this.rules = result.data.content
               this.total = result.data.totalElements
               this.loading = false
             }
           }
         )
-      } else if(this.queryParams.originFile.fileName !== '' || this.queryParams.originFile.fileDescription !== '' ||this.queryParams.originFile.fileType !=='' || this.queryParams.originFile.manager !== ''){
-        fileManagement.getFilesByParams(this.queryParams).then(result => {
+      } else if(this.queryParams.originRule.ruleName !== '' || this.queryParams.originRule.ruleDescription !== ''){
+        ruleManagement.getDecisionRulesByParams(this.queryParams).then(result => {
             if (result.code === 200) {
-              this.files = result.data.content
+              this.rules = result.data.content
               this.total = result.data.totalElements
               this.loading = false
             }
@@ -452,8 +500,13 @@ export default {
     getTreeselect() {
       treeManagement.getTreeManagement(25500).then(response => {
         console.log(response.data)
-        this.labelTree.push(response.data)
+        this.ruleTree.push(response.data)
       })
+    },
+    // 筛选节点
+    filterNode(value, data) {
+      if (!value) return true
+      return data.label.indexOf(value) !== -1
     },
     /** 转换知识树管理数据结构 */
     normalizer(node) {
@@ -467,19 +520,14 @@ export default {
         children: node.subLeafs
       }
     },
-    // 筛选节点
-    filterNode(value, data) {
-      if (!value) return true
-      return data.label.indexOf(value) !== -1
-    },
     // 节点单击事件
     handleNodeClick(data) {
+      this.queryParams.sortableField = "n.label"
       this.queryParams.dynamicLabel = data.leafName
       this.loading = true
-      this.queryParams.sortableField = "n.label"
-      fileManagement.getAllFilesByLabel(this.queryParams).then(result => {
+      ruleManagement.getAllDecisionRulesByLabel(this.queryParams).then(result => {
           if (result.code === 200) {
-            this.files = result.data.content
+            this.rules = result.data.content
             this.total = result.data.totalElements
             this.loading = false
           }
@@ -491,10 +539,9 @@ export default {
     handleQuery() {
       this.queryParams.pageNum = 1;
       this.loading = true
-      this.queryParams.sortableField = "n.label"
-      fileManagement.getFilesByParams(this.queryParams).then(result => {
+      ruleManagement.getDecisionRulesByParams(this.queryParams).then(result => {
           if (result.code === 200) {
-            this.files = result.data.content
+            this.rules = result.data.content
             this.total = result.data.totalElements
             this.loading = false
           }
@@ -508,54 +555,68 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.problemId)
+      this.ids = selection.map(item => item.ruleId)
       this.single = selection.length !== 1
       this.multiple = !selection.length
     },
+
+    addCondition() {
+      this.selectRule.ruleConditions.push(
+        {
+          conditionId: undefined,
+          conditionContent: '',
+          conditionCluster: ''
+        }
+      )
+    },
+    removeCondition(item) {
+      let index = this.selectRule.ruleConditions.indexOf(item)
+      if (index !== -1) {
+        this.selectRule.ruleConditions.splice(index, 1)
+      }
+    },
+    addResult() {
+      this.selectRule.ruleResults.push(
+        {
+          resultId: undefined,
+          resultContent: '',
+          resultCluster: '',
+        }
+      )
+    },
+    removeResult(item) {
+      let index = this.selectRule.ruleResults.indexOf(item)
+      if (index !== -1) {
+        this.selectRule.ruleResults.splice(index, 1)
+      }
+    },
     /** 新增按钮操作 */
     handleAdd() {
-      this.modifyfileShow = true;
-      this.title = "新增文件"
-      this.reset();
-      this.upload.fileList = []
+      this.modifyRuleShow = true;
+      this.title = "创建规则"
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
-      this.reset();
-      const fileId = row.fileId
-      fileManagement.getFileInfoById(fileId).then(response => {
-        this.file = response.data
-        this.open = true
-        this.title = '修改文件信息'
-        this.upload.fileList = [{ name: this.file.fileName, url: this.file.fileUrl }]
-      })
+      this.modifyRuleShow = true;
+      this.title = "修改规则";
+      this.selectRule = row
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      const fileIds = row.fileId || this.ids
-      this.$modal.confirm('是否确认删除编号为"' + fileIds + '"的数据项？').then(function() {
-        return fileManagement.fileDelete(fileIds)
+      const ruleIds = row.ruleId || this.ids
+      this.$modal.confirm('是否确认删除原则编号为"' + ruleIds + '"的数据项？').then(function() {
+        return ruleManagement.deleteDecisionRule(ruleIds)
       }).then(() => {
         this.getList()
         this.$modal.msgSuccess('删除成功')
       }).catch(() => {
       })
     },
-    handleDownload(row){
-      let name = row.fileName
-      let url = row.fileUrl
-      let suffix = url.substring(url.lastIndexOf('.'), url.length)
-      const a = document.createElement('a')
-      a.setAttribute('download', name + suffix)
-      a.setAttribute('target', '_blank')
-      a.setAttribute('href', url)
-      a.click()
-    },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('problem/export', {
+      this.download('rule/export', {
         ...this.queryParams
-      }, `problem_${new Date().getTime()}.xlsx`)
+      }, `rule_${new Date().getTime()}.xlsx`)
     },
     /** 导入按钮操作 */
     handleImport() {
@@ -564,7 +625,7 @@ export default {
     },
     /** 下载模板操作 */
     importTemplate() {
-      this.download('system/problem/importTemplate', {}, `problem_template_${new Date().getTime()}.xlsx`)
+      this.download('system/rule/importTemplate', {}, `rule_template_${new Date().getTime()}.xlsx`)
     },
     // 文件上传中处理
     handleFileUploadProgress(event, file, fileList) {
@@ -574,8 +635,6 @@ export default {
     handleFileSuccess(response, file, fileList) {
       this.upload.open = false
       this.upload.isUploading = false
-      this.file.fileUrl = response.url
-      this.file.fileName = response.originalFilename
       this.$refs.upload.clearFiles()
       this.$alert('<div style=\'overflow: auto;overflow-x: hidden;max-height: 70vh;padding: 10px 20px 0;\'>' + response.msg + '</div>', '导入结果', { dangerouslyUseHTMLString: true })
       this.getList()
@@ -584,27 +643,46 @@ export default {
     submitFileForm() {
       this.$refs.upload.submit()
     },
-    submitForm() {
-      this.$refs['form'].validate(valid => {
+    submitForm:function() {
+      this.$refs["ruleForm"].validate(valid => {
         if (valid) {
-          if (this.file.fileId != null) {
-            fileManagement.updateFile(this.file).then(response => {
-              this.$modal.msgSuccess('修改成功')
-              this.open = false
-              this.getList()
-            })
+          if (this.selectRule.ruleId !== undefined) {
+            ruleManagement.updateDecisionRule(this.selectRule).then(response => {
+              this.$modal.msgSuccess("修改成功");
+              this.open = false;
+              this.getList();
+            });
           } else {
-            fileManagement.createFile(this.file).then(response => {
-              this.$modal.msgSuccess('新增成功')
-              this.open = false
-              this.getList()
-            })
+            ruleManagement.createDecisionRule(this.selectRule).then(response => {
+              this.$modal.msgSuccess("新增成功");
+              this.open = false;
+              this.getList();
+            });
           }
         }
-      })
+      });
     },
+    cancel(){
+      this.modifyRuleShow = false;
+      this.reset();
+    },
+    reset(){
+      this.selectRule = {
+        ruleId:undefined,
+        ruleName:'',
+        dynamicLabels:[],
+        ruleSource:'',
+        ruleDescription:'' ,
+        manager:'',
+        modifyTime:'',
+        ruleConditions:[""],
+        ruleResults:[""]
+      };
+      this.resetForm("ruleForm");
+    }
   }
 }
+
 </script>
 
 <style scoped>

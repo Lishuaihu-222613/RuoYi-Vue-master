@@ -125,15 +125,6 @@
         >
         </vue-context-menu>
 
-        <modifyAuxiliary ref="modifyAuxiliary"
-                         :dialog="modifyResourceShow"
-                         :selectResource="selectResource"
-                         :title="title"
-                         @closeDialog="() =>{ this.modifyResourceShow = false }"
-                         @restore="() =>{this.selectResource = {}}"
-        >
-        </modifyAuxiliary>
-
         <el-table v-loading="loading" :data="resources" @selection-change="handleSelectionChange"
                   @row-contextmenu="showContextMenu"
         >
@@ -210,6 +201,75 @@
       </el-col>
     </el-row>
 
+    <!-- 添加或修改用户配置对话框 -->
+    <el-dialog :title="title" :visible.sync="modifyResourceShow" append-to-body width="600px">
+      <el-form ref="resource" :model="selectResource" :rules="rules" label-width="80px">
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="资源名称" prop="resourceName">
+              <el-input v-model="selectResource.resourceName" maxlength="30" placeholder="请输入资源名称"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="资源类别" prop="resourceTypes">
+              <treeselect v-model="selectResource.resourceTypes" :multiple="true" :options="labelTree"
+                          :normalizer="normalizer"
+                          :show-count="true" placeholder="请选择资源类别"
+              />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="存在地址" prop="site">
+              <el-input v-model="selectResource.site" placeholder="请输入存在地址"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="资源描述" prop="resourceDescription">
+              <el-input v-model="selectResource.resourceDescription" placeholder="请输入资源描述" type="textarea"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-form-item label="工具用途">
+            <el-button type="primary" @click="addUsage" style="float: right">添加事项</el-button>
+            <el-row v-for="(item,index) in selectResource.resourceUsages" :key="index">
+              <el-col :span="20">
+                <el-input v-model="selectResource.resourceUsages[index]"></el-input>
+              </el-col>
+              <el-col :span="4">
+                <el-button
+                  circle icon="el-icon-delete" type="danger"
+                  @click="removeUsage(selectResource.resourceUsages[index])"
+                ></el-button>
+              </el-col>
+            </el-row>
+          </el-form-item>
+        </el-row>
+        <el-row>
+          <el-form-item label="适用工艺">
+            <el-button type="primary" @click="addSuitableProcess" style="float: right">添加事项</el-button>
+            <el-row v-for="(item,index) in selectResource.suitableProcesses" :key="index">
+              <el-col :span="20">
+                <el-input v-model="selectResource.suitableProcesses[index]"></el-input>
+              </el-col>
+              <el-col :span="4">
+                <el-button
+                  circle icon="el-icon-delete" type="danger"
+                  @click="removeSuitableProcess(selectResource.suitableProcesses[index])"
+                ></el-button>
+              </el-col>
+            </el-row>
+          </el-form-item>
+        </el-row>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitForm">确 定</el-button>
+        <el-button @click="cancel">取 消</el-button>
+      </div>
+    </el-dialog>
+
     <!-- 资源导入对话框 -->
     <el-dialog :title="upload.title" :visible.sync="upload.open" append-to-body width="400px">
       <el-upload
@@ -248,14 +308,14 @@
 </template>
 
 <script>
-import modifyAuxiliary from '@/views/Resource/Auxiliary/components/modifyAuxiliary.vue'
 import { getToken } from '@/utils/auth'
 import * as resourceManagement from '@/api/system/resourceManagement'
 import * as treeManagement from '@/api/system/treeManagement'
+import Treeselect from '@riophae/vue-treeselect'
 
 export default {
   name: 'index',
-  components: { modifyAuxiliary },
+  components: { Treeselect },
   data() {
     return {
       // 遮罩层
@@ -296,9 +356,7 @@ export default {
           resourceName: '',
           resourceTypes: [],
           resourceDescription: '',
-          sites: '',
-          resourceUsages: [],
-          suitableProcesses: []
+          sites: ''
         }
       },
       // 列信息
@@ -347,7 +405,15 @@ export default {
         children: 'subLeafs',
         label: 'leafName'
       },
-      selectResource: {},
+      selectResource: {
+        resourceId:undefined,
+        resourceName:'',
+        resourceTypes:[],
+        resourceDescription:'',
+        site:'',
+        resourceUsages:[""],
+        suitableProcesses:[""],
+      },
       modifyState: false,
       labelTree: [],
       dialog: false,
@@ -410,6 +476,18 @@ export default {
         this.labelTree.push(response.data)
       })
     },
+    /** 转换知识树管理数据结构 */
+    normalizer(node) {
+      if (node.children && !node.children.length) {
+        delete node.children;
+      }
+      return {
+        id: node.leafName,
+        label: node.leafName,
+        value:node.leafValue,
+        children: node.subLeafs
+      }
+    },
     // 筛选节点
     filterNode(value, data) {
       if (!value) return true
@@ -419,6 +497,7 @@ export default {
     handleNodeClick(data) {
       this.queryParams.dynamicLabel = data.leafValue
       this.loading = true
+      this.queryParams.sortableField = "n.label"
       resourceManagement.getAllAuxiliaryResourcesByLabel(this.queryParams).then(result => {
           if (result.code === 200) {
             this.resources = result.data.content
@@ -433,6 +512,7 @@ export default {
     handleQuery() {
       this.queryParams.pageNum = 1
       this.loading = true
+      this.queryParams.sortableField = "n.label"
       resourceManagement.getAuxiliaryResourcesByParams(this.queryParams).then(result => {
           if (result.code === 200) {
             this.resources = result.data.content
@@ -531,6 +611,59 @@ export default {
     // 提交上传文件
     submitFileForm() {
       this.$refs.upload.submit()
+    },
+    addUsage(){
+      this.selectResource.resourceUsages.push('')
+    },
+    removeUsage(item){
+      let index = this.selectResource.resourceUsages.indexOf(item)
+      if (index !== -1) {
+        this.selectResource.resourceUsages.splice(index, 1)
+      }
+    },
+    addSuitableProcess(){
+      this.selectResource.suitableProcesses.push('')
+    },
+    removeSuitableProcess(item){
+      let index = this.selectResource.suitableProcesses.indexOf(item)
+      if (index !== -1) {
+        this.selectResource.suitableProcesses.splice(index, 1)
+      }
+    },
+    submitForm:function() {
+      this.$refs["resource"].validate(valid => {
+        if (valid) {
+          if (this.selectResource.resourceId !== undefined) {
+            resourceManagement.updateAuxiliaryResource(this.selectResource).then(response => {
+              this.$modal.msgSuccess("修改成功");
+              this.open = false;
+              this.getList();
+            });
+          } else {
+            resourceManagement.createAuxiliaryResource(this.form).then(response => {
+              this.$modal.msgSuccess("新增成功");
+              this.open = false;
+              this.getList();
+            });
+          }
+        }
+      });
+    },
+    cancel(){
+      this.modifyResourceShow = false;
+      this.reset();
+    },
+    reset(){
+      this.selectResource = {
+        resourceId:undefined,
+        resourceName:'',
+        resourceTypes:[],
+        resourceDescription:'',
+        site:'',
+        resourceUsages:[""],
+        suitableProcesses:[""],
+      };
+      this.resetForm("resource");
     }
   }
 }

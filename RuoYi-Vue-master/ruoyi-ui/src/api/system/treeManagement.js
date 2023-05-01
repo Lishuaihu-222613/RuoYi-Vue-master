@@ -48,11 +48,17 @@ export function addTreeManagement(data) {
   })
 }
 
-export function getSubLeafsByParentId(data) {
+export function getSubLeafsByParentId(parentId) {
   return request({
-    url: '/ClassificationTree/getSubLeafs',
-    method: 'post',
-    data: data
+    url: '/ClassificationTree/getSubLeafs/'+parentId,
+    method: 'get',
+  })
+}
+
+export function getLeafOptions() {
+  return request({
+    url: '/ClassificationTree/getLeafOptions',
+    method: 'get',
   })
 }
 

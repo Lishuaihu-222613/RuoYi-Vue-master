@@ -162,6 +162,7 @@
 import Treeselect from '@riophae/vue-treeselect'
 import * as processManagement from '@/api/system/processManagement'
 import * as treeManagement from '@/api/system/treeManagement'
+import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 export default {
   name: 'modifyElement',
   components: { Treeselect },

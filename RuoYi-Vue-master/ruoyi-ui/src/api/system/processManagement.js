@@ -31,9 +31,23 @@ export function updateElement(data){
   })
 }
 
-export function getAllProcess(data){
+export function getAllProcess(){
   return request({
     url: '/process/getAllProcess',
+    method: 'get'
+  })
+}
+
+export function getAllProcessOptions(){
+  return request({
+    url: '/process/getAllProcessOptions',
+    method: 'get'
+  })
+}
+
+export function getAllWholeProcess(data){
+  return request({
+    url: '/process/getAllWholeProcess',
     method: 'post',
     data:data
   })

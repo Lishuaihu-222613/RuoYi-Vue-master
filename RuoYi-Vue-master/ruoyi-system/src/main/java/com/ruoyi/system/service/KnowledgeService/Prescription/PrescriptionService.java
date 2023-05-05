@@ -3,6 +3,7 @@ package com.ruoyi.system.service.KnowledgeService.Prescription;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.Interface.PrescriptionInterface;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.Interface.hasMaterialElementInterface;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.Prescription;
+import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.PrescriptionElements;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.Property.*;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.Stability.ExplosionStability;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.Stability.HeatStability;
@@ -450,7 +451,7 @@ public interface PrescriptionService {
      */
     void deleteStoragePropertyById(Long propertyId);
 
-    List<hasMaterialElement> getAllMaterialElementsByProscriptionId(Long proscriptionId);
+    List<PrescriptionElements> getAllMaterialElementsByProscriptionId(Long proscriptionId);
 
     List<hasMaterialElement> modifyAllMaterialElementsByProscriptionId(Long proscriptionId,List<MaterialAndValue> materialElements);
 

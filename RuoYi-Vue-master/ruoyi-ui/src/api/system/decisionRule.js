@@ -26,9 +26,8 @@ export function getDecisionRulesByParams(data) {
 
 export function deleteDecisionRule(data) {
   return request({
-    url: '/decisionRule/deleteDecisionRule',
-    method: 'post',
-    data: data
+    url: '/decisionRule/deleteDecisionRule/'+data,
+    method: 'get'
   })
 }
 

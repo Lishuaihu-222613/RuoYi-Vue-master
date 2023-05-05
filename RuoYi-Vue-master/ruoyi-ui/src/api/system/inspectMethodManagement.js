@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function getAllInspectMethods(data) {
   return request({
-    url: '/method/getAllInspectMethods',
+    url: '/method/getAllInspectionMethods',
     method: 'post',
     data: data
   })

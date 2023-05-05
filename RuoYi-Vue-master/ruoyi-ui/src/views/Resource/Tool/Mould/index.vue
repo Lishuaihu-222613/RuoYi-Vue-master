@@ -272,7 +272,8 @@
         </el-row>
         <el-row>
           <el-form-item label="资源描述" prop="resourceDescription">
-            <el-input v-model="selectResource.resourceDescription" placeholder="请输入资源描述" type="textarea" />
+            <el-input v-model="selectResource.resourc
+            eDescription" placeholder="请输入资源描述" type="textarea" />
           </el-form-item>
         </el-row>
         <el-row>
@@ -644,7 +645,7 @@ export default {
     },
     /** 查询知识下拉树结构 */
     getTreeselect() {
-      treeManagement.getTreeManagement(25500).then(response => {
+      treeManagement.getTreeManagement(25818).then(response => {
         this.labelTree = [];
         console.log(response.data)
         this.labelTree.push(response.data)

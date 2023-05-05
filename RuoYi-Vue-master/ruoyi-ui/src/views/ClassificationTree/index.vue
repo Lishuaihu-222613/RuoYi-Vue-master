@@ -118,18 +118,18 @@
 
     <!-- 添加或修改知识树管理对话框 -->
     <el-dialog :title="title" :visible.sync="open" append-to-body width="600px">
-      <el-form ref="form" :model="leaf" :rules="rules" label-width="80px">
-        <el-form-item label="节点名称" prop="leafName">
-          <el-input v-model="leaf.leafName" placeholder="请输入知识名称"/>
+      <el-form ref="form" :model="leafNode" label-width="80px">
+        <el-form-item label="节点名称">
+          <el-input v-model="leafNode.leafName" placeholder="请输入知识名称"/>
         </el-form-item>
-        <el-form-item label="节点描述" prop="leafDescription">
-          <el-input v-model="leaf.leafDescription" placeholder="请输入概念描述"/>
+        <el-form-item label="节点描述">
+          <el-input v-model="leafNode.leafDescription" placeholder="请输入概念描述"/>
         </el-form-item>
         <el-form-item label="父级节点">
           <treeselect v-model="parentId" :normalizer="normalizer" :options="leafOptions" placeholder="请选择父级概念"/>
         </el-form-item>
-        <el-form-item label="节点值" prop="leafValue">
-          <el-input v-model="leaf.leafValue" placeholder="请输入节点数量"/>
+        <el-form-item label="节点值">
+          <el-input v-model="leafNode.leafValue" placeholder="请输入节点数量"/>
         </el-form-item>
         <el-row>
           <el-col :span="12">
@@ -143,9 +143,9 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="是否存在子节点" prop="hasSubLeafs">
+            <el-form-item label="是否存在子节点">
               <el-switch
-                v-model="leaf.hasSubLeafs"
+                v-model="leafNode.hasSubLeafs"
                 active-color="#13ce66"
                 inactive-color="#ff4949"
               >
@@ -153,30 +153,39 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-form-item label="节点属性" prop="leafAttributes">
-          <el-button style="float: right" type="primary" @click="addAttribute">添加属性</el-button>
-          <el-row v-for="(item,index) in leaf.leafAttributes" :key="index">
+        <el-form-item label="节点属性">
+          <el-row>
+            <el-col :offset="18" :span="6">
+              <el-button type="primary" @click.prevent="addAttribute">添加属性</el-button>
+            </el-col>
+          </el-row>
+          <el-row v-for="(item,index) in leafNode.leafAttributes" :key="index">
             <el-col :span="20">
-              <el-input v-model="leaf.leafAttributes[index]"></el-input>
+              <el-input v-model="leafNode.leafAttributes[index]"></el-input>
             </el-col>
             <el-col :span="4">
               <el-button
-                circle icon="el-icon-delete" type="danger"
-                @click="removeAttribute(leaf.leafAttributes[index])"
-              ></el-button>
+                type="text"
+                @click.prevent="removeAttribute(leafNode.leafAttributes[index])"
+              >删除
+              </el-button>
             </el-col>
           </el-row>
         </el-form-item>
-        <el-form-item label="节点要求" prop="leafRequirements">
-          <el-button style="float: right" type="primary" @click="addRequirement">添加要求</el-button>
-          <el-row v-for="(item,index) in leaf.leafRequirements" :key="index">
+        <el-form-item label="节点要求">
+          <el-row>
+            <el-col :offset="18" :span="6">
+              <el-button type="primary" @click.prevent="addRequirement">添加要求</el-button>
+            </el-col>
+          </el-row>
+          <el-row v-for="(item,index) in leafNode.leafRequirements" :key="index">
             <el-col :span="20">
-              <el-input v-model="leaf.leafRequirements[index]"></el-input>
+              <el-input v-model="leafNode.leafRequirements[index]"></el-input>
             </el-col>
             <el-col :span="4">
               <el-button
                 circle icon="el-icon-delete" type="danger"
-                @click="removeRequirement(leaf.leafRequirements[index])"
+                @click.prevent="removeRequirement(leafNode.leafRequirements[index])"
               ></el-button>
             </el-col>
           </el-row>
@@ -199,7 +208,7 @@ export default {
   name: 'index',
   components: { Treeselect },
   data() {
-    return {
+    return{
       // 遮罩层
       loading: true,
       // 显示搜索条件
@@ -226,29 +235,16 @@ export default {
       parentId: undefined,
       RootNode: true,
       indent: 4,
-      // 表单参数
-      leaf: {
-        leafId: undefined,
+      leafNode:{
+        leafId: 0,
         leafName: '',
         leafDescription: '',
         leafValue: '',
         leafAttributes: [''],
         leafRequirements: [''],
-        hasSubLeafs: true,
-        dynamicLabels: [],
+        hasSubLeafs: false,
+        dynamicLabels: [''],
         subLeafs: []
-      },
-      // 表单校验
-      rules: {
-        leafName: [
-          { required: true, message: '知识名称不能为空', trigger: 'blur' }
-        ],
-        leafDescription: [
-          { required: true, message: '知识描述不能为空', trigger: 'blur' }
-        ],
-        leafValue: [
-          { required: true, message: '知识值不能为空', trigger: 'blur' }
-        ]
       },
       columns: [
         { key: 0, label: `节点编号`, visible: true },
@@ -320,7 +316,17 @@ export default {
     },
     // 表单重置
     reset() {
-      this.leaf = {}
+      this.leafNode = {
+        leafId: undefined,
+        leafName: '',
+        leafDescription: '',
+        leafValue: '',
+        leafAttributes: [''],
+        leafRequirements: [''],
+        hasSubLeafs: false,
+        dynamicLabels: [],
+        subLeafs: []
+      }
       this.resetForm('form')
     },
     /** 搜索按钮操作 */
@@ -333,7 +339,7 @@ export default {
       this.handleQuery()
     },
     handleOpen(row) {
-      this.RootNode = row.dynamicLabels.includes('根节点');
+      this.RootNode = row.dynamicLabels.includes('根节点')
       treeManagement.getParentLeaf(row.leafId).then(result => {
         this.parentId = result.data.leafId
       })
@@ -359,46 +365,49 @@ export default {
         console.log(row)
         // this.form.parentId = row.leafId;
         treeManagement.getTreeManagement(row.leafId).then(response => {
-          this.leaf = response.data
+          this.leafNode = response.data
           this.open = true
           this.title = '修改知识树管理'
         })
       }
     },
     addAttribute() {
-      this.leaf.leafAttributes.push('')
+      console.log('aaaa')
+      console.log(this.leafNode)
+      this.leafNode.leafAttributes.push('')
     },
     removeAttribute(item) {
-      let index = this.leaf.leafAttributes.indexOf(item)
+      let index = this.leafNode.leafAttributes.indexOf(item)
       if (index !== -1) {
-        this.leaf.leafAttributes.splice(index, 1)
+        this.leafNode.leafAttributes.splice(index, 1)
       }
     },
     addRequirement() {
-      this.leaf.leafRequirements.push('')
+      this.leafNode.leafRequirements.push('')
     },
     removeRequirement(item) {
-      let index = this.leaf.leafRequirements.indexOf(item)
+      let index = this.leafNode.leafRequirements.indexOf(item)
       if (index !== -1) {
-        this.leaf.leafRequirements.splice(index, 1)
+        this.leafNode.leafRequirements.splice(index, 1)
       }
     },
     /** 提交按钮 */
     submitForm() {
       this.$refs['form'].validate(valid => {
         if (valid) {
-          if (this.leaf.leafId !== undefined) {
+          if (this.leafNode.leafId !== undefined) {
             if (this.RootNode === true) {
-              this.leaf.dynamicLabels.push('根节点')
-              treeManagement.addTreeManagement(this.leaf).then(response =>{
+              this.leafNode.dynamicLabels.push('根节点')
+              treeManagement.addTreeManagement(this.leafNode).then(response => {
                 this.$modal.msgSuccess('修改成功')
                 this.open = false
                 this.getList()
               })
-            } else{
+            } else {
+              this.leafNode.dynamicLabels.push('子节点')
               let node = {
                 parentId: this.parentId,
-                subLeaf: this.leaf
+                subLeaf: this.leafNode
               }
               treeManagement.updateTreeManagement(node).then(response => {
                 this.$modal.msgSuccess('修改成功')
@@ -408,10 +417,12 @@ export default {
             }
           } else {
             if (this.RootNode === true) {
-              this.leaf.dynamicLabels.push('根节点')
+              this.leafNode.dynamicLabels.push('根节点')
+            } else {
+              this.leafNode.dynamicLabels.push('子节点')
             }
             if (this.parentId === undefined) {
-              treeManagement.addTreeManagement(this.leaf).then(response => {
+              treeManagement.addTreeManagement(this.leafNode).then(response => {
                 this.$modal.msgSuccess('新增成功')
                 this.open = false
                 this.getList()
@@ -419,7 +430,7 @@ export default {
             } else {
               let node = {
                 parentId: this.parentId,
-                subLeaf: this.leaf
+                subLeaf: this.leafNode
               }
               treeManagement.addSubLeaf(node).then(response => {
                 this.$modal.msgSuccess('新增子节点成功')

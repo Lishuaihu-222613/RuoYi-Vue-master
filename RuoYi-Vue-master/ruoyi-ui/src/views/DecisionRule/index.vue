@@ -142,34 +142,24 @@
                            align="center"
                            label="规则来源" prop="ruleSource"
           />
-          <el-table-column v-if="columns[4].visible" key="modifyTime" :show-overflow-tooltip="true"
-                           align="center"
-                           label="修改时间" prop="modifyTime"
-          >
-            <span>{{ parseTime(scope.row.modifyTime) }}</span>
-          </el-table-column>
-          <el-table-column v-if="columns[5].visible" key="manager" :show-overflow-tooltip="true"
-                           align="center"
-                           label="经理人" prop="manager"
-          />
-          <el-table-column v-if="columns[6].visible" key="ruleConditions" :show-overflow-tooltip="true"
+          <el-table-column v-if="columns[4].visible" key="ruleConditions" :show-overflow-tooltip="true"
                            align="center"
                            label="规则条件" prop="ruleConditions"
           >
             <template slot-scope="scope">
-              <el-row v-for="(item,index) in scope.row.ruleConditions" :key="index" :index="index+''">
+              <el-row v-for="(item,index) in scope.row.conditions" :key="index" :index="index+''">
                 <el-tag type="success">
                   {{ item.conditionCluster + ':' + item.conditionContent }}
                 </el-tag>
               </el-row>
             </template>
           </el-table-column>
-          <el-table-column v-if="columns[7].visible" key="ruleResults" :show-overflow-tooltip="true"
+          <el-table-column v-if="columns[5].visible" key="ruleResults" :show-overflow-tooltip="true"
                            align="center"
                            label="规则结果" prop="ruleResults"
           >
             <template slot-scope="scope">
-              <el-row v-for="(item,index) in scope.row.ruleResults" :key="index" :index="index+''">
+              <el-row v-for="(item,index) in scope.row.results" :key="index" :index="index+''">
                 <el-tag  type="success">
                   {{ item.resultCluster + ':' + item.resultContent }}
                 </el-tag>
@@ -241,32 +231,14 @@
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="12">
-            <el-form-item label="经理人" prop="manager">
-              <el-input v-model="selectRule.manager" placeholder="请输入经理人"/>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="修改日期" prop="modifyTime">
-              <el-date-picker
-                v-model="selectRule.modifyTime"
-                type="date"
-                placeholder="选择日期"
-                format="yyyy 年 MM 月 dd 日"
-                value-format="yyyy-MM-dd">
-              </el-date-picker>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
           <el-form-item label="规则条件">
             <el-row>
               <el-col :offset="18" :span="6">
                 <el-button type="primary" @click="addCondition" >添加条件</el-button>
               </el-col>
             </el-row>
-            <el-row v-for="(item,index) in selectRule.ruleConditions" :key="index">
-              <el-col :span="2">
+            <el-row v-for="(item,index) in selectRule.conditions" :key="index">
+              <el-col :span="4">
                 <el-tag type="primary">
                   条件{{ index }}
                 </el-tag>
@@ -274,7 +246,6 @@
               <el-col :span="6">
                 <el-input v-model="item.conditionCluster" placeholder="条件类别"></el-input>
               </el-col>
-              <el-col :span="2" class="line">----</el-col>
               <el-col :span="6">
                 <el-input v-model="item.conditionContent" placeholder="条件内容" ></el-input>
               </el-col>
@@ -291,8 +262,8 @@
                 <el-button type="primary" @click="addResult" >添加结果</el-button>
               </el-col>
             </el-row>
-            <el-row v-for="(item,index) in selectRule.ruleResults" :key="index">
-              <el-col :span="2">
+            <el-row v-for="(item,index) in selectRule.results" :key="index">
+              <el-col :span="4">
                 <el-tag type="primary">
                   结果{{ index }}
                 </el-tag>
@@ -300,7 +271,6 @@
               <el-col :span="6">
                 <el-input v-model="item.resultCluster" placeholder="结果类别"></el-input>
               </el-col>
-              <el-col :span="2" class="line">----</el-col>
               <el-col :span="6">
                 <el-input v-model="item.resultContent" placeholder="结果内容" ></el-input>
               </el-col>
@@ -413,9 +383,7 @@ export default {
         { key: 1, label: `规则名称`, visible: true },
         { key: 2, label: `规则内容`, visible: true },
         { key: 3, label: `规则来源`, visible: true },
-        { key: 4, label: `修改时间`, visible: true },
-        { key: 5, label: `经理人`, visible: true },
-        { key: 5, label: `规则条件`, visible: true },
+        { key: 4, label: `规则条件`, visible: true },
         { key: 5, label: `规则结果`, visible: true },
       ],
       title: '',
@@ -436,10 +404,16 @@ export default {
         dynamicLabels:[],
         ruleSource:'',
         ruleDescription:'' ,
-        manager:'',
-        modifyTime:'',
-        ruleConditions:[""],
-        ruleResults:[""]
+        conditions:[{
+          conditionId: undefined,
+          conditionCluster:'',
+          conditionContent:'',
+        }],
+        results:[{
+          resultId: undefined,
+          resultCluster:'',
+          resultContent:'',
+        }]
       },
       modifyState: false,
       ruleTree: [],
@@ -498,7 +472,7 @@ export default {
     },
     /** 查询知识下拉树结构 */
     getTreeselect() {
-      treeManagement.getTreeManagement(25500).then(response => {
+      treeManagement.getTreeManagement(25844).then(response => {
         console.log(response.data)
         this.ruleTree.push(response.data)
       })
@@ -561,7 +535,7 @@ export default {
     },
 
     addCondition() {
-      this.selectRule.ruleConditions.push(
+      this.selectRule.conditions.push(
         {
           conditionId: undefined,
           conditionContent: '',
@@ -570,13 +544,13 @@ export default {
       )
     },
     removeCondition(item) {
-      let index = this.selectRule.ruleConditions.indexOf(item)
+      let index = this.selectRule.conditions.indexOf(item)
       if (index !== -1) {
-        this.selectRule.ruleConditions.splice(index, 1)
+        this.selectRule.conditions.splice(index, 1)
       }
     },
     addResult() {
-      this.selectRule.ruleResults.push(
+      this.selectRule.results.push(
         {
           resultId: undefined,
           resultContent: '',
@@ -585,9 +559,9 @@ export default {
       )
     },
     removeResult(item) {
-      let index = this.selectRule.ruleResults.indexOf(item)
+      let index = this.selectRule.results.indexOf(item)
       if (index !== -1) {
-        this.selectRule.ruleResults.splice(index, 1)
+        this.selectRule.results.splice(index, 1)
       }
     },
     /** 新增按钮操作 */
@@ -675,8 +649,16 @@ export default {
         ruleDescription:'' ,
         manager:'',
         modifyTime:'',
-        ruleConditions:[""],
-        ruleResults:[""]
+        conditions:[{
+          conditionId: undefined,
+          conditionCluster:'',
+          conditionContent:'',
+        }],
+        results:[{
+          resultId: undefined,
+          resultCluster:'',
+          resultContent:'',
+        }]
       };
       this.resetForm("ruleForm");
     }

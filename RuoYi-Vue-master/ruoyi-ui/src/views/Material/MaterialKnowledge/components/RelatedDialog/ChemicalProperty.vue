@@ -9,9 +9,18 @@
       </el-form-item>
       <el-form-item v-for="(value, key) in chemicalProperty.propertyAttributes" :label-width="formLabelWidth" :key="key">
         <el-row>
-          <el-input style="display: inline-block;float: right;" v-model="key"></el-input>
-          <el-input type="textarea" v-model="chemicalProperty.propertyAttributes[key]"></el-input>
-          <el-button @click.prevent="deleteAttr(key)">删 除</el-button>
+          <el-col :span="6">
+            <el-input style="display: inline-block;float: right;" v-model="key"></el-input>
+          </el-col>
+          <el-col :span="4">
+            ------------------------
+          </el-col>
+          <el-col :span="10">
+            <el-input v-model="chemicalProperty.propertyAttributes[key]"></el-input>
+          </el-col>
+          <el-col :span="4">
+            <el-button @click.prevent="deleteAttr(key)">删 除</el-button>
+          </el-col>
         </el-row>
       </el-form-item>
     </el-form>
@@ -55,7 +64,7 @@ export default {
   data: () => ({
     materialId: 0,
     dialogFormVisible: false,
-    formLabelWidth: '120px',
+    formLabelWidth: '80px',
     chemicalProperty: {
       propertyId: '',
       propertyName: '',

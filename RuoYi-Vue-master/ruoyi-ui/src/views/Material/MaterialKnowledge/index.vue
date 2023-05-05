@@ -47,7 +47,7 @@
               @keyup.enter.native="handleQuery"
             />
           </el-form-item>
-          <el-form-item label="CAS-登记号" prop="casRegistryNumber">
+          <el-form-item label="登记号" prop="casRegistryNumber">
             <el-input
               v-model="queryParams.originMaterial.casRegistryNumber"
               clearable
@@ -244,7 +244,7 @@
                            label="理化分析谱图" prop="AnalysisSpectrogram"
           >
             <template v-slot="scope">
-              <el-button type="info" @click.native.prevent="showAnalysisSpectrogram(scope.row.materialId)">
+              <el-button type="text" @click.native.prevent="showAnalysisSpectrogram(scope.row.materialId)">
                 查 看
               </el-button>
             </template>
@@ -256,13 +256,13 @@
             <template v-slot="scope">
               <el-row>
                 <el-col :span="12">
-                  <el-button type="info" @click.native.prevent="showPhysicalProperty(scope.row.materialId)">
-                    物理性质
+                  <el-button type="text" @click.native.prevent="showPhysicalProperty(scope.row.materialId)">
+                    物理
                   </el-button>
                 </el-col>
                 <el-col :span="12">
-                  <el-button type="info" @click.native.prevent="showChemicalProperty(scope.row.materialId)">
-                    化学性质
+                  <el-button type="text" @click.native.prevent="showChemicalProperty(scope.row.materialId)">
+                    化学
                   </el-button>
                 </el-col>
               </el-row>
@@ -274,7 +274,7 @@
           >
             <template v-slot="scope">
               <el-row>
-                <el-button type="info" @click.native.prevent="showInspectProjectAndMethods(scope.row.materialId)">
+                <el-button type="text" @click.native.prevent="showInspectProjectAndMethods(scope.row.materialId)">
                   查 看
                 </el-button>
               </el-row>
@@ -285,7 +285,7 @@
                            label="生产方法" prop="manufacturer"
           >
             <template v-slot="scope">
-              <el-button type="info" @click.native.prevent="showProduceMethod(scope.row.materialId)">
+              <el-button type="text" @click.native.prevent="showProduceMethod(scope.row.materialId)">
                 查 看
               </el-button>
             </template>
@@ -295,7 +295,7 @@
                            label="存储要求" prop="toolSpecification"
           >
             <template v-slot="scope">
-              <el-button type="info" @click.native.prevent="showStorageRequirement(scope.row.materialId)">
+              <el-button type="text" @click.native.prevent="showStorageRequirement(scope.row.materialId)">
                 查 看
               </el-button>
             </template>
@@ -304,7 +304,7 @@
                            align="center"
                            label="关联文件" prop="toolUsage"
           >
-            <el-button type="info" @click.native.prevent="showRelatedFile(scope.row.materialId)">
+            <el-button type="text" @click.native.prevent="showRelatedFile(scope.row.materialId)">
               下 载
             </el-button>
           </el-table-column>
@@ -314,7 +314,7 @@
           >
             <template slot-scope="scope">
               <el-row>
-                <el-button type="info" @click.native.prevent="showDangerAndProtection(scope.row.materialId)">
+                <el-button type="text" @click.native.prevent="showDangerAndProtection(scope.row.materialId)">
                   查 看
                 </el-button>
               </el-row>
@@ -518,7 +518,9 @@ import StorageRequirement from '@/views/Material/MaterialKnowledge/components/Re
 import * as treeManagement from '@/api/system/treeManagement'
 import Treeselect from '@riophae/vue-treeselect'
 import * as materialManagement from '@/api/system/materialManagement'
-
+import ImageUploader from '@/views/Material/MaterialKnowledge/components/ImageUpload'
+import { getToken } from '@/utils/auth'
+import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 export default {
 
   name: 'materialKnowledge',
@@ -615,7 +617,7 @@ export default {
         casRegistryNumber:'',
         materialDescription:'',
         materialAppearance:'',
-        materialUsage:'',
+        materialUsage:[],
         materialLabels:[],
       },
       labelTree: [],

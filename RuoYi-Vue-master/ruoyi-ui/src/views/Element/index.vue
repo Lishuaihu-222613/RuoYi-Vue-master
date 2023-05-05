@@ -230,8 +230,8 @@
       </el-col>
     </el-row>
 
-    <el-dialog :title="model.fileName" :visible.sync="modelShow" append-to-body width="400px">
-      <iframe :src="model.fileUrl" frameborder="0" style="width: 100%;height: 450px"></iframe>
+    <el-dialog title="轻模型展示" :visible.sync="modelShow" append-to-body >
+      <iframe :src="fileUrl" frameborder="0" style="width: 800px;height: 600px"></iframe>
     </el-dialog>
 
     <!-- 产品导入对话框 -->
@@ -374,7 +374,12 @@ export default {
         children: 'subElements'
       },
       selectElement: {},
-      model: {},
+      model: {
+        fileId:0,
+        fileName:"轻模型-测试1",
+        fileUrl:"D:\\Desktop\\请模型\\assem.html"
+      },
+      fileUrl:"http://localhost:8080/profile/upload/2023/05/02/assem.html",
       modifyState: false,
       elementTree: [],
       dialog: false,
@@ -423,7 +428,7 @@ export default {
     },
     /** 查询知识下拉树结构 */
     getTreeselect() {
-      treeManagement.getTreeManagement(25500).then(response => {
+      treeManagement.getTreeManagement(25877).then(response => {
         this.elementTree = []
         console.log(response.data)
         this.elementTree.push(response.data)
@@ -479,6 +484,7 @@ export default {
     },
     handleModel(data) {
       this.modelShow = true
+      console.log(44444)
       this.model = data.model
     },
 
@@ -530,7 +536,7 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.modifyElementShow = true
-      this.title = '修改结构'
+      this.title = '修改元素'
       this.selectElementId = row.elementId
     },
     /** 删除按钮操作 */

@@ -201,7 +201,7 @@ export default {
     /** 查询标签列表 */
     getLabelList() {
       this.loading = true
-      treeManagement.getTreeManagement(25500).then(response => {
+      treeManagement.getTreeManagement(25822).then(response => {
         this.options = []
         console.log(response.data)
         this.options.push(response.data)

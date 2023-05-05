@@ -5,6 +5,7 @@ import com.ruoyi.system.Repository.KnowledgeRepository.Prescription.*;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.Interface.PrescriptionInterface;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.Interface.hasMaterialElementInterface;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.Prescription;
+import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.PrescriptionElements;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.Property.*;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.Stability.ExplosionStability;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.Stability.HeatStability;
@@ -479,12 +480,21 @@ public class PrescriptionServiceImpl implements PrescriptionService {
     }
 
     @Override
-    public List<hasMaterialElement> getAllMaterialElementsByProscriptionId(Long proscriptionId) {
+    public List<PrescriptionElements> getAllMaterialElementsByProscriptionId(Long proscriptionId) {
         Optional<Prescription> optionalPrescription = prescriptionRepository.findById(proscriptionId);
         if(optionalPrescription.isPresent()) {
             Prescription prescription = prescriptionRepository.getMaterialElementsById(proscriptionId);
             Set<hasMaterialElement> materialElements = prescription.getMaterialElements();
-            return new ArrayList<>(materialElements);
+            ArrayList<PrescriptionElements> elements = new ArrayList<>();
+            for (hasMaterialElement materialElement : materialElements) {
+                PrescriptionElements element = new PrescriptionElements();
+                element.setPercentage(materialElement.getPercentage());
+                element.setMaterialId(materialElement.getMaterial().getMaterialId());
+                element.setMaterialName(materialElement.getMaterial().getMaterialName());
+                element.setRelationId(materialElement.getId());
+                elements.add(element);
+            }
+            return elements;
         }
         return null;
     }

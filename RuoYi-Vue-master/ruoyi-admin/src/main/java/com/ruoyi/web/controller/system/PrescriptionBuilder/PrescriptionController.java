@@ -6,6 +6,7 @@ import com.ruoyi.common.utils.Neo4j.R;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.Interface.PrescriptionInterface;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.Interface.hasMaterialElementInterface;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.Prescription;
+import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.PrescriptionElements;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.Property.*;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.Stability.ExplosionStability;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.Stability.HeatStability;
@@ -169,9 +170,9 @@ public class PrescriptionController extends BaseController {
 
     @ResponseBody
     @GetMapping("/getElementsByPrescriptionId/{prescriptionId}")
-    public R<List<hasMaterialElement>> getElementsByPrescriptionId(@PathVariable Long prescriptionId) {
+    public R<List<PrescriptionElements>> getElementsByPrescriptionId(@PathVariable Long prescriptionId) {
         try {
-            List<hasMaterialElement> elements = prescriptionService.getAllMaterialElementsByProscriptionId(prescriptionId);
+            List<PrescriptionElements> elements = prescriptionService.getAllMaterialElementsByProscriptionId(prescriptionId);
             System.out.println(elements);
             return R.success(elements);
         } catch (Exception e) {

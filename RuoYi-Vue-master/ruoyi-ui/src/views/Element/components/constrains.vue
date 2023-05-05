@@ -2,29 +2,31 @@
   <el-dialog :title="windowTitle" :visible.sync="dialogFormVisible" top="50vh" width="50%"
              @closed="handleClose" @open="handleOpen"
   >
-    <el-table ref="table" :model="constraints">
+    <el-table ref="table" :data="constraints">
       <el-table-column label="约束类型" width="180">
         <template slot-scope="scope">
-          <el-select v-model="scope.row.constraintType" placeholder="请选择">
-            <el-option
-              v-for="item in constraintOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            >
-            </el-option>
-          </el-select>
+          <span>{{scope.row.constraintType}}</span>
+<!--          <el-select v-model="scope.row.constraintType" placeholder="请选择">-->
+<!--            <el-option-->
+<!--              v-for="item in constraintOptions"-->
+<!--              :key="item.value"-->
+<!--              :label="item.label"-->
+<!--              :value="item.value"-->
+<!--            >-->
+<!--            </el-option>-->
+<!--          </el-select>-->
         </template>
       </el-table-column>
       <el-table-column label="约束元素" width="180">
         <template slot-scope="scope">
-          <treeselect v-model="scope.row.elementId"
-                      :clearable="true"
-                      :normalizer="elementNormalizer"
-                      :options="elementOptions"
-                      :searchable="true"
-                      placeholder="请选择约束元素"
-          />
+          <span>{{scope.row.element}}</span>
+<!--          <treeselect v-model="scope.row.elementId"-->
+<!--                      :clearable="true"-->
+<!--                      :normalizer="elementNormalizer"-->
+<!--                      :options="elementOptions"-->
+<!--                      :searchable="true"-->
+<!--                      placeholder="请选择约束元素"-->
+<!--          />-->
         </template>
       </el-table-column>
       <el-table-column label="约束名" width="180">
@@ -113,15 +115,15 @@ export default {
   data() {
     return {
       dialogFormVisible: false,
-      windowTitle: '',
+      windowTitle: '约束信息',
       elementId: 0,
       productId: 0,
       constraints: [{
-        constraintId:undefined,
-        constraintType: '',
-        elements:undefined,
-        constraintName: '',
-        constraintValue: ''
+        constraintId:25694,
+        constraintType: '同轴',
+        element:'测试1',
+        constraintName: '同轴约束1',
+        constraintValue: '-'
       }],
       constraintOptions: [
         {

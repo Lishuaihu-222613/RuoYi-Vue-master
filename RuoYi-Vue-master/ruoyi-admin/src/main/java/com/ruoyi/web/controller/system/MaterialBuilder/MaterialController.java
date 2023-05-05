@@ -771,7 +771,7 @@ public class MaterialController extends BaseController {
     };
 
     @ResponseBody
-    @GetMapping("/deleteStorageRequirement/{StorageRequirementId}")
+    @GetMapping("/deleteStorageRequirement/{storageRequirementId}")
     public R<String> deleteStorageRequirementById(@PathVariable Long storageRequirementId) {
         try {
             System.out.println(storageRequirementId);

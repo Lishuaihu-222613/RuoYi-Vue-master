@@ -204,6 +204,11 @@ export default {
       handler(newVal, oldVal) {
         this.productId = newVal
       }
+    },
+    title:{
+      handler(newVal, oldVal) {
+        this.windowTitle = newVal
+      }
     }
   },
   data(){
@@ -254,10 +259,13 @@ export default {
         } else {
           this.elementType = 'AssemblyProduct'
         }
-      } else {
+      }
+      else {
         elementManagement.getElementById(this.elementId).then(result =>{
           if(result.code === 200){
+            console.log("455555")
             this.element = result.data;
+            console.log(this.element)
           }
         })
         elementManagement.getProductById(this.productId).then(result =>{
@@ -284,28 +292,28 @@ export default {
           this.dynamicLabels  = this.element.dynamicLabels.filter(item => item !== 'AssemblyComponent'||'TypicalElement')
         }
       }
-      fileManagement.getModelList().then(result =>{
-        if(result.code === 200){
-          this.modelOptions = result.data
-        }
-      })
-      fileManagement.getFileList().then(result =>{
-        if(result.code === 200){
-          this.fileOptions = result.data
-        }
-      })
-      fileManagement.getModelFileByStructure(this.element.elementId).then(result =>{
-        if(result.code === 200){
-          this.modelFileId = result.data.fileId
-        }
-      })
-      fileManagement.getFilesByStructure().then(result =>{
-        if(result.code === 200){
-          this.associatedFileId = result.data.map(item =>{
-            return item.fileId
-          })
-        }
-      })
+      // fileManagement.getModelList().then(result =>{
+      //   if(result.code === 200){
+      //     this.modelOptions = result.data
+      //   }
+      // })
+      // fileManagement.getFileList().then(result =>{
+      //   if(result.code === 200){
+      //     this.fileOptions = result.data
+      //   }
+      // })
+      // fileManagement.getModelFileByStructure(this.element.elementId).then(result =>{
+      //   if(result.code === 200){
+      //     this.modelFileId = result.data.fileId
+      //   }
+      // })
+      // fileManagement.getFilesByStructure().then(result =>{
+      //   if(result.code === 200){
+      //     this.associatedFileId = result.data.map(item =>{
+      //       return item.fileId
+      //     })
+      //   }
+      // })
     },
     handleClose(){
       this.dialogFormVisible = false;

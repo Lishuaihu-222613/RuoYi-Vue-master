@@ -42,28 +42,28 @@ public class ProcessElement {
     @Property(name = "存在子节点")
     private boolean hasSubElements;
 
-    @Relationship(type = "包含子节点")
+    @Relationship(type = "hasSubElement")
     private Set<ProcessElement> subElements;
 
-    @Relationship(type = "前道关系")
+    @Relationship(type = "hasBeforeElement")
     private Set<ProcessElement> beforeElements;
 
-    @Relationship(type = "后道关系")
+    @Relationship(type = "hasAfterElement")
     private Set<ProcessElement> afterElements;
 
-    @Relationship(type = "与关系")
+    @Relationship(type = "hasAndElement")
     private Set<ProcessElement> andElements;
 
-    @Relationship(type = "或关系")
+    @Relationship(type = "hasOrElement")
     private Set<ProcessElement> orElements;
 
-    @Relationship(type = "关联零、部、组（整）件")
+    @Relationship(type = "hasAssociatedProcess")
     private Set<AssemblyElement> associatedStructure;
 
-    @Relationship(type = "使用资源")
+    @Relationship(type = "use")
     private Set<AssemblyResource> usedResources;
 
-    @Relationship(type = "关联文件")
+    @Relationship(type = "hasAssociatedFile")
     private Set<FileKnowledge> associatedFiles;
 
     public Long getElementId() {

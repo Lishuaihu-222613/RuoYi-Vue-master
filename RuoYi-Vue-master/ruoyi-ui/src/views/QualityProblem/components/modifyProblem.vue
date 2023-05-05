@@ -196,7 +196,7 @@ export default {
     getLabelList() {
       this.loading = true
       this.options = []
-      treeManagement.getTreeManagement(25500).then(response => {
+      treeManagement.getTreeManagement(25779).then(response => {
         console.log(response.data)
         this.options.push(response.data)
       })

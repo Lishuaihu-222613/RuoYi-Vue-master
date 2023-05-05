@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function getElementById(elementId) {
   return request({
-    url: '/element/getElementById/'+elementId,
+    url: '/element/getProductById/'+elementId,
     method: 'get'
   })
 }

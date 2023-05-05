@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :visible.sync="dialogFormVisible" title="工序编辑" top="50vh" width="75%"
+  <el-dialog :visible.sync="dialogFormVisible" title="关系编辑" top="50vh" width="75%"
              @closed="handleClose" @open="handleOpen"
   >
     <el-tabs type="border-card">
@@ -13,7 +13,7 @@
                 closable
                 @close="handleCloseStructure(structure)"
                 type="info">
-                {{structure.elementId}}
+                {{structure.elementName}}
               </el-tag>
             </el-row>
             <el-row class="row-bg" justify="space-around" type="flex">
@@ -172,6 +172,7 @@ import Treeselect from '@riophae/vue-treeselect'
 import * as fileManagement from '@/api/system/fileManagement'
 import * as resourceManagement from '@/api/system/resourceManagement'
 import * as structureManagement from '@/api/system/elementManagement'
+import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 
 export default {
 
@@ -228,7 +229,12 @@ export default {
       andeElements:[],
       orElements:[],
       subElements:[],
-      structures:[],
+      structures:[
+        {
+          elementId:0,
+          elementName:'测试产品1'
+        }
+      ],
       structureLabel:'',
       structureLabelOptions:[],
       resourceLabelOptions:[],
@@ -239,10 +245,48 @@ export default {
       structureOptions:[],
       resourceOptions:[],
       fileOptions:[],
-      resources:[],
+      resources:[
+        {
+          resourceId:0,
+          resourceName:'吊车1'
+        },
+        {
+          resourceId:1,
+          resourceName:'搅拌釜1'
+        },
+        {
+          resourceId:2,
+          resourceName:'喷涂系统Ⅱ'
+        },
+        {
+          resourceId:3,
+          resourceName:'电热鼓风干燥箱'
+        },
+        {
+          resourceId:4,
+          resourceName:'软吊具1'
+        },
+        {
+          resourceId:5,
+          resourceName:'立式喷砂工装1'
+        },
+        {
+          resourceId:6,
+          resourceName:'排气管固定工装1'
+        },
+        {
+          resourceId:7,
+          resourceName:'立式喷砂工装1'
+        },
+      ],
       resourceLabel:'',
       fileLabel:'',
-      files:[],
+      files:[
+        {
+          fileId:0,
+          fileName:'壳体准备工艺规程文件'
+        }
+      ],
       newFile:{},
       selectedRelations: [],
       relations: [{

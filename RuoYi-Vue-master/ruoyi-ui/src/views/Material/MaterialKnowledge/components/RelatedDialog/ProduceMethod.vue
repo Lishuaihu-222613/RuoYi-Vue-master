@@ -42,8 +42,12 @@
             <el-button @click.prevent="getAssociatedProblems(item.methodId)">查看</el-button>
           </el-form-item>
           <el-form-item >
-            <el-button @click="dialogFormVisible = false">取 消</el-button>
-            <el-button type="primary" @click="onSubmit">确 定</el-button>
+            <el-row>
+              <el-col :span="4" :offset="20">
+                <el-button @click="dialogFormVisible = false">取 消</el-button>
+                <el-button type="primary" @click="onSubmit">确 定</el-button>
+              </el-col>
+            </el-row>
           </el-form-item>
         </el-form>
       </el-tab-pane>

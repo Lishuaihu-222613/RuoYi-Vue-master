@@ -153,6 +153,35 @@ export function deleteDangerById(dangerId){
   })
 };
 
+export function getStorageRequirementsByMaterialId(materialId){
+  return request({
+    url: '/material/getStorageRequirementsByMaterialId/'+materialId,
+    method: 'get'
+  })
+};
+
+export function createStorageRequirement(materialId){
+  return request({
+    url: '/material/createStorageRequirement/'+materialId,
+    method: 'get',
+  })
+};
+
+export function updateStorageRequirement(data){
+  return request({
+    url: '/material/updateStorageRequirement',
+    method: 'post',
+    data: data
+  })
+};
+
+export function deleteStorageRequirementById(requirementId){
+  return request({
+    url: '/material/deleteStorageRequirement/'+requirementId,
+    method: 'get',
+  })
+};
+
 export function getProtectionsByMaterialId(materialId){
   return request({
     url: '/material/getProtectionsByMaterialId/'+materialId,

@@ -429,7 +429,7 @@ export default {
     },
     /** 查询知识下拉树结构 */
     getTreeselect() {
-      treeManagement.getTreeManagement(25500).then(response => {
+      treeManagement.getTreeManagement(25842).then(response => {
         console.log(response.data)
         this.methodTree.push(response.data)
       })

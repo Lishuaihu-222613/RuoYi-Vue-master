@@ -158,7 +158,9 @@
                            label="修改时间"
                            prop="modifyTime"
           >
-            <span>{{ parseTime(scope.row.modifyTime) }}</span>
+            <template slot-scope="scope">
+              <span>{{ parseTime(scope.row.modifyTime) }}</span>
+            </template>
           </el-table-column>
           <el-table-column
             align="center"
@@ -202,8 +204,8 @@
       </el-col>
     </el-row>
 
-    <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body>
-      <el-form ref="form" :model="file" :rules="rules" label-width="80px">
+    <el-dialog :title="title" :visible.sync="modifyfileShow" width="600px" append-to-body>
+      <el-form ref="form" :model="file"  label-width="80px">
         <el-row>
           <el-col :span="12">
             <el-form-item label="文件名称" prop="fileName">
@@ -450,7 +452,7 @@ export default {
     },
     /** 查询知识下拉树结构 */
     getTreeselect() {
-      treeManagement.getTreeManagement(25500).then(response => {
+      treeManagement.getTreeManagement(25843).then(response => {
         console.log(response.data)
         this.labelTree.push(response.data)
       })
@@ -583,6 +585,9 @@ export default {
     // 提交上传文件
     submitFileForm() {
       this.$refs.upload.submit()
+    },
+    cancel(){
+
     },
     submitForm() {
       this.$refs['form'].validate(valid => {

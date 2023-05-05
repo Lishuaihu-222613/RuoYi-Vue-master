@@ -25,6 +25,6 @@ public interface StorageRequirementRepository extends Neo4jRepository<StorageReq
     @Override
     void deleteById(Long requirementId);
 
-    @Query("MATCH (n:StorageRequirement)<-[r:hasRequirement]-(m:Material) where m.id = $materialId return n")
+    @Query("MATCH (n:StorageRequirement)<-[r:hasRequirement]-(m:Material) where id(m) = $materialId return n")
     Collection<StorageRequirement> findStorageRequirementsByMaterialId(@Param("materialId")Long materialId);
 }

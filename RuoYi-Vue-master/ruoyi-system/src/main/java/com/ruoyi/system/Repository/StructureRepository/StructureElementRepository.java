@@ -66,10 +66,10 @@ public interface StructureElementRepository extends Neo4jRepository<AssemblyElem
     @Query(value = "MATCH (n:AssemblyElement)-[r:isComposedOf]->(m) where id(n) = $parentId return m ")
     List<AssemblyElement> findSubElementsByParentId(@Param("$parentId")Long $parentId);
 
-    @Query(value = "MATCH (n:AssemblyElement)-[r:isComposedOf]->(n:AssemblyElement) where id(n) = $elementId delete r ")
+    @Query(value = "MATCH (n:AssemblyElement)-[r:isComposedOf]->(m:AssemblyElement) where id(n) = $elementId delete r ")
     void deleteParentRelation(@Param("elementId") Long elementId);
 
-    @Query(value = "CREATE (n:AssemblyElement)-[r:isComposedOf]->(n:AssemblyElement) where id(n) = $parentId and id(m) = $elementId ")
+    @Query(value = "CREATE (n:AssemblyElement)-[r:isComposedOf]->(m:AssemblyElement) where id(n) = $parentId and id(m) = $elementId ")
     void createParentRelation(@Param("parentId") Long parentId,@Param("elementId") Long elementId);
 
 }

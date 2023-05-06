@@ -7,6 +7,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.security.core.parameters.P;
 
 import java.util.List;
 import java.util.Optional;
@@ -43,5 +45,17 @@ public interface ResourceRepository extends Neo4jRepository<AssemblyResource,Lon
 
     @Override
     <S extends AssemblyResource> Page<S> findAll(Example<S> example, Pageable pageable);
+
+    @Query("Match (n:AssemblyResource)<-[]-(m) where id(m) = $associatedId return n ")
+    List<AssemblyResource> findResourceByAssociatedId(@Param("associatedId") Long associatedId);
+
+    @Query("Match (n:AssemblyResource)<-[]-(m) where id(n) = $resourceId and id(m) = $associatedId delete r ")
+    void deleteRelation(@Param("resourceId") Long resourceId,@Param("associatedId") Long associatedId);
+
+    @Query("Merge (n:AssemblyResource)<-[r:use]-(m) where id(n) = $resourceId and id(m) = $associatedId ")
+    void createUseRelation(@Param("resourceId") Long resourceId,@Param("associatedId") Long associatedId);
+
+    @Query("Merge (n:AssemblyResource)<-[r:hasAssociatedDevice]-(m) where id(n) = $resourceId and id(m) = $associatedId ")
+    void createDeviceRelation(@Param("resourceId") Long resourceId,@Param("associatedId") Long associatedId);
 
 }

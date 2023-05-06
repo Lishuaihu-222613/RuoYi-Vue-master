@@ -35,4 +35,13 @@ public interface FileRepository extends Neo4jRepository<FileKnowledge,Long> {
 
     @Override
     <S extends FileKnowledge> Page<S> findAll(Example<S> example, Pageable pageable);
+
+    @Query("Match (n:FileKnowledge)<-[r:hasAssociatedFile]-(m) where id(m) = $associatedId return n ")
+    List<FileKnowledge> findByAssociatedId(@Param("associatedId") Long associatedId);
+
+    @Query("MERGE (n:FileKnowledge)<-[r:hasAssociatedFile]-(m) where id(n) = $fileId id(m) = $associatedId return n ")
+    void createdAssociatedRelationById(@Param("fileId") Long fileId, @Param("associatedId") Long associatedId);
+
+    @Query("Match (n:FileKnowledge)<-[r:hasAssociatedFile]-(m) where id(n) = $fileId id(m) = $associatedId delete r")
+    void deleteRelationById(@Param("fileId") Long fileId, @Param("associatedId") Long associatedId);
 }

@@ -30,7 +30,6 @@ public interface ConstraintRepository extends Neo4jRepository<AssemblyConstraint
 
     @Query("Match (n:AssemblyElement) where id(n) = $elementId " +
             "Match (m:AssemblyConstraint) where id(m) = $constraintId " +
-            "Merge (n)-[r:hasConstraint]->(m) " +
-            "Merge (n)<-[r:with]-(m)")
+            "Merge (n)-[r:hasConstraint]->(m) " )
     void updateRelationShipForConstraint(@Param("constraintId") Long constraintId,@Param("elementId") Long elementId);
 }

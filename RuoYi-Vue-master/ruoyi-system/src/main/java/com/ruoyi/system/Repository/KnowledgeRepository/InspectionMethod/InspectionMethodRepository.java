@@ -36,4 +36,13 @@ public interface InspectionMethodRepository extends Neo4jRepository<InspectionMe
 
     @Override
     <S extends InspectionMethod> Page<S> findAll(Example<S> example, Pageable pageable);
+
+    @Query("Match (n:InspectionMethod)<-[]-(m) where id(m) = $associatedId return n ")
+    List<InspectionMethod> findByAssociatedId(@Param("associatedId") Long associatedId);
+
+    @Query("Merge (n:InspectionMethod)<-[r:hasInspectionMethod]-(m) where id(n) = methodId and id(m) = $associatedId")
+    void createRelationById(@Param("methodId") Long methodId ,@Param("associatedId") Long associatedId );
+
+    @Query("MATCH (n:InspectionMethod)<-[r]-(m) where id(n) = methodId and id(m) = $associatedId DELETE r")
+    void deleteRelationById(@Param("methodId") Long methodId ,@Param("associatedId") Long associatedId  );
 }

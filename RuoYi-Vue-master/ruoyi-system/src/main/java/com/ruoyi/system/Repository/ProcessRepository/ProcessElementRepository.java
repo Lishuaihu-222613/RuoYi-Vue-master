@@ -36,20 +36,35 @@ public interface ProcessElementRepository extends Neo4jRepository<ProcessElement
     @Query("Match (n:ProcessElement :Process)  return n")
     List<ProcessElement> findAllProcess();
 
+    @Query("Match (n:ProcessElement)-[r:hasAssociatedStructure]->(m) where id(m) = $structureId return n ")
+    List<ProcessElement> findProcessByStructure(@Param("structureId") Long structureId);
+
+    @Query("Match (n:ProcessElement)<-[r:hasAssociatedProcess]-(m) where id(m) = $prescriptionId return n ")
+    List<ProcessElement> findProcessByPrescription(@Param("prescriptionId") Long prescriptionId);
+
+    @Query("Match (n:ProcessElement :TypicalProcess :`:#{literal(#dynamicLabel)}`) return n")
+    List<ProcessElement> findTypicalProcessByLabel(@Param("dynamicLabel") String dynamicLabel);
+
+    @Query("Match (n:ProcessElement :TypicalSequence :`:#{literal(#dynamicLabel)}`) return n")
+    List<ProcessElement> findTypicalSequenceByLabel(@Param("dynamicLabel") String dynamicLabel);
+
+    @Query("Match (n:ProcessElement :TypicalStep :`:#{literal(#dynamicLabel)}`) return n")
+    List<ProcessElement> findTypicalStepByLabel(@Param("dynamicLabel") String dynamicLabel);
+
     @Query(value = "MATCH (n:ProcessElement :Sequence)<-[r:hasSubElement]-(m::ProcessElement :Process) WHERE id(m) = $processId RETURN n "
             + ":#{orderBy(#pageable)} SKIP $skip LIMIT $limit",
             countQuery = "MATCH (n:ProcessElement :Sequence)<-[r:hasSubElement]-(m::ProcessElement :Process) WHERE id(m) = $processId RETURN count(n)"
     )
     Page<ProcessElement> findSequencesByProcessId(Long processId ,Pageable pageable);
 
-    @Query("MATCH (n:ProcessElement)<-[r::hasSubElement] WHERE n.name = $name RETURN n :#{orderBy(#sort)}")
-    List<ProcessElement> findStepsBySequenceId(Long sequenceId, Sort sort);
+    @Query("MATCH (n:ProcessElement)<-[r:hasSubElement] WHERE n.name = $name RETURN n order by n.序号")
+    List<ProcessElement> findStepsBySequenceId(Long sequenceId);
 
     @Query(value = "MATCH (n:ProcessElement :Process :`:#{literal(#dynamicLabel)}`) return n ")
     List<ProcessElement> findProcessByLabel(@Param("dynamicLabel")String dynamicLabel);
 
     @Query(value = "MATCH (n:ProcessElement :`:#{allOf(#dynamicLabels)}`) return n ")
-    List<Process> findElementsByLabels(List<String> dynamicLabels);
+    List<ProcessElement> findElementsByLabels(List<String> dynamicLabels);
 
     @Override
     Optional<ProcessElement> findById(Long elementId);

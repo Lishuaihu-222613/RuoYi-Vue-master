@@ -57,7 +57,7 @@ public class ProcessElement {
     @Relationship(type = "hasOrElement")
     private Set<ProcessElement> orElements;
 
-    @Relationship(type = "hasAssociatedProcess")
+    @Relationship(type = "hasAssociatedStructure")
     private Set<AssemblyElement> associatedStructure;
 
     @Relationship(type = "use")

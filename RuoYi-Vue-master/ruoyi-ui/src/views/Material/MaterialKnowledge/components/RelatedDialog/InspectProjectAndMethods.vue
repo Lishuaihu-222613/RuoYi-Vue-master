@@ -36,16 +36,27 @@
       @close="refreshProject"
     >
       <el-form :model="project">
-        <el-form-item :label-width="formLabelWidth" label="指标Id">
-          <el-input v-model="project.projectId" :disabled="true"></el-input>
-        </el-form-item>
-        <el-form-item :label-width="formLabelWidth" label="指标名称">
-          <el-input v-model="project.projectName"></el-input>
-        </el-form-item>
+        <el-row>
+          <el-col>
+            <el-form-item :label-width="formLabelWidth" label="指标Id">
+              <el-input v-model="project.projectId" :disabled="true"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col>
+            <el-form-item :label-width="formLabelWidth" label="指标名称">
+              <el-input v-model="project.projectName"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row >
+
+        </el-row>
+
+
         <el-form-item :label-width="formLabelWidth" label="表头">
-          <el-button @click="project.classificationAndIndicators.push()" disabled="disabled">添加</el-button>
+          <el-button @click="project.classificationAndIndicators.push()" :disabled="disabled">添加</el-button>
         </el-form-item>
-        <el-form-item v-for="(item, key) in project.classificationAndIndicators" :key="key" :label="key">
+        <el-form-item v-for="(value, key) in project.classificationAndIndicators" :key="key" :label="key">
           <template v-slot="scope">
             <el-input v-model="project.classificationAndIndicators[key]"></el-input>
           </template>
@@ -55,10 +66,10 @@
           <el-button @click="editInspectMethod(project.projectId)" >修改</el-button>
         </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
+      <el-form-item>
         <el-button @click="modifyVisible = false">取 消</el-button>
         <el-button type="primary" @click="onSubmit">确 定</el-button>
-      </div>
+      </el-form-item>
     </el-dialog>
   </el-dialog>
 </template>
@@ -112,13 +123,13 @@ export default {
     project: {
       projectId: 0,
       projectName: '',
-      classificationAndIndicators: []
+      classificationAndIndicators: {}
     },
     inspectProjects: [
       {
         projectId: 0,
         projectName: '',
-        classificationAndIndicators: []
+        classificationAndIndicators: {}
       }
     ]
   }),
@@ -129,7 +140,7 @@ export default {
     },
     handleOpen() {
       materialManagement.getInspectProjectsByMaterialId(this.materialId).then(result => {
-        if (result.code == 200) {
+        if (result.code ==== 200) {
           this.inspectProjects = result.data
           console.log(this.inspectProjects)
         }

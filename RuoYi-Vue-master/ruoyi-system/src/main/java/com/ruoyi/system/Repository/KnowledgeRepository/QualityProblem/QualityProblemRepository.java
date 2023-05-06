@@ -43,4 +43,13 @@ public interface QualityProblemRepository extends Neo4jRepository<QualityProblem
 
     @Query(value = "MATCH (n:QualityProblem :`:#{literal(#dynamicLabel)}`) return n " )
     List<QualityProblem> findProblemsByLabel(@Param("dynamicLabel") String dynamicLabel);
+
+    @Query("Match (n:QualityProblem)<-[]-(m) where id(m) = $associatedId return n")
+    List<QualityProblem> findByAssociaedId(@Param("associatedId") Long associatedId);
+
+    @Query("Merge (n:QualityProblem)<-[r:hasAssociatedProblem]-(m) where id(n) = $problemId and id(m) = $associatedId")
+    void createRelationById(@Param("problemId") Long problemId,@Param("associatedId") Long associatedId);
+
+    @Query("Merge (n:QualityProblem)<-[r:hasAssociatedProblem]-(m) where id(n) = $problemId and id(m) = $associatedId delete r")
+    void deleteRelationById(@Param("problemId") Long problemId,@Param("associatedId") Long associatedId);
 }

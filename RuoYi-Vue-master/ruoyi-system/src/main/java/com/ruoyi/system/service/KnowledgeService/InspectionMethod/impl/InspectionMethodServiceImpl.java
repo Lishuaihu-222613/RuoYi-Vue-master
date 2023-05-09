@@ -11,6 +11,7 @@ import com.ruoyi.system.domain.AssemblyPojo.Knowledge.InspectionKnowledge.Inspec
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.InspectionKnowledge.InspectionMode;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.InspectionKnowledge.vo.ConditionForMethod;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.InspectionKnowledge.vo.FactorForMethod;
+import com.ruoyi.system.domain.AssemblyPojo.Knowledge.InspectionKnowledge.vo.MethodRelations;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.InspectionKnowledge.vo.ModeForMethod;
 import com.ruoyi.system.service.KnowledgeService.InspectionMethod.InspectionMethodService;
 import org.springframework.data.domain.*;
@@ -119,6 +120,11 @@ public class InspectionMethodServiceImpl implements InspectionMethodService {
     @Override
     public void deleteInspectionMethod(Long[] methodIds) {
         inspectionMethodRepository.deleteAllById(Arrays.asList(methodIds));
+    }
+
+    @Override
+    public void deleteRelations(Long methodId) {
+        inspectionMethodRepository.deleteOutRelationsById(methodId);
     }
 
     @Override

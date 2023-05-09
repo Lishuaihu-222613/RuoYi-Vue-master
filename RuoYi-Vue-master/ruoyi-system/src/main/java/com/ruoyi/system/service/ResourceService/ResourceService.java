@@ -22,7 +22,11 @@ public interface ResourceService {
 
     <S extends AssemblyResource> S updateResource(S resource);
 
+    <S extends MouldTool> S updateMouldTool(S resource);
+
     void deleteResource(List<Long> resourceId);
+
+    void createRelatedRelations(Long relatedId, List<Long> resources);
 
     <S extends AssemblyResource> Page<S> getAllByParams(Example<S> example, Pageable pageable);
 
@@ -39,6 +43,8 @@ public interface ResourceService {
     Page<SpecialTool> getSpecialToolsByType(String label, Pageable pageable);
 
     Page<SpreaderTool> getSpreaderToolsByType(String label, Pageable pageable);
+
+    List<AssemblyResource> getResourcesByRelatedId(Long relatedId);
 
     List<AuxiliaryResource> getAuxiliaryResourcesByType(String label);
 

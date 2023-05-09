@@ -4,7 +4,7 @@
   >
     <el-tabs :tab-position="tabPosition">
       <el-tab-pane label="配方组分">
-        <el-form ref="form" :model="newElement" label-width="80px">
+        <el-form ref="form" label-width="80px">
           <el-row>
             <el-col :span="8">
               <el-form-item label="材料类别">
@@ -15,12 +15,12 @@
             </el-col>
             <el-col :span="6">
               <el-form-item label="材料种类">
-                <el-select v-model="newElement.elementId" placeholder="请选择材料">
+                <el-select v-model="newElement" placeholder="请选择材料">
                   <el-option
                     v-for="option in materialOptions"
                     :key="option.materialId"
                     :label="option.materialName"
-                    :value="option.materialId"
+                    :value="option"
                   >
                   </el-option>
                 </el-select>
@@ -28,7 +28,7 @@
             </el-col>
             <el-col :span="6">
               <el-form-item label="质量分数">
-                <el-input-number v-model="newElement.percentage" :precision="2" controls-position="right"
+                <el-input-number v-model="newMaterialPercentage" :precision="2" controls-position="right"
                 ></el-input-number>
               </el-form-item>
             </el-col>
@@ -47,27 +47,23 @@
           <el-table-column
             label="组分"
             prop="materialName"
-          />
+          >
+            <template slot-scope="scope">
+              <el-tag>{{scope.row.material.materialName}}</el-tag>
+            </template>
+          </el-table-column>
           <el-table-column
             label="质量分数"
             prop="percentage"
           >
             <template slot-scope="scope">
-              <el-input-number v-model="scope.row.percentage" :precision="2" controls-position="right"
-              ></el-input-number>
+              <el-tag>{{scope.row.percentage+"%"}}</el-tag>
             </template>
           </el-table-column>
           <el-table-column
             label="操作"
           >
             <template slot-scope="scope">
-              <el-button
-                icon="el-icon-edit"
-                size="mini"
-                type="text"
-                @click="handleEditElement(scope.row)"
-              >修改组分
-              </el-button>
               <el-button
                 icon="el-icon-delete"
                 size="mini"
@@ -81,62 +77,50 @@
       </el-tab-pane>
       <el-tab-pane label="关联产品">
         <el-form ref="productForm">
-          <el-form-item v-for="(item,index) in products"
-                        :label-width="formLabelWidth"
-          >
-            <template #label>
-              {{ '产品' + (index + 1) }}
-            </template>
+          <el-form-item label="关联产品">
             <el-row>
-              <el-col :span="20">
-                <el-select v-model="item.elementId" disabled placeholder="请选择产品">
-                  <el-option
-                    v-for="option in productOptions"
-                    :key="option.elementId"
-                    :label="option.elementName"
-                    :value="option.elementId"
-                  >
-                  </el-option>
-                </el-select>
-              </el-col>
-              <el-col :span="4">
-                <el-button @click="removeProductElement(item)">删 除</el-button>
-              </el-col>
+              <el-tag
+                v-for="(item,index) in products"
+                :key="item.elementId"
+                closable
+                type="info"
+                @close="handleCloseProduct(item)"
+              >
+                {{ item.elementName }}
+              </el-tag>
             </el-row>
           </el-form-item>
           <el-form-item label="新增产品">
             <el-row>
               <el-col :span="10">
-                <el-select v-model="productLabel" filterable placeholder="请选择分类"
-                           @change="changeProductLabel"
-                >
-                  <el-option
-                    v-for="option in productLabelOptions"
-                    :key="option.leafId"
-                    :label="option.leafName"
-                    :value="option.leafName"
-                  >
-                  </el-option>
-                </el-select>
+                <treeselect v-model="productLabel"
+                            :clearable="true"
+                            :normalizer="normalizer"
+                            :options="productLabelOptions"
+                            :searchable="true"
+                            placeholder="请选择标签"
+                            @select="changeProductLabel"
+                />
               </el-col>
-              <el-col :span="4">-----</el-col>
               <el-col :span="10">
-                <el-select v-model="newProductId" filterable placeholder="请选择产品">
+                <el-select v-model="newProduct" filterable placeholder="请选择产品">
                   <el-option
                     v-for="option in filterProductOptions"
                     :key="option.elementId"
                     :label="option.elementName"
-                    :value="option.elementId"
+                    :value="option.element"
                   >
                   </el-option>
                 </el-select>
+              </el-col>
+              <el-col :span="4">
+                <el-button @click.prevent="addProduct">添加</el-button>
               </el-col>
             </el-row>
           </el-form-item>
           <el-form-item>
             <el-row>
               <el-col :offset="18" :span="6">
-                <el-button @click="addProduct">增 加</el-button>
                 <el-button type="primary" @click="onSubmitProduct">确 定</el-button>
                 <el-button @click="cancel">取 消</el-button>
               </el-col>
@@ -146,62 +130,50 @@
       </el-tab-pane>
       <el-tab-pane label="关联工艺">
         <el-form ref="processForm">
-          <el-form-item v-for="(item,index) in processes"
-                        :label-width="formLabelWidth"
-          >
-            <template #label>
-              {{ '工艺' + (index + 1) }}
-            </template>
+          <el-form-item label="相关工艺">
             <el-row>
-              <el-col :span="20">
-                <el-select v-model="item.elementId" disabled placeholder="请选择工艺">
-                  <el-option
-                    v-for="option in processOptions"
-                    :key="option.elementId"
-                    :label="option.elementName"
-                    :value="option.elementId"
-                  >
-                  </el-option>
-                </el-select>
-              </el-col>
-              <el-col :span="4">
-                <el-button @click="removeProcessElement(item)">删 除</el-button>
-              </el-col>
+              <el-tag
+                v-for="item in processes"
+                :key="item.elementId"
+                closable
+                type="info"
+                @close="handleCloseProcess(item)"
+              >
+                {{ item.elementName }}
+              </el-tag>
             </el-row>
           </el-form-item>
           <el-form-item label="新增工艺">
             <el-row>
               <el-col :span="10">
-                <el-select v-model="processLabel" filterable placeholder="请选择分类"
-                           @change="changeProcessLabel"
-                >
-                  <el-option
-                    v-for="option in processLabelOptions"
-                    :key="option.leafId"
-                    :label="option.leafName"
-                    :value="option.leafName"
-                  >
-                  </el-option>
-                </el-select>
+                <treeselect v-model="processLabel"
+                            :clearable="true"
+                            :normalizer="normalizer"
+                            :options="processLabelOptions"
+                            :searchable="true"
+                            placeholder="请选择分类"
+                            @select="changeProcessLabel"
+                />
               </el-col>
-              <el-col :span="4">-----</el-col>
               <el-col :span="10">
-                <el-select v-model="newProcessId" filterable placeholder="请选择工艺">
+                <el-select v-model="newProcess" filterable placeholder="请选择工艺">
                   <el-option
                     v-for="option in filterProcessOptions"
                     :key="option.elementId"
                     :label="option.elementName"
-                    :value="option.elementId"
+                    :value="option.element"
                   >
                   </el-option>
                 </el-select>
+              </el-col>
+              <el-col :span="4">
+                <el-button @click="addProcess">增 加</el-button>
               </el-col>
             </el-row>
           </el-form-item>
           <el-form-item>
             <el-row>
               <el-col :offset="18" :span="6">
-                <el-button @click="addProcess">增 加</el-button>
                 <el-button type="primary" @click="onSubmitProcess">确 定</el-button>
                 <el-button @click="cancel">取 消</el-button>
               </el-col>
@@ -262,7 +234,7 @@ export default {
   },
 
   created() {
-    this.getMaterialOptions()
+
   },
 
   data() {
@@ -282,9 +254,9 @@ export default {
       materialLabelOptions: [],
       productLabelOptions: [],
       processLabelOptions: [],
-      newMaterialId: undefined,
-      newProductId: undefined,
-      newProcessId: undefined,
+      newMaterial: {},
+      newProduct: {},
+      newProcess: {},
       filterMaterialOptions: [],
       filterProductOptions: [],
       filterProcessOptions: [],
@@ -292,21 +264,16 @@ export default {
       windowTitle: '创建组分',
       elements: [
         {
-          materialId: 0,
-          materialName: '端羧基聚丁二烯丙烯腈',
-          relationId: 0,
+          material:{
+            materialId: 0,
+            materialName: '端羧基聚丁二烯丙烯腈',
+          },
           percentage: 99.65
         },
-        {
-          materialId: 0,
-          materialName: '端羧基聚丁二烯丙烯腈',
-          relationId: 0,
-          percentage: 99.65
-        }
       ],
       newElement: {
-        elementId: undefined,
-        percentage: 0.0
+        materialId: undefined,
+        materialName: ''
       },
       products: [],
       processes: [],
@@ -320,13 +287,12 @@ export default {
   methods: {
 
     normalizer(node) {
-      if (node.children && !node.children.length) {
-        delete node.children
+      if (node.subLeafs && !node.subLeafs.length) {
+        delete node.subLeafs
       }
       return {
         id: node.leafName,
         label: node.leafName,
-        value: node.leafValue,
         children: node.subLeafs
       }
     },
@@ -336,62 +302,49 @@ export default {
         console.log(response.data)
         this.materialLabelOptions.push(response.data)
       })
-    },
-
-    getMaterialOptions() {
-      materialManagement.getAllMaterialOptions().then(result => {
-        if (result.code === 200) {
-          this.materialOptions = []
-          this.materialOptions.push(result.data)
-        }
+      treeManagement.getTreeManagement(25500).then(response => {
+        console.log(response.data)
+        this.processLabelOptions.push(response.data)
+      })
+      treeManagement.getTreeManagement(25451).then(response => {
+        console.log(response.data)
+        this.productLabelOptions.push(response.data)
       })
     },
 
-    getProductOptions() {
-      structureManagement.getAllProducts().then(result => {
-        if (result.code === 200) {
-          this.productOptions = []
-          this.productOptions.push(result.data)
-        }
-      })
+    handleCloseProduct(item){
+      this.products.splice(this.products.indexOf(item), 1)
+    },
+    handleCloseProcess(item){
+      this.processes.splice(this.processes.indexOf(item), 1)
     },
 
-    getProcessOptions() {
-      processManagement.getAllProcess().then(result => {
+    changeMaterialLabel(node,instanceId) {
+      this.filterMaterialOptions = []
+      materialManagement.getMaterialOptionsByLabel(node.leafName).then(result => {
         if (result.code === 200) {
-          this.processOptions = []
-          this.processOptions.push(result.data)
-        }
-      })
-    },
-    changeMaterialLabel(value) {
-      materialManagement.getMaterialOptionsByLabel(value).then(result => {
-        if (result.code === 200) {
-          this.filterMaterialOptions = []
           this.filterMaterialOptions.push(result.data)
         }
       })
     },
-    changeProductLabel(value) {
-      structureManagement.getProductOptionsByLabel(value).then(result => {
+    changeProductLabel(node,instanceId) {
+      this.filterProductOptions = []
+      structureManagement.getProductOptionsByLabel(node.leafName).then(result => {
         if (result.code === 200) {
-          this.filterProductOptions = []
           this.filterProductOptions.push(result.data)
         }
       })
     },
-    changeProcessLabel(value) {
-      processManagement.getProcessOptionsByLabel(value).then(result => {
+    changeProcessLabel(node,instanceId) {
+      this.filterProcessOptions = []
+      processManagement.getProcessOptionsByLabel(node.leafName).then(result => {
         if (result.code === 200) {
-          this.filterProcessOptions = []
           this.filterProcessOptions.push(result.data)
         }
       })
     },
     handleOpen() {
-      this.getMaterialOptions()
-      this.getProductOptions()
-      // this.getProcessOptions();
+
       this.getTreeselect()
 
       console.log(this.prescriptionId)
@@ -404,13 +357,13 @@ export default {
           console.log(this.elements)
         }
       })
-      prescriptionManagement.getProductsByPrescriptionId(this.selectPrescriptionId).then(result => {
+      structureManagement.getProductsByRelatedId(this.selectPrescriptionId).then(result => {
         if (result.code === 200) {
           this.products = []
           this.products.push(result.data)
         }
       })
-      prescriptionManagement.getProcessByPrescriptionId(this.selectPrescriptionId).then(result => {
+      processManagement.getProcessByRelatedId(this.selectPrescriptionId).then(result => {
         if (result.code === 200) {
           this.processes = []
           this.processes.push(result.data)
@@ -434,17 +387,13 @@ export default {
       this.$emit('closeDialog', null)
       this.$emit('restore', null)
     },
-    handleEditElement(){
 
-    },
     addMaterialElement() {
-      this.elements.push({
-        materialId: 0,
-        materialName: '',
-        relationId: 0,
-        percentage: 0.0
-      })
-      this.newMaterialId = undefined
+      let item = {
+        material:this.newElement,
+        percentage: this.newMaterialPercentage
+      }
+      this.elements.push(item)
       this.newMaterialPercentage = 0.0
     },
     removeMaterialElement(item) {

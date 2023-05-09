@@ -10,7 +10,7 @@ export function getAllInspectMethods(data) {
 
 export function getAllInspectMethodsByLabel(data) {
   return request({
-    url: '/method/getAllInspectMethodsByLabel',
+    url: '/method/getInspectionMethodsByType',
     method: 'post',
     data: data
   })
@@ -18,7 +18,7 @@ export function getAllInspectMethodsByLabel(data) {
 
 export function getInspectMethodsByParams(data) {
   return request({
-    url: '/method/getInspectMethodsByParams',
+    url: '/method/getAllInspectionMethodsByParams',
     method: 'post',
     data: data
   })
@@ -26,7 +26,7 @@ export function getInspectMethodsByParams(data) {
 
 export function getInspectMethodById(methodId) {
   return request({
-    url: '/method/getInspectMethodById/' + methodId,
+    url: '/method/getInspectionMethodById/' + methodId,
     method: 'get'
   })
 }
@@ -57,7 +57,7 @@ export function deleteInspectMethod(data) {
 
 export function changeRelations(data) {
   return request({
-    url: '/method/changeRelations',
+    url: '/method/modifyRelations',
     method: 'post',
     data: data
   })

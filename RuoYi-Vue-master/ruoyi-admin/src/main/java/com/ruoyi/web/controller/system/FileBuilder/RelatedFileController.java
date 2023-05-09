@@ -90,6 +90,58 @@ public class RelatedFileController extends BaseController {
         }
     };
 
+    @ResponseBody
+    @GetMapping("/getFilesByRelatedId/{relatedId}")
+    public R<List<FileKnowledge>> getFilesByRelatedId(@PathVariable Long relatedId){
+        try {
+            List<FileKnowledge> files = fileKnowledgeService.getFilesByRelatedId(relatedId);
+            System.out.println(files);
+            return R.success(files);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    };
+
+    @ResponseBody
+    @GetMapping("/getModelFileByStructure/{relatedId}")
+    public R<FileKnowledge> getModelFileByStructure(@PathVariable Long relatedId){
+        try {
+            FileKnowledge model = fileKnowledgeService.getModelFileByStructureId(relatedId);
+            System.out.println(model);
+            return R.success(model);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    };
+
+    @ResponseBody
+    @GetMapping("/getFileOptionsByLabel/{label}")
+    public R<List<FileKnowledge>> getFileOptionsByLabel(@PathVariable String label){
+        try {
+            List<FileKnowledge> options = fileKnowledgeService.getFileOptionsByLabel(label);
+            System.out.println(options);
+            return R.success(options);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    };
+
+    @ResponseBody
+    @GetMapping("/getAllModelFile")
+    public R<List<FileKnowledge>> getAllModelFile(){
+        try {
+            List<FileKnowledge> files = fileKnowledgeService.getAllModelFile();
+            System.out.println(files);
+            return R.success(files);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    };
+
 
     @ResponseBody
     @PostMapping("/updateFile")

@@ -88,6 +88,32 @@ public class QualityProblemController extends BaseController {
     };
 
     @ResponseBody
+    @GetMapping("/getQualityProblemOptionsByLabel/{label}")
+    public R<List<QualityProblem>> getQualityProblemOptionsByLabel(@PathVariable String label){
+        try{
+            List<QualityProblem> problems = qualityProblemService.getQualityProblemOptionsByLabel(label);
+            System.out.println(problems);
+            return R.success(problems);
+        }catch(Exception e){
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    };
+
+    @ResponseBody
+    @GetMapping("/getProblemsByRelatedId/{relatedId}")
+    public R<List<QualityProblem>> getProblemsByRelatedId(@PathVariable Long relatedId){
+        try{
+            List<QualityProblem> problems = qualityProblemService.getProblemsByRelatedId(relatedId);
+            System.out.println(problems);
+            return R.success(problems);
+        }catch(Exception e){
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    };
+
+    @ResponseBody
     @PostMapping("/getAllProblemsByParams")
     public R<Page<QualityProblem>> getAllProblemsByParams(@RequestBody ProblemQueryVo params){
         try{

@@ -3,11 +3,9 @@ package com.ruoyi.web.controller.system.ElementBuilder;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.utils.Neo4j.R;
 import com.ruoyi.system.domain.AssemblyPojo.Structure.*;
-import com.ruoyi.system.domain.AssemblyPojo.Structure.vo.Constraint;
-import com.ruoyi.system.domain.AssemblyPojo.Structure.vo.ConstraintForElement;
-import com.ruoyi.system.domain.AssemblyPojo.Structure.vo.ElementForParent;
-import com.ruoyi.system.domain.AssemblyPojo.Structure.vo.ElementQueryVo;
+import com.ruoyi.system.domain.AssemblyPojo.Structure.vo.*;
 import com.ruoyi.system.service.ElementService.ElementService;
+import com.ruoyi.system.service.KnowledgeService.File.FileKnowledgeService;
 import org.springframework.data.domain.*;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,6 +20,9 @@ public class ElementController extends BaseController {
 
     @Resource
     private ElementService elementService;
+
+    @Resource
+    private FileKnowledgeService fileKnowledgeService;
 
     @ResponseBody
     @GetMapping("/getAllProducts")
@@ -43,6 +44,19 @@ public class ElementController extends BaseController {
             List<AssemblyElement> productList = elementService.getAllAssemblyProductsByLabel(params.getDynamicLabel());
             System.out.println(productList);
             return R.success(productList);
+        } catch (Exception e){
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    };
+
+    @ResponseBody
+    @GetMapping("/getProductOptionsByLabel/{label}")
+    public R<List<AssemblyElement>> getProductOptionsByLabel(@PathVariable String label){
+        try {
+            List<AssemblyElement> elements = elementService.getAllAssemblyProductsByLabel(label);
+            System.out.println(elements);
+            return R.success(elements);
         } catch (Exception e){
             e.printStackTrace();
             return R.error(e.getMessage());
@@ -127,6 +141,47 @@ public class ElementController extends BaseController {
     };
 
     @ResponseBody
+    @GetMapping("/getSubElementsById/{elementId}")
+    public R<List<AssemblyElement>> getSubElementsById(@PathVariable Long elementId){
+        try {
+            List<AssemblyElement> elements = elementService.getSubElementsById(elementId);
+            System.out.println(elements);
+            return R.success(elements);
+        } catch (Exception e){
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    };
+
+    @ResponseBody
+    @GetMapping("/getParentElementById/{elementId}")
+    public R<AssemblyElement> getParentElementById(@PathVariable Long elementId){
+        try {
+            AssemblyElement elements = elementService.getParentElementById(elementId);
+            System.out.println(elements);
+            return R.success(elements);
+        } catch (Exception e){
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    };
+
+    @ResponseBody
+    @GetMapping("/getSingleElementById/{elementId}")
+    public R<AssemblyElement> getSingleElementById(@PathVariable Long elementId){
+        try {
+            AssemblyElement element = elementService.getSingleElementById(elementId);
+            System.out.println(element);
+            return R.success(element);
+        } catch (Exception e){
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    };
+
+
+
+    @ResponseBody
     @GetMapping("/getConstraintsByElementId/{elementId}")
     public R<List<AssemblyConstraint>> getConstraintsByElementId(@PathVariable Long elementId){
         try {
@@ -141,9 +196,9 @@ public class ElementController extends BaseController {
 
     @ResponseBody
     @PostMapping("/createConstraint")
-    public R<AssemblyConstraint> createConstraint(@RequestBody AssemblyConstraint constraint){
+    public R<AssemblyConstraint> createConstraint(@RequestBody ConstraintVo vo){
         try {
-            AssemblyConstraint constraint1 = elementService.createConstraint(constraint);
+            AssemblyConstraint constraint1 = elementService.createConstraint(vo);
             System.out.println(constraint1);
             return R.success(constraint1);
         } catch (Exception e){
@@ -178,8 +233,8 @@ public class ElementController extends BaseController {
     };
 
     @ResponseBody
-    @GetMapping("/getProductById/{elementId}")
-    public R<AssemblyElement> getWholeProductById(@PathVariable Long elementId){
+    @GetMapping("/getElementById/{elementId}")
+    public R<AssemblyElement> getElementById(@PathVariable Long elementId){
         try {
             AssemblyElement element = elementService.getElementById(elementId);
             return R.success(element);
@@ -189,15 +244,12 @@ public class ElementController extends BaseController {
         }
     };
 
-
-
     @ResponseBody
-    @PostMapping("/createProduct")
-    public R<List<AssemblyProduct>> createProduct(@RequestBody AssemblyProduct product){
+    @GetMapping("/getRelatedStructure/{relatedId}")
+    public R<List<AssemblyElement>> getRelatedStructure(@PathVariable Long relatedId){
         try {
-            AssemblyProduct assemblyproduct = elementService.createProduct(product);
-            System.out.println(assemblyproduct);
-            return R.success(assemblyproduct);
+            List<AssemblyElement> structure = elementService.getRelatedStructure(relatedId);
+            return R.success(structure);
         } catch (Exception e){
             e.printStackTrace();
             return R.error(e.getMessage());
@@ -205,31 +257,16 @@ public class ElementController extends BaseController {
     };
 
     @ResponseBody
-    @PostMapping("/createComponent")
-    public R<List<AssemblyProduct>> createComponent(@RequestBody AssemblyComponent component ){
+    @PostMapping("/modifyRelatedStructure")
+    public R<String> modifyRelatedStructure(@RequestBody RelatedStructureVo vo ){
         try {
-            elementService.createComponent(component);
-            System.out.println(component);
-            return R.success(component);
+            elementService.modifyRelatedStructure(vo);
+            return R.success("修改成功！");
         } catch (Exception e){
             e.printStackTrace();
             return R.error(e.getMessage());
         }
     };
-
-    @ResponseBody
-    @PostMapping("/createPart")
-    public R<List<AssemblyProduct>> createPart(@RequestBody AssemblyPart part ){
-        try {
-            elementService.createPart(part);
-            System.out.println(part);
-            return R.success(part);
-        } catch (Exception e){
-            e.printStackTrace();
-            return R.error(e.getMessage());
-        }
-    };
-
 
     @ResponseBody
     @PostMapping("/deleteElements")
@@ -242,6 +279,21 @@ public class ElementController extends BaseController {
             return R.error(e.getMessage());
         }
     };
+
+    @ResponseBody
+    @PostMapping("/modifyFiles")
+    public R<String> modifyFiles(@RequestBody RelationsVoForElement relations ){
+        try {
+            fileKnowledgeService.createRelatedRelations(relations.getElementId(), relations.getAssociatedFileIds());
+            elementService.modifyRelations(relations);
+            return R.success("更改成功！");
+        } catch (Exception e){
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    };
+
+
 
 
 

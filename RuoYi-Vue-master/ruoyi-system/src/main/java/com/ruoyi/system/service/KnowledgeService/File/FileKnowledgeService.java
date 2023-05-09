@@ -61,4 +61,14 @@ public interface FileKnowledgeService
      * @return 结果
      */
     public void deleteFileKnowledgeByFileId(Long fileId);
+
+    public void createRelatedRelations(Long relatedId,List<Long> files);
+
+    public List<FileKnowledge> getFilesByRelatedId(Long relatedId);
+
+    List<FileKnowledge> getAllModelFile();
+
+    List<FileKnowledge> getFileOptionsByLabel(String label);
+
+    public FileKnowledge getModelFileByStructureId(Long structure);
 }

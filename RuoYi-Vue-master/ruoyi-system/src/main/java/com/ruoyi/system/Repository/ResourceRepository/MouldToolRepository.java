@@ -15,4 +15,7 @@ public interface MouldToolRepository extends Neo4jRepository<MouldTool,Long> {
             countQuery = "Match (n:MouldTool :`:#{literal(#dynamicLabel)}`) return count(n)"
     )
     Page<MouldTool> findResourcesByResourceType(@Param("dynamicLabel") String dynamicLabel, Pageable pageable);
+
+    @Override
+    <S extends MouldTool> S save(S entity);
 }

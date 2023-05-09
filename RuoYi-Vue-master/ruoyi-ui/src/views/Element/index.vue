@@ -33,8 +33,27 @@
             :props="productProps"
             default-expand-all
             @node-click="handleProductClick"
-            @node-contextmenu="showContextMenu"
-          />
+          >
+            <span slot-scope="{ node, data }" class="custom-tree-node">
+              <span>{{ node.label }}</span>
+                <span>
+                  <el-button
+                    size="mini"
+                    type="text"
+                    @click="() => handleUpdate(data)"
+                  >
+                    修改
+                  </el-button>
+                  <el-button
+                    size="mini"
+                    type="text"
+                    @click="() => handleDelete(data)"
+                  >
+                    删除
+                  </el-button>
+                </span>
+              </span>
+          </el-tree>
         </div>
       </el-col>
       <!--产品数据-->
@@ -62,11 +81,12 @@
           </el-form-item>
           <el-form-item label="只看典型">
             <template slot-scope="scope">
-                <el-switch
-                  v-model="typical"
-                  active-color="#13ce66"
-                  inactive-color="#ff4949">
-                </el-switch>
+              <el-switch
+                v-model="typical"
+                active-color="#13ce66"
+                inactive-color="#ff4949"
+              >
+              </el-switch>
             </template>
           </el-form-item>
           <el-form-item>
@@ -133,44 +153,51 @@
 
         <ModifyElement ref="modifyElement"
                        :dialog="modifyElementShow"
-                       :selectElementId="selectElementId"
                        :pId="productId"
                        :proId="parentId"
+                       :selectElementId="selectElementId"
                        :title="title"
                        @closeDialog="() =>{ this.modifyElementShow = false }"
                        @restore="() =>{this.selectElement = {}}"
         />
         <constrains ref="constrains"
                     :dialog="modifyConstraintShow"
-                    :selectElement="selectElement"
+                    :selectElementId="selectElementId"
+                    :pId="productId"
                     :title="title"
                     @closeDialog="() =>{ this.modifyConstraintShow = false }"
                     @restore="() =>{this.selectElement = {}}"
         />
 
-        <el-table v-loading="loading" :data="elements" row-key="elementId"
-                  :tree-props="{children: 'subElements', hasChildren: 'hasChildren'}" @selection-change="handleSelectionChange">
+        <el-table v-loading="loading" :data="elements"
+                  :load="loadSubElement"
+                  :tree-props="{children: 'subElements', hasChildren: 'hasSubElements'}"
+                  lazy
+                  row-key="elementId"
+                  @selection-change="handleSelectionChange"
+        >
           <el-table-column align="center" type="selection" width="50"/>
-          <el-table-column v-if="columns[0].visible" key="elementId" align="center" label="结构编号" prop="elementId"/>
+          <el-table-column v-if="columns[0].visible" key="elementId" align="center" label="编号" prop="elementId"/>
           <el-table-column v-if="columns[1].visible" key="elementName" :show-overflow-tooltip="true" align="center"
-                           label="结构名称" prop="elementName"
+                           label="名称" prop="elementName"
           />
           <el-table-column v-if="columns[2].visible" key="elementQuantity" :show-overflow-tooltip="true" align="center"
-                           label="结构数量" prop="elementQuantity"
+                           label="数量" prop="elementQuantity"
           />
-          <el-table-column v-if="columns[3].visible" key="elementDescription" align="center" label="结构描述"
+          <el-table-column v-if="columns[3].visible" key="elementDescription" align="center" label="描述"
                            prop="elementDescription"
           />
           <el-table-column v-if="columns[4].visible" key="elementSource" :show-overflow-tooltip="true" align="center"
-                           label="结构来源" prop="elementSource"
+                           label="来源" prop="elementSource"
           >
             <template slot-scope="scope">
-              <el-radio v-model="scope.row.elementSource" label="自制">自制</el-radio>
-              <el-radio v-model="scope.row.elementSource" label="外源">外源</el-radio>
+              <el-tag>
+                {{scope.row.elementSource}}
+              </el-tag>
             </template>
           </el-table-column>
           <el-table-column v-if="columns[5].visible" key="elementDensity" :show-overflow-tooltip="true" align="center"
-                           label="结构密度" prop="elementDensity"
+                           label="密度" prop="elementDensity"
           />
           <el-table-column v-if="columns[6].visible" key="elementWetArea" align="center" label="表面积"
                            prop="elementWetArea" width="120"
@@ -230,7 +257,7 @@
       </el-col>
     </el-row>
 
-    <el-dialog title="轻模型展示" :visible.sync="modelShow" append-to-body >
+    <el-dialog :visible.sync="modelShow" append-to-body title="轻模型展示">
       <iframe :src="fileUrl" frameborder="0" style="width: 800px;height: 600px"></iframe>
     </el-dialog>
 
@@ -273,11 +300,12 @@
 <script>
 
 import * as elementManagement from '@/api/system/elementManagement'
+import * as fileManagement from '@/api/system/fileManagement'
 import constrains from '@/views/Element/components/constrains.vue'
 import { getToken } from '@/utils/auth'
 import * as treeManagement from '@/api/system/treeManagement'
 import ModifyElement from '@/views/Element/components/modifyElement.vue'
-import { getAllElementsByParams } from '@/api/system/elementManagement'
+import { getProductOptionsByLabel } from '@/api/system/elementManagement'
 
 export default {
   name: 'index',
@@ -324,7 +352,7 @@ export default {
       },
       queryParams: {
         pageNum: 1,
-        pageSize: 9,
+        pageSize: 10,
         sortableField: 'elementId',
         sortType: 'ascending',
         dynamicLabel: '',
@@ -338,7 +366,7 @@ export default {
       },
       // 列信息
       columns: [
-        { key: 0, label: `结构编号`, visible: true },
+        { key: 0, label: `结构编号`, visible: false },
         { key: 1, label: `结构名称`, visible: true },
         { key: 2, label: `结构描述`, visible: true },
         { key: 3, label: `结构数量`, visible: true },
@@ -366,7 +394,7 @@ export default {
         label: 'leafName'
       },
       productProps: {
-        children: 'subElements',
+
         label: 'elementName'
       },
       treeProps: {
@@ -375,20 +403,20 @@ export default {
       },
       selectElement: {},
       model: {
-        fileId:0,
-        fileName:"轻模型-测试1",
-        fileUrl:"D:\\Desktop\\请模型\\assem.html"
+        fileId: 0,
+        fileName: '轻模型-测试1',
+        fileUrl: 'D:\\Desktop\\请模型\\assem.html'
       },
-      fileUrl:"http://localhost:8080/profile/upload/2023/05/02/assem.html",
+      fileUrl: 'http://localhost:8080/profile/upload/2023/05/02/assem.html',
       modifyState: false,
       elementTree: [],
       dialog: false,
       total: 0,
       currentPage: 1,
-      typical:false,
-      selectElementId:0,
-      productId:0,
-      parentId:0,
+      typical: false,
+      selectElementId: 0,
+      productId: 0,
+      parentId: 0
     }
   },
 
@@ -408,13 +436,13 @@ export default {
       } else if (this.queryParams.dynamicLabel !== '') {
         elementManagement.getProductListByLabel(this.queryParams).then(result => {
             if (result.code === 200) {
-              this.elements = result.data.content
-              this.total = result.data.totalElements
+              this.products = result.data.content
+              // this.total = result.data.totalElements
               this.loading = false
             }
           }
         )
-      } else if (this.queryParams.originProblem.elementName !== '' || this.queryParams.originProblem.elementDescription !== '') {
+      } else if (this.queryParams.originElement.elementName !== '' || this.queryParams.originElement.elementDescription !== '') {
         elementManagement.getAllElementsByParams(this.queryParams).then(result => {
             if (result.code === 200) {
               this.elements = result.data.content
@@ -441,9 +469,10 @@ export default {
     },
     // 分类树节点单击事件
     handleNodeClick(data) {
-      this.queryParams.dynamicLabel = data.leafValue
+      this.queryParams.dynamicLabel = data.leafName
       this.loading = true
-      elementManagement.getProductListByLabel(this.queryParams).then(result => {
+      this.queryParams.sortableField = 'n.label'
+      elementManagement.getProductOptionsByLabel(this.queryParams).then(result => {
           if (result.code === 200) {
             this.products = result.data
             this.loading = false
@@ -453,17 +482,30 @@ export default {
     },
     //产品树节点单击
     handleProductClick(data) {
+      this.elements = []
       this.productId = data.elementId
       this.parentId = data.elementId
-      // this.queryParams.originElement.elementId = data.elementId
       this.loading = true
-      elementManagement.getProductById(data.elementId).then(result => {
+      this.elements.push(data)
+      elementManagement.getSubElementsById(data.elementId).then(result => {
           if (result.code === 200) {
-            this.elements = result.data.subElements
+            this.elements[0].subElements = result.data
             this.loading = false
+            console.log(this.elements)
           }
         }
       )
+    },
+    loadSubElement(tree, treeNode, resolve) {
+      setTimeout(() => {
+        let id = tree.elementId
+        elementManagement.getSubElementsById(id).then(result => {
+            if (result.code === 200) {
+              resolve(result.data)
+            }
+          }
+        )
+      }, 1000)
     },
     handleCommand(command, data) {
       switch (command) {
@@ -481,11 +523,16 @@ export default {
     handleConstraints(data) {
       this.modifyConstraintShow = true
       this.selectElement = data
+      this.selectElementId = data.elementId
     },
     handleModel(data) {
       this.modelShow = true
-      console.log(44444)
-      this.model = data.model
+      fileManagement.getModelFileByStructure(data.elementId).then(result => {
+        if (result.code === 200) {
+          this.fileUrl = result.data.fileUrl
+        }
+      })
+      // this.model = data.model
     },
 
     /** 搜索按钮操作 */
@@ -512,21 +559,7 @@ export default {
       this.single = selection.length !== 1
       this.multiple = !selection.length
     },
-    showContextMenu(event, product, node, nodeComponent) {
-      event.preventDefault()
-      let x = event.clientX
-      let y = event.clientY
-      // 获得当前位置
-      this.contextMenuData.axis = {
-        x, y
-      }
-      this.contextMenuData.menulists = this.tableMenu
-      this.selectElement = product
-    },
-    show3DModel(){
-      this.model = this.selectElement.modelFile;
-      this.modelShow =true;
-    },
+
 
     /** 新增按钮操作 */
     handleAdd() {
@@ -542,7 +575,7 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const elementIds = row.elementId || this.ids
-      this.$modal.confirm('是否确认删除结构编号为"' + elementIds + '"的数据项？').then(function() {
+      this.$modal.confirm('是否确认删除编号为"' + elementIds + '"的数据项？').then(function() {
         return elementManagement.deleteElements(elementIds)
       }).then(() => {
         this.getList()
@@ -558,7 +591,7 @@ export default {
     },
     /** 导入按钮操作 */
     handleImport() {
-      this.upload.title = '原则导入'
+      this.upload.title = '产品导入'
       this.upload.open = true
     },
     /** 下载模板操作 */
@@ -587,5 +620,13 @@ export default {
 </script>
 
 <style scoped>
+.custom-tree-node {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+  padding-right: 8px;
+}
 
 </style>

@@ -25,11 +25,6 @@
           />
         </div>
         <div class="head-container">
-<!--          <el-row>-->
-<!--            <el-col :span="12" :offset="6" >-->
-<!--              <span>工艺列表</span>-->
-<!--            </el-col>-->
-<!--          </el-row>-->
           <el-divider></el-divider>
           <el-tree
             ref="processTree"
@@ -38,7 +33,27 @@
             :props="processProps"
             default-expand-all
             @node-click="handleProcessClick"
-          />
+          >
+            <span slot-scope="{ node, data }" class="custom-tree-node">
+              <span>{{ node.label }}</span>
+                <span>
+                  <el-button
+                    size="mini"
+                    type="text"
+                    @click="() => handleUpdate(data)"
+                  >
+                    修改
+                  </el-button>
+                  <el-button
+                    size="mini"
+                    type="text"
+                    @click="() => handleDelete(data)"
+                  >
+                    删除
+                  </el-button>
+                </span>
+              </span>
+          </el-tree>
         </div>
       </el-col>
       <!--工艺数据-->
@@ -63,6 +78,16 @@
               style="width: 240px"
               @keyup.enter.native="handleQuery"
             />
+          </el-form-item>
+          <el-form-item label="只看典型">
+            <template slot-scope="scope">
+              <el-switch
+                v-model="typical"
+                active-color="#13ce66"
+                inactive-color="#ff4949"
+              >
+              </el-switch>
+            </template>
           </el-form-item>
           <el-form-item>
             <el-button icon="el-icon-search" size="mini" type="primary" @click="handleQuery">搜索</el-button>
@@ -128,30 +153,38 @@
 
         <modifyElement ref="modifyElement"
                        :dialog="modifyElementShow"
-                       :selectElement="selectElement"
+                       :pId="processId"
+                       :proId="parentId"
+                       :selectElementId="selectElementId"
                        :title="title"
                        @closeDialog="() =>{ this.modifyElementShow = false }"
                        @restore="() =>{this.selectElement = {}}"
         />
-        <relationWindow ref="constrains"
-                    :dialog="modifyConstraintShow"
-                    :selectElement="selectElement"
-                    :title="title"
-                    @closeDialog="() =>{ this.modifyConstraintShow = false }"
-                    @restore="() =>{this.selectElement = {}}"
+        <relationWindow ref="relatedWindow"
+                        :dialog="modifyConstraintShow"
+                        :pId="parentId"
+                        :selectElementId="selectElementId"
+                        @closeDialog="() =>{ this.modifyConstraintShow = false }"
+                        @restore="() =>{this.selectElement = {}}"
         />
 
-        <el-table v-loading="loading" :data="elements" row-key="elementId" @selection-change="handleSelectionChange"
-                  :tree-props="{children: 'subElements', hasChildren: 'hasChildren'}">
+        <el-table v-loading="loading" :data="elements"
+                  :load="loadSubElement"
+                  lazy
+                  :tree-props="{children: 'subElements', hasChildren: 'hasSubElements'}"
+                  row-key="elementId"
+                  @selection-change="handleSelectionChange"
+        >
           <el-table-column align="center" type="selection" width="50"/>
-          <el-table-column v-if="columns[0].visible" key="elementId" align="center" label="元素编号" prop="elementId"/>
+          <el-table-column v-if="columns[0].visible" key="elementId" align="center" label="编号" prop="elementId"/>
           <el-table-column v-if="columns[1].visible" key="elementNumber" :show-overflow-tooltip="true" align="center"
-                           label="元素序号" prop="elementNumber"
+                           label="序号" prop="elementNumber"
           />
           <el-table-column v-if="columns[2].visible" key="elementName" :show-overflow-tooltip="true" align="center"
-                           label="元素名称" prop="elementName"
+                           label="名称" prop="elementName"
           />
-          <el-table-column v-if="columns[3].visible" key="elementDescription" :show-overflow-tooltip="true" align="center"
+          <el-table-column v-if="columns[3].visible" key="elementDescription" :show-overflow-tooltip="true"
+                           align="center"
                            label="内容描述"
                            prop="elementDescription"
           />
@@ -164,22 +197,26 @@
               </el-tag>
             </template>
           </el-table-column>
-          <el-table-column v-if="columns[5].visible" key="elementRequirements" :show-overflow-tooltip="true" align="center"
+          <el-table-column v-if="columns[5].visible" key="elementRequirements" :show-overflow-tooltip="true"
+                           align="center"
                            label="相关要求" prop="elementRequirements"
           >
             <template slot-scope="scope">
               <el-tag v-for="(value, key) in scope.row.elementRequirements" :key="key" :index="key+''" type="success">
-                {{ key + ':' + scope.row.elementRequirements[key+''] }}
+                {{ key + ':' + scope.row.elementRequirements[key + ''] }}
               </el-tag>
             </template>
           </el-table-column>
-          <el-table-column v-if="columns[6].visible" key="elementOtherProperties" :show-overflow-tooltip="true" align="center"
+          <el-table-column v-if="columns[6].visible" key="elementOtherProperties" :show-overflow-tooltip="true"
+                           align="center"
                            label="其他属性"
                            prop="elementOtherProperties"
           >
             <template slot-scope="scope">
-              <el-tag v-for="(value, key) in scope.row.elementOtherProperties" :key="key" :index="key+''" type="success">
-                {{ key + ':' + scope.row.elementOtherProperties[key+''] }}
+              <el-tag v-for="(value, key) in scope.row.elementOtherProperties" :key="key" :index="key+''"
+                      type="success"
+              >
+                {{ key + ':' + scope.row.elementOtherProperties[key + ''] }}
               </el-tag>
             </template>
           </el-table-column>
@@ -226,7 +263,7 @@
       </el-col>
     </el-row>
 
-    <!-- 产品导入对话框 -->
+    <!-- 工艺导入对话框 -->
     <el-dialog :title="upload.title" :visible.sync="upload.open" append-to-body width="400px">
       <el-upload
         ref="upload"
@@ -269,7 +306,7 @@ import modifyElement from '@/views/Process/components/modifyElement.vue'
 import RelationWindow from '@/views/Process/components/relationWindow.vue'
 import { getToken } from '@/utils/auth'
 import * as treeManagement from '@/api/system/treeManagement'
-import { getAllProcess } from '@/api/system/processManagement'
+
 
 export default {
   name: 'index1',
@@ -316,7 +353,7 @@ export default {
       },
       queryParams: {
         pageNum: 1,
-        pageSize: 9,
+        pageSize: 10,
         sortableField: 'elementId',
         sortType: 'ascending',
         dynamicLabel: '',
@@ -330,7 +367,7 @@ export default {
       },
       // 列信息
       columns: [
-        { key: 0, label: `元素编号`, visible: true },
+        { key: 0, label: `元素编号`, visible: false },
         { key: 1, label: `元素序号`, visible: true },
         { key: 2, label: `元素名称`, visible: true },
         { key: 3, label: `内容描述`, visible: true },
@@ -344,162 +381,163 @@ export default {
       modelShow: false,
       showSearch: true,
       selectId: 0,
+      typical: false,
       selectLabel: '',
       filterText: '',
       labelOptions: [],
       processes: [
         {
-          elementId:0,
-          elementName:'测试工艺方案1'
+          elementId: 0,
+          elementName: '测试工艺方案1'
         }
       ],
-      elements:[{
-        elementId:25369,
-        elementNumber:'',
-        elementName:'壳体准备工艺',
-        elementDescription:'',
-        elementRemark:["壳体内表面绝热层喷砂、打磨、清理"],
-        elementRequirements:{},
-        elementOtherProperties:{},
-        subElements:[
+      elements: [{
+        elementId: 25369,
+        elementNumber: '',
+        elementName: '壳体准备工艺',
+        elementDescription: '',
+        elementRemark: ['壳体内表面绝热层喷砂、打磨、清理'],
+        elementRequirements: {},
+        elementOtherProperties: {},
+        subElements: [
           {
-            elementId:25412,
-            elementNumber:'10',
-            elementName:'壳体预处理工序',
-            elementDescription:'壳体内表面绝热层喷砂、打磨、清理',
-            elementRemark:[],
-            elementRequirements:{},
-            elementOtherProperties:{},
-            subElements:[
+            elementId: 25412,
+            elementNumber: '10',
+            elementName: '壳体预处理工序',
+            elementDescription: '壳体内表面绝热层喷砂、打磨、清理',
+            elementRemark: [],
+            elementRequirements: {},
+            elementOtherProperties: {},
+            subElements: [
               {
-                elementId:25501,
-                elementNumber:'1',
-                elementName:'壳体接收',
-                elementDescription:'',
-                elementRemark:[],
-                elementRequirements:{
-                  技术要求:'见子工步',
-                  检验要求:'三检'
+                elementId: 25501,
+                elementNumber: '1',
+                elementName: '壳体接收',
+                elementDescription: '',
+                elementRemark: [],
+                elementRequirements: {
+                  技术要求: '见子工步',
+                  检验要求: '三检'
                 },
-                elementOtherProperties:{},
-                subElements:[
+                elementOtherProperties: {},
+                subElements: [
                   {
-                    elementId:25520,
-                    elementNumber:'1.1',
-                    elementName:'壳体接收1',
-                    elementDescription:'壳体卸车时，将壳体平稳放置弧形架或打磨转动车上。检查壳体外表面有无划痕、磕碰伤，电缆支座有无磕碰伤，前后封头纤维丝有无断裂，前后裙及前后接头（金属件）有无损伤，螺纹孔有无缺陷、多余物，人工脱粘层分离是否正常，有无局部粘连，其夹层内有无多余物等，并做详细记录。',
-                    elementRemark:[],
-                    elementRequirements:{},
-                    elementOtherProperties:{},
+                    elementId: 25520,
+                    elementNumber: '1.1',
+                    elementName: '壳体接收1',
+                    elementDescription: '壳体卸车时，将壳体平稳放置弧形架或打磨转动车上。检查壳体外表面有无划痕、磕碰伤，电缆支座有无磕碰伤，前后封头纤维丝有无断裂，前后裙及前后接头（金属件）有无损伤，螺纹孔有无缺陷、多余物，人工脱粘层分离是否正常，有无局部粘连，其夹层内有无多余物等，并做详细记录。',
+                    elementRemark: [],
+                    elementRequirements: {},
+                    elementOtherProperties: {}
                   },
                   {
-                    elementId:25521,
-                    elementNumber:'1.2',
-                    elementName:'壳体接收2',
-                    elementDescription:'填写产品标识，连同质量标识一同粘贴于壳体前裙端面I象限金属裙框附近处。',
-                    elementRemark:[],
-                    elementRequirements:{
-                      技术要求:'粘贴产品标识前，应确认质量传递卡与壳体质量标识齐全后方可粘贴',
-                      检验要求:'三检'
+                    elementId: 25521,
+                    elementNumber: '1.2',
+                    elementName: '壳体接收2',
+                    elementDescription: '填写产品标识，连同质量标识一同粘贴于壳体前裙端面I象限金属裙框附近处。',
+                    elementRemark: [],
+                    elementRequirements: {
+                      技术要求: '粘贴产品标识前，应确认质量传递卡与壳体质量标识齐全后方可粘贴',
+                      检验要求: '三检'
                     },
-                    elementOtherProperties:{},
+                    elementOtherProperties: {}
                   },
                   {
-                    elementId:25522,
-                    elementNumber:'1.3',
-                    elementName:'壳体接收3',
-                    elementDescription:'壳体接收后，每天记录壳体存放区域的环境情况和产品防护情况',
-                    elementRemark:[],
-                    elementRequirements:{
-                      技术要求:'环境情况包括：天气情况、温度、相对湿含量、绝对湿含量',
-                      检验要求:'三检'
+                    elementId: 25522,
+                    elementNumber: '1.3',
+                    elementName: '壳体接收3',
+                    elementDescription: '壳体接收后，每天记录壳体存放区域的环境情况和产品防护情况',
+                    elementRemark: [],
+                    elementRequirements: {
+                      技术要求: '环境情况包括：天气情况、温度、相对湿含量、绝对湿含量',
+                      检验要求: '三检'
                     },
-                    elementOtherProperties:{},
+                    elementOtherProperties: {}
                   }
                 ]
-              },{
-                elementId:25524,
-                elementNumber:'2',
-                elementName:'内表面处理',
-                elementDescription:'内表面喷砂处理与内表面打磨',
-                elementRemark:[],
-                elementRequirements:{},
-                elementOtherProperties:{},
-                subElements:[
+              }, {
+                elementId: 25524,
+                elementNumber: '2',
+                elementName: '内表面处理',
+                elementDescription: '内表面喷砂处理与内表面打磨',
+                elementRemark: [],
+                elementRequirements: {},
+                elementOtherProperties: {},
+                subElements: [
                   {
-                    elementId:25525,
-                    elementNumber:'2.1',
-                    elementName:'内表面喷砂处理',
-                    elementDescription:'内表面喷砂处理',
-                    elementRemark:[],
-                    elementRequirements:{},
-                    elementOtherProperties:{},
-                    subElements:[
+                    elementId: 25525,
+                    elementNumber: '2.1',
+                    elementName: '内表面喷砂处理',
+                    elementDescription: '内表面喷砂处理',
+                    elementRemark: [],
+                    elementRequirements: {},
+                    elementOtherProperties: {},
+                    subElements: [
                       {
-                        elementId:25527,
-                        elementNumber:'2.1.1',
-                        elementName:'内表面喷砂处理1',
-                        elementDescription:'使用胶带对金属裙上的螺孔进行粘贴保护',
-                        elementRemark:[],
-                        elementRequirements:{
-                          技术要求:'内有螺纹的孔均需保护，光孔不需要保护。'
+                        elementId: 25527,
+                        elementNumber: '2.1.1',
+                        elementName: '内表面喷砂处理1',
+                        elementDescription: '使用胶带对金属裙上的螺孔进行粘贴保护',
+                        elementRemark: [],
+                        elementRequirements: {
+                          技术要求: '内有螺纹的孔均需保护，光孔不需要保护。'
                         },
-                        elementOtherProperties:{},
+                        elementOtherProperties: {}
                       },
                       {
-                        elementId:25528,
-                        elementNumber:'2.1.2',
-                        elementName:'内表面喷砂处理2',
-                        elementDescription:'使用胶布对人工脱夹层进行简易封口。',
-                        elementRemark:[],
-                        elementRequirements:{
-                          技术要求:'防止喷砂过程中多余物进入人脱夹层中。'
+                        elementId: 25528,
+                        elementNumber: '2.1.2',
+                        elementName: '内表面喷砂处理2',
+                        elementDescription: '使用胶布对人工脱夹层进行简易封口。',
+                        elementRemark: [],
+                        elementRequirements: {
+                          技术要求: '防止喷砂过程中多余物进入人脱夹层中。'
                         },
-                        elementOtherProperties:{},
+                        elementOtherProperties: {}
                       },
                       {
-                        elementId:25529,
-                        elementNumber:'2.1.3',
-                        elementName:'内表面喷砂处理3',
-                        elementDescription:'内表面处理采用立式喷砂工艺，喷砂前准备、安装翻转工装及壳体防护工装、喷枪连接、模拟运行、壳体喷砂、壳体起吊转运、卸除工装等步骤操作按《非金属壳体立式喷砂通用工艺规程》执行。',
-                        elementRemark:[],
-                        elementRequirements:{},
-                        elementOtherProperties:{},
+                        elementId: 25529,
+                        elementNumber: '2.1.3',
+                        elementName: '内表面喷砂处理3',
+                        elementDescription: '内表面处理采用立式喷砂工艺，喷砂前准备、安装翻转工装及壳体防护工装、喷枪连接、模拟运行、壳体喷砂、壳体起吊转运、卸除工装等步骤操作按《非金属壳体立式喷砂通用工艺规程》执行。',
+                        elementRemark: [],
+                        elementRequirements: {},
+                        elementOtherProperties: {}
                       }
                     ]
                   },
                   {
-                    elementId:25526,
-                    elementNumber:'2.2',
-                    elementName:'内表面打磨',
-                    elementDescription:'打磨前准备，壳体防护、绝热层打磨、人工脱黏层打磨、壳体清理可按Q/Gz626《非金属壳体内表面处理通用工艺规程执行》',
-                    elementRemark:[],
-                    elementRequirements:{
-                      技术要求:'如需使用打磨工艺，需提前反馈工艺，经批准后方可使用打磨工艺进行内表面处理'
+                    elementId: 25526,
+                    elementNumber: '2.2',
+                    elementName: '内表面打磨',
+                    elementDescription: '打磨前准备，壳体防护、绝热层打磨、人工脱黏层打磨、壳体清理可按Q/Gz626《非金属壳体内表面处理通用工艺规程执行》',
+                    elementRemark: [],
+                    elementRequirements: {
+                      技术要求: '如需使用打磨工艺，需提前反馈工艺，经批准后方可使用打磨工艺进行内表面处理'
                     },
-                    elementOtherProperties:{},
+                    elementOtherProperties: {}
                   }
                 ]
               }
             ]
           },
           {
-            elementId:25411,
-            elementNumber:'20',
-            elementName:'衬层成型工序',
-            elementDescription:'待编辑',
-            elementRemark:[],
-            elementRequirements:{},
-            elementOtherProperties:{},
+            elementId: 25411,
+            elementNumber: '20',
+            elementName: '衬层成型工序',
+            elementDescription: '待编辑',
+            elementRemark: [],
+            elementRequirements: {},
+            elementOtherProperties: {}
           },
           {
-            elementId:25432,
-            elementNumber:'30',
-            elementName:'壳体预处理工序',
-            elementDescription:'待编辑',
-            elementRemark:[],
-            elementRequirements:{},
-            elementOtherProperties:{},
+            elementId: 25432,
+            elementNumber: '30',
+            elementName: '壳体预处理工序',
+            elementDescription: '待编辑',
+            elementRemark: [],
+            elementRequirements: {},
+            elementOtherProperties: {}
           }
 
         ]
@@ -509,7 +547,7 @@ export default {
         label: 'leafName'
       },
       processProps: {
-        children: 'subElements',
+
         label: 'elementName'
       },
       treeProps: {
@@ -517,12 +555,15 @@ export default {
         children: 'subElements'
       },
       selectElement: {},
+      selectElementId:0,
       model: {},
       modifyState: false,
       elementTree: [],
       dialog: false,
       total: 0,
-      currentPage: 1
+      currentPage: 1,
+      processId: 0,
+      parentId: 0
     }
   },
 
@@ -532,7 +573,7 @@ export default {
     getList() {
       this.loading = false
       if (this.queryParams.dynamicLabel === '') {
-        processManagement.getAllWholeProcess(this.queryParams).then(result => {
+        processManagement.getAllWholeProcess().then(result => {
             if (result.code === 200) {
               this.processes = result.data
               this.loading = false
@@ -543,7 +584,7 @@ export default {
         processManagement.getAllProcessByLabel(this.queryParams).then(result => {
             if (result.code === 200) {
               this.processes = result.data.content
-              this.total = result.data.totalElements
+              // this.total = result.data.totalElements
               this.loading = false
             }
           }
@@ -576,7 +617,7 @@ export default {
     handleNodeClick(data) {
       this.queryParams.dynamicLabel = data.leafValue
       this.loading = true
-      this.queryParams.sortableField = "n.label"
+      this.queryParams.sortableField = 'n.label'
       processManagement.getAllProcessByLabel(this.queryParams).then(result => {
           if (result.code === 200) {
             this.processes = result.data
@@ -585,23 +626,37 @@ export default {
         }
       )
     },
-    //产品树节点单击
+    //工艺树节点单击
     handleProcessClick(data) {
-      this.queryParams.originElement.elementId = data.elementId
+      this.elements = []
+      this.processId = data.elementId
+      this.parentId = data.elementId
       this.loading = true
-      processManagement.getProcessById(this.queryParams).then(result => {
+      this.elements.push(data)
+      processManagement.getSubElementsById(data.elementId).then(result => {
           if (result.code === 200) {
-            this.elements = []
-            this.elements.push(result.data)
+            this.elements[0].subElements = result.data
             this.loading = false
           }
         }
       )
     },
 
+    loadSubElement(tree, treeNode, resolve){
+      setTimeout(() => {
+        let id = tree.elementId
+        processManagement.getSubElementsById(id).then(result => {
+            if (result.code === 200) {
+              resolve(result.data)
+            }
+          }
+        )
+      }, 1000)
+    },
     handleRelations(data) {
       this.modifyConstraintShow = true
-      this.selectId = data.elementId
+      this.selectElement = data
+      this.selectElementId = data.elementId
     },
 
     /** 搜索按钮操作 */
@@ -610,8 +665,7 @@ export default {
       this.loading = true
       processManagement.getAllElementsByParams(this.queryParams).then(result => {
           if (result.code === 200) {
-            this.elements = []
-            this.elements.push(result.data)
+            this.elements = result.data
             this.loading = false
           }
         }
@@ -632,14 +686,14 @@ export default {
     /** 新增按钮操作 */
     handleAdd() {
       this.modifyElementShow = true
-      this.title = '新增元素'
+      this.title = '创建元素'
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.modifyElementShow = true
       this.title = '修改元素'
       this.selectElement = row
-      this.selectId = row.elementId
+      this.selectElementId = row.elementId
     },
     /** 删除按钮操作 */
     handleDelete(row) {
@@ -660,7 +714,7 @@ export default {
     },
     /** 导入按钮操作 */
     handleImport() {
-      this.upload.title = '原则导入'
+      this.upload.title = '工艺导入'
       this.upload.open = true
     },
     /** 下载模板操作 */

@@ -1,5 +1,20 @@
 import request from '@/utils/request'
 
+export function getSingleElementById(elementId){
+  return request({
+    url: '/process/getSingleElementsById/'+elementId,
+    method: 'get'
+  })
+}
+
+export function getParentElementById(elementId){
+  return request({
+    url: '/process/getParentElementById/'+elementId,
+    method: 'get'
+  })
+}
+
+
 export function getElementById(elementId){
   return request({
     url: '/process/getElementById/'+elementId,
@@ -7,9 +22,78 @@ export function getElementById(elementId){
   })
 }
 
+export function getSubElementsById(elementId){
+  return request({
+    url: '/process/getSubElementsById/'+elementId,
+    method: 'get'
+  })
+}
+
+export function getBeforeElements(elementId){
+  return request({
+    url: '/process/getBeforeElementsById/'+elementId,
+    method: 'get'
+  })
+}
+
+export function getAfterElements(elementId){
+  return request({
+    url: '/process/getAfterElementsById/'+elementId,
+    method: 'get'
+  })
+}
+
+export function getAndElements(elementId){
+  return request({
+    url: '/process/getAndElementsById/'+elementId,
+    method: 'get'
+  })
+}
+
+export function getOrElements(elementId){
+  return request({
+    url: '/process/getOrElementsById/'+elementId,
+    method: 'get'
+  })
+}
+
 export function createElement(data){
   return request({
     url: '/process/createElement',
+    method: 'post',
+    data:data
+  })
+}
+
+export function modifyBeforeElement(data){
+  return request({
+    url: '/process/modifyBeforeElement',
+    method: 'post',
+    data:data
+  })
+}
+
+export function modifyAfterElement(data){
+  return request({
+    url: '/process/modifyAfterElement',
+    method: 'post',
+    data:data
+  })
+}
+
+export function modifyAndElement(data){
+  return request({
+    url: '/process/modifyAndElement',
+    method: 'post',
+    data:data
+  })
+}
+
+
+
+export function modifyOrElement(data){
+  return request({
+    url: '/process/modifyOrElement',
     method: 'post',
     data:data
   })
@@ -31,6 +115,15 @@ export function updateElement(data){
   })
 }
 
+export function updateRelation(data){
+  return request({
+    url: '/process/updateRelation',
+    method: 'post',
+    data:data
+  })
+}
+
+
 export function getAllProcess(){
   return request({
     url: '/process/getAllProcess',
@@ -45,17 +138,16 @@ export function getAllProcessOptions(){
   })
 }
 
-export function getAllWholeProcess(data){
+export function getAllWholeProcess(){
   return request({
-    url: '/process/getAllWholeProcess',
-    method: 'post',
-    data:data
+    url: '/process/getAllProcess',
+    method: 'get'
   })
 }
 
 export function getAllProcessByLabel(data){
   return request({
-    url: '/process/getAllProcessByLabel',
+    url: '/process/getProcessListsByLabel',
     method: 'post',
     data:data
   })
@@ -63,7 +155,7 @@ export function getAllProcessByLabel(data){
 
 export function getAllElementsByParams(data){
   return request({
-    url: '/process/getAllElementsByParams',
+    url: '/process/getElementsByParams',
     method: 'post',
     data:data
   })
@@ -79,7 +171,7 @@ export function deleteElements(data){
 
 export function getProcessOptionsByLabel(label){
   return request({
-    url: '/process/getAllProcess/'+label,
+    url: '/process/getProcessOptionsByLabel/'+label,
     method: 'get'
   })
 }

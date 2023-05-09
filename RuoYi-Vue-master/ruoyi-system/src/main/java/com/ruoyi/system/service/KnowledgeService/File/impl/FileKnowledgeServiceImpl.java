@@ -1,6 +1,7 @@
 package com.ruoyi.system.service.KnowledgeService.File.impl;
 
 import java.util.Arrays;
+import java.util.List;
 
 import com.ruoyi.system.Repository.KnowledgeRepository.File.FileRepository;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.fileKnowledge.FileKnowledge;
@@ -62,5 +63,34 @@ public class FileKnowledgeServiceImpl implements FileKnowledgeService
     @Override
     public void deleteFileKnowledgeByFileId(Long fileId) {
         fileRepository.deleteById(fileId);
+    }
+
+    @Override
+    public void createRelatedRelations(Long relatedId, List<Long> files) {
+        for (Long fileId : files) {
+            fileRepository.createdAssociatedRelationById(fileId,relatedId);
+        }
+
+    }
+
+    @Override
+    public List<FileKnowledge> getFilesByRelatedId(Long relatedId) {
+        List<FileKnowledge> files = fileRepository.findByAssociatedId(relatedId);
+        return files;
+    }
+
+    @Override
+    public List<FileKnowledge> getAllModelFile() {
+        return fileRepository.getAllModelFile();
+    }
+
+    @Override
+    public List<FileKnowledge> getFileOptionsByLabel(String label) {
+        return fileRepository.getFileOptionsByLabel(label);
+    }
+
+    @Override
+    public FileKnowledge getModelFileByStructureId(Long structureId) {
+        return fileRepository.findByStructureId(structureId);
     }
 }

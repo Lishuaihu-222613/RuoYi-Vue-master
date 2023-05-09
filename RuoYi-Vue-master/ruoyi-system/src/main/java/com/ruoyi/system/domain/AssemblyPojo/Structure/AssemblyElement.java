@@ -49,9 +49,6 @@ public class AssemblyElement {
     @Relationship(type = "isComposedOf", direction = Relationship.Direction.OUTGOING)
     private Set<AssemblyElement> subElements;
 
-    @Relationship(type = "hasConstraint", direction = Relationship.Direction.OUTGOING)
-    private Set<AssemblyConstraint> constraints;
-
     @Relationship(type = "hasModelFile", direction = Relationship.Direction.OUTGOING)
     private FileKnowledge modelFile;
 
@@ -154,14 +151,6 @@ public class AssemblyElement {
         this.subElements = subElements;
     }
 
-    public Set<AssemblyConstraint> getConstraints() {
-        return constraints;
-    }
-
-    public void setConstraints(Set<AssemblyConstraint> constraints) {
-        this.constraints = constraints;
-    }
-
     public FileKnowledge getModelFile() {
         return modelFile;
     }
@@ -189,7 +178,7 @@ public class AssemblyElement {
     public AssemblyElement() {
     }
 
-    public AssemblyElement(Long elementId, String elementName, String elementDescription, Integer elementQuantity, String elementSource, double elementDensity, double elementWetArea, double elementVolume, double elementMass, String elementBoundingBox, boolean hasSubElements, Set<String> dynamicLabels, Set<AssemblyElement> subElements, Set<AssemblyConstraint> constraints, FileKnowledge modelFile, Set<FileKnowledge> associatedFiles) {
+    public AssemblyElement(Long elementId, String elementName, String elementDescription, Integer elementQuantity, String elementSource, double elementDensity, double elementWetArea, double elementVolume, double elementMass, String elementBoundingBox, boolean hasSubElements, Set<String> dynamicLabels, Set<AssemblyElement> subElements, FileKnowledge modelFile, Set<FileKnowledge> associatedFiles) {
         this.elementId = elementId;
         this.elementName = elementName;
         this.elementDescription = elementDescription;
@@ -203,7 +192,6 @@ public class AssemblyElement {
         this.hasSubElements = hasSubElements;
         this.dynamicLabels = dynamicLabels;
         this.subElements = subElements;
-        this.constraints = constraints;
         this.modelFile = modelFile;
         this.associatedFiles = associatedFiles;
     }
@@ -212,13 +200,13 @@ public class AssemblyElement {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        AssemblyElement that = (AssemblyElement) o;
-        return Double.compare(that.elementDensity, elementDensity) == 0 && Double.compare(that.elementWetArea, elementWetArea) == 0 && Double.compare(that.elementVolume, elementVolume) == 0 && Double.compare(that.elementMass, elementMass) == 0 && hasSubElements == that.hasSubElements && Objects.equals(elementId, that.elementId) && Objects.equals(elementName, that.elementName) && Objects.equals(elementDescription, that.elementDescription) && Objects.equals(elementQuantity, that.elementQuantity) && Objects.equals(elementSource, that.elementSource) && Objects.equals(elementBoundingBox, that.elementBoundingBox) && Objects.equals(dynamicLabels, that.dynamicLabels) && Objects.equals(subElements, that.subElements) && Objects.equals(constraints, that.constraints) && Objects.equals(modelFile, that.modelFile) && Objects.equals(associatedFiles, that.associatedFiles);
+        AssemblyElement element = (AssemblyElement) o;
+        return Double.compare(element.elementDensity, elementDensity) == 0 && Double.compare(element.elementWetArea, elementWetArea) == 0 && Double.compare(element.elementVolume, elementVolume) == 0 && Double.compare(element.elementMass, elementMass) == 0 && hasSubElements == element.hasSubElements && Objects.equals(elementId, element.elementId) && Objects.equals(elementName, element.elementName) && Objects.equals(elementDescription, element.elementDescription) && Objects.equals(elementQuantity, element.elementQuantity) && Objects.equals(elementSource, element.elementSource) && Objects.equals(elementBoundingBox, element.elementBoundingBox) && Objects.equals(dynamicLabels, element.dynamicLabels) && Objects.equals(subElements, element.subElements) && Objects.equals(modelFile, element.modelFile) && Objects.equals(associatedFiles, element.associatedFiles);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(elementId, elementName, elementDescription, elementQuantity, elementSource, elementDensity, elementWetArea, elementVolume, elementMass, elementBoundingBox, hasSubElements, dynamicLabels, subElements, constraints, modelFile, associatedFiles);
+        return Objects.hash(elementId, elementName, elementDescription, elementQuantity, elementSource, elementDensity, elementWetArea, elementVolume, elementMass, elementBoundingBox, hasSubElements, dynamicLabels, subElements, modelFile, associatedFiles);
     }
 
     @Override
@@ -237,7 +225,6 @@ public class AssemblyElement {
                 ", hasSubElements=" + hasSubElements +
                 ", dynamicLabels=" + dynamicLabels +
                 ", subElements=" + subElements +
-                ", constraints=" + constraints +
                 ", modelFile=" + modelFile +
                 ", associatedFiles=" + associatedFiles +
                 '}';

@@ -44,7 +44,7 @@ public class InspectionMethod {
     @Relationship(type = "hasAssociatedProblem",direction = Relationship.Direction.OUTGOING)
     private Set<QualityProblem> associatedProblems;
 
-    @Relationship(type = "hasAssociatedDevice",direction = Relationship.Direction.OUTGOING)
+    @Relationship(type = "use",direction = Relationship.Direction.OUTGOING)
     private Set<AssemblyResource> associatedDevices;
 
     @Relationship(type = "hasAssociatedFile",direction = Relationship.Direction.OUTGOING)

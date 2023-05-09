@@ -390,7 +390,7 @@ export default {
         elementName:"",
       },
       modelFile:{
-        fileUrl:"http://localhost:8080/profile/upload/2023/05/02/assem.html"
+        fileUrl:""
       },
       defaultProps:{
         label:"elementName",
@@ -523,6 +523,7 @@ export default {
     },
     handleClickStructure(){
       this.selectElement = {};
+      this.modelFile.fileUrl = "http://localhost:8080/profile/upload/2023/05/02/assem.html"
       elementManagement.getProductById(25677).then(result =>{
         if(result.code ===200){
           this.selectElement = result.data

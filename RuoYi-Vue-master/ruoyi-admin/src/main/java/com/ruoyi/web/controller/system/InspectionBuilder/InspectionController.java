@@ -7,11 +7,11 @@ import com.ruoyi.system.domain.AssemblyPojo.Knowledge.InspectionKnowledge.Inspec
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.InspectionKnowledge.InspectionFactor;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.InspectionKnowledge.InspectionMethod;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.InspectionKnowledge.InspectionMode;
-import com.ruoyi.system.domain.AssemblyPojo.Knowledge.InspectionKnowledge.vo.ConditionForMethod;
-import com.ruoyi.system.domain.AssemblyPojo.Knowledge.InspectionKnowledge.vo.FactorForMethod;
-import com.ruoyi.system.domain.AssemblyPojo.Knowledge.InspectionKnowledge.vo.MethodQueryVo;
-import com.ruoyi.system.domain.AssemblyPojo.Knowledge.InspectionKnowledge.vo.ModeForMethod;
+import com.ruoyi.system.domain.AssemblyPojo.Knowledge.InspectionKnowledge.vo.*;
+import com.ruoyi.system.service.KnowledgeService.File.FileKnowledgeService;
 import com.ruoyi.system.service.KnowledgeService.InspectionMethod.InspectionMethodService;
+import com.ruoyi.system.service.KnowledgeService.QualityProblem.QualityProblemService;
+import com.ruoyi.system.service.ResourceService.ResourceService;
 import org.springframework.data.domain.*;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,6 +26,15 @@ public class InspectionController extends BaseController {
 
     @Resource
     private InspectionMethodService inspectionMethodService;
+
+    @Resource
+    private ResourceService resourceService;
+
+    @Resource
+    private FileKnowledgeService fileKnowledgeService;
+
+    @Resource
+    private QualityProblemService qualityProblemService;
 
     @ResponseBody
     @PostMapping("/getInspectionMethodsByType")
@@ -111,7 +120,7 @@ public class InspectionController extends BaseController {
     };
 
     @ResponseBody
-    @PostMapping("/createInspectionMethod")
+    @PostMapping("/createInspectMethod")
     public R<InspectionMethod> createInspectionMethod(@RequestBody InspectionMethod method) {
         try {
             InspectionMethod inspectionMethod = inspectionMethodService.createInspectionMethod(method);
@@ -124,7 +133,7 @@ public class InspectionController extends BaseController {
     };
 
     @ResponseBody
-    @PostMapping("/updateInspectionMethod")
+    @PostMapping("/updateInspectMethod")
     public R<InspectionMethod> updateInspectionMethod(@RequestBody InspectionMethod method) {
         try {
             InspectionMethod inspectionMethod = inspectionMethodService.updateInspectionMethod(method);
@@ -137,11 +146,26 @@ public class InspectionController extends BaseController {
     };
 
     @ResponseBody
-    @PostMapping("/deleteInspectionMethod")
-    public R<Principle> deleteInspectionMethod(@RequestBody Long[] methodIds) {
+    @PostMapping("/deleteInspectMethod")
+    public R<String> deleteInspectionMethod(@RequestBody Long[] methodIds) {
         try {
             inspectionMethodService.deleteInspectionMethod(methodIds);
             return R.success("删除" + methodIds + "的检测方法");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    };
+
+    @ResponseBody
+    @PostMapping("/modifyRelations")
+    public R<String> modifyRelations(@RequestBody MethodRelations relations) {
+        try {
+            inspectionMethodService.deleteRelations(relations.getMethodId());
+            qualityProblemService.createRelatedRelations(relations.getMethodId(),relations.getProblems());
+            resourceService.createRelatedRelations(relations.getMethodId(),relations.getResources());
+            fileKnowledgeService.createRelatedRelations(relations.getMethodId(),relations.getFiles());
+            return R.success("更改关系成功");
         } catch (Exception e) {
             e.printStackTrace();
             return R.error(e.getMessage());

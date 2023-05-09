@@ -15,10 +15,10 @@ public class EquipmentResource extends AssemblyResource{
     private Map<String,String> equipmentCapacity;
 
     @Property(name = "设备功率")
-    private double equipmentPower;
+    private String equipmentPower;
 
     @Property(name = "设备价格")
-    private double equipmentPrice;
+    private String equipmentPrice;
 
     @Property(name = "生产日期")
     private Date productionDate;
@@ -52,19 +52,19 @@ public class EquipmentResource extends AssemblyResource{
         this.equipmentCapacity = equipmentCapacity;
     }
 
-    public double getEquipmentPower() {
+    public String getEquipmentPower() {
         return equipmentPower;
     }
 
-    public void setEquipmentPower(double equipmentPower) {
+    public void setEquipmentPower(String equipmentPower) {
         this.equipmentPower = equipmentPower;
     }
 
-    public double getEquipmentPrice() {
+    public String getEquipmentPrice() {
         return equipmentPrice;
     }
 
-    public void setEquipmentPrice(double equipmentPrice) {
+    public void setEquipmentPrice(String equipmentPrice) {
         this.equipmentPrice = equipmentPrice;
     }
 
@@ -135,7 +135,7 @@ public class EquipmentResource extends AssemblyResource{
     public EquipmentResource() {
     }
 
-    public EquipmentResource(Long resourceId, String resourceName, String resourceDescription, Set<String> resourceTypes, String site, Map<String, String> equipmentCapacity, double equipmentPower, double equipmentPrice, Date productionDate, String manufacturer, String equipmentSize, String equipmentState, double depreciationRate, double loadRate, List<String> attentions, String principle) {
+    public EquipmentResource(Long resourceId, String resourceName, String resourceDescription, Set<String> resourceTypes, String site, Map<String, String> equipmentCapacity, String equipmentPower, String equipmentPrice, Date productionDate, String manufacturer, String equipmentSize, String equipmentState, double depreciationRate, double loadRate, List<String> attentions, String principle) {
         super(resourceId, resourceName, resourceDescription, resourceTypes, site);
         this.equipmentCapacity = equipmentCapacity;
         this.equipmentPower = equipmentPower;
@@ -156,7 +156,7 @@ public class EquipmentResource extends AssemblyResource{
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         EquipmentResource that = (EquipmentResource) o;
-        return Double.compare(that.equipmentPower, equipmentPower) == 0 && Double.compare(that.equipmentPrice, equipmentPrice) == 0 && Double.compare(that.depreciationRate, depreciationRate) == 0 && Double.compare(that.loadRate, loadRate) == 0 && Objects.equals(equipmentCapacity, that.equipmentCapacity) && Objects.equals(productionDate, that.productionDate) && Objects.equals(manufacturer, that.manufacturer) && Objects.equals(equipmentSize, that.equipmentSize) && Objects.equals(equipmentState, that.equipmentState) && Objects.equals(attentions, that.attentions) && Objects.equals(principle, that.principle);
+        return Double.compare(that.depreciationRate, depreciationRate) == 0 && Double.compare(that.loadRate, loadRate) == 0 && Objects.equals(equipmentCapacity, that.equipmentCapacity) && Objects.equals(equipmentPower, that.equipmentPower) && Objects.equals(equipmentPrice, that.equipmentPrice) && Objects.equals(productionDate, that.productionDate) && Objects.equals(manufacturer, that.manufacturer) && Objects.equals(equipmentSize, that.equipmentSize) && Objects.equals(equipmentState, that.equipmentState) && Objects.equals(attentions, that.attentions) && Objects.equals(principle, that.principle);
     }
 
     @Override
@@ -168,8 +168,8 @@ public class EquipmentResource extends AssemblyResource{
     public String toString() {
         return "EquipmentResource{" +
                 "equipmentCapacity=" + equipmentCapacity +
-                ", equipmentPower=" + equipmentPower +
-                ", equipmentPrice=" + equipmentPrice +
+                ", equipmentPower='" + equipmentPower + '\'' +
+                ", equipmentPrice='" + equipmentPrice + '\'' +
                 ", productionDate=" + productionDate +
                 ", manufacturer='" + manufacturer + '\'' +
                 ", equipmentSize='" + equipmentSize + '\'' +

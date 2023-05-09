@@ -29,7 +29,7 @@
 </template>
 
 <script>
-
+import * as tree from '@/api/system/treeManagement'
 import * as knowledgeTree from "@/api/knowledgeTree/domainManagement";
 import * as kgBuilderApi from '@/api/system/KgBuilder'
 import * as ruoyiutils from '@/utils/ruoyi'
@@ -42,7 +42,8 @@ export default {
       filterText: '',
       treeData: [],
       defaultProps: {
-        children: 'children',
+        hasChildren:'hasSubLeaf',
+        children: 'subLeafs',
         label: 'name'
       }
     };
@@ -85,9 +86,12 @@ export default {
       this.$emit('searchDomain',val);
     },
     initKnowledgeTree() {
-      knowledgeTree.listDomainManagement().then(response => {
-        this.treeData = this.handleTree(response.data, "id", "parentId");
-      });
+      // knowledgeTree.listDomainManagement().then(response => {
+      //   this.treeData = this.handleTree(response.data, "id", "parentId");
+      // });
+      tree.getAllRootNode().then(result =>{
+        this.treeData = result.data
+      })
     }
   }
 }

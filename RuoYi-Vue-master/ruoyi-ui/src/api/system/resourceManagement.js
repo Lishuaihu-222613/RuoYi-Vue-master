@@ -151,6 +151,20 @@ export function getAllFixtureToolsByLabel(data) {
   })
 }
 
+export function getResourceOptionsByLabel(label) {
+  return request({
+    url: '/Resource/getResourceOptionsByLabel/'+label,
+    method: 'get',
+  })
+}
+
+export function getResourcesByRelatedId(relatedId) {
+  return request({
+    url: '/Resource/getResourcesByRelatedId/'+relatedId,
+    method: 'get',
+  })
+}
+
 export function getAllFixtureTools(data) {
   return request({
     url: '/Resource/getAllFixtureTools',
@@ -159,41 +173,41 @@ export function getAllFixtureTools(data) {
   })
 }
 
-export function updateSpecificResource(data) {
+export function updateSpecialTool(data) {
   return request({
-    url: '/Resource/updateSpecificResource',
+    url: '/Resource/updateSpecialTool',
     method: 'post',
     data: data
   })
 }
 
-export function createSpecificResource(data) {
+export function createSpecialTool(data) {
   return request({
-    url: '/Resource/createSpecificResource',
+    url: '/Resource/createSpecialTool',
     method: 'post',
     data: data
   })
 }
 
-export function getSpecificResourcesByParams(data) {
+export function getSpecialToolsByParams(data) {
   return request({
-    url: '/Resource/getSpecificResourcesByParams',
+    url: '/Resource/getSpecialToolsByParams',
     method: 'post',
     data: data
   })
 }
 
-export function getAllSpecificResourcesByLabel(data) {
+export function getAllSpecialToolsByLabel(data) {
   return request({
-    url: '/Resource/getSpecificResourcesByLabel',
+    url: '/Resource/getSpecialToolsByLabel',
     method: 'post',
     data: data
   })
 }
 
-export function getAllSpecificResources(data) {
+export function getAllSpecialTools(data) {
   return request({
-    url: '/Resource/getAllSpecificResources',
+    url: '/Resource/getAllSpecialTools',
     method: 'post',
     data: data
   })
@@ -289,7 +303,7 @@ export function getAllAuxiliaryResources(data) {
 
 export function getAllAuxiliaryResourcesByLabel(data) {
   return request({
-    url: '/Resource/getAllAuxiliaryResourcesByLabel',
+    url: '/Resource/getAuxiliaryResourcesByLabel',
     method: 'post',
     data: data
   })

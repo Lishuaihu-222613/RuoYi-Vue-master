@@ -2,31 +2,52 @@
   <el-dialog :title="windowTitle" :visible.sync="dialogFormVisible" top="50vh" width="50%"
              @closed="handleClose" @open="handleOpen"
   >
+    <el-form>
+      <el-row>
+        <el-col :span="2">
+          <el-tag type="info">约束：</el-tag>
+        </el-col>
+        <el-col :span="6">
+          <el-select v-model="newConstraint.constraintType" placeholder="约束类型">
+            <el-option
+              v-for="item in constraintOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            >
+            </el-option>
+          </el-select>
+        </el-col>
+        <el-col :span="6">
+          <treeselect v-model="newConstraint.elementId"
+                      :clearable="true"
+                      :load-options="loadOptions"
+                      :normalizer="elementNormalizer"
+                      :options="elementOptions"
+                      :searchable="true"
+                      placeholder="请选择约束元素"
+          />
+        </el-col>
+        <el-col :span="4" >
+          <el-input v-model="newConstraint.constraintName" placeholder="请输入约束名"/>
+        </el-col>
+        <el-col :span="4">
+          <el-input v-model="newConstraint.constraintValue" placeholder="请输入约束值"/>
+        </el-col>
+        <el-col :span="1" :offset="1">
+          <el-button type="primary" icon="el-icon-edit" @click="addConstraint" circle></el-button>
+        </el-col>
+      </el-row>
+    </el-form>
     <el-table ref="table" :data="constraints">
       <el-table-column label="约束类型" width="180">
         <template slot-scope="scope">
-          <span>{{scope.row.constraintType}}</span>
-<!--          <el-select v-model="scope.row.constraintType" placeholder="请选择">-->
-<!--            <el-option-->
-<!--              v-for="item in constraintOptions"-->
-<!--              :key="item.value"-->
-<!--              :label="item.label"-->
-<!--              :value="item.value"-->
-<!--            >-->
-<!--            </el-option>-->
-<!--          </el-select>-->
+          <span>{{ scope.row.constraintType }}</span>
         </template>
       </el-table-column>
       <el-table-column label="约束元素" width="180">
         <template slot-scope="scope">
-          <span>{{scope.row.element}}</span>
-<!--          <treeselect v-model="scope.row.elementId"-->
-<!--                      :clearable="true"-->
-<!--                      :normalizer="elementNormalizer"-->
-<!--                      :options="elementOptions"-->
-<!--                      :searchable="true"-->
-<!--                      placeholder="请选择约束元素"-->
-<!--          />-->
+          <span>{{ scope.row.elements[0].elementName }}</span>
         </template>
       </el-table-column>
       <el-table-column label="约束名" width="180">
@@ -39,24 +60,8 @@
           <el-input v-model="scope.row.constraintValue" placeholder="请输入约束值"></el-input>
         </template>
       </el-table-column>
-      <el-table-column width="180">
-        <template slot="header" slot-scope="scope">
-          <el-button
-            icon="el-icon-edit"
-            size="mini"
-            type="text"
-            @click="handleAdd"
-          >新增
-          </el-button>
-        </template>
+      <el-table-column label="操作" width="180">
         <template slot-scope="scope">
-          <el-button
-            icon="el-icon-edit"
-            size="mini"
-            type="text"
-            @click="handleUpdate(scope.row)"
-          >修改
-          </el-button>
           <el-button
             icon="el-icon-delete"
             size="mini"
@@ -74,7 +79,12 @@
 <script>
 import Treeselect from '@riophae/vue-treeselect'
 import * as elementManagement from '@/api/system/elementManagement'
-import * as treeManagement from '@/api/system/treeManagement'
+import '@riophae/vue-treeselect/dist/vue-treeselect.css'
+import { LOAD_CHILDREN_OPTIONS } from '@riophae/vue-treeselect'
+
+const simulateAsyncOperation = fn => {
+  setTimeout(fn, 2000)
+}
 
 export default {
   name: 'constrains',
@@ -119,12 +129,13 @@ export default {
       elementId: 0,
       productId: 0,
       constraints: [{
-        constraintId:25694,
+        constraintId: 25694,
         constraintType: '同轴',
-        element:'测试1',
+        elements:[{}],
         constraintName: '同轴约束1',
         constraintValue: '-'
       }],
+      newConstraint: {},
       constraintOptions: [
         {
           value: '接触',
@@ -148,12 +159,16 @@ export default {
   },
   methods: {
     handleOpen() {
+      this.constraints = []
+      this.elementOptions = []
       elementManagement.getConstrainsByElementId(this.elementId).then(result => {
         if (result.code === 200) {
-          this.constraints = result.data
+          if(result.data.length >0) {
+            this.constraints = result.data
+          }
         }
       })
-      elementManagement.getProductById(this.productId).then(result => {
+      elementManagement.getSingleElementById(this.productId).then(result => {
         if (result.code === 200) {
           this.elementOptions.push(result.data)
         }
@@ -166,8 +181,8 @@ export default {
       this.$emit('restore', null)
     },
     elementNormalizer(node) {
-      if (node.children && !node.children.length) {
-        delete node.children
+      if (node.subElements && !node.subElements.length) {
+        node.subElements = null
       }
       return {
         id: node.elementId,
@@ -175,37 +190,53 @@ export default {
         children: node.subElements
       }
     },
-    handleAdd() {
-      let newConstraint = {
-        constraintId: undefined,
-        constraintType: '',
-        elements: undefined,
-        constraintName: '',
-        constraintValue: ''
+    loadOptions({ action, parentNode, callback }) {
+
+      if (action === LOAD_CHILDREN_OPTIONS) {
+        simulateAsyncOperation(() =>{
+          elementManagement.getSubElementsById(parentNode.elementId).then(result =>{
+            if(result.code === 200){
+              parentNode.subElements = result.data
+              callback()
+            }
+          })
+        })
       }
-      elementManagement.createConstraint(newConstraint).then(result =>{
-        if(result.code === 200){
-          this.constraints.push(result.data);
+    },
+    addConstraint() {
+      let item = {
+        elementId:this.elementId,
+        constraintType:this.newConstraint.constraintType,
+        otherElementId:this.newConstraint.elementId,
+        constraintName:this.newConstraint.constraintName,
+        constraintValue:this.newConstraint.constraintValue
+      }
+      elementManagement.createConstraint(item).then(result => {
+        if (result.code === 200) {
+          this.constraints.push(result.data)
         }
       })
     },
     handleUpdate(data) {
       let con = {
-        elementId:this.elementId,
-        constraint:data
+        elementId: this.elementId,
+        constraint: data
       }
-      elementManagement.updateConstraint(con).then(result =>{
-        if(result.code === 200){
-          this.$modal.msgSuccess("修改成功")
+      elementManagement.updateConstraint(con).then(result => {
+        if (result.code === 200) {
+          this.$modal.msgSuccess('修改成功')
         }
       })
     },
     handleDelete(data) {
-      elementManagement.deleteConstraint(data.constraintId).then(result =>{
-        if(result.code === 200){
-          this.$modal.msgSuccess("修改成功")
+      elementManagement.deleteConstraint(data.constraintId).then(result => {
+        if (result.code === 200) {
+          this.$modal.msgSuccess('修改成功')
         }
       })
+    },
+    reset(){
+
     }
   }
 }

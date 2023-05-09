@@ -93,6 +93,11 @@ public class QualityProblemServiceImpl implements QualityProblemService {
     }
 
     @Override
+    public List<QualityProblem> getQualityProblemOptionsByLabel(String dynamicLabel) {
+        return qualityProblemRepository.getQualityProblemOptionsByLabel(dynamicLabel);
+    }
+
+    @Override
     public Page<QualityProblem> getQualityProblemsByParams(Example<QualityProblem> example, Pageable pageable) {
         return qualityProblemRepository.findAll(example,pageable);
     }
@@ -115,6 +120,18 @@ public class QualityProblemServiceImpl implements QualityProblemService {
     @Override
     public void deleteQualityProblem(Long problemId) {
         qualityProblemRepository.deleteById(problemId);
+    }
+
+    @Override
+    public void createRelatedRelations(Long relatedId, List<Long> problems) {
+        for (Long problemId : problems) {
+            qualityProblemRepository.createRelationById(problemId,relatedId);
+        }
+    }
+
+    @Override
+    public List<QualityProblem> getProblemsByRelatedId(Long relatedId) {
+        return qualityProblemRepository.findByAssociatedId(relatedId);
     }
 
     @Override

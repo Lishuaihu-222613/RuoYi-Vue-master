@@ -2,7 +2,14 @@ import request from '@/utils/request'
 
 export function getElementById(elementId) {
   return request({
-    url: '/element/getProductById/'+elementId,
+    url: '/element/getElementById/'+elementId,
+    method: 'get'
+  })
+}
+
+export function getSingleElementById(elementId) {
+  return request({
+    url: '/element/getSingleElementById/'+elementId,
     method: 'get'
   })
 }
@@ -14,9 +21,16 @@ export function getAllProducts() {
   })
 }
 
+export function getSubElementsById(elementId) {
+  return request({
+    url: '/element/getSubElementsById/'+elementId,
+    method: 'get'
+  })
+}
+
 export function getProductOptionsByLabel(label) {
   return request({
-    url: '/element/getAllProducts/'+label,
+    url: '/element/getProductOptionsByLabel/'+label,
     method: 'get'
   })
 }
@@ -79,14 +93,14 @@ export function deleteElements(data) {
 
 export function getParentElement(elementId) {
   return request({
-    url: '/element/getParentElement/'+elementId,
+    url: '/element/getParentElementById/'+elementId,
     method: 'get',
   })
 }
 
 export function getConstrainsByElementId(elementId) {
   return request({
-    url: '/element/getConstrainsByElementId'+elementId,
+    url: '/element/getConstraintsByElementId/'+elementId,
     method: 'get',
   })
 }
@@ -115,11 +129,24 @@ export function modifyFiles(data) {
   })
 }
 
+export function modifyModelFile(data) {
+  return request({
+    url: '/element/modifyModelFile',
+    method: 'post',
+    data: data
+  })
+}
+
 export function deleteConstraint(constraintId) {
   return request({
-    url: '/element/deleteConstraint'+constraintId,
+    url: '/element/deleteConstraint/'+constraintId,
     method: 'get',
   })
 }
 
-
+export function getStructureByRelatedId(relatedId) {
+  return request({
+    url: '/element/getRelatedStructure/'+relatedId,
+    method: 'get',
+  })
+}

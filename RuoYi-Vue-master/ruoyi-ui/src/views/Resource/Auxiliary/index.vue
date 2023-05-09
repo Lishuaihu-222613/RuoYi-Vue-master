@@ -312,7 +312,7 @@ import { getToken } from '@/utils/auth'
 import * as resourceManagement from '@/api/system/resourceManagement'
 import * as treeManagement from '@/api/system/treeManagement'
 import Treeselect from '@riophae/vue-treeselect'
-
+import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 export default {
   name: 'index',
   components: { Treeselect },
@@ -471,20 +471,19 @@ export default {
     },
     /** 查询知识下拉树结构 */
     getTreeselect() {
-      treeManagement.getTreeManagement(25500).then(response => {
+      treeManagement.getTreeManagement(25782).then(response => {
         console.log(response.data)
         this.labelTree.push(response.data)
       })
     },
     /** 转换知识树管理数据结构 */
     normalizer(node) {
-      if (node.children && !node.children.length) {
-        delete node.children;
+      if (node.subLeafs && !node.subLeafs.length) {
+        delete node.subLeafs;
       }
       return {
         id: node.leafName,
         label: node.leafName,
-        value:node.leafValue,
         children: node.subLeafs
       }
     },
@@ -495,7 +494,7 @@ export default {
     },
     // 节点单击事件
     handleNodeClick(data) {
-      this.queryParams.dynamicLabel = data.leafValue
+      this.queryParams.dynamicLabel = data.leafName
       this.loading = true
       this.queryParams.sortableField = "n.label"
       resourceManagement.getAllAuxiliaryResourcesByLabel(this.queryParams).then(result => {
@@ -512,7 +511,6 @@ export default {
     handleQuery() {
       this.queryParams.pageNum = 1
       this.loading = true
-      this.queryParams.sortableField = "n.label"
       resourceManagement.getAuxiliaryResourcesByParams(this.queryParams).then(result => {
           if (result.code === 200) {
             this.resources = result.data.content
@@ -640,7 +638,7 @@ export default {
               this.getList();
             });
           } else {
-            resourceManagement.createAuxiliaryResource(this.form).then(response => {
+            resourceManagement.createAuxiliaryResource(this.selectResource).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();

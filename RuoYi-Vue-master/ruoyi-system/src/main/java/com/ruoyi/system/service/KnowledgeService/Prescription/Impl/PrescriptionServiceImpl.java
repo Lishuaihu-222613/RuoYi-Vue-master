@@ -489,8 +489,7 @@ public class PrescriptionServiceImpl implements PrescriptionService {
             for (hasMaterialElement materialElement : materialElements) {
                 PrescriptionElements element = new PrescriptionElements();
                 element.setPercentage(materialElement.getPercentage());
-                element.setMaterialId(materialElement.getMaterial().getMaterialId());
-                element.setMaterialName(materialElement.getMaterial().getMaterialName());
+                element.setMaterial(materialElement.getMaterial());
                 element.setRelationId(materialElement.getId());
                 elements.add(element);
             }

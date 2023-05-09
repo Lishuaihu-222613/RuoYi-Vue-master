@@ -16,6 +16,28 @@ export function getAllFilesByLabel(data) {
   })
 }
 
+export function getFilesByRelatedId(relatedId) {
+  return request({
+    url: '/fileManagement/getFilesByRelatedId/'+relatedId,
+    method: 'get'
+  })
+}
+
+
+export function getFileOptionsByLabel(label) {
+  return request({
+    url: '/fileManagement/getFileOptionsByLabel/'+label,
+    method: 'get'
+  })
+}
+
+export function getAllModelFile() {
+  return request({
+    url: '/fileManagement/getAllModelFile',
+    method: 'get'
+  })
+}
+
 export function getAllFiles(data) {
   return request({
     url: '/fileManagement/getAllFiles',
@@ -75,13 +97,6 @@ export function getFileList() {
 export function getModelFileByStructure(elementId) {
   return request({
     url: '/fileManagement/getModelFileByStructure/'+elementId,
-    method: 'get',
-  })
-}
-
-export function getFilesByStructure(fileId) {
-  return request({
-    url: '/fileManagement/getFilesByStructure/'+elementId,
     method: 'get',
   })
 }

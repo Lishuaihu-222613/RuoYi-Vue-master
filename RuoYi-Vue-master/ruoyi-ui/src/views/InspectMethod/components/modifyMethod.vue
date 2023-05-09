@@ -2,7 +2,7 @@
   <el-dialog :visible.sync="dialogFormVisible" title="检测方法编辑" top="50vh" width="50%"
              @closed="handleClose" @open="handleOpen"
   >
-    <el-tabs :tab-position="tabPosition">
+    <el-tabs :tab-position="tabPosition" >
       <el-tab-pane label="基础信息">
         <el-form ref="form" :model="method" :rules="rules">
           <el-form-item :label-width="formLabelWidth" label="检测方法名称">
@@ -121,7 +121,7 @@
         </el-form>
       </el-tab-pane>
       <el-tab-pane label="关联信息">
-        <el-form ref="relatedForm" :model="method" :rules="rules">
+        <el-form ref="relatedForm" :model="method" >
           <el-form-item :label-width="formLabelWidth" label="关联质量问题">
             <el-row>
               <el-tag
@@ -240,11 +240,15 @@
               </el-col>
             </el-row>
           </el-form-item>
+          <el-form-item>
+            <el-row>
+              <el-col :span="6" :offset="18">
+                <el-button type="primary" @click="changeRelation">确 定</el-button>
+                <el-button @click="cancel">取 消</el-button>
+              </el-col>
+            </el-row>
+          </el-form-item>
         </el-form>
-        <div slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="changeRelation">确 定</el-button>
-          <el-button @click="cancel">取 消</el-button>
-        </div>
       </el-tab-pane>
     </el-tabs>
 
@@ -321,11 +325,11 @@ export default {
         methodFactors: [],
         methodModes: []
       },
-      processLabel: '',
+      processLabel: undefined,
       processLabelOptions: [],
       processOptions: [],
       processId: undefined,
-      problemLabel: '',
+      problemLabel: undefined,
       problemLabelOptions: [],
       problemOptions: [],
       newProblem: {},
@@ -334,7 +338,7 @@ export default {
         problemName:'燃烧室一界面脱黏'
       }
       ],
-      resourceLabel: '',
+      resourceLabel: undefined,
       resourceLabelOptions: [],
       resourceOptions: [],
       newResource: {},
@@ -344,7 +348,7 @@ export default {
           resourceName:'数字式超声波检测仪'
         }
       ],
-      fileLabel: '',
+      fileLabel: undefined,
       fileLabelOptions: [],
       fileOptions: [],
       newFile: {},
@@ -377,23 +381,23 @@ export default {
         console.log(response.data)
         this.processLabelOptions.push(response.data)
       })
-      treeManagement.getTreeManagement(25500).then(response => {
+      treeManagement.getTreeManagement(25779).then(response => {
         console.log(response.data)
         this.problemLabelOptions.push(response.data)
       })
-      treeManagement.getTreeManagement(25500).then(response => {
+      treeManagement.getTreeManagement(25780).then(response => {
         console.log(response.data)
         this.resourceLabelOptions.push(response.data)
       })
-      treeManagement.getTreeManagement(25500).then(response => {
+      treeManagement.getTreeManagement(25843).then(response => {
         console.log(response.data)
         this.fileLabelOptions.push(response.data)
       })
     },
     /** 转换知识树管理数据结构 */
     normalizer(node) {
-      if (node.children && !node.children.length) {
-        delete node.children
+      if (node.subLeafs && !node.subLeafs.length) {
+        delete node.subLeafs
       }
       return {
         id: node.leafName,
@@ -403,6 +407,26 @@ export default {
     },
     handleOpen() {
       this.getLabelList()
+      methodManagement.getInspectMethodById(this.methodId).then(result =>{
+        if(result.code === 200){
+          this.method = result.data
+        }
+      })
+      problemManagement.getProblemsByRelatedId(this.methodId).then(result =>{
+        if(result.code === 200){
+          this.problems = result.data
+        }
+      })
+      resourceManagement.getResourcesByRelatedId(this.methodId).then(result =>{
+        if(result.code === 200){
+          this.resources = result.data
+        }
+      })
+      fileManagement.getFilesByRelatedId(this.methodId).then(result =>{
+        if(result.code === 200){
+          this.files = result.data
+        }
+      })
     },
     // 取消按钮
     cancel() {
@@ -468,7 +492,8 @@ export default {
       }
     },
     selectProblemLabel(node, instanceId) {
-      problemManagement.getQualityProblemOptionsByLabel(node.label).then(result => {
+      this.problemOptions = []
+      problemManagement.getQualityProblemOptionsByLabel(node.leafName).then(result => {
         if (result.code === 200) {
           this.problemOptions = result.data
         }
@@ -497,7 +522,7 @@ export default {
     },
     selectResourceType(node, instanceId) {
       this.resourceOptions = []
-      resourceManagement.getResourceOptionsByLabel(node.label).then(result => {
+      resourceManagement.getResourceOptionsByLabel(node.leafName).then(result => {
         if (result.code === 200) {
           this.resourceOptions.push(result.data)
         }
@@ -505,7 +530,7 @@ export default {
     },
     selectFileLabel(node, instanceId) {
       this.fileOptions = []
-      fileManagement.getFileOptionsByLabel(node.label).then(result => {
+      fileManagement.getFileOptionsByLabel(node.leafName).then(result => {
         if (result.code === 200) {
           this.files.push(result.data)
         }
@@ -513,14 +538,14 @@ export default {
     },
     onSubmit() {
       if (this.windowTitle === '创建方法') {
-        methodManagement.createQualityProblem(this.method).then(result => {
+        methodManagement.createInspectMethod(this.method).then(result => {
           if (result.code === 200) {
             this.method = result.data
             this.$modal.msgSuccess('创建成功！')
           }
         })
       } else {
-        methodManagement.updateQualityProblem(this.method).then(result => {
+        methodManagement.updateInspectMethod(this.method).then(result => {
           if (result.code === 200) {
             this.method = result.data
             this.$modal.msgSuccess('修改成功！')
@@ -530,10 +555,12 @@ export default {
     },
     changeRelation() {
       let relations = {
-        problems: this.problems,
-        resources: this.resources,
-        files: this.files
+        methodId:this.method.methodId,
+        problems: this.problems.map(item => {return item.problemId}),
+        resources: this.resources.map(item => {return item.resourceId}),
+        files: this.files.map(item => {return item.fileId})
       }
+
       methodManagement.changeRelations(relations).then(result => {
         if (result.code === 200) {
           this.$modal.msgSuccess('更改成功')
@@ -545,5 +572,14 @@ export default {
 </script>
 
 <style scoped>
+
+.el-tabs--card {
+  height: calc(80vh - 110px);
+  /* overflow-y: auto; */
+}
+.el-tab-pane {
+  height: calc(80vh - 110px);
+  overflow-y: auto;
+}
 
 </style>

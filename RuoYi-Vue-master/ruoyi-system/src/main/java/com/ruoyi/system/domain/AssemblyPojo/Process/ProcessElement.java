@@ -45,18 +45,6 @@ public class ProcessElement {
     @Relationship(type = "hasSubElement")
     private Set<ProcessElement> subElements;
 
-    @Relationship(type = "hasBeforeElement")
-    private Set<ProcessElement> beforeElements;
-
-    @Relationship(type = "hasAfterElement")
-    private Set<ProcessElement> afterElements;
-
-    @Relationship(type = "hasAndElement")
-    private Set<ProcessElement> andElements;
-
-    @Relationship(type = "hasOrElement")
-    private Set<ProcessElement> orElements;
-
     @Relationship(type = "hasAssociatedStructure")
     private Set<AssemblyElement> associatedStructure;
 
@@ -146,38 +134,6 @@ public class ProcessElement {
         this.subElements = subElements;
     }
 
-    public Set<ProcessElement> getBeforeElements() {
-        return beforeElements;
-    }
-
-    public void setBeforeElements(Set<ProcessElement> beforeElements) {
-        this.beforeElements = beforeElements;
-    }
-
-    public Set<ProcessElement> getAfterElements() {
-        return afterElements;
-    }
-
-    public void setAfterElements(Set<ProcessElement> afterElements) {
-        this.afterElements = afterElements;
-    }
-
-    public Set<ProcessElement> getAndElements() {
-        return andElements;
-    }
-
-    public void setAndElements(Set<ProcessElement> andElements) {
-        this.andElements = andElements;
-    }
-
-    public Set<ProcessElement> getOrElements() {
-        return orElements;
-    }
-
-    public void setOrElements(Set<ProcessElement> orElements) {
-        this.orElements = orElements;
-    }
-
     public Set<AssemblyElement> getAssociatedStructure() {
         return associatedStructure;
     }
@@ -205,7 +161,7 @@ public class ProcessElement {
     public ProcessElement() {
     }
 
-    public ProcessElement(Long elementId, String elementName, String elementNumber, String elementDescription, List<String> elementRemark, Map<String, String> elementRequirements, Map<String, String> elementOtherProperties, Set<String> dynamicLabels, boolean hasSubElements, Set<ProcessElement> subElements, Set<ProcessElement> beforeElements, Set<ProcessElement> afterElements, Set<ProcessElement> andElements, Set<ProcessElement> orElements, Set<AssemblyElement> associatedStructure, Set<AssemblyResource> usedResources, Set<FileKnowledge> associatedFiles) {
+    public ProcessElement(Long elementId, String elementName, String elementNumber, String elementDescription, List<String> elementRemark, Map<String, String> elementRequirements, Map<String, String> elementOtherProperties, Set<String> dynamicLabels, boolean hasSubElements, Set<ProcessElement> subElements, Set<AssemblyElement> associatedStructure, Set<AssemblyResource> usedResources, Set<FileKnowledge> associatedFiles) {
         this.elementId = elementId;
         this.elementName = elementName;
         this.elementNumber = elementNumber;
@@ -216,10 +172,6 @@ public class ProcessElement {
         this.dynamicLabels = dynamicLabels;
         this.hasSubElements = hasSubElements;
         this.subElements = subElements;
-        this.beforeElements = beforeElements;
-        this.afterElements = afterElements;
-        this.andElements = andElements;
-        this.orElements = orElements;
         this.associatedStructure = associatedStructure;
         this.usedResources = usedResources;
         this.associatedFiles = associatedFiles;
@@ -230,12 +182,12 @@ public class ProcessElement {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ProcessElement that = (ProcessElement) o;
-        return hasSubElements == that.hasSubElements && Objects.equals(elementId, that.elementId) && Objects.equals(elementName, that.elementName) && Objects.equals(elementNumber, that.elementNumber) && Objects.equals(elementDescription, that.elementDescription) && Objects.equals(elementRemark, that.elementRemark) && Objects.equals(elementRequirements, that.elementRequirements) && Objects.equals(elementOtherProperties, that.elementOtherProperties) && Objects.equals(dynamicLabels, that.dynamicLabels) && Objects.equals(subElements, that.subElements) && Objects.equals(beforeElements, that.beforeElements) && Objects.equals(afterElements, that.afterElements) && Objects.equals(andElements, that.andElements) && Objects.equals(orElements, that.orElements) && Objects.equals(associatedStructure, that.associatedStructure) && Objects.equals(usedResources, that.usedResources) && Objects.equals(associatedFiles, that.associatedFiles);
+        return hasSubElements == that.hasSubElements && Objects.equals(elementId, that.elementId) && Objects.equals(elementName, that.elementName) && Objects.equals(elementNumber, that.elementNumber) && Objects.equals(elementDescription, that.elementDescription) && Objects.equals(elementRemark, that.elementRemark) && Objects.equals(elementRequirements, that.elementRequirements) && Objects.equals(elementOtherProperties, that.elementOtherProperties) && Objects.equals(dynamicLabels, that.dynamicLabels) && Objects.equals(subElements, that.subElements) && Objects.equals(associatedStructure, that.associatedStructure) && Objects.equals(usedResources, that.usedResources) && Objects.equals(associatedFiles, that.associatedFiles);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(elementId, elementName, elementNumber, elementDescription, elementRemark, elementRequirements, elementOtherProperties, dynamicLabels, hasSubElements, subElements, beforeElements, afterElements, andElements, orElements, associatedStructure, usedResources, associatedFiles);
+        return Objects.hash(elementId, elementName, elementNumber, elementDescription, elementRemark, elementRequirements, elementOtherProperties, dynamicLabels, hasSubElements, subElements, associatedStructure, usedResources, associatedFiles);
     }
 
     @Override
@@ -251,10 +203,6 @@ public class ProcessElement {
                 ", dynamicLabels=" + dynamicLabels +
                 ", hasSubElements=" + hasSubElements +
                 ", subElements=" + subElements +
-                ", beforeElements=" + beforeElements +
-                ", afterElements=" + afterElements +
-                ", andElements=" + andElements +
-                ", orElements=" + orElements +
                 ", associatedStructure=" + associatedStructure +
                 ", usedResources=" + usedResources +
                 ", associatedFiles=" + associatedFiles +

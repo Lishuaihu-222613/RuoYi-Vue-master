@@ -627,7 +627,7 @@ export default {
       showSearch:true,
       queryParams:{
         pageNum:1,
-        pageSize:9,
+        pageSize:10,
         sortType:"ascending",
         sortableField:"materialId",
         dynamicLabel:"",

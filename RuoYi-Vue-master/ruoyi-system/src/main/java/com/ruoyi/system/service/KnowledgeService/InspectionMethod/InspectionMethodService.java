@@ -31,6 +31,8 @@ public interface InspectionMethodService {
     List<InspectionMethod> getInspectionMethodsByName(String methodName);
     
     void deleteInspectionMethod(Long[] methodId);
+
+    void deleteRelations(Long methodId);
     
     InspectionCondition createInspectionCondition(ConditionForMethod CM);
     

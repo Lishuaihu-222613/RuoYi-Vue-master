@@ -25,6 +25,9 @@ public interface FileRepository extends Neo4jRepository<FileKnowledge,Long> {
     )
     Page<FileKnowledge> findByFileClassification(@Param("dynamicLabel") String dynamicLabel, Pageable pageable);
 
+    @Query(value = " Match (n:FileKnowledge :`:#{literal(#dynamicLabel)}`) return n ")
+    List<FileKnowledge> getFileOptionsByLabel(@Param("dynamicLabel") String dynamicLabel);
+
     List<FileKnowledge> findByFileName(String fileName);
 
     @Override
@@ -39,7 +42,15 @@ public interface FileRepository extends Neo4jRepository<FileKnowledge,Long> {
     @Query("Match (n:FileKnowledge)<-[r:hasAssociatedFile]-(m) where id(m) = $associatedId return n ")
     List<FileKnowledge> findByAssociatedId(@Param("associatedId") Long associatedId);
 
-    @Query("MERGE (n:FileKnowledge)<-[r:hasAssociatedFile]-(m) where id(n) = $fileId id(m) = $associatedId return n ")
+    @Query("Match (n:FileKnowledge :三维模型文件) return n ")
+    List<FileKnowledge> getAllModelFile();
+
+    @Query("Match (n:FileKnowledge)<-[r:hasModelFile]-(m) where id(m) = $associatedId return n ")
+    FileKnowledge findByStructureId(@Param("associatedId") Long associatedId);
+
+    @Query("Match (n:FileKnowledge) where id(n) = $fileId " +
+            "Match (m) where id(m) = $associatedId " +
+            "MERGE (n)<-[r:hasAssociatedFile]-(m)")
     void createdAssociatedRelationById(@Param("fileId") Long fileId, @Param("associatedId") Long associatedId);
 
     @Query("Match (n:FileKnowledge)<-[r:hasAssociatedFile]-(m) where id(n) = $fileId id(m) = $associatedId delete r")

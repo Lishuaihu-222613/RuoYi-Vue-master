@@ -2,27 +2,27 @@
   <!-- 添加或修改工艺元素配置对话框 -->
   <el-dialog :visible.sync="dialogFormVisible" :title="windowTitle" top="50vh" width="50%"
              @closed="handleClose" @open="handleOpen">
-    <el-form ref="form" :model="element" :rules="rules" label-width="80px">
+    <el-form ref="form" :model="element"  label-width="80px">
       <el-row>
         <el-col :span="12">
-          <el-form-item label="元素序号" prop="elementNumber">
-            <el-input v-model="element.elementNumber" placeholder="请输入元素序号" maxlength="30" />
+          <el-form-item label="序号" prop="elementNumber">
+            <el-input v-model="element.elementNumber" placeholder="请输入序号" maxlength="30" />
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="元素名称" prop="elementName">
-            <el-input v-model="element.elementName" placeholder="请输入元素名称" maxlength="30"></el-input>
+          <el-form-item label="名称" prop="elementName">
+            <el-input v-model="element.elementName" placeholder="请输入名称" maxlength="30"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
       <el-row>
-        <el-form-item label="元素描述" prop="elementDescription">
-          <el-input v-model="element.elementDescription" placeholder="请输入元素描述" type="textarea" autosize />
+        <el-form-item label="描述" prop="elementDescription">
+          <el-input v-model="element.elementDescription" placeholder="请输入描述" type="textarea" autosize />
         </el-form-item>
       </el-row>
       <el-row>
         <el-col :span="12">
-          <el-form-item label="元素类别">
+          <el-form-item label="类别">
             <el-radio-group v-model="elementType">
               <el-radio :label="'Process'">工 艺</el-radio>
               <el-radio :label="'Sequence'">工 序</el-radio>
@@ -31,7 +31,7 @@
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="元素标签">
+          <el-form-item label="标签">
             <el-row class="row-bg" justify="space-around" type="flex">
               <treeselect v-model="dynamicLabels"
                           :multiple="true"
@@ -47,7 +47,7 @@
       </el-row>
       <el-row>
         <el-col :span="12">
-          <el-form-item label="是否包含子元素">
+          <el-form-item label="包含子级">
             <el-switch
               v-model="element.hasSubElements"
               active-color="#13ce66"
@@ -55,14 +55,14 @@
             </el-switch>
           </el-form-item>
         </el-col>
-        <el-col :span="12" v-if="!(elementType === 'AssemblyProduct')">
-          <el-form-item label="父元素">
+        <el-col :span="12" v-if="!(elementType === 'Process')">
+          <el-form-item label="父级">
             <treeselect v-model="parentId"
                         :clearable="true"
                         :searchable="true"
                         :normalizer="elementNormalizer"
                         :options="elementOptions"
-                        placeholder="请选择父元素"
+                        placeholder="请选择父级"
             />
           </el-form-item>
         </el-col>
@@ -163,6 +163,8 @@ import Treeselect from '@riophae/vue-treeselect'
 import * as processManagement from '@/api/system/processManagement'
 import * as treeManagement from '@/api/system/treeManagement'
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
+import * as elementManagement from '@/api/system/elementManagement'
+import { getParentElementById, getSingleElementById } from '@/api/system/processManagement'
 export default {
   name: 'modifyElement',
   components: { Treeselect },
@@ -171,13 +173,13 @@ export default {
       type: Number,
       default: 0
     },
-    selectElement:{
-      type:Object,
-      default:{}
-    },
     dialog: {
       type: Boolean,
       default: false
+    },
+    proId: {
+      type: Number,
+      default: 0
     },
     pId:{
       type: Number,
@@ -196,13 +198,6 @@ export default {
         }
       }
     },
-    selectElement: {
-      handler(newVal, oldVal) {
-        if (newVal !== null || newVal !== 0) {
-          this.element = newVal
-        }
-      }
-    },
     dialog: {
       handler(newVal, oldVal) {
         this.dialogFormVisible = newVal
@@ -211,6 +206,16 @@ export default {
     pId:{
       handler(newVal, oldVal) {
         this.parentId = newVal
+      }
+    },
+    proId: {
+      handler(newVal, oldVal) {
+        this.processId = newVal
+      }
+    },
+    title: {
+      handler(newVal, oldVal) {
+        this.windowTitle = newVal
       }
     }
   },
@@ -231,9 +236,11 @@ export default {
         dynamicLabels:[],
       },
       elementType:'',
+      isTypical: false,
       dynamicLabels:[],
       labelOptions:[],
-      parentId:undefined,
+      parentId:0,
+      processId:0,
       elementOptions:[],
       newRequirementName:'',
       newRequirementValue:'',
@@ -243,23 +250,64 @@ export default {
   },
   methods:{
     handleOpen(){
-      treeManagement.getTreeManagement(22223).then(result =>{
-        this.labelOptions = result.data;
+      treeManagement.getTreeManagement(25500).then(result =>{
+        this.labelOptions = []
+        this.labelOptions.push(result.data) ;
       })
-      processManagement.getElementById(this.elementId).then(result =>{
-        if(result.code === 200){
-          this.element = result.data
+
+      if (this.windowTitle === '创建元素'){
+        if (this.parentId !== 0 && this.parentId !== undefined) {
+          this.elementType = 'Sequence'
+          processManagement.getElementById(this.processId).then(result =>{
+            this.elementOptions = []
+            this.elementOptions.push(result.data)
+          })
+        } else {
+          this.elementType = 'Process'
         }
-      })
-      if(this.element.dynamicLabels.includes('Process')){
-        this.elementType = 'Process';
-        this.dynamicLabels  = this.element.dynamicLabels.filter(item => item !== 'Process')
-      } else if(this.element.dynamicLabels.includes('Sequence')){
-        this.elementType = 'Sequence';
-        this.dynamicLabels  = this.element.dynamicLabels.filter(item => item !== 'Sequence')
-      } else if(this.element.dynamicLabels.includes('Step')){
-        this.elementType = 'Step';
-        this.dynamicLabels  = this.element.dynamicLabels.filter(item => item !== 'Step')
+      }
+      else {
+        // processManagement.getSingleElementById(this.elementId).then(result =>{
+        //   if(result.code === 200){
+        //     this.element = result.data
+        //   }
+        // })
+        if (this.processId !== 0 ||this.processId !== undefined) {
+          processManagement.getElementById(this.processId).then(result => {
+            if (result.code === 200) {
+              this.elementOptions = []
+              this.elementOptions.push(result.data)
+            }
+          })
+        }
+        processManagement.getSingleElementById(this.elementId).then(result =>{
+          if (result.code === 200) {
+            this.element = result.data
+            this.dynamicLabels = this.element.dynamicLabels
+            console.log(this.element)
+            if (this.dynamicLabels.includes('TypicalElement')) {
+              this.isTypical = true
+              this.dynamicLabels = this.element.dynamicLabels.filter(item => item !== 'TypicalElement')
+            }
+            if (this.dynamicLabels.includes('Process')) {
+              this.elementType = 'Process'
+              this.dynamicLabels = this.dynamicLabels.filter(item => item !== 'Process')
+            } else if (this.dynamicLabels.includes('Sequence')) {
+              this.elementType = 'Sequence'
+              processManagement.getParentElementById(this.element.elementId).then(result => {
+                this.parentId = result.data.elementId
+              })
+              this.dynamicLabels = this.dynamicLabels.filter(item => item !== 'Sequence')
+            } else if (this.dynamicLabels.includes('Step')) {
+              this.elementType = 'Step'
+              processManagement.getParentElementById(this.element.elementId).then(result => {
+                this.parentId = result.data.elementId
+              })
+              this.dynamicLabels = this.dynamicLabels.filter(item => item !== 'Step')
+            }
+          }
+        })
+
       }
     },
     handleClose(){
@@ -269,8 +317,8 @@ export default {
       this.$emit('restore', null);
     },
     labelNormalizer(node){
-      if (node.children && !node.children.length) {
-        delete node.children;
+      if (node.subLeafs && !node.subLeafs.length) {
+        delete node.subLeafs;
       }
       return {
         id: node.leafName,
@@ -279,8 +327,8 @@ export default {
       }
     },
     elementNormalizer(node){
-      if (node.children && !node.children.length) {
-        delete node.children;
+      if (node.subElements && !node.subElements.length) {
+        delete node.subElements;
       }
       return {
         id: node.elementId,
@@ -310,46 +358,35 @@ export default {
       this.$delete(this.element.elementOtherProperties,name)
     },
     submitForm(){
-      if(this.windowTitle === "创建元素" && this.elementType === 'Process'){
-        let newLabels = this.dynamicLabels.concat();
-        newLabels.unshift(this.elementType);
-        this.element.dynamicLabels = newLabels;
-        processManagement.createElement(this.element).then(result =>{
-          if(result.code === 200){
-            this.element = result.data;
-            this.$modal.msgSuccess("创建成功！")
-          }
-        })
+      if (this.isTypical === true) {
+        this.element.dynamicLabels.push('TypicalElement')
       }
-      else if(this.windowTitle === "创建元素" && this.elementType !== 'Process'){
-        let newLabels = this.dynamicLabels.concat();
-        newLabels.unshift(this.elementType);
-        this.element.dynamicLabels = newLabels;
+      this.element.dynamicLabels.push(this.elementType)
+      this.element.dynamicLabels = this.element.dynamicLabels.concat(this.dynamicLabels)
+      if(this.windowTitle === "创建元素" ){
         let data = {
-          parentId:this.parentId,
-          element:this.element,
+          parentId: this.parentId,
+          originElement: this.element
         }
-        process.createElementForParent(this.data).then(result =>{
+        processManagement.createElement(data).then(result =>{
           if(result.code === 200){
             this.element = result.data;
             this.$modal.msgSuccess("创建成功！")
           }
         })
-      }
-      else if(this.windowTitle === "推荐信息修改"){
-        this.$emit('changeElement', this.element);
-      }
-      else{
-        processManagement.updateElement(this.element).then(result =>{
-          let newLabels = this.dynamicLabels.concat();
-          newLabels.unshift(this.elementType);
-          this.element.dynamicLabels = newLabels;
-          if(result.code === 200){
-            this.element = result.data;
-            this.$modal.msgSuccess("修改成功！")
+      } else {
+        let data = {
+          parentId: this.parentId,
+          originElement: this.element
+        }
+        processManagement.updateElement(data).then(result => {
+          if (result.code === 200) {
+            this.element = result.data
+            this.$modal.msgSuccess('修改成功！')
           }
         })
       }
+      this.loading = false
     },
     cancel(){
       this.dialogFormVisible = false
@@ -357,7 +394,24 @@ export default {
     },
     // 表单重置
     reset() {
-      this.element = {}
+      this.element = {
+        elementId:undefined,
+        elementName:'',
+        elementDescription:'',
+        elementNumber:'',
+        elementRemark:[],
+        elementRequirements:{},
+        elementOtherProperties:{},
+        hasSubElements:false,
+        dynamicLabels:[],
+      }
+      this.elementType = ''
+      this.parentId = 0
+      this.elementId = 0
+      this.files = []
+      this.model = {}
+      this.isTypical = false
+      this.dynamicLabels = []
       this.resetForm('form')
     },
   },

@@ -1,5 +1,6 @@
 package com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription;
 
+import com.ruoyi.system.domain.AssemblyPojo.Knowledge.MaterialKnowledge.Material;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,7 +14,5 @@ public class PrescriptionElements {
 
     private Double percentage;
 
-    private Long materialId;
-
-    private String materialName;
+    private Material material;
 }

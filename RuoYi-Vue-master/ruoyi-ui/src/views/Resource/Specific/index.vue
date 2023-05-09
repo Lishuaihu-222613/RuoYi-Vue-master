@@ -154,7 +154,7 @@
           >
             <template slot-scope="scope">
               <el-tag v-for="(value, key) in scope.row.capacityDescriptions" :key="key" :index="key+''" type="success">
-                {{ key + ':' + scope.row.toolCapacity[key+''] }}
+                {{ key + ':' + scope.row.capacityDescriptions[key+''] }}
               </el-tag>
             </template>
           </el-table-column>
@@ -195,7 +195,7 @@
 
     <!-- 添加或修改用户配置对话框 -->
     <el-dialog :title="title" :visible.sync="modifyResourceShow" append-to-body width="600px">
-      <el-form ref="resource" :model="selectResource" :rules="rules" label-width="80px">
+      <el-form ref="resource" :model="selectResource"  label-width="80px">
         <el-row>
           <el-col :span="12">
             <el-form-item label="资源名称" prop="resourceName">
@@ -307,6 +307,7 @@ import { getToken } from '@/utils/auth'
 import * as resourceManagement from '@/api/system/resourceManagement'
 import * as treeManagement from '@/api/system/treeManagement'
 import Treeselect from '@riophae/vue-treeselect'
+import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 
 export default {
   name: 'index',
@@ -343,7 +344,7 @@ export default {
         // 设置上传的请求头部
         headers: { Authorization: 'Bearer ' + getToken() },
         // 上传的地址
-        url: process.env.VUE_APP_BASE_API + '/SpecificResource/importData'
+        url: process.env.VUE_APP_BASE_API + '/SpecialTool/importData'
       },
       queryParams: {
         pageNum: 1,
@@ -433,7 +434,7 @@ export default {
     getList() {
       this.loading = true
       if (this.queryParams.dynamicLabel === '') {
-        resourceManagement.getAllSpecificResources(this.queryParams).then(result => {
+        resourceManagement.getAllSpecialTools(this.queryParams).then(result => {
             if (result.code === 200) {
               console.log(result.data)
               this.resources = result.data.content
@@ -443,7 +444,7 @@ export default {
           }
         )
       } else if (this.queryParams.dynamicLabel !== '') {
-        resourceManagement.getAllSpecificResourcesByLabel(this.queryParams).then(result => {
+        resourceManagement.getAllSpecialToolsByLabel(this.queryParams).then(result => {
             if (result.code === 200) {
               this.resources = result.data.content
               this.total = result.data.totalElements
@@ -452,7 +453,7 @@ export default {
           }
         )
       } else if (this.queryParams.originResource.resourceName !== '' || this.queryParams.originResource.resourceDescription !== '' || this.queryParams.originResource.resourceUsage !== '') {
-        resourceManagement.getSpecificResourcesByParams(this.queryParams).then(result => {
+        resourceManagement.getSpecialToolsByParams(this.queryParams).then(result => {
             if (result.code === 200) {
               this.resources = result.data.content
               this.total = result.data.totalElements
@@ -465,14 +466,14 @@ export default {
     },
     /** 查询知识下拉树结构 */
     getTreeselect() {
-      treeManagement.getTreeManagement(25500).then(response => {
+      treeManagement.getTreeManagement(25781).then(response => {
         console.log(response.data)
         this.labelTree.push(response.data)
       })
     },
     normalizer(node) {
-      if (node.children && !node.children.length) {
-        delete node.children;
+      if (node.subLeafs && !node.subLeafs.length) {
+        delete node.subLeafs;
       }
       return {
         id: node.leafName,
@@ -488,10 +489,10 @@ export default {
     },
     // 节点单击事件
     handleNodeClick(data) {
-      this.queryParams.dynamicLabel = data.leafValue
+      this.queryParams.dynamicLabel = data.leafName
       this.loading = true
       this.queryParams.sortableField = "n.label"
-      resourceManagement.getAllSpecificResourcesByLabel(this.queryParams).then(result => {
+      resourceManagement.getAllSpecialToolsByLabel(this.queryParams).then(result => {
           if (result.code === 200) {
             this.resources = result.data.content
             this.total = result.data.totalElements
@@ -505,8 +506,7 @@ export default {
     handleQuery() {
       this.queryParams.pageNum = 1
       this.loading = true
-      this.queryParams.sortableField = "n.label"
-      resourceManagement.getSpecificResourcesByParams(this.queryParams).then(result => {
+      resourceManagement.getSpecialToolsByParams(this.queryParams).then(result => {
           if (result.code === 200) {
             this.resources = result.data.content
             this.total = result.data.totalElements
@@ -615,13 +615,13 @@ export default {
       this.$refs['resource'].validate(valid => {
         if (valid) {
           if (this.selectResource.resourceId !== undefined) {
-            resourceManagement.updateSpecificResource(this.selectResource).then(response => {
+            resourceManagement.updateSpecialTool(this.selectResource).then(response => {
               this.$modal.msgSuccess('修改成功')
               this.open = false
               this.getList()
             })
           } else {
-            resourceManagement.createSpecificResource(this.form).then(response => {
+            resourceManagement.createSpecialTool(this.selectResource).then(response => {
               this.$modal.msgSuccess('新增成功')
               this.open = false
               this.getList()

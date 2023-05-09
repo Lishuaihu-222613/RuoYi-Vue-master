@@ -142,9 +142,9 @@
                            align="center"
                            label="资源描述" prop="resourceDescription"
           />
-          <el-table-column v-if="columns[3].visible" key="resourceUsage" :show-overflow-tooltip="true"
+          <el-table-column v-if="columns[3].visible" key="site" :show-overflow-tooltip="true"
                            align="center"
-                           label="存在地址" prop="sites"
+                           label="存在地址" prop="site"
           />
           <el-table-column v-if="columns[4].visible" key="equipmentPower" :show-overflow-tooltip="true"
                            align="center"
@@ -175,14 +175,9 @@
                            label="设备状态" prop="equipmentState"
           >
             <template slot-scope="scope">
-              <el-switch
-                v-model="scope.row.equipmentState"
-                active-value="可用"
-                inactive-value="报修"
-                active-text="可用"
-                inactive-text="报修"
-                disabled
-              ></el-switch>
+              <el-tag>
+                {{scope.row.equipmentState}}
+              </el-tag>
             </template>
           </el-table-column>
           <el-table-column v-if="columns[10].visible" key="depreciationRate" :show-overflow-tooltip="true"
@@ -446,6 +441,7 @@ import { getToken } from '@/utils/auth'
 import * as resourceManagement from '@/api/system/resourceManagement'
 import * as treeManagement from '@/api/system/treeManagement'
 import Treeselect from '@riophae/vue-treeselect'
+import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 
 export default {
   name: 'index',
@@ -568,8 +564,8 @@ export default {
         equipmentState:'',
         depreciationRate:0.0,
         loadRate:0.0,
-        equipmentCapacity:new Map(),
-        attentions:[],
+        equipmentCapacity: {},
+        attentions:[""],
       },
       modifyState: false,
       labelTree: [],
@@ -625,7 +621,7 @@ export default {
     },
     /** 查询知识下拉树结构 */
     getTreeselect() {
-      treeManagement.getTreeManagement(25500).then(response => {
+      treeManagement.getTreeManagement(25817).then(response => {
         console.log(response.data)
         this.labelTree.push(response.data)
       })
@@ -637,8 +633,8 @@ export default {
     },
     /** 转换知识树管理数据结构 */
     normalizer(node) {
-      if (node.children && !node.children.length) {
-        delete node.children;
+      if (node.subLeafs && !node.subLeafs.length) {
+        delete node.subLeafs;
       }
       return {
         id: node.leafName,
@@ -666,7 +662,6 @@ export default {
     handleQuery() {
       this.queryParams.pageNum = 1
       this.loading = true
-      this.queryParams.sortableField = "n.label"
       resourceManagement.getEquipmentResourcesByParams(this.queryParams).then(result => {
           if (result.code === 200) {
             this.resources = result.data.content
@@ -791,7 +786,7 @@ export default {
               this.getList();
             });
           } else {
-            resourceManagement.createEquipmentResource(this.form).then(response => {
+            resourceManagement.createEquipmentResource(this.selectResource).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();

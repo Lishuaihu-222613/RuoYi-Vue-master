@@ -20,6 +20,8 @@ public interface QualityProblemService {
 
     Page<QualityProblem> getQualityProblemsByLabel(String dynamicLabel, Pageable pageable);
 
+    List<QualityProblem> getQualityProblemOptionsByLabel(String dynamicLabel);
+
     Page<QualityProblem> getQualityProblemsByParams(Example<QualityProblem> example, Pageable pageable);
 
     List<QualityProblem> getQualityProblemsByName(String problemName);
@@ -27,6 +29,10 @@ public interface QualityProblemService {
     QualityProblem getQualityProblemById(Long problemId);
 
     void deleteQualityProblem(Long problemId);
+
+    void createRelatedRelations(Long relatedId,List<Long> problems);
+
+    List<QualityProblem> getProblemsByRelatedId(Long relatedId);
 
     Appearance createAppearanceForQualityProblem(Long problemId, Appearance appearance);
 

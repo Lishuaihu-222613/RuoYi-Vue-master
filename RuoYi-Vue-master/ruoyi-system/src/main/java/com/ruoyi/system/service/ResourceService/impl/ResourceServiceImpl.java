@@ -61,8 +61,20 @@ public class ResourceServiceImpl implements ResourceService {
     }
 
     @Override
+    public <S extends MouldTool> S updateMouldTool(S resource) {
+        return mouldToolRepository.save(resource);
+    }
+
+    @Override
     public void deleteResource(List<Long> resourceIds) {
         resourceRepository.deleteAllById(resourceIds);
+    }
+
+    @Override
+    public void createRelatedRelations(Long relatedId, List<Long> resources) {
+        for (Long resourceId : resources) {
+            resourceRepository.createUseRelation(resourceId,relatedId);
+        }
     }
 
     @Override
@@ -103,6 +115,11 @@ public class ResourceServiceImpl implements ResourceService {
     @Override
     public Page<SpreaderTool> getSpreaderToolsByType(String label, Pageable pageable) {
         return spreaderToolRepository.findResourcesByResourceType(label,pageable);
+    }
+
+    @Override
+    public List<AssemblyResource> getResourcesByRelatedId(Long relatedId) {
+        return resourceRepository.findResourceByAssociatedId(relatedId);
     }
 
     @Override

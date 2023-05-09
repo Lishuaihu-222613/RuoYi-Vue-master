@@ -16,6 +16,20 @@ export function getAllQualityProblemsByLabel(data) {
   })
 }
 
+export function getProblemsByRelatedId(relatedId) {
+  return request({
+    url: '/qualityProblem/getProblemsByRelatedId/'+relatedId,
+    method: 'get',
+  })
+}
+
+export function getQualityProblemOptionsByLabel(label) {
+  return request({
+    url: '/qualityProblem/getQualityProblemOptionsByLabel/'+label,
+    method: 'get',
+  })
+}
+
 export function getQualityProblemsByParams(data) {
   return request({
     url: '/qualityProblem/getQualityProblemsByParams',

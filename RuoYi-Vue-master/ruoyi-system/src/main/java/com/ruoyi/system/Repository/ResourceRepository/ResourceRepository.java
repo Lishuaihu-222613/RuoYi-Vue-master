@@ -52,7 +52,9 @@ public interface ResourceRepository extends Neo4jRepository<AssemblyResource,Lon
     @Query("Match (n:AssemblyResource)<-[]-(m) where id(n) = $resourceId and id(m) = $associatedId delete r ")
     void deleteRelation(@Param("resourceId") Long resourceId,@Param("associatedId") Long associatedId);
 
-    @Query("Merge (n:AssemblyResource)<-[r:use]-(m) where id(n) = $resourceId and id(m) = $associatedId ")
+    @Query("Match (n:AssemblyResource) where id(n) = $resourceId " +
+            "Match (m) where id(m) = $associatedId " +
+            "Merge  (n)<-[r:use]-(m)")
     void createUseRelation(@Param("resourceId") Long resourceId,@Param("associatedId") Long associatedId);
 
     @Query("Merge (n:AssemblyResource)<-[r:hasAssociatedDevice]-(m) where id(n) = $resourceId and id(m) = $associatedId ")

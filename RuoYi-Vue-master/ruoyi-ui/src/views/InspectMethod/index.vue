@@ -507,12 +507,12 @@ export default {
     /** 新增按钮操作 */
     handleAdd() {
       this.modifyMethodShow = true;
-      this.title = "新增原则"
+      this.title = "创建方法"
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.modifyMethodShow = true;
-      this.title = "修改原则";
+      this.title = "修改方法";
       this.selectMethodId = row.methodId;
     },
     /** 删除按钮操作 */

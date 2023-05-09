@@ -22,7 +22,11 @@ public interface InspectionMethodRepository extends Neo4jRepository<InspectionMe
     @Override
     Page<InspectionMethod> findAll(Pageable pageable);
 
-    @Query(value = "MATCH (n:InspectionMethod :`:#{literal(#dynamicLabel)}`) return n " +
+    @Query(value = "MATCH (n:InspectionMethod :`:#{literal(#dynamicLabel)}`) " +
+            "Match (n)-[:hasMode]->(m)" +
+            "Match (n)-[:hasFactor]->(f)" +
+            "Match (n)-[:hasCondition]->(c)" +
+            "return n,collect(m),collect(f),collect(c)" +
             ":#{orderBy(#pageable)} SKIP $skip LIMIT $limit",
             countQuery = "MATCH (n:InspectionMethod :`:#{literal(#dynamicLabel)}`) return count(n)"
     )
@@ -45,4 +49,7 @@ public interface InspectionMethodRepository extends Neo4jRepository<InspectionMe
 
     @Query("MATCH (n:InspectionMethod)<-[r]-(m) where id(n) = methodId and id(m) = $associatedId DELETE r")
     void deleteRelationById(@Param("methodId") Long methodId ,@Param("associatedId") Long associatedId  );
+
+    @Query("MATCH (n:InspectionMethod)-[r:hasAssociatedProblem|:use|:hasAssociatedFile]->(m) where id(n) = $methodId DELETE r")
+    void deleteOutRelationsById(@Param("methodId") Long methodId);
 }

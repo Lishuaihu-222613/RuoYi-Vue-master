@@ -1,10 +1,7 @@
 package com.ruoyi.system.service.ElementService;
 
 import com.ruoyi.system.domain.AssemblyPojo.Structure.*;
-import com.ruoyi.system.domain.AssemblyPojo.Structure.vo.Constraint;
-import com.ruoyi.system.domain.AssemblyPojo.Structure.vo.ConstraintForElement;
-import com.ruoyi.system.domain.AssemblyPojo.Structure.vo.ElementForParent;
-import com.ruoyi.system.domain.AssemblyPojo.Structure.vo.PartsWithConstraints;
+import com.ruoyi.system.domain.AssemblyPojo.Structure.vo.*;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +17,8 @@ public interface ElementService {
      */
     List<AssemblyElement> getAllAssemblyProducts();
 
+    List<AssemblyElement> getSubElementsById(Long elementId );
+
     List<AssemblyElement> getAllAssemblyProductsByLabel(String dynamicLabel);
 
     Page<AssemblyElement> getAllAssemblyProductsByLabel(String dynamicLabel, Pageable pageable);
@@ -29,6 +28,14 @@ public interface ElementService {
     void deleteElements(Long[] elements);
 
     AssemblyElement getElementById(Long elementId);
+
+    List<AssemblyElement> getRelatedStructure(Long relatedId);
+
+    void modifyRelatedStructure(RelatedStructureVo vo);
+
+    AssemblyElement getSingleElementById(Long elementId);
+
+    AssemblyElement getParentElementById(Long elementId);
 
     AssemblyElement createElementForParent(ElementForParent EP);
 
@@ -40,25 +47,16 @@ public interface ElementService {
 
     List<AssemblyConstraint> getConstraintsByElementId(Long elementId);
 
-    AssemblyConstraint createConstraintForElement(Long elementId);
+    AssemblyConstraint createConstraintForElement(ConstraintVo vo);
 
     AssemblyConstraint updateConstraint(ConstraintForElement CE);
 
     void deleteConstraint(Long constraintId);
 
-    /**
-     * 获得某装配产品的组件与零件
-     * @param ProductId
-     * @return
-     */
-    List<AssemblyStructure> getAllStructureByProductId(Long ProductId);
+    void modifyRelations(RelationsVoForElement relationsVoForElement);
 
-    /**
-     * 获得某装配组件的子组件与零件
-     * @param ComponentId
-     * @return
-     */
-    List<AssemblyStructure> getAllStructureByComponentId(Long ComponentId);
+
+
 
     /**
      * 获得某装配结构关联的全部装配约束
@@ -67,54 +65,7 @@ public interface ElementService {
      */
     List<AssemblyConstraint> getAllConstraintByStructureId(Long ASItemId);
 
-    /**
-     * 获得单个装配结构
-     * @param ASItemId
-     * @return
-     */
-    AssemblyStructure getAssemblyStructureId(Long ASItemId);
 
-    /**
-     * 获得单个产品
-     * @param ProductId
-     * @return
-     */
-    AssemblyProduct getProductById(Long ProductId);
-
-    /**
-     * 获得单个组件
-     * @param ComponentId
-     * @return
-     */
-    AssemblyComponent getComponentById(Long ComponentId);
-
-    /**
-     * 获得单个零件
-     * @param PartId
-     * @return
-     */
-    AssemblyPart getPartById(Long PartId);
-
-    /**
-     * 获得装配约束
-     * @param ConstraintId
-     * @return
-     */
-    AssemblyConstraint getConstraintById(Long ConstraintId);
-
-    /**
-     * 创建完整的装配产品结构，包含组件，零件，以及相关约束
-     * @param product
-     * @return
-     */
-    AssemblyProduct createProduct(AssemblyProduct product);
-
-    /**
-     * 创建完整的装配组件结构，包含子组件，零件，以及相关约束
-     * @param component
-     * @return
-     */
-    AssemblyComponent createComponent(AssemblyComponent component);
 
     /**
      * 创建完整的装配零件，包含零件所有属性
@@ -125,17 +76,11 @@ public interface ElementService {
 
     /**
      * 创建装配约束，包含关联的零件或组件
-     * @param constraint
+     * @param
      * @return
      */
-    AssemblyConstraint createConstraint(AssemblyConstraint constraint);
+    AssemblyConstraint createConstraint(ConstraintVo vo);
 
-    /**
-     * 更新装配元素
-     * @param structure
-     * @return
-     */
-    AssemblyStructure updateStructure(AssemblyStructure structure);
 
     /**
      * 创建待推理零件集并初始化

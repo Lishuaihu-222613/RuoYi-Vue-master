@@ -203,7 +203,7 @@ public class ResourceController extends BaseController {
     @PostMapping("/updateMouldTool")
     public R<MouldTool> updateResource(@RequestBody MouldTool resource) {
         try {
-            MouldTool newResource = resourceService.updateResource(resource);
+            MouldTool newResource = resourceService.updateMouldTool(resource);
             System.out.println(newResource);
             return R.success(newResource);
         } catch (Exception e) {
@@ -699,6 +699,19 @@ public class ResourceController extends BaseController {
     public R<List<MouldTool>> getMouldTools() {
         try {
             List<MouldTool> resources = resourceService.getMouldTools();
+            System.out.println(resources);
+            return R.success(resources);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    };
+
+    @ResponseBody
+    @GetMapping("/getResourcesByRelatedId/{relatedId}")
+    public R<List<AssemblyResource>> getResourcesByRelatedId(@PathVariable Long relatedId) {
+        try {
+            List<AssemblyResource> resources = resourceService.getResourcesByRelatedId(relatedId);
             System.out.println(resources);
             return R.success(resources);
         } catch (Exception e) {

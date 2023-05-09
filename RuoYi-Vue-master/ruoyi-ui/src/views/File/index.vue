@@ -226,7 +226,16 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="分类标签" prop="fileClassification">
-              <treeselect v-model="file.fileClassification" :options="labelTree" :show-count="true" placeholder="请选择分类标签" :normalizer="normalizer" :multiple="true"/>
+              <treeselect v-model="file.fileClassification" :options="labelTree"
+                          :show-count="true"
+                          placeholder="请选择分类标签"
+                          :flat="true"
+                          sort-value-by="LEVEL"
+                          value-consists-of="ALL_WITH_INDETERMINATE"
+                          :autoSelectAncestors="true"
+                          :autoDeselectAncestors="true"
+                          :normalizer="normalizer"
+                          :multiple="true"/>
             </el-form-item>
           </el-col>
         </el-row>
@@ -238,16 +247,32 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="修改时间" prop="modifyTime">
-                <el-date-picker type="date" placeholder="选择日期" v-model="file.modifyTime"/>
+                <el-date-picker type="date"
+                                placeholder="选择日期"
+                                size="small"
+                                format="yyyy 年 MM 月 dd 日"
+                                value-format="yyyy-MM-dd"
+                                style="width: 100%;"
+                                v-model="file.modifyTime"/>
             </el-form-item>
           </el-col>
+        </el-row>
+        <el-row>
+          <el-form-item label="文件描述" prop="fileDescription">
+            <el-input
+              type="textarea"
+              autosize
+              placeholder="请输入文件描述"
+              v-model="file.fileDescription">
+            </el-input>
+          </el-form-item>
         </el-row>
         <el-row>
           <el-form-item label="文件上传" prop="fileUrl">
             <el-upload
               ref="upload"
               :limit="1"
-              accept=".jpg, .png, .pdf, .docx, .doc"
+              accept=".jpg, .png, .pdf, .docx, .doc, .html"
               :action="upload.url"
               :headers="upload.headers"
               :file-list="upload.fileList"
@@ -260,7 +285,7 @@
                          @click="submitFileForm"
               >上传到服务器
               </el-button>
-              <div slot="tip" class="el-upload__tip">只能上传jpg/png/pdf/docx/doc文件，且不超过500kb</div>
+              <div slot="tip" class="el-upload__tip">只能上传jpg/png/pdf/docx/doc/html文件</div>
             </el-upload>
           </el-form-item>
         </el-row>
@@ -351,7 +376,7 @@ export default {
       },
       queryParams: {
         pageNum: 1,
-        pageSize: 9,
+        pageSize: 10,
         sortableField: 'fileId',
         sortType: 'ascending',
         dynamicLabel: "",
@@ -385,7 +410,7 @@ export default {
         label: 'leafName'
       },
       file:{
-        fileId:0,
+        fileId:undefined,
         fileName:'',
         fileType:'',
         fileSize:'',
@@ -459,8 +484,8 @@ export default {
     },
     /** 转换知识树管理数据结构 */
     normalizer(node) {
-      if (node.children && !node.children.length) {
-        delete node.children;
+      if (node.subLeafs && !node.subLeafs.length) {
+        delete node.subLeafs;
       }
       return {
         id: node.leafName,

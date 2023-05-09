@@ -213,6 +213,11 @@
             <el-form-item label="规则类别" prop="ruleTypes">
               <treeselect v-model="selectRule.dynamicLabels" :multiple="true" :options="ruleTree"
                           :normalizer="normalizer"
+                          :flat="true"
+                          sort-value-by="LEVEL"
+                          value-consists-of="ALL_WITH_INDETERMINATE"
+                          :autoSelectAncestors="true"
+                          :autoDeselectAncestors="true"
                           :show-count="true" placeholder="请选择规则类别"
               />
             </el-form-item>
@@ -226,7 +231,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="规则描述" prop="ruleDescription">
-              <el-input v-model="selectRule.ruleDescription" placeholder="请输入规则描述" type="textarea"/>
+              <el-input v-model="selectRule.ruleDescription" placeholder="请输入规则描述" autosize type="textarea"/>
             </el-form-item>
           </el-col>
         </el-row>
@@ -234,23 +239,26 @@
           <el-form-item label="规则条件">
             <el-row>
               <el-col :offset="18" :span="6">
-                <el-button type="primary" @click="addCondition" >添加条件</el-button>
+                <el-button type="primary" size="mini" @click="addCondition" >添加条件</el-button>
               </el-col>
             </el-row>
             <el-row v-for="(item,index) in selectRule.conditions" :key="index">
-              <el-col :span="4">
+              <el-col :span="3">
                 <el-tag type="primary">
-                  条件{{ index }}
+                  条件{{ index+1 }}
                 </el-tag>
               </el-col>
-              <el-col :span="6">
+              <el-col :span="8">
                 <el-input v-model="item.conditionCluster" placeholder="条件类别"></el-input>
               </el-col>
-              <el-col :span="6">
+              <el-col :span="1">
+                <el-divider></el-divider>
+              </el-col>
+              <el-col :span="8">
                 <el-input v-model="item.conditionContent" placeholder="条件内容" ></el-input>
               </el-col>
-              <el-col :span="6">
-                <el-button @click.prevent="removeCondition(item)">删除</el-button>
+              <el-col :span="2">
+                <el-button type="text" @click.prevent="removeCondition(item)" >  删 除</el-button>
               </el-col>
             </el-row>
           </el-form-item>
@@ -259,23 +267,26 @@
           <el-form-item label="规则结果">
             <el-row>
               <el-col :offset="18" :span="6">
-                <el-button type="primary" @click="addResult" >添加结果</el-button>
+                <el-button type="primary" size="mini" @click="addResult" >添加结果</el-button>
               </el-col>
             </el-row>
             <el-row v-for="(item,index) in selectRule.results" :key="index">
-              <el-col :span="4">
+              <el-col :span="3">
                 <el-tag type="primary">
-                  结果{{ index }}
+                  结果{{ index+1 }}
                 </el-tag>
               </el-col>
-              <el-col :span="6">
+              <el-col :span="8">
                 <el-input v-model="item.resultCluster" placeholder="结果类别"></el-input>
               </el-col>
-              <el-col :span="6">
+              <el-col :span="1">
+                <el-divider></el-divider>
+              </el-col>
+              <el-col :span="8">
                 <el-input v-model="item.resultContent" placeholder="结果内容" ></el-input>
               </el-col>
-              <el-col :span="6">
-                <el-button @click.prevent="removeResult(item)">删除</el-button>
+              <el-col :span="2">
+                <el-button type="text" @click.prevent="removeResult(item)">  删 除</el-button>
               </el-col>
             </el-row>
           </el-form-item>
@@ -366,7 +377,7 @@ export default {
       },
       queryParams: {
         pageNum: 1,
-        pageSize: 9,
+        pageSize: 10,
         sortableField: 'ruleId',
         sortType: 'ascending',
         dynamicLabel: "",
@@ -484,8 +495,8 @@ export default {
     },
     /** 转换知识树管理数据结构 */
     normalizer(node) {
-      if (node.children && !node.children.length) {
-        delete node.children;
+      if (node.subLeafs && !node.subLeafs.length) {
+        delete node.subLeafs;
       }
       return {
         id: node.leafName,

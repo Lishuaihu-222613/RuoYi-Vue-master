@@ -4,9 +4,7 @@ import com.ruoyi.system.Repository.StructureRepository.ConstraintRepository;
 import com.ruoyi.system.Repository.StructureRepository.StructureElementRepository;
 import com.ruoyi.system.domain.AssemblyPojo.Structure.*;
 import com.ruoyi.system.Repository.StructureRepository.StructureRepository;
-import com.ruoyi.system.domain.AssemblyPojo.Structure.vo.ConstraintForElement;
-import com.ruoyi.system.domain.AssemblyPojo.Structure.vo.ElementForParent;
-import com.ruoyi.system.domain.AssemblyPojo.Structure.vo.PartsWithConstraints;
+import com.ruoyi.system.domain.AssemblyPojo.Structure.vo.*;
 import com.ruoyi.system.service.ElementService.ElementService;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
@@ -15,6 +13,8 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.*;
+
+import static net.sf.jsqlparser.util.validation.metadata.NamedObject.constraint;
 
 @Service
 public class ElementServiceImpl implements ElementService {
@@ -29,6 +29,13 @@ public class ElementServiceImpl implements ElementService {
     @Override
     public List<AssemblyElement> getAllAssemblyProducts() {
         return structureElementRepository.findAllProducts();
+    }
+
+    @Override
+    public List<AssemblyElement> getSubElementsById(Long elementId) {
+
+        List<AssemblyElement> elements = structureElementRepository.findSubElementsByParentId(elementId);
+        return elements;
     }
 
     @Override
@@ -53,19 +60,43 @@ public class ElementServiceImpl implements ElementService {
 
     @Override
     public AssemblyElement getElementById(Long elementId) {
-        return structureElementRepository.findById(elementId).get();
+        Optional<AssemblyElement> element = structureElementRepository.findById(elementId);
+        return element.orElse(null);
     }
 
     @Override
+    public List<AssemblyElement> getRelatedStructure(Long relatedId) {
+        List<AssemblyElement> structure = structureElementRepository.findRelatedStructure(relatedId);
+        return structure;
+    }
+
+    @Override
+    public void modifyRelatedStructure(RelatedStructureVo vo) {
+        structureElementRepository.deleteRelatedStructure(vo.getRelatedId());
+        for (Long elementId : vo.getElementId()) {
+            structureElementRepository.createRelatedStructure(vo.getRelatedId(), elementId);
+        }
+
+    }
+
+    @Override
+    public AssemblyElement getSingleElementById(Long elementId) {
+        AssemblyElement singleElement = structureElementRepository.findSingleElement(elementId);
+        return singleElement;
+    }
+
+    @Override
+    public AssemblyElement getParentElementById(Long elementId) {
+        return structureElementRepository.findParentElement(elementId);
+    }
+
+
+    @Override
     public AssemblyElement createElementForParent(ElementForParent EP) {
-        Optional<AssemblyElement> parentElement = structureElementRepository.findById(EP.getParentId());
-        if(parentElement.isPresent()){
-            AssemblyElement parent = parentElement.get();
+        AssemblyElement parentElement = structureElementRepository.findSingleElement(EP.getParentId());
+        if(parentElement != null){
             AssemblyElement childElement = structureElementRepository.save(EP.getOriginElement());
-            Set<AssemblyElement> subElements = parent.getSubElements();
-            subElements.add(childElement);
-            parent.setSubElements(subElements);
-            structureElementRepository.save(parent);
+            structureElementRepository.createParentRelation(parentElement.getElementId(),childElement.getElementId());
             return childElement;
         }
         return null;
@@ -113,6 +144,7 @@ public class ElementServiceImpl implements ElementService {
             oldElement.setElementVolume(assemblyElement.getElementVolume());
             oldElement.setElementMass(assemblyElement.getElementMass());
             oldElement.setElementBoundingBox(assemblyElement.getElementBoundingBox());
+            oldElement.setHasSubElements(assemblyElement.isHasSubElements());
             return structureElementRepository.save(oldElement);
         }
         return null;
@@ -130,19 +162,18 @@ public class ElementServiceImpl implements ElementService {
     }
 
     @Override
-    public AssemblyConstraint createConstraintForElement(Long elementId) {
+    public AssemblyConstraint createConstraintForElement(ConstraintVo vo) {
         AssemblyConstraint constraint = new AssemblyConstraint();
-        Optional<AssemblyElement> elementOptional = structureElementRepository.findById(elementId);
-        if(elementOptional.isPresent()){
-            AssemblyElement element = elementOptional.get();
-            Set<AssemblyConstraint> constraints = element.getConstraints();
-            constraints.add(constraint);
-            element.setConstraints(constraints);
-            structureElementRepository.save(element);
-            return constraint;
-        }
-        return null;
+        constraint.setConstraintType(vo.getConstraintType());
+        constraint.setConstraintValue(vo.getConstraintValue());
+        constraint.setConstraintName(vo.getConstraintName());
+        AssemblyConstraint newConstraint = constraintRepository.save(constraint);
+        constraintRepository.updateRelationShipForConstraint(newConstraint.getConstraintId(), vo.getElementId());
+        constraintRepository.updateRelationShipForConstraint(newConstraint.getConstraintId(), vo.getOtherElementId());
+        newConstraint.getElements().add(structureElementRepository.findById(vo.getElementId()).get());
+        return newConstraint;
     }
+
 
     //
     @Override
@@ -170,55 +201,18 @@ public class ElementServiceImpl implements ElementService {
     }
 
     @Override
-    public List<AssemblyStructure> getAllStructureByProductId(Long ProductId) {
-        return null;
+    public void modifyRelations(RelationsVoForElement relationsVoForElement) {
+        structureElementRepository.deleteAssociatedFileRelation(relationsVoForElement.getElementId());
+        structureElementRepository.createModelFileRelation(relationsVoForElement.getModelFileId(),relationsVoForElement.getElementId());
     }
 
-    @Override
-    public List<AssemblyStructure> getAllStructureByComponentId(Long ComponentId) {
-        return null;
-    }
 
     @Override
     public List<AssemblyConstraint> getAllConstraintByStructureId(Long ASItemId) {
         return null;
     }
 
-    @Override
-    public AssemblyStructure getAssemblyStructureId(Long ASItemId) {
-        return null;
-    }
 
-
-    @Override
-    public AssemblyProduct getProductById(Long ProductId) {
-        return null;
-    }
-
-    @Override
-    public AssemblyComponent getComponentById(Long ComponentId) {
-        return null;
-    }
-
-    @Override
-    public AssemblyPart getPartById(Long PartId) {
-        return null;
-    }
-
-    @Override
-    public AssemblyConstraint getConstraintById(Long ConstraintId) {
-        return null;
-    }
-
-    @Override
-    public AssemblyProduct createProduct(AssemblyProduct product) {
-        return null;
-    }
-
-    @Override
-    public AssemblyComponent createComponent(AssemblyComponent component) {
-        return null;
-    }
 
     @Override
     public AssemblyPart createPart(AssemblyPart part) {
@@ -227,15 +221,20 @@ public class ElementServiceImpl implements ElementService {
 
 
     @Override
-    public AssemblyConstraint createConstraint(AssemblyConstraint constraint) {
-        AssemblyConstraint assemblyConstraint = constraintRepository.save(constraint);
-        return assemblyConstraint;
+    public AssemblyConstraint createConstraint(ConstraintVo vo) {
+            AssemblyConstraint assemblyConstraint = new AssemblyConstraint();
+            assemblyConstraint.setConstraintType(vo.getConstraintType());
+            assemblyConstraint.setConstraintName(vo.getConstraintName());
+            assemblyConstraint.setConstraintValue(vo.getConstraintValue());
+            AssemblyConstraint newConstraint = constraintRepository.save(assemblyConstraint);
+            constraintRepository.updateRelationShipForConstraint(newConstraint.getConstraintId(),vo.getElementId());
+            constraintRepository.updateRelationShipForConstraint(newConstraint.getConstraintId(),vo.getOtherElementId());
+            AssemblyConstraint otherConstraint = constraintRepository.findSingleConstraintById(newConstraint.getConstraintId());
+            otherConstraint.getElements().removeIf(item -> Objects.equals(item.getElementId(), vo.getElementId()));
+            return otherConstraint;
     }
 
-    @Override
-    public AssemblyStructure updateStructure(AssemblyStructure structure) {
-        return null;
-    }
+
 
     @Override
     public Set<AssemblyPart> createUnknownParts(List<PartsWithConstraints> constraints) {

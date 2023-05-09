@@ -47,35 +47,35 @@ export function getProcessByPrescriptionId(prescriptionId) {
 
 export function getCombustionPropertyByPId(prescriptionId) {
   return request({
-    url: '/prescription/getCombustionPropertyByPId/' + prescriptionId,
+    url: '/prescription/getCombustionPropertyByPrescriptionId/' + prescriptionId,
     method: 'get'
   })
 }
 
 export function getEnergyPropertyByPId(prescriptionId) {
   return request({
-    url: '/prescription/getEnergyPropertyByPId/' + prescriptionId,
+    url: '/prescription/getEnergyPropertyByPrescriptionId/' + prescriptionId,
     method: 'get'
   })
 }
 
 export function getForcePropertyByPId(prescriptionId) {
   return request({
-    url: '/prescription/getForcePropertyByPId/' + prescriptionId,
+    url: '/prescription/getForcePropertyByPrescriptionId/' + prescriptionId,
     method: 'get'
   })
 }
 
 export function getStoragePropertyByPId(prescriptionId) {
   return request({
-    url: '/prescription/getStoragePropertyByPId/' + prescriptionId,
+    url: '/prescription/getStoragePropertyByPrescriptionId/' + prescriptionId,
     method: 'get'
   })
 }
 
 export function getOxidantRatioByPId(prescriptionId) {
   return request({
-    url: '/prescription/getOxidantRatioByPId/' + prescriptionId,
+    url: '/prescription/getOxidantRatioByPrescriptionId/' + prescriptionId,
     method: 'get'
   })
 }
@@ -89,28 +89,28 @@ export function getPrescriptionById(prescriptionId) {
 
 export function getHeatStabilityByPId(prescriptionId) {
   return request({
-    url: '/prescription/getHeatStabilityByPId/' + prescriptionId,
+    url: '/prescription/getHeatStabilityByPrescriptionId/' + prescriptionId,
     method: 'get'
   })
 }
 
 export function getMechanicalStabilityByPId(prescriptionId) {
   return request({
-    url: '/prescription/getMechanicalStabilityByPId/' + prescriptionId,
+    url: '/prescription/getMechanicalStabilityByPrescriptionId/' + prescriptionId,
     method: 'get'
   })
 }
 
 export function getRadioStabilityByPId(prescriptionId) {
   return request({
-    url: '/prescription/getRadioStabilityByPId/' + prescriptionId,
+    url: '/prescription/getRadioStabilityByPrescriptionId/' + prescriptionId,
     method: 'get'
   })
 }
 
 export function getExplosionStabilityByPId(prescriptionId) {
   return request({
-    url: '/prescription/getExplosionStabilityByPId/' + prescriptionId,
+    url: '/prescription/getExplosionStabilityByPrescriptionId/' + prescriptionId,
     method: 'get'
   })
 }

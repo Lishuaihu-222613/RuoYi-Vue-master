@@ -175,14 +175,9 @@
                            label="工具状态" prop="toolState"
           >
             <template slot-scope="scope">
-              <el-switch
-                v-model="scope.row.toolState"
-                active-value="可用"
-                inactive-value="报修"
-                active-text="可用"
-                inactive-text="报修"
-                disabled
-              ></el-switch>
+              <el-tag>
+                {{scope.row.toolState}}
+              </el-tag>
             </template>
           </el-table-column>
           <el-table-column v-if="columns[11].visible" key="wearCondition" :show-overflow-tooltip="true"
@@ -272,8 +267,7 @@
         </el-row>
         <el-row>
           <el-form-item label="资源描述" prop="resourceDescription">
-            <el-input v-model="selectResource.resourc
-            eDescription" placeholder="请输入资源描述" type="textarea" />
+            <el-input v-model="selectResource.resourceDescription" placeholder="请输入资源描述" type="textarea" />
           </el-form-item>
         </el-row>
         <el-row>
@@ -511,7 +505,7 @@ export default {
         sortType: 'ascending',
         dynamicLabel: '',
         originResource: {
-          resourceId: 0,
+          resourceId: undefined,
           resourceName: '',
           resourceTypes: [],
           resourceDescription: '',

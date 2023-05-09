@@ -22,7 +22,7 @@ public interface ConstraintRepository extends Neo4jRepository<AssemblyConstraint
     @Query("MATCH (n:AssemblyElement) -[r:hasConstraint]-> (m:AssemblyConstraint) where id(n) = $elementId return m")
     List<AssemblyConstraint> findConstraintsByElementId(@Param("elementId") Long elementId);
 
-    @Query("Match (n:AssemblyElement) -[r:hasConstraint]-> (m:AssemblyConstraint) where id(m) = $constraintId return m ,collect(n)")
+    @Query("Match  (m:AssemblyConstraint)-[r:with]->(n:AssemblyElement) where id(m) = $constraintId return m,collect(r),collect(n)")
     AssemblyConstraint findSingleConstraintById(@Param("constraintId") Long constraintId);
 
     @Query("Match (n:AssemblyElement) -[r:hasConstraint]- (m:AssemblyConstraint) where id(m) = $constraintId delete r")
@@ -30,6 +30,10 @@ public interface ConstraintRepository extends Neo4jRepository<AssemblyConstraint
 
     @Query("Match (n:AssemblyElement) where id(n) = $elementId " +
             "Match (m:AssemblyConstraint) where id(m) = $constraintId " +
-            "Merge (n)-[r:hasConstraint]->(m) " )
+            "Merge (n)-[r:hasConstraint]->(m) " +
+            "Merge (n)<-[l:with]-(m)" )
     void updateRelationShipForConstraint(@Param("constraintId") Long constraintId,@Param("elementId") Long elementId);
+
+    @Query("Match (n:AssemblyElement)-[r:hasConstraint]->(m) where id(m) = $constraintId return m,collect(n) " )
+    AssemblyConstraint getOtherConstraint(@Param("constraintId") Long constraintId);
 }

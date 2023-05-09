@@ -32,6 +32,7 @@
                             :clearable="true"
                             :searchable="true"
                             @select="selectStructure"
+                            :load-options="loadOptions"
                             :normalizer="elementNormalizer"
                             :options="structureOptions"
                             placeholder="请选择结构元素"
@@ -40,7 +41,6 @@
               <el-col :span="4">
                 <el-button @click.prevent="addStructure">添加</el-button>
               </el-col>
-
             </el-row>
           </el-form-item>
           <el-form-item :label-width="formLabelWidth" label="使用资源">
@@ -130,8 +130,8 @@
       </el-tab-pane>
       <el-tab-pane label="元素关系编辑">
         <el-row>
-          <p style="text-align: center; margin: 0 0 20px">工序关系选择</p>
-          <el-select v-model="relation" clearable placeholder="请选择元素关系" style="right :0px"
+          <p style="text-align: center; margin: 0 0 20px">关系选择</p>
+          <el-select v-model="relation" clearable placeholder="请选择关系" style="right :0px"
                      @change="selectRelationKind"
           >
             <el-option
@@ -155,7 +155,7 @@
             style="text-align: left; display: inline-block"
           >
             <span slot-scope="{ option }">{{ option.number }}-{{ option.label }}</span>
-            <el-button slot="right-footer" class="transfer-footer" size="small" @click="modifyRelation">修改工序关系</el-button>
+            <el-button slot="right-footer" class="transfer-footer" size="small" @click="modifyRelation">修改关系</el-button>
           </el-transfer>
         </div>
 
@@ -173,6 +173,13 @@ import * as fileManagement from '@/api/system/fileManagement'
 import * as resourceManagement from '@/api/system/resourceManagement'
 import * as structureManagement from '@/api/system/elementManagement'
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
+import * as treeManagement from '@/api/system/treeManagement'
+import { LOAD_CHILDREN_OPTIONS } from '@riophae/vue-treeselect'
+import * as elementManagement from '@/api/system/elementManagement'
+
+const simulateAsyncOperation = fn => {
+  setTimeout(fn, 2000)
+}
 
 export default {
 
@@ -180,7 +187,7 @@ export default {
   components: { Treeselect },
 
   watch: {
-    selectId: {
+    selectElementId: {
       handler(newVal, oldVal) {
         if (newVal !== null) {
           this.elementId = newVal
@@ -195,14 +202,14 @@ export default {
     pId: {
       handler(newVal, oldVal) {
         if (newVal !== null) {
-          this.processId = newVal
+          this.parentId = newVal
         }
       }
     }
   },
 
   props: {
-    selectId: {
+    selectElementId: {
       type: Number,
       default: 0
     },
@@ -219,14 +226,14 @@ export default {
   data() {
     return {
       elementId: 0,
-      processId: 0,
+      parentId: 0,
       formLabelWidth: '120px',
       dialogFormVisible: false,
       element: {},
       elements: [],
       beforeElements:[],
       afterElements:[],
-      andeElements:[],
+      andElements:[],
       orElements:[],
       subElements:[],
       structures:[
@@ -289,7 +296,8 @@ export default {
       ],
       newFile:{},
       selectedRelations: [],
-      relations: [{
+      relations: [
+        {
         value: 'before',
         label: '前道关系'
       }, {
@@ -301,38 +309,76 @@ export default {
       }, {
         value: 'or',
         label: '逻辑或关系'
-      },{
-        value: 'sub',
-        label: '子关系'
       }],
       relation: ''
     }
   },
   methods: {
 
+    getTreeselect() {
+      treeManagement.getTreeManagement(25877).then(response => {
+        this.structureLabelOptions = []
+        console.log(response.data)
+        this.structureLabelOptions.push(response.data)
+      })
+      treeManagement.getTreeManagement(25780).then(response => {
+        this.resourceLabelOptions = []
+        console.log(response.data)
+        this.resourceLabelOptions.push(response.data)
+      })
+      treeManagement.getTreeManagement(25843).then(response => {
+        this.fileLabelOptions = []
+        console.log(response.data)
+        this.fileLabelOptions.push(response.data)
+      })
+    },
+
     handleOpen() {
-      processManagement.getElementById(this.elementId).then(result => {
-        if (result.code == 200) {
-          this.element = result.data
-          this.beforeElements =  this.element.beforeElement.map(item=>{
-            return item.elementId;
-          })
-          this.afterElements =  this.element.afterElement.map(item=>{
-            return item.elementId;
-          })
-          this.andElements =  this.element.andElement.map(item=>{
-            return item.elementId;
-          })
-          this.orElements =  this.element.orElement.map(item=>{
+
+      this.getTreeselect()
+
+      processManagement.getBeforeElements(this.elementId).then(result =>{
+        if(result.code === 200){
+          this.beforeElements = result.data.map(item=>{
             return item.elementId;
           })
         }
-      });
+      })
+      processManagement.getAfterElements(this.elementId).then(result =>{
+        if(result.code === 200){
+          this.afterElements = result.data.map(item=>{
+            return item.elementId;
+          })
+        }
+      })
+      processManagement.getAndElements(this.elementId).then(result =>{
+        if(result.code === 200){
+          this.andElements = result.data.map(item=>{
+            return item.elementId;
+          })
+        }
+      })
+      processManagement.getOrElements(this.elementId).then(result =>{
+        if(result.code === 200){
+          this.orElements = result.data.map(item=>{
+            return item.elementId;
+          })
+        }
+      })
+      structureManagement.getStructureByRelatedId(this.elementId).then(result =>{
+        this.structures = result.data
+      } )
+      fileManagement.getFilesByRelatedId(this.elementId).then(result =>{
+        this.files = result.data
+      })
+      resourceManagement.getResourcesByRelatedId(this.elementId).then(result =>{
+        this.resources = result.data
+      })
+
       let oriElements;
-      processManagement.getElementByProcess(this.processId).then(result => {
+      processManagement.getSubElementsById(this.parentId).then(result => {
         if(result.code === 200){
           oriElements = result.data
-          console.log(oriElements)
           this.elements = oriElements.map(item=>{
             return Object.assign({},{'key':item.elementId,
               'label':item.elementName,'number':item.elementNumber
@@ -351,8 +397,8 @@ export default {
     },
 
     normalizer(node) {
-      if (node.children && !node.children.length) {
-        delete node.children;
+      if (node.subLeafs && !node.subLeafs.length) {
+        delete node.subLeafs;
       }
       return {
         id: node.leafName,
@@ -362,13 +408,27 @@ export default {
     },
 
     elementNormalizer(node){
-      if (node.children && !node.children.length) {
-        delete node.children;
+      if (node.subElements && !node.subElements.length) {
+        node.subElements = null
       }
       return {
         id: node.elementId,
         label: node.elementName,
         children: node.subElements
+      }
+    },
+
+    loadOptions({ action, parentNode, callback }) {
+
+      if (action === LOAD_CHILDREN_OPTIONS) {
+        simulateAsyncOperation(() =>{
+          elementManagement.getSubElementsById(parentNode.elementId).then(result =>{
+            if(result.code === 200){
+              parentNode.subElements = result.data
+              callback()
+            }
+          })
+        })
       }
     },
 
@@ -392,7 +452,6 @@ export default {
         }
       })
     },
-
     selectResourceLabel(node,instanceId){
       this.resourceOptions = []
       resourceManagement.getResourceOptionsByLabel(node.label).then(result =>{
@@ -401,7 +460,6 @@ export default {
         }
       })
     },
-
     selectFileLabel(node,instanceId){
       this.fileOptions = []
       fileManagement.getFileOptionsByLabel(node.label).then(result =>{
@@ -419,9 +477,8 @@ export default {
     },
 
     addStructure(){
-      if(this.structure !== {})
-      this.structures.push(this.structure)
-      this.structure = {}
+      this.structures.push(this.newStructure)
+      this.newStructure = {}
     },
 
     addResource(){
@@ -465,31 +522,31 @@ export default {
     modifyRelation() {
       let ss = {
         elementId:this.elementId,
-        elementList:this.selectedRelations
+        relations:this.selectedRelations
       }
 
       if(this.relation === "before"){
         processManagement.modifyBeforeElement(ss).then(result => {
           if(result.code === 200){
-            this.$modal.msgSuccess("工序关系修改成功！")
+            this.$modal.msgSuccess("关系修改成功！")
           }
         })
       } else if(this.relation === "after"){
         processManagement.modifyAfterElement(ss).then(result => {
           if(result.code === 200){
-            this.$modal.msgSuccess("工序关系修改成功！")
+            this.$modal.msgSuccess("关系修改成功！")
           }
         })
       } else if(this.relation ==="and"){
         processManagement.modifyAndElement(ss).then(result => {
           if(result.code === 200){
-            this.$modal.msgSuccess("工序关系修改成功！")
+            this.$modal.msgSuccess("关系修改成功！")
           }
         })
       } else if(this.relation === "or"){
         processManagement.modifyOrElement(ss).then(result => {
           if(result.code === 200){
-            this.$modal.msgSuccess("工序关系修改成功！")
+            this.$modal.msgSuccess("关系修改成功！")
           }
         })
       }

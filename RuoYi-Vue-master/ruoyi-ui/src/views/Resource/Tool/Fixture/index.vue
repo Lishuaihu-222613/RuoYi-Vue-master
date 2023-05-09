@@ -175,14 +175,9 @@
                            label="工具状态" prop="toolState"
           >
             <template slot-scope="scope">
-              <el-switch
-                v-model="scope.row.toolState"
-                active-value="可用"
-                inactive-value="报修"
-                active-text="可用"
-                inactive-text="报修"
-                disabled
-              ></el-switch>
+              <el-tag>
+                {{scope.row.toolState}}
+              </el-tag>
             </template>
           </el-table-column>
           <el-table-column v-if="columns[11].visible" key="wearCondition" :show-overflow-tooltip="true"
@@ -279,7 +274,12 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="资源类别" prop="resourceTypes">
-              <treeselect v-model="selectResource.resourceTypes" :options="labelTree" :normalizer="normalizer" :multiple="true" :show-count="true" placeholder="请选择资源类别" />
+              <treeselect v-model="selectResource.resourceTypes"
+                          :options="labelTree"
+                          :normalizer="normalizer"
+                          :multiple="true"
+                          :show-count="true"
+                          placeholder="请选择资源类别" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -487,7 +487,7 @@ import { getToken } from '@/utils/auth'
 import * as resourceManagement from '@/api/system/resourceManagement'
 import * as treeManagement from '@/api/system/treeManagement'
 import Treeselect from '@riophae/vue-treeselect'
-
+import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 export default {
   name: 'index',
   components: { Treeselect },
@@ -675,20 +675,19 @@ export default {
     },
     /** 查询知识下拉树结构 */
     getTreeselect() {
-      treeManagement.getTreeManagement(25500).then(response => {
+      treeManagement.getTreeManagement(25820).then(response => {
         console.log(response.data)
         this.labelTree.push(response.data)
       })
     },
     /** 转换知识树管理数据结构 */
     normalizer(node) {
-      if (node.children && !node.children.length) {
-        delete node.children;
+      if (node.subLeafs && !node.subLeafs.length) {
+        delete node.subLeafs;
       }
       return {
         id: node.leafName,
         label: node.leafName,
-        value:node.leafValue,
         children: node.subLeafs
       }
     },
@@ -840,7 +839,7 @@ export default {
               this.getList();
             });
           } else {
-            resourceManagement.createFixtureTool(this.form).then(response => {
+            resourceManagement.createFixtureTool(this.selectResource).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();

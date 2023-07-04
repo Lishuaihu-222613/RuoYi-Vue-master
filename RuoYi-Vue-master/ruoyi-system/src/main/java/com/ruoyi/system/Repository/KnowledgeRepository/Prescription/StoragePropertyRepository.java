@@ -26,7 +26,7 @@ public interface StoragePropertyRepository extends Neo4jRepository<StorageProper
     @Override
     void deleteById(Long propertyId);
 
-    @Query("MATCH (n:推进剂配方)-[r:hasCombustionProperty]->(m:贮存性能) where id(n) = $prescriptionId return m")
+    @Query("MATCH (n:推进剂配方)-[r:hasStorageProperty]->(m:贮存性能) where id(n) = $prescriptionId return m")
     Optional<StorageProperty> findStoragePropertyByPrescription(@Param("prescriptionId") Long prescriptionId);
 
     @Query("MATCH (n:贮存性能) where n.label = $propertyName return n")

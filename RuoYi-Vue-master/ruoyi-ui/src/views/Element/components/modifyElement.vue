@@ -122,23 +122,32 @@
           <el-form-item label="模型文件">
             <el-row>
               <el-tag
-                v-if="structureModel === {}"
+                v-for="model in models"
+                :key="model.fileId"
                 closable
                 type="info"
-                @close="handleCloseModel(structureModel)"
+                @close="handleCloseModel(model)"
               >
-                {{ structureModel.fileName }}
+                {{ model.fileName }}
               </el-tag>
             </el-row>
-            <el-select v-model="structureModel" filterable placeholder="请选择模型文件" value-key="fileId">
-              <el-option
-                v-for="item in modelOptions"
-                :key="item.fileId"
-                :label="item.fileName"
-                :value="item"
-              >
-              </el-option>
-            </el-select>
+            <el-row>
+              <el-col :span="20">
+                <el-select v-model="newModel" filterable placeholder="请选择模型文件" value-key="fileId">
+                  <el-option
+                    v-for="item in modelOptions"
+                    :key="item.fileId"
+                    :label="item.fileName"
+                    :value="item"
+                  >
+                  </el-option>
+                </el-select>
+              </el-col>
+              <el-col :span="4">
+                <el-button @click.prevent="selectModel">选择</el-button>
+              </el-col>
+            </el-row>
+
           </el-form-item>
         </el-col>
         <el-col :span="12">
@@ -271,6 +280,7 @@ export default {
         hasSubElements: false,
         dynamicLabels: []
       },
+      models:[],
       elementType: '',
       dynamicLabels: [],
       labelOptions: [],
@@ -287,7 +297,8 @@ export default {
       fileOptions: [],
       elementOptions: [],
       elementId: 0,
-      isTypical: false
+      isTypical: false,
+      newModel:{}
     }
   },
   methods: {
@@ -347,12 +358,12 @@ export default {
             }
           })
         }
-        fileManagement.getFilesByRelatedId(this.element.elementId).then(result => {
+        fileManagement.getFilesByRelatedId(this.elementId).then(result => {
           if (result.code === 200) {
             this.files = result.data
           }
         })
-        fileManagement.getModelFileByStructure(this.element.elementId).then(result => {
+        fileManagement.getModelFileByStructure(this.elementId).then(result => {
           if (result.code === 200) {
             this.structureModel = result.data
           }
@@ -410,6 +421,11 @@ export default {
         children: node.subElements
       }
     },
+    selectModel(){
+      this.models = []
+      this.models.push(this.newModel)
+      console.log(this.models)
+    },
     submitForm() {
       if (this.isTypical === true) {
         this.element.dynamicLabels.push('TypicalElement')
@@ -441,17 +457,16 @@ export default {
         })
       }
       console.log(this.element)
-      if (this.model.fileId !== 0 || this.files.length > 0) {
+      if (this.models[0].fileId !== 0 || this.files.length > 0) {
         let relations = {
           elementId: this.element.elementId,
-          modelFileId: this.model.fileId,
+          modelFileId: this.models[0].fileId,
           associatedFileIds: this.files.map(item => {
             return item.fileId
           })
         }
         elementManagement.modifyFiles(relations).then(result => {
           if (result.code === 200) {
-
           }
         })
       }

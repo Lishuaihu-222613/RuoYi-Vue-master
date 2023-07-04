@@ -6,6 +6,8 @@ import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.Stability.Hea
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.Stability.MechanicalStability;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.Stability.RadioStability;
 import com.ruoyi.system.domain.AssemblyPojo.Process.Process;
+import com.ruoyi.system.domain.AssemblyPojo.Process.ProcessElement;
+import com.ruoyi.system.domain.AssemblyPojo.Structure.AssemblyElement;
 import com.ruoyi.system.domain.AssemblyPojo.Structure.AssemblyProduct;
 import org.springframework.data.neo4j.core.schema.*;
 
@@ -71,16 +73,16 @@ public class Prescription {
     @Relationship(type = "hasExplosionStability" , direction = Relationship.Direction.OUTGOING)
     private ExplosionStability explosionStability;
 
-    @Relationship(type = "hasUsage" , direction = Relationship.Direction.OUTGOING)
-    private Set<AssemblyProduct> product;
+    @Relationship(type = "hasAssociatedStructure" , direction = Relationship.Direction.OUTGOING)
+    private Set<AssemblyElement> product;
 
-    @Relationship(type = "hasProcess" , direction = Relationship.Direction.OUTGOING)
-    private Set<Process> typicalProcesses;
+    @Relationship(type = "hasAssociatedProcess" , direction = Relationship.Direction.OUTGOING)
+    private Set<ProcessElement> typicalProcesses;
 
     public Prescription() {
     }
 
-    public Prescription(Long prescriptionId, String prescriptionName, String prescriptionDescription, String density, String dangerLevel, Map<String, String> curingTime, Map<String, String> otherProperty, Set<String> prescriptionLabels, Set<hasMaterialElement> materialElements, EnergyProperty energyProperty, ForceProperty forceProperty, CombustionProperty combustionProperty, StorageProperty storageProperty, OxidantRatio oxidantRatio, HeatStability heatStability, MechanicalStability mechanicalStability, RadioStability radioStability, ExplosionStability explosionStability, Set<AssemblyProduct> product, Set<Process> typicalProcesses) {
+    public Prescription(Long prescriptionId, String prescriptionName, String prescriptionDescription, String density, String dangerLevel, Map<String, String> curingTime, Map<String, String> otherProperty, Set<String> prescriptionLabels, Set<hasMaterialElement> materialElements, EnergyProperty energyProperty, ForceProperty forceProperty, CombustionProperty combustionProperty, StorageProperty storageProperty, OxidantRatio oxidantRatio, HeatStability heatStability, MechanicalStability mechanicalStability, RadioStability radioStability, ExplosionStability explosionStability, Set<AssemblyElement> product, Set<ProcessElement> typicalProcesses) {
         this.prescriptionId = prescriptionId;
         this.prescriptionName = prescriptionName;
         this.prescriptionDescription = prescriptionDescription;
@@ -247,19 +249,19 @@ public class Prescription {
         this.explosionStability = explosionStability;
     }
 
-    public Set<AssemblyProduct> getProduct() {
+    public Set<AssemblyElement> getProduct() {
         return product;
     }
 
-    public void setProduct(Set<AssemblyProduct> product) {
+    public void setProduct(Set<AssemblyElement> product) {
         this.product = product;
     }
 
-    public Set<Process> getTypicalProcesses() {
+    public Set<ProcessElement> getTypicalProcesses() {
         return typicalProcesses;
     }
 
-    public void setTypicalProcesses(Set<Process> typicalProcesses) {
+    public void setTypicalProcesses(Set<ProcessElement> typicalProcesses) {
         this.typicalProcesses = typicalProcesses;
     }
 

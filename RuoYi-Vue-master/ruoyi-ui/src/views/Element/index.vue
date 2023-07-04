@@ -241,6 +241,7 @@
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item command="handleConstraints" icon="el-icon-key">查看约束</el-dropdown-item>
                   <el-dropdown-item command="handleModel" icon="el-icon-circle-check">查看模型</el-dropdown-item>
+                  <el-dropdown-item command="handleGraph" icon="el-icon-circle-check">查看图谱</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
             </template>
@@ -394,7 +395,7 @@ export default {
         label: 'leafName'
       },
       productProps: {
-
+        children: 'subElements',
         label: 'elementName'
       },
       treeProps: {
@@ -515,6 +516,9 @@ export default {
         case 'handleModel':
           this.handleModel(data)
           break
+        case 'handleGraph':
+          this.handleGraph(data)
+          break
         default:
           break
       }
@@ -533,6 +537,9 @@ export default {
         }
       })
       // this.model = data.model
+    },
+    handleGraph(data){
+      this.$router.push({ path: "/KM/FileConvert", query: {id: data.elementId}});
     },
 
     /** 搜索按钮操作 */

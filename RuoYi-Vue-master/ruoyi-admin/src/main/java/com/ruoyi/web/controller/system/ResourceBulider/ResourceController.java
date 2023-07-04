@@ -213,8 +213,8 @@ public class ResourceController extends BaseController {
     };
 
     @ResponseBody
-    @GetMapping("/deleteResource")
-    public R<String> deletePrinciple(@RequestBody List<Long> resourceIds) {
+    @GetMapping("/deleteResource/{resourceIds}")
+    public R<String> deletePrinciple(@PathVariable Long[] resourceIds) {
         try {
             resourceService.deleteResource(resourceIds);
             return R.success("删除" + resourceIds + "的资源");
@@ -610,6 +610,19 @@ public class ResourceController extends BaseController {
             Page<MouldTool> resources = resourceService.getMouldTools(pageable);
             System.out.println(resources);
             return R.success(resources);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    };
+
+    @ResponseBody
+    @GetMapping("/getResourceOptionsByLabel/{label}")
+    public R<List<AssemblyResource>> getResourceOptionsByLabel(@PathVariable String label) {
+        try {
+            List<AssemblyResource> options = resourceService.getResourceOptionsByLabel(label);
+            System.out.println(options);
+            return R.success(options);
         } catch (Exception e) {
             e.printStackTrace();
             return R.error(e.getMessage());

@@ -32,6 +32,11 @@ public class ElementServiceImpl implements ElementService {
     }
 
     @Override
+    public List<AssemblyElement> getSimilarElements(Example<AssemblyElement> example) {
+        return structureElementRepository.findAll(example);
+    }
+
+    @Override
     public List<AssemblyElement> getSubElementsById(Long elementId) {
 
         List<AssemblyElement> elements = structureElementRepository.findSubElementsByParentId(elementId);
@@ -203,6 +208,7 @@ public class ElementServiceImpl implements ElementService {
     @Override
     public void modifyRelations(RelationsVoForElement relationsVoForElement) {
         structureElementRepository.deleteAssociatedFileRelation(relationsVoForElement.getElementId());
+        structureElementRepository.deleteModelFileRelation(relationsVoForElement.getElementId());
         structureElementRepository.createModelFileRelation(relationsVoForElement.getModelFileId(),relationsVoForElement.getElementId());
     }
 

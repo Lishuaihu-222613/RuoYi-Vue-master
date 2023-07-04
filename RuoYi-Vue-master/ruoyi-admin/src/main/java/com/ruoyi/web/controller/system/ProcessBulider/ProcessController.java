@@ -3,6 +3,7 @@ import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.utils.Neo4j.R;
 import com.ruoyi.system.domain.AssemblyPojo.Process.ProcessElement;
 import com.ruoyi.system.domain.AssemblyPojo.Process.vo.*;
+import com.ruoyi.system.domain.AssemblyPojo.Structure.vo.RelatedStructureVo;
 import com.ruoyi.system.service.ProcessService.ProcessService;
 import org.springframework.data.domain.*;
 import org.springframework.web.bind.annotation.*;
@@ -253,6 +254,33 @@ public class ProcessController extends BaseController {
     }
 
     ;
+
+    @ResponseBody
+    @GetMapping("/getProcessByRelatedId/{relatedId}")
+    public R<List<ProcessElement>> getProcessByRelatedId(@PathVariable Long relatedId) {
+        try {
+            List<ProcessElement> elements = processService.getProcessByRelatedId(relatedId);
+            System.out.println(elements);
+            return R.success(elements);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    }
+
+    ;
+
+    @ResponseBody
+    @PostMapping("/modifyRelatedProcess")
+    public R<String> modifyRelatedProcess(@RequestBody RelatedProcessVo vo ){
+        try {
+            processService.modifyRelatedProcess(vo);
+            return R.success("修改成功！");
+        } catch (Exception e){
+            e.printStackTrace();
+            return R.error(e.getMessage());
+        }
+    };
 
     @ResponseBody
     @GetMapping("/getOrElementsById/{elementId}")

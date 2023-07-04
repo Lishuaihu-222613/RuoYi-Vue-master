@@ -14,9 +14,9 @@ import java.util.Optional;
 
 public interface StructureElementRepository extends Neo4jRepository<AssemblyElement,Long> {
 
+
     @Override
     <S extends AssemblyElement> S save(S element);
-
     @Override
     <S extends AssemblyElement> Page<S> findAll(Example<S> example, Pageable pageable);
 
@@ -84,6 +84,8 @@ public interface StructureElementRepository extends Neo4jRepository<AssemblyElem
             "MERGE (n)<-[r:hasModelFile]-(m)")
     void createModelFileRelation(@Param("fileId") Long fileId, @Param("elementId") Long elementId);
 
+    @Query("Match (n:FileKnowledge)<-[r:hasModelFile]-(m:AssemblyElement) where id(m) = $elementId delete r")
+    void deleteModelFileRelation(@Param("elementId") Long elementId);
 
     @Query("Match (n:FileKnowledge)<-[r]-(m:AssemblyElement) where id(m) = $elementId delete r")
     void deleteAssociatedFileRelation(@Param("elementId") Long elementId);
@@ -91,7 +93,7 @@ public interface StructureElementRepository extends Neo4jRepository<AssemblyElem
     @Query("Match (n:AssemblyElement)<-[r:hasAssociatedStructure]-(m) where id(m) = $relatedId return n")
     List<AssemblyElement> findRelatedStructure(@Param("relatedId") Long relatedId);
 
-    @Query("Match (n:AssemblyElement)<-[r:hasAssociatedStructure]-(m) where id(m) = $relatedId")
+    @Query("Match (n:AssemblyElement)<-[r:hasAssociatedStructure]-(m) where id(m) = $relatedId delete r")
     void deleteRelatedStructure(@Param("relatedId") Long relatedId);
 
     @Query("Match (n) where id(n) = $relatedId " +

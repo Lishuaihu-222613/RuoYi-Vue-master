@@ -8,6 +8,14 @@ export function getAllPrescriptions(data) {
   })
 }
 
+export function addMaterialElement(data) {
+  return request({
+    url: '/prescription/addMaterialElementForProscription',
+    method: 'post',
+    data: data
+  })
+}
+
 export function getAllPrescriptionsByLabel(data) {
   return request({
     url: '/prescription/getAllPrescriptionsByLabel',
@@ -206,6 +214,13 @@ export function updateExplosionStability(data) {
 export function deletePrescription(prescriptionId) {
   return request({
     url: '/prescription/deletePrescription/' + prescriptionId,
+    method: 'get'
+  })
+}
+
+export function deleteMaterialElementForProscription(prescriptionId) {
+  return request({
+    url: '/prescription/deleteMaterialElementForProscription/' + prescriptionId,
     method: 'get'
   })
 }

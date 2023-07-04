@@ -67,9 +67,8 @@ export function createDomain(data){
 
 export function getCypherResult(data){
   return request({
-    url: '/kg/getCypherResult',
-    method: 'get',
-    params: data
+    url: '/kg/getCypherResult/'+data,
+    method: 'get'
   })
 }
 

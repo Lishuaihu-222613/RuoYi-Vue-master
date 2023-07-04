@@ -15,6 +15,8 @@
               <treeselect v-model="prescription.prescriptionLabels"
                           :clearable="true"
                           :multiple="true"
+                          :flat="true"
+                          :autoSelectAncestors="true"
                           :normalizer="normalizer"
                           :options="options"
                           :searchable="true"
@@ -117,6 +119,7 @@ import Treeselect from '@riophae/vue-treeselect'
 import * as treeManagement from '@/api/system/treeManagement'
 import * as prescriptionManagement from '@/api/system/prescriptionManagement'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
+import { ALL_WITH_INDETERMINATE } from '@riophae/vue-treeselect/src/constants'
 
 export default {
   name: 'modifyPrescription',
@@ -198,6 +201,9 @@ export default {
     }
   },
   methods: {
+    ALL_WITH_INDETERMINATE() {
+      return ALL_WITH_INDETERMINATE
+    },
     /** 查询标签列表 */
     getLabelList() {
       this.loading = true
@@ -209,8 +215,8 @@ export default {
     },
     /** 转换知识树管理数据结构 */
     normalizer(node) {
-      if (node.children && !node.children.length) {
-        delete node.children
+      if (node.subLeafs && !node.subLeafs.length) {
+        delete node.subLeafs
       }
       return {
         id: node.leafName,

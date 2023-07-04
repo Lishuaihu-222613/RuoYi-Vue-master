@@ -2,23 +2,11 @@ package com.ruoyi.system.service.ProcessService.impl;
 
 import com.ruoyi.system.Repository.KnowledgeRepository.File.FileRepository;
 import com.ruoyi.system.Repository.ProcessRepository.ProcessElementRepository;
-import com.ruoyi.system.Repository.ProcessRepository.ProcessRepository;
-import com.ruoyi.system.Repository.ProcessRepository.SequenceRepository;
-import com.ruoyi.system.Repository.ProcessRepository.StepRepository;
 import com.ruoyi.system.Repository.ResourceRepository.ResourceRepository;
 import com.ruoyi.system.Repository.StructureRepository.StructureElementRepository;
-import com.ruoyi.system.domain.AssemblyPojo.Process.Interface.ProcessInterface;
-import com.ruoyi.system.domain.AssemblyPojo.Process.Process;
 import com.ruoyi.system.domain.AssemblyPojo.Process.ProcessElement;
-import com.ruoyi.system.domain.AssemblyPojo.Process.SpecialSequence.Sequence;
-import com.ruoyi.system.domain.AssemblyPojo.Process.Step;
 import com.ruoyi.system.domain.AssemblyPojo.Process.vo.*;
-import com.ruoyi.system.domain.AssemblyPojo.Structure.AssemblyElement;
-import com.ruoyi.system.domain.AssemblyPojo.Structure.vo.ElementForParent;
-import com.ruoyi.system.domain.AssemblyPojo.Structure.vo.RelationsVoForElement;
-import com.ruoyi.system.service.KnowledgeService.File.impl.FileKnowledgeServiceImpl;
 import com.ruoyi.system.service.ProcessService.ProcessService;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -79,6 +67,12 @@ public class ProcessServiceImpl implements ProcessService {
     }
 
     @Override
+    public List<ProcessElement> getProcessByRelatedId(Long elementId) {
+        List<ProcessElement> elements = processElementRepository.findProcessByRelatedId(elementId);
+        return elements;
+    }
+
+    @Override
     public List<ProcessElement> getAllAssemblyProcessByLabel(String dynamicLabel) {
         return processElementRepository.findProcessByLabel(dynamicLabel);
     }
@@ -113,6 +107,56 @@ public class ProcessServiceImpl implements ProcessService {
     @Override
     public ProcessElement getParentElementById(Long elementId) {
         return processElementRepository.findParentElement(elementId);
+    }
+
+    @Override
+    public List<ProcessElement> getElementsByStructure(Long structureId) {
+        return processElementRepository.findElementsByStructure(structureId);
+    }
+
+    @Override
+    public List<ProcessElement> getElementsByStructureAndLabel(String label,Long structureId) {
+        return processElementRepository.findElementsByStructureAndLabel(label,structureId);
+    }
+
+    @Override
+    public List<ProcessElement> getTypicalProcessByLabel(String label) {
+        return processElementRepository.findTypicalProcessByLabel(label);
+    }
+
+    @Override
+    public List<ProcessElement> getTypicalSequenceByLabel(String label) {
+        return processElementRepository.findTypicalSequenceByLabel(label);
+    }
+
+    @Override
+    public List<ProcessElement> getTypicalStepByLabel(String label) {
+        return processElementRepository.findTypicalStepByLabel(label);
+    }
+
+    @Override
+    public List<ProcessElement> getTypicalElementByLabel(String label) {
+        return processElementRepository.findTypicalElementByLabel(label);
+    }
+
+    @Override
+    public List<ProcessElement> getSimilarProcessByLabel(String label, Example<ProcessElement> example) {
+        return processElementRepository.findAll(example);
+    }
+
+    @Override
+    public List<ProcessElement> getSimilarSequenceByLabel(String label, Example<ProcessElement> example) {
+        return processElementRepository.findAll(example);
+    }
+
+    @Override
+    public List<ProcessElement> getSimilarStepByLabel(String label, Example<ProcessElement> example) {
+        return processElementRepository.findAll(example);
+    }
+
+    @Override
+    public List<ProcessElement> getSimilarElement(Example<ProcessElement> example) {
+        return processElementRepository.findAll(example);
     }
 
     @Override
@@ -252,6 +296,15 @@ public class ProcessServiceImpl implements ProcessService {
             fileRepository.createdAssociatedRelationById(file,vo.getElementId());
         }
 
+
+    }
+
+    @Override
+    public void modifyRelatedProcess(RelatedProcessVo vo) {
+        processElementRepository.deleteRelatedProcess(vo.getRelatedId());
+        for (Long elementId : vo.getElementId()) {
+            processElementRepository.createRelatedProcess(vo.getRelatedId(),elementId);
+        }
 
     }
 }

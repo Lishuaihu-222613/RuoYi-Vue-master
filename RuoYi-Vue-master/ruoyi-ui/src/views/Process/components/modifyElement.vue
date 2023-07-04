@@ -46,7 +46,7 @@
         </el-col>
       </el-row>
       <el-row>
-        <el-col :span="12">
+        <el-col :span="8">
           <el-form-item label="包含子级">
             <el-switch
               v-model="element.hasSubElements"
@@ -55,7 +55,17 @@
             </el-switch>
           </el-form-item>
         </el-col>
-        <el-col :span="12" v-if="!(elementType === 'Process')">
+        <el-col :span="8">
+          <el-form-item label="典型">
+            <el-switch
+              v-model="isTypical"
+              active-color="#13ce66"
+              inactive-color="#ff4949"
+            >
+            </el-switch>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8" v-if="!(elementType === 'Process')">
           <el-form-item label="父级">
             <treeselect v-model="parentId"
                         :clearable="true"

@@ -42,7 +42,7 @@ export function getAllMaterialOptions(){
 
 export function getMaterialOptionsByLabel(label){
   return request({
-    url: '/material/getAllMaterialOptions/'+label,
+    url: '/material/getMaterialOptionsByLabel/'+label,
     method: 'get'
   })
 }
@@ -253,9 +253,9 @@ export function createInspectProject(materialId){
   })
 };
 
-export function updateInspectProjectById(data){
+export function updateInspectProject(data){
   return request({
-    url: '/material/updateInspectProjectById',
+    url: '/material/updateInspectProject',
     method: 'post',
     data: data
   })
@@ -263,7 +263,7 @@ export function updateInspectProjectById(data){
 
 export function deleteInspectProjectById(projectId){
   return request({
-    url: '/material/deleteProtection/'+projectId,
+    url: '/material/deleteInspectProject/'+projectId,
     method: 'get'
   })
 };

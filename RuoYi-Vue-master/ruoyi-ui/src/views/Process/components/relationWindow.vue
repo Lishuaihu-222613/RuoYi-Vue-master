@@ -4,37 +4,37 @@
   >
     <el-tabs type="border-card">
       <el-tab-pane label="关联信息编辑">
-        <el-form >
+        <el-form>
           <el-form-item :label-width="formLabelWidth" label="关联零、部、组（整）件">
             <el-row>
               <el-tag
                 v-for="structure in structures"
                 :key="structure.elementId"
                 closable
+                type="info"
                 @close="handleCloseStructure(structure)"
-                type="info">
-                {{structure.elementName}}
+              >
+                {{ structure.elementName }}
               </el-tag>
             </el-row>
             <el-row class="row-bg" justify="space-around" type="flex">
               <el-col :span="10">
                 <treeselect v-model="structureLabel"
                             :clearable="true"
-                            :searchable="true"
                             :normalizer="normalizer"
-                            @select="selectStructureLabel"
                             :options="structureLabelOptions"
+                            :searchable="true"
                             placeholder="请选择结构标签"
+                            @select="selectStructureLabel"
                 />
               </el-col>
               <el-col :span="10">
                 <treeselect v-model="structureId"
                             :clearable="true"
-                            :searchable="true"
-                            @select="selectStructure"
                             :load-options="loadOptions"
                             :normalizer="elementNormalizer"
                             :options="structureOptions"
+                            :searchable="true"
                             placeholder="请选择结构元素"
                 />
               </el-col>
@@ -49,29 +49,31 @@
                 v-for="resource in resources"
                 :key="resource.resourceId"
                 closable
+                type="info"
                 @close="handleCloseResource(resource)"
-                type="info">
-                {{resource.resourceName}}
+              >
+                {{ resource.resourceName }}
               </el-tag>
             </el-row>
             <el-row class="row-bg" justify="space-around" type="flex">
               <el-col :span="10">
                 <treeselect v-model="resourceLabel"
                             :clearable="true"
-                            :searchable="true"
                             :normalizer="normalizer"
-                            @select="selectResourceLabel"
                             :options="resourceLabelOptions"
+                            :searchable="true"
                             placeholder="请选择资源标签"
+                            @select="selectResourceLabel"
                 />
               </el-col>
               <el-col :span="10">
-                <el-select value-key="resourceId" v-model="newResource" multiple placeholder="请选择">
+                <el-select v-model="newResource" placeholder="请选择" value-key="resourceId">
                   <el-option
                     v-for="item in resourceOptions"
                     :key="item.resourceId"
                     :label="item.resourceName"
-                    :value="item">
+                    :value="item"
+                  >
                   </el-option>
                 </el-select>
               </el-col>
@@ -86,29 +88,31 @@
                 v-for="file in files"
                 :key="file.fileId"
                 closable
+                type="info"
                 @close="handleCloseFile(file)"
-                type="info">
-                {{file.fileName}}
+              >
+                {{ file.fileName }}
               </el-tag>
             </el-row>
             <el-row class="row-bg" justify="space-around" type="flex">
               <el-col :span="10">
                 <treeselect v-model="fileLabel"
                             :clearable="true"
-                            :searchable="true"
                             :normalizer="normalizer"
-                            @select="selectFileLabel"
                             :options="fileLabelOptions"
+                            :searchable="true"
                             placeholder="请选择标签"
+                            @select="selectFileLabel"
                 />
               </el-col>
               <el-col :span="10">
-                <el-select value-key="fileId" v-model="newFile" multiple placeholder="请选择">
+                <el-select v-model="newFile" placeholder="请选择" value-key="fileId">
                   <el-option
                     v-for="item in fileOptions"
                     :key="item.fileId"
                     :label="item.fileName"
-                    :value="item">
+                    :value="item"
+                  >
                   </el-option>
                 </el-select>
               </el-col>
@@ -155,7 +159,8 @@
             style="text-align: left; display: inline-block"
           >
             <span slot-scope="{ option }">{{ option.number }}-{{ option.label }}</span>
-            <el-button slot="right-footer" class="transfer-footer" size="small" @click="modifyRelation">修改关系</el-button>
+            <el-button slot="right-footer" class="transfer-footer" size="small" @click="modifyRelation">修改关系
+            </el-button>
           </el-transfer>
         </div>
 
@@ -172,7 +177,7 @@ import Treeselect from '@riophae/vue-treeselect'
 import * as fileManagement from '@/api/system/fileManagement'
 import * as resourceManagement from '@/api/system/resourceManagement'
 import * as structureManagement from '@/api/system/elementManagement'
-import "@riophae/vue-treeselect/dist/vue-treeselect.css";
+import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 import * as treeManagement from '@/api/system/treeManagement'
 import { LOAD_CHILDREN_OPTIONS } from '@riophae/vue-treeselect'
 import * as elementManagement from '@/api/system/elementManagement'
@@ -198,14 +203,8 @@ export default {
       handler(newVal, oldVal) {
         this.dialogFormVisible = newVal
       }
-    },
-    pId: {
-      handler(newVal, oldVal) {
-        if (newVal !== null) {
-          this.parentId = newVal
-        }
-      }
     }
+
   },
 
   props: {
@@ -216,10 +215,6 @@ export default {
     dialog: {
       type: Boolean,
       default: false
-    },
-    pId: {
-      type: Number,
-      default: 0
     }
   },
 
@@ -231,85 +226,42 @@ export default {
       dialogFormVisible: false,
       element: {},
       elements: [],
-      beforeElements:[],
-      afterElements:[],
-      andElements:[],
-      orElements:[],
-      subElements:[],
-      structures:[
-        {
-          elementId:0,
-          elementName:'测试产品1'
-        }
-      ],
-      structureLabel:'',
-      structureLabelOptions:[],
-      resourceLabelOptions:[],
-      fileLabelOptions:[],
-      structureId:undefined,
-      structure:{},
-      newResource:{},
-      structureOptions:[],
-      resourceOptions:[],
-      fileOptions:[],
-      resources:[
-        {
-          resourceId:0,
-          resourceName:'吊车1'
-        },
-        {
-          resourceId:1,
-          resourceName:'搅拌釜1'
-        },
-        {
-          resourceId:2,
-          resourceName:'喷涂系统Ⅱ'
-        },
-        {
-          resourceId:3,
-          resourceName:'电热鼓风干燥箱'
-        },
-        {
-          resourceId:4,
-          resourceName:'软吊具1'
-        },
-        {
-          resourceId:5,
-          resourceName:'立式喷砂工装1'
-        },
-        {
-          resourceId:6,
-          resourceName:'排气管固定工装1'
-        },
-        {
-          resourceId:7,
-          resourceName:'立式喷砂工装1'
-        },
-      ],
-      resourceLabel:'',
-      fileLabel:'',
-      files:[
-        {
-          fileId:0,
-          fileName:'壳体准备工艺规程文件'
-        }
-      ],
-      newFile:{},
+      beforeElements: [],
+      afterElements: [],
+      andElements: [],
+      orElements: [],
+      subElements: [],
+      structures: [],
+      structureLabel: '',
+      structureLabelOptions: [],
+      resourceLabelOptions: [],
+      fileLabelOptions: [],
+      structureId: undefined,
+      structure: {},
+      newResource: {},
+      structureOptions: [],
+      resourceOptions: [],
+      fileOptions: [],
+      resources: [],
+      resourceLabel: '',
+      fileLabel: '',
+      files: [],
+      newFile: {},
       selectedRelations: [],
       relations: [
         {
-        value: 'before',
-        label: '前道关系'
-      }, {
-        value: 'after',
-        label: '后道关系'
-      }, {
-        value: 'and',
-        label: '逻辑与关系'
-      }, {
-        value: 'or',
-        label: '逻辑或关系'
-      }],
+          value: 'before',
+          label: '前道关系'
+        }, {
+          value: 'after',
+          label: '后道关系'
+        }, {
+          value: 'and',
+          label: '逻辑与关系'
+        }, {
+          value: 'or',
+          label: '逻辑或关系'
+        }],
       relation: ''
     }
   },
@@ -337,60 +289,72 @@ export default {
 
       this.getTreeselect()
 
-      processManagement.getBeforeElements(this.elementId).then(result =>{
-        if(result.code === 200){
-          this.beforeElements = result.data.map(item=>{
-            return item.elementId;
+      processManagement.getBeforeElements(this.elementId).then(result => {
+        if (result.code === 200) {
+          this.beforeElements = result.data.map(item => {
+            return item.elementId
           })
+          console.log("beforeElements",this.beforeElements)
         }
       })
-      processManagement.getAfterElements(this.elementId).then(result =>{
-        if(result.code === 200){
-          this.afterElements = result.data.map(item=>{
-            return item.elementId;
+      processManagement.getAfterElements(this.elementId).then(result => {
+        if (result.code === 200) {
+          this.afterElements = result.data.map(item => {
+            return item.elementId
           })
         }
+        console.log("afterElements",this.afterElements)
       })
-      processManagement.getAndElements(this.elementId).then(result =>{
-        if(result.code === 200){
-          this.andElements = result.data.map(item=>{
-            return item.elementId;
+      processManagement.getAndElements(this.elementId).then(result => {
+        if (result.code === 200) {
+          this.andElements = result.data.map(item => {
+            return item.elementId
           })
+          console.log("andElements",this.andElements)
         }
       })
-      processManagement.getOrElements(this.elementId).then(result =>{
-        if(result.code === 200){
-          this.orElements = result.data.map(item=>{
-            return item.elementId;
+      processManagement.getOrElements(this.elementId).then(result => {
+        if (result.code === 200) {
+          this.orElements = result.data.map(item => {
+            return item.elementId
           })
+          console.log("orElements",this.orElements)
         }
       })
-      structureManagement.getStructureByRelatedId(this.elementId).then(result =>{
+      structureManagement.getStructureByRelatedId(this.elementId).then(result => {
         this.structures = result.data
-      } )
-      fileManagement.getFilesByRelatedId(this.elementId).then(result =>{
+      })
+      fileManagement.getFilesByRelatedId(this.elementId).then(result => {
         this.files = result.data
       })
-      resourceManagement.getResourcesByRelatedId(this.elementId).then(result =>{
+      resourceManagement.getResourcesByRelatedId(this.elementId).then(result => {
         this.resources = result.data
       })
+      processManagement.getParentElementById(this.elementId).then(result => {
+        if (result.code === 200) {
+          this.parentId = result.data.elementId
+        }
+      })
 
-      let oriElements;
       processManagement.getSubElementsById(this.parentId).then(result => {
-        if(result.code === 200){
-          oriElements = result.data
-          this.elements = oriElements.map(item=>{
-            return Object.assign({},{'key':item.elementId,
-              'label':item.elementName,'number':item.elementNumber
+        console.log(this.parentId)
+        if (result.code === 200) {
+          console.log(result.data)
+          this.elements = result.data.map(item => {
+            return Object.assign({}, {
+              'key': item.elementId,
+              'label': item.elementName, 'number': item.elementNumber
             })
           })
           this.removeItemSelf(this.elements)
           console.log(this.elements)
         }
-      });
+      })
     },
 
     handleClose() {
+      this.elements = []
+      this.selectedRelations = []
       this.dialogFormVisible = false
       this.$emit('closeDialog', null)
       this.$emit('restore', null)
@@ -398,7 +362,7 @@ export default {
 
     normalizer(node) {
       if (node.subLeafs && !node.subLeafs.length) {
-        delete node.subLeafs;
+        delete node.subLeafs
       }
       return {
         id: node.leafName,
@@ -407,7 +371,7 @@ export default {
       }
     },
 
-    elementNormalizer(node){
+    elementNormalizer(node) {
       if (node.subElements && !node.subElements.length) {
         node.subElements = null
       }
@@ -419,11 +383,10 @@ export default {
     },
 
     loadOptions({ action, parentNode, callback }) {
-
       if (action === LOAD_CHILDREN_OPTIONS) {
-        simulateAsyncOperation(() =>{
-          elementManagement.getSubElementsById(parentNode.elementId).then(result =>{
-            if(result.code === 200){
+        simulateAsyncOperation(() => {
+          elementManagement.getSubElementsById(parentNode.elementId).then(result => {
+            if (result.code === 200) {
               parentNode.subElements = result.data
               callback()
             }
@@ -432,78 +395,75 @@ export default {
       }
     },
 
-    handleCloseStructure(data){
-      this.structures.splice(this.structures.indexOf(data), 1);
+    handleCloseStructure(data) {
+      this.structures.splice(this.structures.indexOf(data), 1)
     },
 
-    handleCloseResource(data){
-      this.resources.splice(this.resources.indexOf(data), 1);
+    handleCloseResource(data) {
+      this.resources.splice(this.resources.indexOf(data), 1)
     },
 
-    handleCloseFile(data){
-      this.files.splice(this.files.indexOf(data), 1);
+    handleCloseFile(data) {
+      this.files.splice(this.files.indexOf(data), 1)
     },
 
-    selectStructureLabel(node,instanceId){
+    selectStructureLabel(node, instanceId) {
       this.structureOptions = []
-      structureManagement.getProductOptionsByLabel(node.label).then(result =>{
-        if(result.code === 200){
-          this.structureOptions.push(result.data)
+      structureManagement.getProductOptionsByLabel(node.leafName).then(result => {
+        if (result.code === 200) {
+          this.structureOptions = result.data
         }
       })
     },
-    selectResourceLabel(node,instanceId){
+    selectResourceLabel(node, instanceId) {
       this.resourceOptions = []
-      resourceManagement.getResourceOptionsByLabel(node.label).then(result =>{
-        if(result.code === 200 ){
-          this.resourceOptions.push(result.data)
+      resourceManagement.getResourceOptionsByLabel(node.leafName).then(result => {
+        if (result.code === 200) {
+          this.resourceOptions = result.data
         }
       })
     },
-    selectFileLabel(node,instanceId){
+    selectFileLabel(node, instanceId) {
       this.fileOptions = []
-      fileManagement.getFileOptionsByLabel(node.label).then(result =>{
-        if(result.code === 200){
-          this.files.push(result.data)
+      fileManagement.getFileOptionsByLabel(node.leafName).then(result => {
+        if (result.code === 200) {
+          this.files.push = result.data
         }
       })
     },
 
-    selectStructure(node,instanceId){
-      this.structure = {
-        elementId:node.id,
-        elementName:node.label
-      }
+    addStructure() {
+      elementManagement.getSingleElementById(this.structureId).then(result => {
+        if (result.code === 200) {
+          this.structures.push(result.data)
+        }
+      })
+      console.log(this.structure)
+      this.structureId = undefined
     },
 
-    addStructure(){
-      this.structures.push(this.newStructure)
-      this.newStructure = {}
-    },
-
-    addResource(){
+    addResource() {
       this.resources.push(this.newResource)
       this.newResource = {}
     },
-    addFile(){
+    addFile() {
       this.files.push(this.newFile)
       this.newFile = {}
     },
 
-    removeItemSelf(arr){
-      let index = NaN;
-      for(let i in arr){
-        if(arr[i]['key'] === this.elementId){
-          index=i;
-          break;
+    removeItemSelf(arr) {
+      let index = NaN
+      for (let i in arr) {
+        if (arr[i]['key'] === this.elementId) {
+          index = i
+          break
         }
       }
       if (!isNaN(index)) {
-        arr.splice(index,1);
+        arr.splice(index, 1)
       }
     },
     selectRelationKind(rel) {
-
       if (rel === 'before') {
         this.selectedRelations = this.beforeElements
       } else if (rel === 'after') {
@@ -521,32 +481,31 @@ export default {
 
     modifyRelation() {
       let ss = {
-        elementId:this.elementId,
-        relations:this.selectedRelations
+        elementId: this.elementId,
+        relations: this.selectedRelations
       }
-
-      if(this.relation === "before"){
+      if (this.relation === 'before') {
         processManagement.modifyBeforeElement(ss).then(result => {
-          if(result.code === 200){
-            this.$modal.msgSuccess("关系修改成功！")
+          if (result.code === 200) {
+            this.$modal.msgSuccess('关系修改成功！')
           }
         })
-      } else if(this.relation === "after"){
+      } else if (this.relation === 'after') {
         processManagement.modifyAfterElement(ss).then(result => {
-          if(result.code === 200){
-            this.$modal.msgSuccess("关系修改成功！")
+          if (result.code === 200) {
+            this.$modal.msgSuccess('关系修改成功！')
           }
         })
-      } else if(this.relation ==="and"){
+      } else if (this.relation === 'and') {
         processManagement.modifyAndElement(ss).then(result => {
-          if(result.code === 200){
-            this.$modal.msgSuccess("关系修改成功！")
+          if (result.code === 200) {
+            this.$modal.msgSuccess('关系修改成功！')
           }
         })
-      } else if(this.relation === "or"){
+      } else if (this.relation === 'or') {
         processManagement.modifyOrElement(ss).then(result => {
-          if(result.code === 200){
-            this.$modal.msgSuccess("关系修改成功！")
+          if (result.code === 200) {
+            this.$modal.msgSuccess('关系修改成功！')
           }
         })
       }
@@ -554,19 +513,21 @@ export default {
 
     onSubmit() {
       let relation = {
-        structures:this.structures.map((item,index) => {
-          return Object.assign({},{'elementId':item.elementId})
+        elementId: this.elementId,
+        structures: this.structures.map(item => {
+          return item.elementId
         }),
-        resources:this.resources.map((item,index) => {
-          return Object.assign({},{'resources':item.resourceId})
+        resources: this.resources.map(item => {
+          return item.resourceId
         }),
-        files:this.files.map((item,index) => {
-          return Object.assign({},{'fileId':item.fileId})
-        }),
+        files: this.files.map(item => {
+          return item.fileId
+        })
       }
-      processManagement.updateRelation(this.element).then(result => {
-        if(result.code == 200){
-          this.$modal.msgSuccess("修改成功！")
+      console.log(relation)
+      processManagement.updateRelation(relation).then(result => {
+        if (result.code == 200) {
+          this.$modal.msgSuccess('修改成功！')
         }
       })
     }

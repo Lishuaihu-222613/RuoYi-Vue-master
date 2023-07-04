@@ -162,7 +162,6 @@
         />
         <relationWindow ref="relatedWindow"
                         :dialog="modifyConstraintShow"
-                        :pId="parentId"
                         :selectElementId="selectElementId"
                         @closeDialog="() =>{ this.modifyConstraintShow = false }"
                         @restore="() =>{this.selectElement = {}}"
@@ -248,6 +247,13 @@
                 type="text"
                 @click="handleRelations(scope.row)"
               >更改关系
+              </el-button>
+              <el-button
+                icon="el-icon-key"
+                size="mini"
+                type="text"
+                @click="handleGraph(scope.row)"
+              >展示图谱
               </el-button>
             </template>
           </el-table-column>
@@ -607,6 +613,9 @@ export default {
         console.log(response.data)
         this.elementTree.push(response.data)
       })
+    },
+    handleGraph(data){
+      this.$router.push({ path: "/KM/FileConvert", query: {id: data.elementId}});
     },
     // 筛选分类节点
     filterNode(value, data) {

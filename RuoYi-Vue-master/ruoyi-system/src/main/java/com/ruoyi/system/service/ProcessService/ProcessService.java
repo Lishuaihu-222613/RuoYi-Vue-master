@@ -1,10 +1,7 @@
 package com.ruoyi.system.service.ProcessService;
 
 import com.ruoyi.system.domain.AssemblyPojo.Process.ProcessElement;
-import com.ruoyi.system.domain.AssemblyPojo.Process.vo.ElementForParentProcess;
-import com.ruoyi.system.domain.AssemblyPojo.Process.vo.ElementRelations;
-import com.ruoyi.system.domain.AssemblyPojo.Process.vo.OtherRelations;
-import com.ruoyi.system.domain.AssemblyPojo.Process.vo.RelationsVoForProcessElement;
+import com.ruoyi.system.domain.AssemblyPojo.Process.vo.*;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,6 +23,9 @@ public interface ProcessService {
 
     List<ProcessElement> getOrElementsById(Long elementId );
 
+    List<ProcessElement> getProcessByRelatedId(Long elementId );
+
+
     List<ProcessElement> getAllAssemblyProcessByLabel(String dynamicLabel);
 
     Page<ProcessElement> getAllAssemblyProcessByLabel(String dynamicLabel, Pageable pageable);
@@ -39,6 +39,26 @@ public interface ProcessService {
     ProcessElement getSingleElementById(Long elementId);
 
     ProcessElement getParentElementById(Long elementId);
+
+    List<ProcessElement> getElementsByStructure(Long structureId);
+
+    List<ProcessElement> getElementsByStructureAndLabel(String label,Long structureId);
+
+    List<ProcessElement> getTypicalProcessByLabel(String label);
+
+    List<ProcessElement> getTypicalSequenceByLabel(String label);
+
+    List<ProcessElement> getTypicalStepByLabel(String label);
+
+    List<ProcessElement> getTypicalElementByLabel(String label);
+
+    List<ProcessElement> getSimilarProcessByLabel(String label, Example<ProcessElement> example);
+
+    List<ProcessElement> getSimilarSequenceByLabel(String label,Example<ProcessElement> example);
+
+    List<ProcessElement> getSimilarStepByLabel(String label,Example<ProcessElement> example);
+
+    List<ProcessElement> getSimilarElement(Example<ProcessElement> example);
 
     ProcessElement createElementForParent(ElementForParentProcess EP);
 
@@ -60,5 +80,5 @@ public interface ProcessService {
 
     void updateRelation(OtherRelations vo);
 
-
+    void modifyRelatedProcess(RelatedProcessVo vo);
 }

@@ -100,8 +100,8 @@ public class KGManagerController extends BaseController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/getCypherResult")
-    public R<KgDomain> getCypherResult(String cypher) {
+    @RequestMapping(value = "/getCypherResult/{cypher}")
+    public R<HashMap<String, Object>> getCypherResult(@PathVariable String cypher) {
         try {
             HashMap<String, Object> graphData = Neo4jUtil.getGraphNodeAndShip(cypher);
             return R.success(graphData);

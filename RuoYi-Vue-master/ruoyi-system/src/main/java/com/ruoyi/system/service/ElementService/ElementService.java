@@ -17,6 +17,8 @@ public interface ElementService {
      */
     List<AssemblyElement> getAllAssemblyProducts();
 
+    List<AssemblyElement> getSimilarElements(Example<AssemblyElement> example);
+
     List<AssemblyElement> getSubElementsById(Long elementId );
 
     List<AssemblyElement> getAllAssemblyProductsByLabel(String dynamicLabel);

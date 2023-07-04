@@ -15,9 +15,9 @@
             </el-col>
             <el-col :span="6">
               <el-form-item label="材料种类">
-                <el-select v-model="newElement" placeholder="请选择材料">
+                <el-select v-model="newElement" placeholder="请选择材料" value-key="materialId">
                   <el-option
-                    v-for="option in materialOptions"
+                    v-for="option in filterMaterialOptions"
                     :key="option.materialId"
                     :label="option.materialName"
                     :value="option"
@@ -103,12 +103,12 @@
                 />
               </el-col>
               <el-col :span="10">
-                <el-select v-model="newProduct" filterable placeholder="请选择产品">
+                <el-select v-model="newProduct" filterable placeholder="请选择产品" value-key="elementId">
                   <el-option
                     v-for="option in filterProductOptions"
                     :key="option.elementId"
                     :label="option.elementName"
-                    :value="option.element"
+                    :value="option"
                   >
                   </el-option>
                 </el-select>
@@ -156,12 +156,12 @@
                 />
               </el-col>
               <el-col :span="10">
-                <el-select v-model="newProcess" filterable placeholder="请选择工艺">
+                <el-select v-model="newProcess" filterable placeholder="请选择工艺" value-key="elementId">
                   <el-option
                     v-for="option in filterProcessOptions"
                     :key="option.elementId"
                     :label="option.elementName"
-                    :value="option.element"
+                    :value="option"
                   >
                   </el-option>
                 </el-select>
@@ -191,11 +191,11 @@ import * as prescriptionManagement from '@/api/system/prescriptionManagement'
 import * as materialManagement from '@/api/system/materialManagement'
 import * as structureManagement from '@/api/system/elementManagement'
 import * as processManagement from '@/api/system/processManagement'
-import { getAllProducts } from '@/api/system/elementManagement'
-import { getAllProcess } from '@/api/system/processManagement'
 import Treeselect from '@riophae/vue-treeselect'
 import * as treeManagement from '@/api/system/treeManagement'
-
+import "@riophae/vue-treeselect/dist/vue-treeselect.css"
+import { getStructureByRelatedId } from '@/api/system/elementManagement'
+import { modifyRelatedProcess } from '@/api/system/processManagement'
 export default {
   name: 'prescriptionElements',
   components: { Treeselect },
@@ -233,9 +233,6 @@ export default {
     }
   },
 
-  created() {
-
-  },
 
   data() {
     return {
@@ -262,19 +259,8 @@ export default {
       filterProcessOptions: [],
       newMaterialPercentage: 0.0,
       windowTitle: '创建组分',
-      elements: [
-        {
-          material:{
-            materialId: 0,
-            materialName: '端羧基聚丁二烯丙烯腈',
-          },
-          percentage: 99.65
-        },
-      ],
-      newElement: {
-        materialId: undefined,
-        materialName: ''
-      },
+      elements: [],
+      newElement: {},
       products: [],
       processes: [],
       dialogFormVisible: false,
@@ -298,6 +284,9 @@ export default {
     },
 
     getTreeselect() {
+      this.materialLabelOptions = []
+      this.processLabelOptions = []
+      this.productLabelOptions = []
       treeManagement.getTreeManagement(25451).then(response => {
         console.log(response.data)
         this.materialLabelOptions.push(response.data)
@@ -306,7 +295,7 @@ export default {
         console.log(response.data)
         this.processLabelOptions.push(response.data)
       })
-      treeManagement.getTreeManagement(25451).then(response => {
+      treeManagement.getTreeManagement(25877).then(response => {
         console.log(response.data)
         this.productLabelOptions.push(response.data)
       })
@@ -323,7 +312,7 @@ export default {
       this.filterMaterialOptions = []
       materialManagement.getMaterialOptionsByLabel(node.leafName).then(result => {
         if (result.code === 200) {
-          this.filterMaterialOptions.push(result.data)
+          this.filterMaterialOptions = result.data
         }
       })
     },
@@ -331,7 +320,7 @@ export default {
       this.filterProductOptions = []
       structureManagement.getProductOptionsByLabel(node.leafName).then(result => {
         if (result.code === 200) {
-          this.filterProductOptions.push(result.data)
+          this.filterProductOptions = result.data
         }
       })
     },
@@ -339,7 +328,7 @@ export default {
       this.filterProcessOptions = []
       processManagement.getProcessOptionsByLabel(node.leafName).then(result => {
         if (result.code === 200) {
-          this.filterProcessOptions.push(result.data)
+          this.filterProcessOptions = result.data
         }
       })
     },
@@ -350,23 +339,21 @@ export default {
       console.log(this.prescriptionId)
       prescriptionManagement.getElementsByPrescriptionId(this.selectPrescriptionId).then(result => {
         if (result.code === 200) {
-          console.log('------------------')
-          console.log(result.data)
           this.elements = []
           this.elements = result.data
           console.log(this.elements)
         }
       })
-      structureManagement.getProductsByRelatedId(this.selectPrescriptionId).then(result => {
+      structureManagement.getStructureByRelatedId(this.selectPrescriptionId).then(result => {
         if (result.code === 200) {
           this.products = []
-          this.products.push(result.data)
+          this.products = result.data
         }
       })
       processManagement.getProcessByRelatedId(this.selectPrescriptionId).then(result => {
         if (result.code === 200) {
           this.processes = []
-          this.processes.push(result.data)
+          this.processes = result.data
         }
       })
     },
@@ -390,57 +377,55 @@ export default {
 
     addMaterialElement() {
       let item = {
-        material:this.newElement,
+        prescriptionId:this.prescriptionId,
+        materialId:this.newElement.materialId,
         percentage: this.newMaterialPercentage
       }
-      this.elements.push(item)
+      let tableItem = {
+        material:this.newMaterial,
+        percentage: this.newMaterialPercentage
+      }
+      this.elements.push(tableItem)
       this.newMaterialPercentage = 0.0
+      prescriptionManagement.addMaterialElement(item).then(result =>{
+        if(result.code === 200){
+          this.$modal.msg("添加组分成功！")
+        }
+      })
+      prescriptionManagement.getElementsByPrescriptionId(this.prescriptionId).then(result =>{
+        if(result.code === 200){
+          this.elements = result.data
+        }
+      })
     },
     removeMaterialElement(item) {
       let index = this.elements.indexOf(item)
       if (index !== -1) {
         this.elements.splice(index, 1)
       }
+      prescriptionManagement.deleteMaterialElementForProscription(item.relationId).then(result =>{
+        if(result.code === 200){
+          this.$modal.msg("删除成功！")
+        }
+      })
     },
     addProduct() {
-      this.products.push(this.newProductId)
+      this.products.push(this.newProduct)
       this.newProductId = undefined
     },
-    removeProductElement(item) {
-      let index = this.products.indexOf(item)
-      if (index !== -1) {
-        this.products.splice(index, 1)
-      }
-    },
+
     addProcess() {
       this.processes.push(this.newProcessId)
       this.newProcessId = undefined
     },
-    removeProcessElement(item) {
-      let index = this.processes.indexOf(item)
-      if (index !== -1) {
-        this.processes.splice(index, 1)
-      }
-    },
-    onSubmitMaterial() {
-      let data = {
-        prescriptionId: this.prescriptionId,
-        elements: this.elements
-      }
-      console.log(data)
-      prescriptionManagement.modifyElements(data).then(result => {
-        if (result.code === 200) {
-          this.$modal.msgSuccess('配方组分修改成功！')
-        }
-      })
-    },
+
     onSubmitProduct() {
       let data = {
-        prescriptionId: this.prescriptionId,
-        products: this.products
+        relatedId: this.prescriptionId,
+        elementId: this.products.map(item =>{return item.elementId})
       }
       console.log(data)
-      prescriptionManagement.modifyProducts(data).then(result => {
+      structureManagement.modifyRelatedStructure(data).then(result => {
         if (result.code === 200) {
           this.$modal.msgSuccess('关联产品修改成功！')
         }
@@ -448,11 +433,11 @@ export default {
     },
     onSubmitProcess() {
       let data = {
-        prescriptionId: this.prescriptionId,
-        processes: this.processes
+        relatedId: this.prescriptionId,
+        elementId: this.processes.map(item =>{return item.elementId})
       }
       console.log(data)
-      prescriptionManagement.modifyProcesses(data).then(result => {
+      processManagement.modifyRelatedProcess(data).then(result => {
         if (result.code === 200) {
           this.$modal.msgSuccess('关联工艺修改成功！')
         }

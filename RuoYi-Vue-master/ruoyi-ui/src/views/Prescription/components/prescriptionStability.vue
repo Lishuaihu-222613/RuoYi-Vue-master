@@ -76,7 +76,7 @@
                 <el-col :span="8">
                   <el-input v-model="name"></el-input>
                 </el-col>
-                <el-col :span="2" class="line">----</el-col>
+                <el-col :span="2" class="line"></el-col>
                 <el-col :span="8">
                   <el-input v-model="heatStability.otherProperty[name]"></el-input>
                 </el-col>
@@ -86,11 +86,17 @@
               </el-row>
             </el-form-item>
           </el-row>
+          <el-row>
+            <el-col :span="12" :offset="12">
+              <el-form-item>
+                <el-button type="primary" @click="onSubmitHeatStability">确 定</el-button>
+                <el-button @click="cancel">取 消</el-button>
+              </el-form-item>
+            </el-col>
+
+          </el-row>
+
         </el-form>
-        <div slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="onSubmitHeatStability">确 定</el-button>
-          <el-button @click="cancel">取 消</el-button>
-        </div>
       </el-tab-pane>
       <el-tab-pane label="机械敏感性">
         <el-form ref="mechanicalStabilityForm" :model="mechanicalStability">
@@ -102,26 +108,26 @@
             </el-col>
             <el-col :span="12">
               <el-form-item :label-width="formLabelWidth" label="冲击感度">
-                <el-input-number v-model="mechanicalStability.impactSensitivity" :precision="2"></el-input-number>
+                <el-input-number v-model="mechanicalStability.impactSensitivity" :precision="precision"></el-input-number>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
             <el-col :span="12">
               <el-form-item :label-width="formLabelWidth" label="摩擦感度">
-                <el-input-number v-model="mechanicalStability.frictionSensitivity" :precision="2"></el-input-number>
+                <el-input-number v-model="mechanicalStability.frictionSensitivity" :precision="precision"></el-input-number>
               </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item :label-width="formLabelWidth" label="震动感度">
-                <el-input-number v-model="mechanicalStability.vibrationSensitivity" :precision="2"></el-input-number>
+                <el-input-number v-model="mechanicalStability.vibrationSensitivity" :precision="precision"></el-input-number>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
             <el-col :span="24">
               <el-form-item :label-width="formLabelWidth" label="枪击感度">
-                <el-input-number v-model="mechanicalStability.vibrationSensitivity" :precision="2"></el-input-number>
+                <el-input-number v-model="mechanicalStability.vibrationSensitivity" :precision="precision"></el-input-number>
               </el-form-item>
             </el-col>
           </el-row>
@@ -143,7 +149,7 @@
                 <el-col :span="8">
                   <el-input v-model="name"></el-input>
                 </el-col>
-                <el-col :span="2" class="line">----</el-col>
+                <el-col :span="2" class="line"></el-col>
                 <el-col :span="8">
                   <el-input v-model="mechanicalStability.otherProperty[name]"></el-input>
                 </el-col>
@@ -153,11 +159,14 @@
               </el-row>
             </el-form-item>
           </el-row>
+          <el-row>
+            <el-col :span="12" :offset="12">
+              <el-button type="primary" @click="onSubmitMechanicalStability">确 定</el-button>
+              <el-button @click="cancel">取 消</el-button>
+            </el-col>
+
+          </el-row>
         </el-form>
-        <div slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="onSubmitMechanicalStability">确 定</el-button>
-          <el-button @click="cancel">取 消</el-button>
-        </div>
       </el-tab-pane>
       <el-tab-pane label="辐射敏感度">
         <el-form ref="radioStabilityForm" :model="radioStability">
@@ -169,7 +178,7 @@
             </el-col>
             <el-col :span="12">
               <el-form-item :label-width="formLabelWidth" label="辐射感度">
-                <el-input-number v-model="radioStability.radiationSensitivity" precision="2"></el-input-number>
+                <el-input-number v-model="radioStability.radiationSensitivity" :precision="precision"></el-input-number>
               </el-form-item>
             </el-col>
           </el-row>
@@ -191,7 +200,7 @@
                 <el-col :span="8">
                   <el-input v-model="name"></el-input>
                 </el-col>
-                <el-col :span="2" class="line">----</el-col>
+                <el-col :span="2" class="line"></el-col>
                 <el-col :span="8">
                   <el-input v-model="radioStability.otherProperty[name]"></el-input>
                 </el-col>
@@ -201,11 +210,14 @@
               </el-row>
             </el-form-item>
           </el-row>
+          <el-row>
+            <el-col :span="12" :offset="12">
+              <el-button type="primary" @click="onSubmitRadioStability">确 定</el-button>
+              <el-button @click="cancel">取 消</el-button>
+            </el-col>
+
+          </el-row>
         </el-form>
-        <div slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="onSubmitRadioStability">确 定</el-button>
-          <el-button @click="cancel">取 消</el-button>
-        </div>
       </el-tab-pane>
       <el-tab-pane label="爆炸敏感性">
         <el-form ref="explosionStabilityForm" :model="explosionStability">
@@ -222,7 +234,7 @@
             </el-col>
             <el-col :span="12">
               <el-form-item :label-width="formLabelWidth" label="炸药分级">
-                <el-input v-model="explosionStability.ExplosiveClassification"></el-input>
+                <el-input v-model="explosionStability.explosiveClassification"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
@@ -244,7 +256,7 @@
                 <el-col :span="8">
                   <el-input v-model="name"></el-input>
                 </el-col>
-                <el-col :span="2" class="line">----</el-col>
+                <el-col :span="2" class="line"></el-col>
                 <el-col :span="8">
                   <el-input v-model="explosionStability.otherProperty[name]"></el-input>
                 </el-col>
@@ -254,11 +266,14 @@
               </el-row>
             </el-form-item>
           </el-row>
+          <el-row>
+            <el-col :span="12" :offset="12">
+              <el-button type="primary" @click="onSubmitExplosionStability">确 定</el-button>
+              <el-button @click="cancel">取 消</el-button>
+            </el-col>
+
+          </el-row>
         </el-form>
-        <div slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="onSubmitExplosionStability">确 定</el-button>
-          <el-button @click="cancel">取 消</el-button>
-        </div>
       </el-tab-pane>
     </el-tabs>
 
@@ -286,7 +301,7 @@ export default {
     }
   },
   watch: {
-    selectPrescription: {
+    selectPrescriptionId: {
       handler(newVal, oldVal) {
         if (newVal !== null || newVal !== 0) {
           this.prescriptionId = newVal
@@ -354,9 +369,10 @@ export default {
         stabilityId: 0,
         stabilityName: '',
         impactTest: '',
-        ExplosiveClassification: '',
+        explosiveClassification: '',
         otherProperty: {}
       },
+      precision:2,
       dialogFormVisible: false,
       formLabelWidth: '100px',
       inputVisible: false,

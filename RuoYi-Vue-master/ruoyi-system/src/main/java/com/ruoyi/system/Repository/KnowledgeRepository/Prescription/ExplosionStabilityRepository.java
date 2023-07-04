@@ -26,7 +26,7 @@ public interface ExplosionStabilityRepository extends Neo4jRepository<ExplosionS
     @Override
     void deleteById(Long stabilityId);
 
-    @Query("MATCH (n:推进剂配方)-[r:hasCombustionProperty]->(m:爆炸敏感性) where id(n) = $prescriptionId return m")
+    @Query("MATCH (n:推进剂配方)-[r:hasExplosionStability]->(m:爆炸敏感性) where id(n) = $prescriptionId return m")
     Optional<ExplosionStability> findExplosionStabilityByPrescription(@Param("prescriptionId") Long prescriptionId);
 
     @Query("MATCH (n:爆炸敏感性) where n.label = $stabilityName return n")

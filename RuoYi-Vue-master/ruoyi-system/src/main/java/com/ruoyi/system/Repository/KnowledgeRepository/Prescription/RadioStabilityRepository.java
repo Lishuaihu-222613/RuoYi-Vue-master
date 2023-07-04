@@ -26,7 +26,7 @@ public interface RadioStabilityRepository extends Neo4jRepository<RadioStability
     @Override
     void deleteById(Long stabilityId);
 
-    @Query("MATCH (n:推进剂配方)-[r:hasCombustionProperty]->(m:辐射敏感性) where id(n) = $prescriptionId return m")
+    @Query("MATCH (n:推进剂配方)-[r:hasRadioStability]->(m:辐射敏感性) where id(n) = $prescriptionId return m")
     Optional<RadioStability> findRadioStabilityByPrescription(@Param("prescriptionId") Long prescriptionId);
 
     @Query("MATCH (n:辐射敏感性) where n.label = $stabilityName return n")

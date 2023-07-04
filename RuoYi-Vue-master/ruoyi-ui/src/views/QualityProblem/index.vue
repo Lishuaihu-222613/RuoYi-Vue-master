@@ -304,7 +304,7 @@ export default {
       },
       // 列信息
       columns: [
-        { key: 0, label: `问题编号`, visible: true },
+        { key: 0, label: `问题编号`, visible: false },
         { key: 1, label: `问题名称`, visible: true },
         { key: 2, label: `问题描述`, visible: true },
         { key: 3, label: `外观表现`, visible: true },

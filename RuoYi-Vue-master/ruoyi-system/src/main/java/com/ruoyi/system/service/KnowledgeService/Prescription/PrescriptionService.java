@@ -11,6 +11,7 @@ import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.Stability.Mec
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.Stability.RadioStability;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.hasMaterialElement;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.vo.MaterialAndValue;
+import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.vo.PrescriptionAndAElement;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -455,7 +456,7 @@ public interface PrescriptionService {
 
     List<hasMaterialElement> modifyAllMaterialElementsByProscriptionId(Long proscriptionId,List<MaterialAndValue> materialElements);
 
-    hasMaterialElement addMaterialElementForProscription(Long proscriptionId,hasMaterialElement newMaterialElement);
+    void addMaterialElementForProscription(PrescriptionAndAElement PE);
 
-    void deleteMaterialElementForProscription(Long proscriptionId,Long elementId);
+    void deleteMaterialElementForProscription(Long relationId);
 }

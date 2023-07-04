@@ -45,8 +45,13 @@ PrescriptionRepository extends Neo4jRepository<Prescription,Long> {
     @Query("Match (n:Prescription)-[r]->(m:Material) where id(n) = $prescriptionId delete r")
     void deleteRelationForMaterial(@Param("prescriptionId") Long prescriptionId);
 
-    @Query("CREATE (n:Prescription)-[r:hasMaterialElement{percentage: $percentage}]->(m:Material) where id(n) = $prescriptionId and id(m) = $materialId")
-    void createRelationForMaterial(@Param("prescriptionId") Long prescriptionId,@Param("$materialId") Long $materialId,@Param("percentage") double percentage);
+    @Query("Match (n:Prescription)-[r]->(m:Material) where id(r) = $relationId delete r")
+    void deleteMaterialElementForProscription(@Param("relationId") Long relationId);
+
+    @Query("Match (n:Prescription) where id(n) = $prescriptionId " +
+            "Match (m:Material) where id(m) = $materialId " +
+            "Merge (n)-[r:hasMaterialElement{质量分数: $percentage}]->(m)")
+    void createRelationForMaterial(@Param("prescriptionId") Long prescriptionId,@Param("materialId") Long $materialId,@Param("percentage") double percentage);
 
     @Query("Match (n:Prescription)-[r:hasMaterialElement]->(m:Material) where id(n) = $prescriptionId return n,collect(r),collect(m)")
     Prescription getMaterialElementsById(@Param("prescriptionId") Long prescriptionId);

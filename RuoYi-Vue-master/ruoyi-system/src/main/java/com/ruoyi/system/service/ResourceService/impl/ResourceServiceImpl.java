@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -66,8 +67,8 @@ public class ResourceServiceImpl implements ResourceService {
     }
 
     @Override
-    public void deleteResource(List<Long> resourceIds) {
-        resourceRepository.deleteAllById(resourceIds);
+    public void deleteResource(Long[] resourceIds) {
+        resourceRepository.deleteAllById(Arrays.asList(resourceIds));
     }
 
     @Override
@@ -250,5 +251,10 @@ public class ResourceServiceImpl implements ResourceService {
     @Override
     public List<AssemblyResource> getAssemblyResourceByStep(Long stepId) {
         return null;
+    }
+
+    @Override
+    public List<AssemblyResource> getResourceOptionsByLabel(String label) {
+        return resourceRepository.findResourceOptionsByLabel(label);
     }
 }

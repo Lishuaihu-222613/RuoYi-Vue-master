@@ -38,7 +38,8 @@ public interface ResourceRepository extends Neo4jRepository<AssemblyResource,Lon
 
     List<AssemblyResource> findByResourceNameContainsOrderByResourceId(String resourceName);
 
-    List<AssemblyResource> findByResourceTypesContains(String resourceType);
+    @Query("Match (n:AssemblyResource :`:#{literal(#dynamicLabel)}`) return n")
+    List<AssemblyResource> findResourceOptionsByLabel(@Param("dynamicLabel") String label);
 
     @Override
     void deleteById(Long resourceId);

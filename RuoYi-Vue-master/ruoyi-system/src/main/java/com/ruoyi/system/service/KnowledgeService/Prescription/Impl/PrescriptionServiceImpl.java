@@ -13,6 +13,7 @@ import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.Stability.Mec
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.Stability.RadioStability;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.hasMaterialElement;
 import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.vo.MaterialAndValue;
+import com.ruoyi.system.domain.AssemblyPojo.Knowledge.Prescription.vo.PrescriptionAndAElement;
 import com.ruoyi.system.service.KnowledgeService.Prescription.PrescriptionService;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
@@ -513,32 +514,12 @@ public class PrescriptionServiceImpl implements PrescriptionService {
     }
 
     @Override
-    public hasMaterialElement addMaterialElementForProscription(Long proscriptionId, hasMaterialElement newMaterialElement) {
-        Optional<Prescription> optionalPrescription = prescriptionRepository.findById(proscriptionId);
-        if(optionalPrescription.isPresent()) {
-            Prescription prescription = optionalPrescription.get();
-            for(hasMaterialElement h: prescription.getMaterialElements()){
-                if(h.getMaterial().equals(newMaterialElement.getMaterial())){
-                    return h;
-                }
-            }
-            prescription.getMaterialElements().add(newMaterialElement);
-            prescriptionRepository.save(prescription);
-        }
-        return null;
+    public void addMaterialElementForProscription(PrescriptionAndAElement PE) {
+        prescriptionRepository.createRelationForMaterial(PE.getPrescriptionId(), PE.getMaterialId(),PE.getPercentage());
     }
 
     @Override
-    public void deleteMaterialElementForProscription(Long proscriptionId, Long elementId) {
-        Optional<Prescription> optionalPrescription = prescriptionRepository.findById(proscriptionId);
-        if(optionalPrescription.isPresent()) {
-            Prescription prescription = optionalPrescription.get();
-            for(hasMaterialElement h: prescription.getMaterialElements()){
-                if(h.getId().equals(elementId)){
-                    prescription.getMaterialElements().remove(h);
-                }
-            }
-            prescriptionRepository.save(prescription);
-        }
+    public void deleteMaterialElementForProscription(Long relationId) {
+        prescriptionRepository.deleteMaterialElementForProscription(relationId);
     }
 }

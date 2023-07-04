@@ -24,7 +24,7 @@ public interface ResourceService {
 
     <S extends MouldTool> S updateMouldTool(S resource);
 
-    void deleteResource(List<Long> resourceId);
+    void deleteResource(Long[] resourceId);
 
     void createRelatedRelations(Long relatedId, List<Long> resources);
 
@@ -98,6 +98,6 @@ public interface ResourceService {
 
     List<AssemblyResource> getAssemblyResourceByStep(Long stepId);
 
-
+    List<AssemblyResource> getResourceOptionsByLabel(String label);
 
 }

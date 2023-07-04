@@ -42,14 +42,17 @@ public interface ProcessElementRepository extends Neo4jRepository<ProcessElement
     @Query("Match (n:ProcessElement)<-[r:hasAssociatedProcess]-(m) where id(m) = $prescriptionId return n ")
     List<ProcessElement> findProcessByPrescription(@Param("prescriptionId") Long prescriptionId);
 
-    @Query("Match (n:ProcessElement :TypicalProcess :`:#{literal(#dynamicLabel)}`) return n")
+    @Query("Match (n:ProcessElement :Process :TypicalElement :`:#{literal(#dynamicLabel)}`) return n")
     List<ProcessElement> findTypicalProcessByLabel(@Param("dynamicLabel") String dynamicLabel);
 
-    @Query("Match (n:ProcessElement :TypicalSequence :`:#{literal(#dynamicLabel)}`) return n")
+    @Query("Match (n:ProcessElement :Sequence :TypicalElement :`:#{literal(#dynamicLabel)}`) return n")
     List<ProcessElement> findTypicalSequenceByLabel(@Param("dynamicLabel") String dynamicLabel);
 
-    @Query("Match (n:ProcessElement :TypicalStep :`:#{literal(#dynamicLabel)}`) return n")
+    @Query("Match (n:ProcessElement :Step :TypicalElement :`:#{literal(#dynamicLabel)}`) return n")
     List<ProcessElement> findTypicalStepByLabel(@Param("dynamicLabel") String dynamicLabel);
+
+    @Query("Match (n:ProcessElement :TypicalElement :`:#{literal(#dynamicLabel)}`) return n")
+    List<ProcessElement> findTypicalElementByLabel(@Param("dynamicLabel") String dynamicLabel);
 
     @Query(value = "MATCH (n:ProcessElement :Sequence)<-[r:hasSubElement]-(m::ProcessElement :Process) WHERE id(m) = $processId RETURN n "
             + ":#{orderBy(#pageable)} SKIP $skip LIMIT $limit",
@@ -75,6 +78,12 @@ public interface ProcessElementRepository extends Neo4jRepository<ProcessElement
     @Query("Match (n:ProcessElement)-[r:hasSubElement]->(m:ProcessElement) where id(m) = $elementId return n")
     ProcessElement findParentElement( @Param("elementId")  Long elementId);
 
+    @Query("Match (n:ProcessElement)-[r:hasAssociatedStructure]->(m:AssemblyElement) where id(m) = $structureId return n")
+    List<ProcessElement> findElementsByStructure(@Param("structureId")  Long structureId);
+
+    @Query("Match (n:ProcessElement :`:#{literal(#dynamicLabel)}`)-[r:hasAssociatedStructure]->(m:AssemblyElement) where id(m) = $structureId return n")
+    List<ProcessElement> findElementsByStructureAndLabel(@Param("dynamicLabel") String dynamicLabel ,@Param("structureId")  Long structureId);
+
     @Query("Match (n:ProcessElement)-[r:hasBeforeElement]->(m:ProcessElement) where id(n) = $elementId return m")
     List<ProcessElement> findBeforeElementsById( @Param("elementId") Long elementId);
 
@@ -87,6 +96,17 @@ public interface ProcessElementRepository extends Neo4jRepository<ProcessElement
     @Query("Match (n:ProcessElement)-[r:hasOrElement]->(m:ProcessElement) where id(n) = $elementId return m")
     List<ProcessElement> findOrElementsById(@Param("elementId") Long elementId);
 
+    @Query("Match (n)-[r:hasAssociatedProcess]->(m:ProcessElement) where id(n) = $relatedId return m")
+    List<ProcessElement> findProcessByRelatedId(@Param("relatedId") Long relatedId);
+
+    @Query("Match (n:ProcessElement)<-[r:hasAssociatedProcess]-(m) where id(m) = $relatedId")
+    void deleteRelatedProcess(@Param("relatedId") Long relatedId);
+
+    @Query("Match (n) where id(n) = $relatedId " +
+            "Match (m) where id(m) = $elementId " +
+            "MERGE (n)-[r:hasAssociatedProcess]->(m)")
+    void createRelatedProcess(@Param("relatedId") Long relatedId,@Param("elementId") Long elementId);
+
     @Query("Match (n:ProcessElement)-[r:hasSubElement]->(m:ProcessElement) where id(n) = $elementId return m order by m.序号")
     List<ProcessElement> findSubElementsById(@Param("elementId") Long elementId);
 
@@ -98,7 +118,8 @@ public interface ProcessElementRepository extends Neo4jRepository<ProcessElement
             "MERGE (n)-[r:hasSubElement]->(m)")
     void createSubRelation(@Param("parentId") Long parentId, @Param("elementId") Long elementId);
 
-    @Query(value = "MATCH (n:ProcessElement)-[r:hasBeforeElement]->(m:ProcessElement) where id(n) = $elementId delete r ")
+    @Query(value = "MATCH (n:ProcessElement)-[r:hasBeforeElement]->(m:ProcessElement) " +
+            "where id(n) = $elementId delete r ")
     void deleteBeforeRelation(@Param("elementId") Long elementId);
 
     @Query(value = "MATCH (n:ProcessElement) where id(n) = $beforeId " +
@@ -106,7 +127,8 @@ public interface ProcessElementRepository extends Neo4jRepository<ProcessElement
             "MERGE (n)<-[r:hasBeforeElement]-(m)" )
     void createBeforeRelation(@Param("beforeId") Long beforeId, @Param("elementId") Long elementId);
 
-    @Query(value = "MATCH (n:ProcessElement)-[r:hasAfterElement]->(m:ProcessElement) where id(n) = $elementId delete r ")
+    @Query(value = "MATCH (n:ProcessElement)-[r:hasAfterElement]->(m:ProcessElement)" +
+            " where id(n) = $elementId delete r ")
     void deleteAfterRelation(@Param("elementId") Long elementId);
 
     @Query(value = "MATCH (n:ProcessElement) where id(n) = $afterId " +
@@ -114,7 +136,8 @@ public interface ProcessElementRepository extends Neo4jRepository<ProcessElement
             "MERGE (n)<-[r:hasAfterElement]-(m)")
     void createAfterRelation(@Param("afterId") Long afterId, @Param("elementId") Long elementId);
 
-    @Query(value = "MATCH (n:ProcessElement)-[r:hasAndElement]->(m:ProcessElement) where id(n) = $elementId delete r ")
+    @Query(value = "MATCH (n:ProcessElement)-[r:hasAndElement]->(m:ProcessElement)" +
+            " where id(n) = $elementId delete r ")
     void deleteAndRelation(@Param("elementId") Long elementId);
 
     @Query(value = "MATCH (n:ProcessElement) where id(n) = $andId " +
@@ -122,7 +145,8 @@ public interface ProcessElementRepository extends Neo4jRepository<ProcessElement
             "MERGE (n)<-[r:hasAndElement]-(m)")
     void createAndRelation(@Param("andId") Long andId, @Param("elementId") Long elementId);
 
-    @Query(value = "MATCH (n:ProcessElement)-[r:hasOrElement]->(m:ProcessElement) where id(n) = $elementId delete r ")
+    @Query(value = "MATCH (n:ProcessElement)-[r:hasOrElement]->(m:ProcessElement)" +
+            " where id(n) = $elementId delete r ")
     void deleteOrRelation(@Param("elementId") Long elementId);
 
     @Query(value = "MATCH (n:ProcessElement) where id(n) = $orId " +

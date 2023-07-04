@@ -26,7 +26,7 @@ public interface OxidantRatioRepository extends Neo4jRepository<OxidantRatio,Lon
     @Override
     void deleteById(Long propertyId);
 
-    @Query("MATCH (n:推进剂配方)-[r:hasCombustionProperty]->(m:氧化剂比例) where id(n) = $prescriptionId return m")
+    @Query("MATCH (n:推进剂配方)-[r:hasOxidantRatio]->(m:氧化剂比例) where id(n) = $prescriptionId return m")
     Optional<OxidantRatio> findOxidantRatioByPrescription(@Param("prescriptionId") Long prescriptionId);
 
     @Query("MATCH (n:氧化剂比例) where n.label = $propertyName return n")

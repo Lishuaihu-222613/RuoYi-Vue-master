@@ -137,6 +137,14 @@ export function modifyModelFile(data) {
   })
 }
 
+export function modifyRelatedStructure(data) {
+  return request({
+    url: '/element/modifyRelatedStructure',
+    method: 'post',
+    data: data
+  })
+}
+
 export function deleteConstraint(constraintId) {
   return request({
     url: '/element/deleteConstraint/'+constraintId,

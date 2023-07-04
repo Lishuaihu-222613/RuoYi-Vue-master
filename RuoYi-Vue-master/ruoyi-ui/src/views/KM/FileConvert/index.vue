@@ -71,13 +71,28 @@ export default {
     KnowledgeTree
   },
 
+  created() {
+    console.log(this.$route)
+    let param = this.$route.query.id
+    // this.expandNode(param)
+    let cypher = "Match (n) where id(n) = "+param+" return n"
+    kgBuilderApi.getCypherResult(cypher).then(result =>{
+      if(result.code === 200){
+        console.log(result.data.nodes[0])
+        this.graphs.nodes = result.data.nodes
+        this.updateGraph()
+      }
+    })
+  },
+
   watch: {
     filterText(val) {
       this.$refs.tree.filter(val)
-    }
+    },
   },
   data() {
     return {
+      // param:this.$router.query.id,
       contextMenuData: {
         menuName: 'test',
         // 菜单显示的位置
@@ -392,10 +407,18 @@ export default {
       window.open(url)
     },
     //展开节点
-    expandNode() {
-      let params = {
-        domain: '',
-        nodeId: this.graphEvent.item._cfg.id
+    expandNode(id) {
+      let params
+      if(id !== undefined){
+        params = {
+          domain: '',
+          nodeId: id
+        }
+      } else {
+        params = {
+          domain: '',
+          nodeId: this.graphEvent.item._cfg.id
+        }
       }
       kgBuilderApi.getMoreRelatedNode(params).then(result => {
         if (result.code === 200) {
@@ -475,7 +498,7 @@ export default {
       this.domain = domain.name
       this.domainId = domain.id
       console.log(this.domain + this.domainId)
-      this.getDomainGraph('TestDomain')
+      this.getDomainGraph(domain.name)
     },
     getDomainGraph(domain) {
       this.loading = true
@@ -497,9 +520,12 @@ export default {
       })
     },
 
-    updateGraph() {
+    async updateGraph() {
       this.graph.data(this.graphs)
       this.graph.render()
+      const { predictLayout, confidence } = await GraphLayoutPredict.predict(this.graphs)
+      console.log(predictLayout, confidence)
+      this.graph.updateLayout({ type: predictLayout ,preventOverlap: true, nodeSpaceing: (d) => {return d.size;} ,strictRadial: true})
     },
     //删除领域
     deleteDomain(id, value) {
@@ -550,6 +576,8 @@ export default {
       // 选中连线
       G6.registerBehavior('select-edge', selectEdge)
 
+      G6.Util.processParallelEdges(this.graphs.edges)
+
       let grid = new G6.Grid()
 
       // 缩略图
@@ -591,8 +619,7 @@ export default {
         },
         itemTypes: ['node', 'edge']
       })
-      const { predictLayout, confidence } = await GraphLayoutPredict.predict(this.graphs)
-      console.log(predictLayout, confidence)
+
 
       this.graph = new G6.Graph({
         container: 'G6',
@@ -610,12 +637,13 @@ export default {
           nodeStrength: 30,         // 可选
           edgeStrength: 0.1,        // 可选
           collideStrength: 0.8,     // 可选
-          nodeSize: 30,             // 可选
+          nodeSize: 100,             // 可选
           alpha: 0.3,               // 可选
           alphaDecay: 0.028,        // 可选
           alphaMin: 0.01,           // 可选
           forceSimulation: null    // 可选
         },
+        gpuEnabled:true,
         modes: {
           default: [
             'hover-node',

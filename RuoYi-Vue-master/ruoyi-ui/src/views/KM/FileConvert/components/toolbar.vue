@@ -4,22 +4,23 @@
       <v-tooltip v-for="(item, index) in tools" :key="index" bottom>
         <template v-slot:activator="{ on, attrs }">
           <v-btn
-            @click="comment_event(item.event)"
             icon
             v-bind="attrs"
+            @click="comment_event(item.event)"
             v-on="on"
           >
             <v-icon style="color: #35495e">{{ item.icon }}</v-icon>
           </v-btn>
-          <template style="color: #c0c4cc" v-if="index == 8">{{ size }}%</template>
+          <template v-if="index == 8" style="color: #c0c4cc">{{ size }}%</template>
           <template v-else-if="index == 10">
             <v-spacer></v-spacer>
-            <el-select v-model="layout"   @change="changeLayout" size="mini" placeholder="请选择">
+            <el-select v-model="layout" placeholder="请选择" size="mini" @change="changeLayout">
               <el-option
                 v-for="item in layouts"
+                :key="item.value"
                 :label="item.label"
                 :value="item.value"
-                :key="item.value">
+              >
               </el-option>
             </el-select>
             <v-spacer></v-spacer>
@@ -39,7 +40,7 @@
         <span>{{ item.tip }}</span>
       </v-tooltip>
     </v-toolbar>
-    <el-dialog title="上传txt文件" :visible.sync="dialogVisible" width="50%">
+    <el-dialog :visible.sync="dialogVisible" title="上传txt文件" width="50%">
       数据格式：（<a href="https://github.com/qiaolufei/KG-Editor/issues/3" target="_blank">进阶版数据格式</a>）
       <pre style="color:#000">
         {
@@ -58,19 +59,19 @@
       </pre>
       <div style="text-align:center">
         <el-upload
-          drag
-          :limit="1"
-          action="https://jsonplaceholder.typicode.com/posts/"
           ref="upload"
-          accept=".txt"
           :close-on-click-modal="false"
           :file-list="fileList"
-          :on-success="onSuccess"
+          :limit="1"
           :on-remove="onRemove"
+          :on-success="onSuccess"
+          accept=".txt"
+          action="https://jsonplaceholder.typicode.com/posts/"
+          drag
         >
           <i class="el-icon-upload"></i>
           <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-          <div class="el-upload__tip" slot="tip">
+          <div slot="tip" class="el-upload__tip">
             上传txt文件，且只能上传 1 个文件
           </div>
         </el-upload>
@@ -102,23 +103,26 @@ export default {
 
     selectedNode: {
       type: Object,
-      default: () => {}
+      default: () => {
+      }
     },
 
     selectedEdge: {
       type: Object,
-      default: () => {}
+      default: () => {
+      }
     },
 
     graph: {
       type: Object,
-      default: () => {}
+      default: () => {
+      }
     }
   },
   watch: {
 
     selectedEdge: {
-      handler (newVal, oldVal) {
+      handler(newVal, oldVal) {
         if (newVal !== '') {
           this.edge = newVal
         }
@@ -126,7 +130,7 @@ export default {
     },
 
     selectedNode: {
-      handler (newVal, oldVal) {
+      handler(newVal, oldVal) {
         if (newVal !== '') {
           this.node = newVal
           this.radius = newVal.size[0] / 2
@@ -159,47 +163,54 @@ export default {
     uploadData: {},
     fileList: [],
     layout: 'random',
-    layouts: [{label: '随机布局', value: 'random'},
-              {label: '力导向布局', value: 'force'},
-              {label: 'Fruchterman布局', value: 'fruchterman'},
-              {label: '环形布局', value: 'circular'},
-              {label: '辐射布局', value: 'radial'},
-              {label: '层次布局', value: 'dagre'},
-              {label: '同心圆布局', value: 'concentric'},
-              {label: '网格布局', value: 'grid'},
-              {label: 'Ai布局', value: 'predictLayout'},
+    layouts: [
+      { label: '随机布局', value: 'random' },
+      { label: '力导向布局', value: 'force' },
+      { label: 'Fruchterman布局', value: 'fruchterman' },
+      { label: '环形布局', value: 'circular' },
+      { label: '辐射布局', value: 'radial' },
+      { label: '层次布局', value: 'dagre' },
+      { label: '同心圆布局', value: 'concentric' },
+      { label: '网格布局', value: 'grid' },
+      { label: 'Ai布局', value: 'predictLayout' }
     ],
     filterLens: false,
-    fishEyeCondition:false,
-    edgefilterLens:new G6.EdgeFilterLens({
+    fishEyeCondition: false,
+    edgefilterLens: new G6.EdgeFilterLens({
       trigger: 'mousemove',
       r: 200,
-      type:"both",
-      showLabel:'both',
-      scaleRBy:'wheel',
+      type: 'both',
+      showLabel: 'both',
+      scaleRBy: 'wheel'
       // shouldShow: d => {
       //   return d.size > 10;
       // }
     }),
-    fisheye:new G6.Fisheye({
+    fisheye: new G6.Fisheye({
       r: 200,
       d: 10,
       showLabel: true,
       delegateStyle: {
         fill: '#f00',
         lineDash: [5, 5],
-        stroke: '#666',
-      },
-    }),
+        stroke: '#666'
+      }
+    })
   }),
-  mounted () {
+  mounted() {
     this.keyCodeForEvent()
   },
   methods: {
 
-    changeLayout () {this.graph.updateLayout({ type: this.layout ,preventOverlap: true, nodeSpaceing: (d) => {return d.size;} ,strictRadial: true})},
+    changeLayout() {
+      this.graph.updateLayout({
+        type: this.layout, preventOverlap: true, nodeSpaceing: (d) => {
+          return d.size
+        }, strictRadial: true
+      })
+    },
 
-    onSuccess (res, file, fileList) {
+    onSuccess(res, file, fileList) {
       let reader = new FileReader()
       reader.readAsText(file.raw)
       reader.onload = (e) => {
@@ -216,19 +227,19 @@ export default {
         }
       }
     },
-    onRemove (file) {
+    onRemove(file) {
       this.fileList = []
     },
 
-    comment_event (event) {
+    comment_event(event) {
       this[event]()
     },
 
-    search(){
-      this.show3 = !this.show3;
-      this.$emit("changeshow3",this.show3)
+    search() {
+      this.show3 = !this.show3
+      this.$emit('changeshow3', this.show3)
     },
-    revoke () { // 撤销
+    revoke() { // 撤销
       let log = this.$store.state.log
       let action = log[0].action
       switch (action) {
@@ -251,19 +262,19 @@ export default {
       }
       this.$store.commit('deleteLog')
     },
-    restore () {
+    restore() {
       this.graph.clear()
     },
-    copy () {
+    copy() {
       if (this.selectedNode === null) {
         this.$message.error('未选择节点！')
       } else {
-            this.cloneNode = objectJS.deepClone(node)
-            this.$message.success('复制成功')
-          }
-      },
+        this.cloneNode = objectJS.deepClone(node)
+        this.$message.success('复制成功')
+      }
+    },
 
-    paste () {
+    paste() {
       if (this.selectedNode === null) {
         this.$message.error('未选择节点！')
       } else {
@@ -274,7 +285,7 @@ export default {
         this.$message.success('粘贴成功')
       }
     },
-    delete () {
+    delete() {
       if (this.selectedEdge === null && this.selectedNode === null) {
         this.$message.error('未选择元素！')
       } else if (this.selectedEdge !== null) {
@@ -295,7 +306,7 @@ export default {
         this.graph.removeItem(this.selectedNode.id)
       }
     },
-    onTop () {
+    onTop() {
       if (this.selectedEdge.id === '' && this.selectedNode.id === '') {
         this.$message.error('未选择元素！')
       } else if (this.selectedEdge.id !== '') {
@@ -312,7 +323,7 @@ export default {
         })
       }
     },
-    onBottom () {
+    onBottom() {
       if (this.selectedEdge.id === '' && this.selectedNode.id === '') {
         this.$message.error('未选择元素！')
       } else if (this.selectedEdge.id !== '') {
@@ -329,25 +340,25 @@ export default {
         })
       }
     },
-    plus () {
+    plus() {
       const currentZoom = Number(this.graph.getZoom())
       this.graph.zoomTo(currentZoom + 0.1)
       this.size = Number(((currentZoom + 0.1) * 100).toFixed(0))
     },
-    minus () {
+    minus() {
       const currentZoom = Number(this.graph.getZoom())
       this.graph.zoomTo(currentZoom - 0.1)
       this.size = Number(((currentZoom - 0.1) * 100).toFixed(0))
     },
-    adaptCanvas () {
+    adaptCanvas() {
       this.graph.fitView(20)
       this.graph.fitCenter()
       this.graph.zoomTo(1)
     },
-    importFile () {
+    importFile() {
       this.dialogVisible = true
     },
-    initializeObj (source, target) { // 初始化node/edge，防止上传文件数据中缺少参数
+    initializeObj(source, target) { // 初始化node/edge，防止上传文件数据中缺少参数
       for (let key in source) {
         if (!target.hasOwnProperty(key)) {
           target[key] = source[key]
@@ -358,7 +369,7 @@ export default {
       }
       return target
     },
-    saveImage () {
+    saveImage() {
       if (!isNullAndEmpty(this.$store.state.dataList.nodes)) {
         this.graph.downloadFullImage('graph', 'image/png', {
           backgroundColor: '#fff',
@@ -368,35 +379,33 @@ export default {
         this.$message.warning('画布为空！')
       }
     },
-    saveJson () {
+    saveJson() {
       //鱼眼放大镜
-      if(!this.fishEyeCondition) {
-        this.graph.removePlugin(this.fisheye);
-        this.fishEyeCondition = true;
-      }
-      else {
-        this.graph.addPlugin(this.fisheye);
-        this.fishEyeCondition = false;
+      if (!this.fishEyeCondition) {
+        this.graph.removePlugin(this.fisheye)
+        this.fishEyeCondition = true
+      } else {
+        this.graph.addPlugin(this.fisheye)
+        this.fishEyeCondition = false
       }
     },
-    help () {
+    help() {
 
-      if(!this.filterLens) {
-        this.graph.removePlugin(this.edgefilterLens);
-        this.filterLens = true;
-      }
-      else {
+      if (!this.filterLens) {
+        this.graph.removePlugin(this.edgefilterLens)
+        this.filterLens = true
+      } else {
         //滤镜
-        this.graph.addPlugin(this.edgefilterLens);
-        this.filterLens = false;
+        this.graph.addPlugin(this.edgefilterLens)
+        this.filterLens = false
       }
     },
     // 模拟组合键触发函数
-    keyCodeForEvent () {
+    keyCodeForEvent() {
       let code = 0
       let code2 = 0
       let _this = this
-      document.onkeydown = function (e) {
+      document.onkeydown = function(e) {
         let evn = e || event
         let key = evn.keyCode || evn.which || evn.charCode
         if (key === 17) {
@@ -435,7 +444,7 @@ export default {
           code2 = 0
         }
       }
-      document.onkeyup = function (e) {
+      document.onkeyup = function(e) {
         if (e.keyCode === 17) {
           code = 0
         }
@@ -444,33 +453,40 @@ export default {
         }
       }
     }
-}}
+  }
+}
 </script>
 <style lang="less" scoped>
 .toolbar {
   position: fixed;
   background: #fff;
   top: 10%;
-  left:25%;
+  left: 25%;
   width: 50%;
   z-index: 999;
 }
+
 .v-modal {
   display: none;
 }
+
 .el-select .el-input.is-focus .el-input__inner {
   border-color: #35495e;
 }
+
 .el-select-dropdown__item.selected {
   color: #35495e;
 }
+
 .el-select .el-input__inner:focus {
   border-color: #35495e;
 }
+
 .el-input__inner:focus {
   border-color: #35495e;
 }
-.el-scrollbar__wrap{
+
+.el-scrollbar__wrap {
   overflow-x: hidden;
 }
 </style>

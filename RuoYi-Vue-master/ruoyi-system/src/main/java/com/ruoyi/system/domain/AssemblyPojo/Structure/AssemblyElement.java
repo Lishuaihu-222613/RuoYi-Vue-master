@@ -41,7 +41,7 @@ public class AssemblyElement {
     private String elementBoundingBox;
 
     @Property(name = "包含子元素")
-    private boolean hasSubElements;
+    private Boolean hasSubElements;
 
     @DynamicLabels
     private Set<String> dynamicLabels;
@@ -163,11 +163,11 @@ public class AssemblyElement {
         return associatedFiles;
     }
 
-    public boolean isHasSubElements() {
+    public Boolean isHasSubElements() {
         return hasSubElements;
     }
 
-    public void setHasSubElements(boolean hasSubElements) {
+    public void setHasSubElements(Boolean hasSubElements) {
         this.hasSubElements = hasSubElements;
     }
 
@@ -178,7 +178,7 @@ public class AssemblyElement {
     public AssemblyElement() {
     }
 
-    public AssemblyElement(Long elementId, String elementName, String elementDescription, Integer elementQuantity, String elementSource, double elementDensity, double elementWetArea, double elementVolume, double elementMass, String elementBoundingBox, boolean hasSubElements, Set<String> dynamicLabels, Set<AssemblyElement> subElements, FileKnowledge modelFile, Set<FileKnowledge> associatedFiles) {
+    public AssemblyElement(Long elementId, String elementName, String elementDescription, Integer elementQuantity, String elementSource, double elementDensity, double elementWetArea, double elementVolume, double elementMass, String elementBoundingBox, Boolean hasSubElements, Set<String> dynamicLabels, Set<AssemblyElement> subElements, FileKnowledge modelFile, Set<FileKnowledge> associatedFiles) {
         this.elementId = elementId;
         this.elementName = elementName;
         this.elementDescription = elementDescription;

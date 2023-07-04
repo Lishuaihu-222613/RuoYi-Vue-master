@@ -6,7 +6,8 @@ export default{
     lineAppendWidth: 3, // 鼠标检测宽度
     startArrow: false, // 开始箭头
     endArrow: true, // 结束箭头
-    cursor: 'pointer'
+    cursor: 'pointer',
+    curveOffset: 50
   },
   label: '',
   labelCfg: {

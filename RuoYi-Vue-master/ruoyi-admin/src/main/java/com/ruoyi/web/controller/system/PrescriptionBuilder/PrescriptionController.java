@@ -986,11 +986,10 @@ public class PrescriptionController extends BaseController {
 
     @ResponseBody
     @PostMapping("/addMaterialElementForProscription")
-    public R<hasMaterialElement> addMaterialElementForProscription(@RequestBody PrescriptionAndAElement PE) {
+    public R<String> addMaterialElementForProscription(@RequestBody PrescriptionAndAElement PE) {
         try {
-            hasMaterialElement hasMaterialElement = prescriptionService.addMaterialElementForProscription(PE.getPrescriptionId(), PE.getElement());
-            System.out.println(hasMaterialElement);
-            return R.success(hasMaterialElement);
+            prescriptionService.addMaterialElementForProscription(PE);
+            return R.success("添加成功");
         } catch (Exception e) {
             e.printStackTrace();
             return R.error(e.getMessage());
@@ -1000,11 +999,11 @@ public class PrescriptionController extends BaseController {
     ;
 
     @ResponseBody
-    @PostMapping("/deleteMaterialElementForProscription/{proscriptionId}/{elementId}")
-    public R<String> deleteMaterialElementForProscription(@PathVariable Long proscriptionId, @PathVariable Long elementId) {
+    @GetMapping("/deleteMaterialElementForProscription/{relationId}")
+    public R<String> deleteMaterialElementForProscription(@PathVariable Long relationId) {
         try {
-            prescriptionService.deleteMaterialElementForProscription(proscriptionId, elementId);
-            return R.success("删除" + proscriptionId + "配方中的" + elementId + "组分");
+            prescriptionService.deleteMaterialElementForProscription(relationId);
+            return R.success("删除成功" );
         } catch (Exception e) {
             e.printStackTrace();
             return R.error(e.getMessage());

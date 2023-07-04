@@ -64,7 +64,7 @@ export function updateQualityProblem(data) {
 
 export function deleteQualityProblem(problemId) {
   return request({
-    url: '/qualityProblem/deleteQualityProblem/' + problemId,
+    url: '/qualityProblem/deleteProblem/' + problemId,
     method: 'get'
   })
 }

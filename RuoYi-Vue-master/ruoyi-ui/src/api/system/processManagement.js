@@ -14,6 +14,12 @@ export function getParentElementById(elementId){
   })
 }
 
+export function getProcessByRelatedId(elementId){
+  return request({
+    url: '/process/getProcessByRelatedId/'+elementId,
+    method: 'get'
+  })
+}
 
 export function getElementById(elementId){
   return request({
@@ -60,6 +66,14 @@ export function getOrElements(elementId){
 export function createElement(data){
   return request({
     url: '/process/createElement',
+    method: 'post',
+    data:data
+  })
+}
+
+export function modifyRelatedProcess(data){
+  return request({
+    url: '/process/modifyBeforeElement',
     method: 'post',
     data:data
   })
